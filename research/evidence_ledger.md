@@ -70,6 +70,30 @@
 - **Interpretation:** Janus should treat provenance and context as core schema fields and define readiness for a stated molecular task.
 - **Confidence:** High as a framework; adaptation to molecular assays remains our work.
 
+### E009 — Large-scale negative bioactivity modeling predates recent resources
+
+- **Claim:** Negative bioactivity data have been incorporated into large-scale molecular target-prediction workflows for more than a decade.
+- **Source:** [Mervin et al., Journal of Cheminformatics (2015)](https://doi.org/10.1186/s13321-015-0098-y)
+- **Evidence:** The study combined more than 195 million ChEMBL and PubChem bioactivity points, selected presumed inactive compounds, and compared inactivity-inclusive models with active-only models using internal and external evaluation.
+- **Interpretation:** Janus cannot claim that using negative bioactivity data in molecular ML is new. The unresolved issue is the scientific status and provenance of the negative observation, not the mere inclusion of a negative class.
+- **Confidence:** High for the reported study; medium for generalization beyond target prediction.
+
+### E010 — Open screening infrastructure can preserve both positive and negative pipeline outcomes
+
+- **Claim:** An open chemical-biology infrastructure can store positive and negative activity data from primary and counter-screening assays.
+- **Source:** [Škuta et al., ECBD, Nucleic Acids Research (2025)](https://doi.org/10.1093/nar/gkae904)
+- **Evidence:** ECBD is designed as a FAIR repository for EU-OPENSCREEN data and explicitly includes primary and counter-screening results.
+- **Interpretation:** The project must distinguish retrospective literature recovery from prospective data governance. “Preserving complete assay-pipeline outcomes” is an existing direction; Janus may add value by connecting such records with literature evidence, heterogeneous sources, and a cross-resource evaluation protocol.
+- **Confidence:** High for the repository scope.
+
+### E011 — Negative data have also been used to clean activity-related chemical signals
+
+- **Claim:** Negative data have been used in statistical analysis of active-negative chemical correlations, not only as binary labels for classifiers.
+- **Source:** [Lee et al., Ligand biological activity predicted by cleaning positive and negative chemical correlations](https://www.repository.cam.ac.uk/items/2a26b764-7e66-4db3-b5d0-2e41192c33c3)
+- **Evidence:** The work combines high-quality negative data with a random-matrix-inspired framework to separate activity-related chemical differences from undersampling noise.
+- **Interpretation:** The second-pass search must include statistical and representation-learning uses of negatives, not only dataset construction and literature mining.
+- **Confidence:** Medium pending full bibliographic and full-text verification.
+
 ## Open questions from pass 1
 
 - How often are qualitative negative statements present in molecular papers and supplementary information?
@@ -77,3 +101,4 @@
 - Which negative categories are most useful: measured inactive, failed experiment, relative decrease, or weak qualitative evidence?
 - Can extraction recall and precision be evaluated without a biased ground-truth corpus?
 - Does evidence-grounded enrichment improve realistic assay-level or time-split model performance?
+- How does Janus differ from older presumed-inactive target-prediction datasets and newer complete screening repositories?

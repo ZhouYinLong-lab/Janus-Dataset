@@ -18,6 +18,12 @@ There is already substantial work on:
 
 The most important new finding in this pass is the existence of InertDB, a 2025 resource explicitly centered on biologically inactive small molecules. This makes “build a negative molecular database” too close to existing work. Janus needs a sharper contribution.
 
+## Second-pass correction
+
+The targeted follow-up found that the direct precedent is older and broader than the first pass suggested. Mervin et al. used presumed-inactive ChEMBL and PubChem data for large-scale target prediction in 2015, and ECBD now preserves positive and negative results from primary and counter-screening assays. Lee et al. also used high-quality negative data to study active-negative chemical correlations.
+
+The novelty risk is therefore not limited to InertDB. The project must avoid claiming that negative bioactivity data have not been used, that negative-data resources do not exist, or that adding an inactive class is itself a new contribution.
+
 ## What appears established
 
 ### 1. Negative observations can be useful
@@ -39,6 +45,10 @@ DUD-E and other benchmark analyses show that high scores can come from chemical 
 ### 5. Literature mining is feasible but evidence quality is unresolved
 
 Chemical information extraction is an active area. The unresolved part for Janus is not whether an LLM can extract a sentence, but whether the extracted negative observation is correctly linked to the molecule, task, context, outcome, and source evidence.
+
+### 6. Negative data have already shown model and analysis value
+
+Earlier target-prediction work reported gains from including presumed-inactive data, and other work used negative data to disentangle active-negative chemical correlations. The remaining question is not whether negative data can ever help, but which types of negative observation help which task, under which validation design, and with what reliability.
 
 ## What is not established by this pass
 
@@ -130,6 +140,9 @@ Stop the current framing if a recent resource already provides the complete sche
 - [Chemical property prediction under experimental biases](https://doi.org/10.1038/s41598-022-12116-5)
 - [CARA — real-world compound activity benchmark](https://doi.org/10.1038/s42004-024-01204-4)
 - [InertDB — biologically inactive small molecules](https://pmc.ncbi.nlm.nih.gov/articles/PMC11983867/)
+- [Mervin et al. — target prediction using negative bioactivity data](https://doi.org/10.1186/s13321-015-0098-y)
+- [Lee et al. — cleaning positive and negative chemical correlations](https://www.repository.cam.ac.uk/items/2a26b764-7e66-4db3-b5d0-2e41192c33c3)
+- [ECBD — European chemical biology database](https://doi.org/10.1093/nar/gkae904)
 - [Coverage bias in small molecule machine learning](https://doi.org/10.1038/s41467-024-55462-w)
 - [LLM-based chemical data extraction review](https://doi.org/10.1039/D4CS00913D)
 - [AI-readiness Criteria for Biomedical Data](https://doi.org/10.1101/2024.10.23.619844)
