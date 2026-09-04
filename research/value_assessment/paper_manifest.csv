@@ -1,0 +1,15 @@
+file,bytes,sha256,source_url
+01_problem_exists/papers/An_2025_InertDB.pdf,1867320,0814680d808394361eed063bca4e832b7250ccfa763bf8c966510cf62b61af67,https://doi.org/10.1186/s13321-025-00999-1
+01_problem_exists/papers/Kretschmer_2025_coverage_bias.pdf,3316147,3886e0196cea33d8ffa5fe9cae390da87994cfce795cc4a900ccb1227c6372e3,https://doi.org/10.1038/s41467-024-55462-w
+01_problem_exists/papers/Skuta_2025_ECBD.pdf,1381735,d6737dc3ea04ec0cf312cbce1d2ff95222a023226fae52cb8f8ab62aec1afc15,https://doi.org/10.1093/nar/gkae904
+01_problem_exists/papers/Tian_2024_CARA.pdf,2114898,baf9d6b50cf75fbb9c98e380922ae22b2d343887a94b5f486725a826a9ac015a,https://doi.org/10.1038/s42004-024-01204-4
+02_recoverability/papers/Chen_2025_ChemMiner.pdf,4093008,356272c560c7a888eb61594f008e89c8692cce14aa0cbe9a171b6a47e2890d86,https://doi.org/10.1109/ICCVW69036.2025.00787
+02_recoverability/papers/Huang_2024_LLM_reaction_extraction.pdf,981644,f214813956c0a50cbc437990e938b193f05aff02eb549f6ad51df4c0beb77a61,https://doi.org/10.1145/3627673.3679874
+02_recoverability/papers/ReactionSeek_2026.pdf,3052577,142d79cd6f6fb50d6d5e64a049eaa823bde1c1104c903f049fc17f0a9c243962,https://doi.org/10.1038/s41467-026-70180-1
+02_recoverability/papers/Swain_2016_ChemDataExtractor.pdf,781428,9edbbadf486c4015b7e14cab34344e4eae981950d64a71b89fee88e0f473a36a,https://doi.org/10.1021/acs.jcim.6b00207
+03_model_utility/papers/Chen_2019_DUDE_hidden_bias.pdf,2322912,230b91de90a016dec77c4684b0de5e808042cfc73d63ac5f11825192bf1d6d6f,https://doi.org/10.1371/journal.pone.0220113
+03_model_utility/papers/Mervin_2015_negative_bioactivity.pdf,2196991,d91e31906d9e1c18f858a8c660813068f26b2b29282a8b2a22aaa7ef2212e116,https://doi.org/10.1186/s13321-015-0098-y
+03_model_utility/papers/Rifaioglu_2020_DEEPScreen.pdf,3866761,acbc30aa6b6bb6c9db66f7f8872e0ccb2988fee1ea8ccc5c190dbc868b88e4a8,https://doi.org/10.1039/C9SC03414E
+03_model_utility/papers/Tian_2024_CARA.pdf,2114898,baf9d6b50cf75fbb9c98e380922ae22b2d343887a94b5f486725a826a9ac015a,https://doi.org/10.1038/s42004-024-01204-4
+03_model_utility/papers/Toniato_2025_negative_reaction_data.pdf,1569780,a6b4c6e93163ca695c405be17661a2c0f568a97c7479d1cc1257a387a917cfea,https://doi.org/10.1126/sciadv.adt5578
+04_cost_benefit/papers/Chen_2025_ChemMiner.pdf,4093008,356272c560c7a888eb61594f008e89c8692cce14aa0cbe9a171b6a47e2890d86,https://doi.org/10.1109/ICCVW69036.2025.00787
