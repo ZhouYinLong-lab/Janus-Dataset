@@ -1,0 +1,10 @@
+claim_id,question,current_answer,key_evidence,counterevidence_or_limit,confidence,decision_implication
+C01,公开生物活性数据是否存在偏倚,"存在类别、来源、覆盖和评价偏倚，但尚未量化普遍的发表偏倚",Smajic 2023; Chen 2019; CARA 2024; Kretschmer 2025,"公开与企业数据差异不能全部归因于发表偏倚",medium-high,"使用 reporting/selection/coverage bias 等准确表述，不夸大因果"
+C02,能否找到实测阴性记录,"可以，PubChem、LIT-PCBA、PKIS 和 ECBD 均含实测 inactive 或低活性结果",PubChem BioAssay; LIT-PCBA; PKIS; ECBD,"inactive 只对具体 assay 和阈值成立，缺失格子不等于阴性",high,"先在有完整矩阵的激酶数据上建立参照"
+C03,阴性数据是否改善模型,"在靶点预测、inactive 资源和反应预测等具体任务中有改善先例",Mervin 2015; InertDB 2025; Toniato 2025,"推定阴性、生成分子和实测阴性的证据等级不同，收益未必泛化",medium-high,"必须做等样本量对照和严格切分"
+C04,能否从论文自动抽取生物活性,"可以，但完整记录抽取仍困难",BioMiner/BioVista 2026,"完整 bioactivity triplet F1 约 0.32；预印本尚待独立复现",high,"不能再把一般活性文献抽取作为主要新意"
+C05,是否已有专门的阴性分子数据库,"有，InertDB 是直接先例",InertDB 2025,"部分数据来自生成扩展，并非实测阴性",high,"新项目不能只增加 inactive 分子数量"
+C06,是否已有完整正负筛选流程资源,"有，ECBD 保存 primary 和 counter-screening 结果",ECBD 2025,"只覆盖特定基础设施，不能代替历史文献恢复",high,"区分前瞻性完整保存和回溯性文献恢复"
+C07,统一阴性证据方法是否已经完成,"本轮检索尚未发现同时覆盖阴性类型、上下文、证据定位和增量模型验证的成熟方案",现有四条路线的交叉比较,"BioMiner 已覆盖多模态定量活性抽取和模型应用，新颖空间明显收窄",medium,"将课题聚焦为 negative-specific schema and evaluation，并继续查重"
+C08,当前是否适合直接建设全领域数据集,"不适合",现有先例密集且跨领域定义差异大,"小范围可行性尚未验证",high,"先做约 50 篇激酶论文的可行性试验"
+C09,是否具有投稿潜力,"有条件地具有",明确的直接先例和可检验的剩余空白,"若新增阴性很少或严格切分下无收益，完整数据集论文难成立",medium,"设置继续、收缩和停止条件"
