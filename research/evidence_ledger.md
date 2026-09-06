@@ -94,6 +94,22 @@
 - **Interpretation:** The second-pass search must include statistical and representation-learning uses of negatives, not only dataset construction and literature mining.
 - **Confidence:** Medium pending full bibliographic and full-text verification.
 
+### E012 — Large-scale multimodal bioactivity extraction with downstream validation now exists
+
+- **Claim:** A 2026 system extracts quantitative protein-ligand bioactivity from text, tables, figures, and chemical structures, and uses the resulting data in downstream modeling.
+- **Source:** [Yan et al., BioMiner (2026 preprint)](https://arxiv.org/abs/2604.21508)
+- **Evidence:** BioVista contains 16,457 expert-curated bioactivity entries from 500 publications. BioMiner reports an F1 score of 0.323 for complete bioactivity triplets, extracts 82,262 records from 11,683 papers for a pretraining application, and reports improvements in downstream evaluations.
+- **Interpretation:** Janus cannot claim novelty for general large-scale literature bioactivity extraction or for demonstrating any downstream use. The remaining distinction must be specific to negative semantics, unknown-versus-negative separation, evidence quality, and controlled incremental-value experiments.
+- **Confidence:** High that the preprint and benchmark claims exist; medium until peer review and independent reproduction.
+
+### E013 — Strict splits continue to expose weak out-of-distribution generalization
+
+- **Claim:** Bioactivity model performance can deteriorate sharply as test molecules move farther from the training distribution.
+- **Source:** [Lee et al., Chemistry (2026)](https://doi.org/10.1002/chem.71208)
+- **Evidence:** The study compares k-nearest-neighbor and modern ML models under increasingly strict splits and reports strong performance deterioration in out-of-distribution settings.
+- **Interpretation:** Any claimed benefit from recovered negative evidence should survive structure-aware, assay-aware, or temporal evaluation and should be compared with a simple similarity baseline.
+- **Confidence:** High for the reported study.
+
 ## Open questions from pass 1
 
 - How often are qualitative negative statements present in molecular papers and supplementary information?
@@ -102,3 +118,4 @@
 - Can extraction recall and precision be evaluated without a biased ground-truth corpus?
 - Does evidence-grounded enrichment improve realistic assay-level or time-split model performance?
 - How does Janus differ from older presumed-inactive target-prediction datasets and newer complete screening repositories?
+- How does a negative-specific benchmark differ empirically from BioVista and other general quantitative bioactivity extraction resources?
