@@ -1,0 +1,1243 @@
+[
+  {
+    "order": "01",
+    "doi": "10.1021/acs.chemrestox.3c00042",
+    "group": "01 偏倚与模型影响",
+    "alias": "公开数据与企业数据对照",
+    "reason": "直接观察阳性比例与预测倾向之间的关系。",
+    "focus": "摘要；Results 中类别分布和跨来源预测结果；Discussion。",
+    "question": "公开数据训练的模型是否更容易预测为阳性？作者能否直接量化未发表的阴性结果？",
+    "caution": "观察到的分布差异支持偏倚担忧，但不单独识别发表偏倚的因果贡献。",
+    "terms": [
+      "overpredict positives",
+      "nonpositive",
+      "publicly available"
+    ],
+    "core": true,
+    "title": "Identifying Differences in the Performance of Machine Learning Models for Off-Targets Trained on Publicly Available and Proprietary Data Sets",
+    "DOI": "10.1021/acs.chemrestox.3c00042",
+    "year": "2023",
+    "itemType": "journalArticle",
+    "publicationTitle": "Chemical research in toxicology",
+    "volume": "36",
+    "issue": "8",
+    "pages": "1300-1312",
+    "url": "https://doi.org/10.1021/acs.chemrestox.3c00042",
+    "creators": [
+      {
+        "firstName": "Aljoša",
+        "lastName": "Smajić",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Iris",
+        "lastName": "Rami",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Sergey",
+        "lastName": "Sosnin",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Gerhard F",
+        "lastName": "Ecker",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Each year, publicly available databases are updated with new compounds from different research institutions. Positive experimental outcomes are more likely to be reported; therefore, they account for a considerable fraction of these entries. Established publicly available databases such as ChEMBL allow researchers to use information without constrictions and create predictive tools for a broad spectrum of applications in the field of toxicology. Therefore, we investigated the distribution of positive and nonpositive entries within ChEMBL for a set of off-targets and its impact on the performance of classification models when applied to pharmaceutical industry data sets. Results indicate that models trained on publicly available data tend to overpredict positives, and models based on industry data sets predict negatives more often than those built using publicly available data sets. This is strengthened even further by the visualization of the prediction space for a set of 10,000 compounds, which makes it possible to identify regions in the chemical space where predictions converge. Finally, we highlight the utilization of these models for consensus modeling for potential adverse events prediction.",
+    "pmcid": "PMC10445286",
+    "collection_path": "Janus｜小分子生物活性阴性证据/01 偏倚与模型影响",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/01.pdf",
+    "pdf_sha256": "36d0d769194eeb70aa42d9b511a7efd55603d2e90db1026886b7f969dfbebaf3",
+    "locators": [
+      {
+        "term": "overpredict positives",
+        "pdf_pages": [
+          1
+        ]
+      },
+      {
+        "term": "nonpositive",
+        "pdf_pages": [
+          1
+        ]
+      },
+      {
+        "term": "publicly available",
+        "pdf_pages": [
+          1,
+          2,
+          6,
+          7,
+          8,
+          9,
+          11
+        ]
+      }
+    ]
+  },
+  {
+    "order": "02",
+    "doi": "10.1371/journal.pone.0220113",
+    "group": "01 偏倚与模型影响",
+    "alias": "DUD-E 人工负例偏差",
+    "reason": "理解为什么看起来很高的模型分数可能来自负例设计。",
+    "focus": "摘要；仅使用配体信息的对照；Discussion。",
+    "question": "如果不看蛋白，模型仍能得高分，它到底学到了什么？",
+    "caution": "这是人工 decoy 和数据集构造偏差，不是发表偏倚的直接测量。",
+    "terms": [
+      "ligand-only",
+      "decoy bias",
+      "analogue bias"
+    ],
+    "core": true,
+    "title": "Hidden bias in the DUD-E dataset leads to misleading performance of deep learning in structure-based virtual screening",
+    "DOI": "10.1371/journal.pone.0220113",
+    "year": "2019",
+    "itemType": "journalArticle",
+    "publicationTitle": "PloS one",
+    "volume": "14",
+    "issue": "8",
+    "pages": "e0220113",
+    "url": "https://doi.org/10.1371/journal.pone.0220113",
+    "creators": [
+      {
+        "firstName": "Lieyang",
+        "lastName": "Chen",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Anthony",
+        "lastName": "Cruz",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Steven",
+        "lastName": "Ramsey",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Callum J",
+        "lastName": "Dickson",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jose S",
+        "lastName": "Duca",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Viktor",
+        "lastName": "Hornak",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "David R",
+        "lastName": "Koes",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Tom",
+        "lastName": "Kurtzman",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Recently much effort has been invested in using convolutional neural network (CNN) models trained on 3D structural images of protein-ligand complexes to distinguish binding from non-binding ligands for virtual screening. However, the dearth of reliable protein-ligand x-ray structures and binding affinity data has required the use of constructed datasets for the training and evaluation of CNN molecular recognition models. Here, we outline various sources of bias in one such widely-used dataset, the Directory of Useful Decoys: Enhanced (DUD-E). We have constructed and performed tests to investigate whether CNN models developed using DUD-E are properly learning the underlying physics of molecular recognition, as intended, or are instead learning biases inherent in the dataset itself. We find that superior enrichment efficiency in CNN models can be attributed to the analogue and decoy bias hidden in the DUD-E dataset rather than successful generalization of the pattern of protein-ligand interactions. Comparing additional deep learning models trained on PDBbind datasets, we found that their enrichment performances using DUD-E are not superior to the performance of the docking program AutoDock Vina. Together, these results suggest that biases that could be present in constructed datasets should be thoroughly evaluated before applying them to machine learning based methodology development.",
+    "pmcid": "PMC6701836",
+    "collection_path": "Janus｜小分子生物活性阴性证据/01 偏倚与模型影响",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/02.pdf",
+    "pdf_sha256": "230b91de90a016dec77c4684b0de5e808042cfc73d63ac5f11825192bf1d6d6f",
+    "locators": [
+      {
+        "term": "ligand-only",
+        "pdf_pages": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      {
+        "term": "decoy bias",
+        "pdf_pages": [
+          1,
+          2,
+          3,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      {
+        "term": "analogue bias",
+        "pdf_pages": [
+          2,
+          9,
+          11,
+          12,
+          13,
+          16,
+          17,
+          18
+        ]
+      }
+    ]
+  },
+  {
+    "order": "03",
+    "doi": "10.1038/s42004-024-01204-4",
+    "group": "01 偏倚与模型影响",
+    "alias": "CARA 真实任务评估",
+    "reason": "理解 assay 条件和测试场景为什么影响模型泛化。",
+    "focus": "数据组织示意；virtual screening 与 lead optimization 的任务定义。",
+    "question": "相同化合物的活性为什么不能脱离实验条件比较？",
+    "caution": "评估研究不等于阴性文献遗漏率研究。",
+    "terms": [
+      "assay",
+      "heterogeneity"
+    ],
+    "core": false,
+    "title": "Benchmarking compound activity prediction for real-world drug discovery applications",
+    "DOI": "10.1038/s42004-024-01204-4",
+    "year": "2024",
+    "itemType": "journalArticle",
+    "publicationTitle": "Communications chemistry",
+    "volume": "7",
+    "issue": "1",
+    "pages": "127",
+    "url": "https://doi.org/10.1038/s42004-024-01204-4",
+    "creators": [
+      {
+        "firstName": "Tingzhong",
+        "lastName": "Tian",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Shuya",
+        "lastName": "Li",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Ziting",
+        "lastName": "Zhang",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Lin",
+        "lastName": "Chen",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Ziheng",
+        "lastName": "Zou",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Dan",
+        "lastName": "Zhao",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jianyang",
+        "lastName": "Zeng",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Identifying active compounds for target proteins is fundamental in early drug discovery. Recently, data-driven computational methods have demonstrated promising potential in predicting compound activities. However, there lacks a well-designed benchmark to comprehensively evaluate these methods from a practical perspective. To fill this gap, we propose a Compound Activity benchmark for Real-world Applications (CARA). Through carefully distinguishing assay types, designing train-test splitting schemes and selecting evaluation metrics, CARA can consider the biased distribution of current real-world compound activity data and avoid overestimation of model performances. We observed that although current models can make successful predictions for certain proportions of assays, their performances varied across different assays. In addition, evaluation of several few-shot training strategies demonstrated different performances related to task types. Overall, we provide a high-quality dataset for developing and evaluating compound activity prediction models, and the analyses in this work may inspire better applications of data-driven models in drug discovery.",
+    "pmcid": "PMC11150475",
+    "collection_path": "Janus｜小分子生物活性阴性证据/01 偏倚与模型影响",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/03.pdf",
+    "pdf_sha256": "baf9d6b50cf75fbb9c98e380922ae22b2d343887a94b5f486725a826a9ac015a",
+    "locators": [
+      {
+        "term": "assay",
+        "pdf_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "order": "04",
+    "title": "SGC-AAK1-1: A Chemical Probe Targeting AAK1 and BMP2K",
+    "group": "02 明确可读的阴性记录",
+    "alias": "激酶探针及其阴性对照",
+    "reason": "在同一论文中具体观察有效探针和阴性对照类似物。",
+    "focus": "化合物16（SGC-AAK1-1N）与25（SGC-AAK1-1）的活性表和对照描述。",
+    "question": "阴性对照针对什么靶点、什么测定成立？实验给出的是数值还是概括语句？",
+    "caution": "阴性对照不是对所有蛋白均无活性；保留浓度、测量方法和截断符号。",
+    "terms": [
+      "negative control",
+      "SGC-AAK1-1N"
+    ],
+    "core": true,
+    "DOI": "10.1021/acsmedchemlett.9b00399",
+    "year": "2020",
+    "itemType": "journalArticle",
+    "publicationTitle": "ACS medicinal chemistry letters",
+    "volume": "11",
+    "issue": "3",
+    "pages": "340-345",
+    "url": "https://doi.org/10.1021/acsmedchemlett.9b00399",
+    "creators": [
+      {
+        "firstName": "Carrow",
+        "lastName": "Wells",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Rafael M",
+        "lastName": "Couñago",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Juanita C",
+        "lastName": "Limas",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Tuanny L",
+        "lastName": "Almeida",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jeanette Gowen",
+        "lastName": "Cook",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "David H",
+        "lastName": "Drewry",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jonathan M",
+        "lastName": "Elkins",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Opher",
+        "lastName": "Gileadi",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Nirav R",
+        "lastName": "Kapadia",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Alvaro",
+        "lastName": "Lorente-Macias",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Julie E",
+        "lastName": "Pickett",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Alexander",
+        "lastName": "Riemen",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Roberta R",
+        "lastName": "Ruela-de-Sousa",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Timothy M",
+        "lastName": "Willson",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Cunyu",
+        "lastName": "Zhang",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "William J",
+        "lastName": "Zuercher",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Reena",
+        "lastName": "Zutshi",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Alison D",
+        "lastName": "Axtman",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Inhibitors based on a 3-acylaminoindazole scaffold were synthesized to yield potent dual AAK1/BMP2K inhibitors. Optimization furnished a small molecule chemical probe (SGC-AAK1-1, 25) that is potent and selective for AAK1/BMP2K over other NAK family members, demonstrates narrow activity in a kinome-wide screen, and is functionally active in cells. This inhibitor represents one of the best available small molecule tools to study the functions of AAK1 and BMP2K.",
+    "pmcid": "PMC7073879",
+    "collection_path": "Janus｜小分子生物活性阴性证据/02 明确可读的阴性记录",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "not verified",
+    "staged_pdf": "staging/04.pdf",
+    "pdf_sha256": "1b10a6d13a532de6f20cca88177846f4757dfc88fef8b8adf512857fe861f41a",
+    "locators": [
+      {
+        "term": "negative control",
+        "pdf_pages": [
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "order": "05",
+    "doi": "10.1038/nbt.3374",
+    "group": "02 明确可读的阴性记录",
+    "alias": "PKIS 广谱激酶测试矩阵",
+    "reason": "理解完整测试矩阵如何包含弱抑制或未达阈值的结果。",
+    "focus": "kinase profiling 的方法、热图和补充表；挑选一个化合物比较不同激酶。",
+    "question": "哪些格子是实际测得的低抑制，哪些是未测试或缺失？",
+    "caution": "阈值化产生的是我们定义的标签，不能把低数值和缺失格子合并。在线发表2015，卷期2016。",
+    "terms": [
+      "Supplementary Table",
+      "224",
+      "inhibition"
+    ],
+    "core": false,
+    "title": "Comprehensive characterization of the Published Kinase Inhibitor Set",
+    "DOI": "10.1038/nbt.3374",
+    "year": "2016",
+    "itemType": "journalArticle",
+    "publicationTitle": "Nature biotechnology",
+    "volume": "34",
+    "issue": "1",
+    "pages": "95-103",
+    "url": "https://doi.org/10.1038/nbt.3374",
+    "creators": [
+      {
+        "firstName": "Jonathan M",
+        "lastName": "Elkins",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Vita",
+        "lastName": "Fedele",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Marta",
+        "lastName": "Szklarz",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Kamal R",
+        "lastName": "Abdul Azeez",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Eidarus",
+        "lastName": "Salah",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jowita",
+        "lastName": "Mikolajczyk",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Sergei",
+        "lastName": "Romanov",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Nikolai",
+        "lastName": "Sepetov",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Xi-Ping",
+        "lastName": "Huang",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Bryan L",
+        "lastName": "Roth",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Ayman",
+        "lastName": "Al Haj Zen",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Denis",
+        "lastName": "Fourches",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Eugene",
+        "lastName": "Muratov",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Alex",
+        "lastName": "Tropsha",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Joel",
+        "lastName": "Morris",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Beverly A",
+        "lastName": "Teicher",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Mark",
+        "lastName": "Kunkel",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Eric",
+        "lastName": "Polley",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Karen E",
+        "lastName": "Lackey",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Francis L",
+        "lastName": "Atkinson",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "John P",
+        "lastName": "Overington",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Paul",
+        "lastName": "Bamborough",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Susanne",
+        "lastName": "Müller",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Daniel J",
+        "lastName": "Price",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Timothy M",
+        "lastName": "Willson",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "David H",
+        "lastName": "Drewry",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Stefan",
+        "lastName": "Knapp",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "William J",
+        "lastName": "Zuercher",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Despite the success of protein kinase inhibitors as approved therapeutics, drug discovery has focused on a small subset of kinase targets. Here we provide a thorough characterization of the Published Kinase Inhibitor Set (PKIS), a set of 367 small-molecule ATP-competitive kinase inhibitors that was recently made freely available with the aim of expanding research in this field and as an experiment in open-source target validation. We screen the set in activity assays with 224 recombinant kinases and 24 G protein-coupled receptors and in cellular assays of cancer cell proliferation and angiogenesis. We identify chemical starting points for designing new chemical probes of orphan kinases and illustrate the utility of these leads by developing a selective inhibitor for the previously untargeted kinases LOK and SLK. Our cellular screens reveal compounds that modulate cancer cell growth and angiogenesis in vitro. These reagents and associated data illustrate an efficient way forward to increasing understanding of the historically untargeted kinome.",
+    "pmcid": "",
+    "collection_path": "Janus｜小分子生物活性阴性证据/02 明确可读的阴性记录",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "not verified",
+    "staged_pdf": "staging/05.pdf",
+    "pdf_sha256": "6615978c22eb9b808c2d848bf96af7a812abbbcdd0de05a3d8b2ff4e0d9bdd59",
+    "locators": [
+      {
+        "term": "Supplementary Table",
+        "pdf_pages": [
+          22
+        ]
+      },
+      {
+        "term": "224",
+        "pdf_pages": [
+          1
+        ]
+      },
+      {
+        "term": "inhibition",
+        "pdf_pages": [
+          1,
+          5,
+          8,
+          10
+        ]
+      }
+    ]
+  },
+  {
+    "order": "06",
+    "doi": "10.1186/s13321-015-0098-y",
+    "group": "03 阴性价值与挖掘方法",
+    "alias": "阴性数据对靶点预测的价值",
+    "reason": "直接比较纳入推定阴性数据与只用阳性数据的模型。",
+    "focus": "阴性样本构建；active-only 对照；外部 WOMBAT 评估。",
+    "question": "改善来自什么阴性数据？测试是否独立？它们是否全是确定的实验阴性？",
+    "caution": "presumed inactive 是推定阴性；本研究不是从论文自动找回阴性证据。",
+    "terms": [
+      "presumed inactive",
+      "WOMBAT",
+      "BEDROC"
+    ],
+    "core": true,
+    "title": "Target prediction utilising negative bioactivity data covering large chemical space",
+    "DOI": "10.1186/s13321-015-0098-y",
+    "year": "2015",
+    "itemType": "journalArticle",
+    "publicationTitle": "Journal of cheminformatics",
+    "volume": "7",
+    "issue": "",
+    "pages": "51",
+    "url": "https://doi.org/10.1186/s13321-015-0098-y",
+    "creators": [
+      {
+        "firstName": "Lewis H",
+        "lastName": "Mervin",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Avid M",
+        "lastName": "Afzal",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Georgios",
+        "lastName": "Drakakis",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Richard",
+        "lastName": "Lewis",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Ola",
+        "lastName": "Engkvist",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Andreas",
+        "lastName": "Bender",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "BackgroundIn silico analyses are increasingly being used to support mode-of-action investigations; however many such approaches do not utilise the large amounts of inactive data held in chemogenomic repositories. The objective of this work is concerned with the integration of such bioactivity data in the target prediction of orphan compounds to produce the probability of activity and inactivity for a range of targets. To this end, a novel human bioactivity data set was constructed through the assimilation of over 195 million bioactivity data points deposited in the ChEMBL and PubChem repositories, and the subsequent application of a sphere-exclusion selection algorithm to oversample presumed inactive compounds.ResultsA Bernoulli Naïve Bayes algorithm was trained using the data and evaluated using fivefold cross-validation, achieving a mean recall and precision of 67.7 and 63.8 % for active compounds and 99.6 and 99.7 % for inactive compounds, respectively. We show the performances of the models are considerably influenced by the underlying intraclass training similarity, the size of a given class of compounds, and the degree of additional oversampling. The method was also validated using compounds extracted from WOMBAT producing average precision-recall AUC and BEDROC scores of 0.56 and 0.85, respectively. Inactive data points used for this test are based on presumed inactivity, producing an approximated indication of the true extrapolative ability of the models. A distance-based applicability domain analysis was also conducted; indicating an average Tanimoto Coefficient distance of 0.3 or greater between a test and training set can be used to give a global measure of confidence in model predictions. A final comparison to a method trained solely on active data from ChEMBL performed with precision-recall AUC and BEDROC scores of 0.45 and 0.76.ConclusionsThe inclusion of inactive data for model training produces models with superior AUC and improved early recognition capabilities, although the results from internal and external validation of the models show differing performance between the breadth of models. The realised target prediction protocol is available at https://github.com/lhm30/PIDGIN.Graphical abstractThe inclusion of large scale negative training data for in silico target prediction improves the precision and recall AUC and BEDROC scores for target models.",
+    "pmcid": "PMC4619454",
+    "collection_path": "Janus｜小分子生物活性阴性证据/03 阴性价值与挖掘方法",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/06.pdf",
+    "pdf_sha256": "d91e31906d9e1c18f858a8c660813068f26b2b29282a8b2a22aaa7ef2212e116",
+    "locators": [
+      {
+        "term": "presumed inactive",
+        "pdf_pages": [
+          1,
+          11,
+          12
+        ]
+      },
+      {
+        "term": "WOMBAT",
+        "pdf_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "term": "BEDROC",
+        "pdf_pages": [
+          1,
+          8,
+          9,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "order": "07",
+    "doi": "10.1021/acs.jcim.9b00164",
+    "group": "03 阴性价值与挖掘方法",
+    "alias": "从论文恢复生物测定上下文",
+    "reason": "以 HIV 逆转录酶研究说明如何检索相关论文并抽取 assay 描述。",
+    "focus": "Figure 1；文本片段提取与分类；结论中的条件缺失限制。",
+    "question": "抽取的是阴性结果、实体关系，还是实验描述？哪个环节可供我们复用？",
+    "caution": "这是生物测定描述抽取，不是已完成的阴性证据抽取系统。此前目录曾误写年份和标题，本轮按正式元数据校正。",
+    "terms": [
+      "Figure 1",
+      "rough classification",
+      "0.84"
+    ],
+    "core": true,
+    "title": "Data Mining Approach for Extraction of Useful Information About Biologically Active Compounds from Publications",
+    "DOI": "10.1021/acs.jcim.9b00164",
+    "year": "2019",
+    "itemType": "journalArticle",
+    "publicationTitle": "Journal of chemical information and modeling",
+    "volume": "59",
+    "issue": "9",
+    "pages": "3635-3644",
+    "url": "https://doi.org/10.1021/acs.jcim.9b00164",
+    "creators": [
+      {
+        "firstName": "Olga A",
+        "lastName": "Tarasova",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Nadezhda Yu",
+        "lastName": "Biziukova",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Dmitry A",
+        "lastName": "Filimonov",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Vladimir V",
+        "lastName": "Poroikov",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Marc C",
+        "lastName": "Nicklaus",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "A lot of high quality data on the biological activity of chemical compounds are required throughout the whole drug discovery process: from development of computational models of the structure-activity relationship to experimental testing of lead compounds and their validation in clinics. Currently, a large amount of such data is available from databases, scientific publications, and patents. Biological data are characterized by incompleteness, uncertainty, and low reproducibility. Despite the existence of free and commercially available databases of biological activities of compounds, they usually lack unambiguous information about peculiarities of biological assays. On the other hand, scientific papers are the primary source of new data disclosed to the scientific community for the first time. In this study, we have developed and validated a data-mining approach for extraction of text fragments containing description of bioassays. We have used this approach to evaluate compounds and their biological activity reported in scientific publications. We have found that categorization of papers into relevant and irrelevant may be performed based on the machine-learning analysis of the abstracts. Text fragments extracted from the full texts of publications allow their further partitioning into several classes according to the peculiarities of bioassays. We demonstrate the applicability of our approach to the comparison of the endpoint values of biological activity and cytotoxicity of reference compounds.",
+    "pmcid": "PMC8194363",
+    "collection_path": "Janus｜小分子生物活性阴性证据/03 阴性价值与挖掘方法",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "not verified",
+    "staged_pdf": "staging/07.pdf",
+    "pdf_sha256": "56f3e3f4d2966359ac95e3736cd47930e0e228e55321c11df676fe28889233d5",
+    "locators": [
+      {
+        "term": "Figure 1",
+        "pdf_pages": [
+          3,
+          5,
+          18
+        ]
+      },
+      {
+        "term": "rough classification",
+        "pdf_pages": [
+          6,
+          14
+        ]
+      },
+      {
+        "term": "0.84",
+        "pdf_pages": [
+          7,
+          8,
+          9,
+          15,
+          22,
+          25,
+          26
+        ]
+      }
+    ]
+  },
+  {
+    "order": "08",
+    "title": "Extracting chemical reactions from text using Snorkel",
+    "group": "03 阴性价值与挖掘方法",
+    "alias": "弱监督入门（跨领域方法补充）",
+    "reason": "通过 labeling functions 理解用规则生成有噪声标签。",
+    "focus": "规则示例；标签模型；评价部分。",
+    "question": "多条规则意见冲突时怎么处理？为什么规则生成的标签还需要验证？",
+    "caution": "反应关系抽取的跨领域方法示例；不是激酶阴性挖掘的直接证据。",
+    "terms": [
+      "labeling functions",
+      "weak supervision"
+    ],
+    "core": false,
+    "DOI": "10.1186/s12859-020-03542-1",
+    "year": "2020",
+    "itemType": "journalArticle",
+    "publicationTitle": "BMC bioinformatics",
+    "volume": "21",
+    "issue": "1",
+    "pages": "217",
+    "url": "https://doi.org/10.1186/s12859-020-03542-1",
+    "creators": [
+      {
+        "firstName": "Emily K",
+        "lastName": "Mallory",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Matthieu",
+        "lastName": "de Rochemonteix",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Alex",
+        "lastName": "Ratner",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Ambika",
+        "lastName": "Acharya",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Chris",
+        "lastName": "Re",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Roselie A",
+        "lastName": "Bright",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Russ B",
+        "lastName": "Altman",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "BackgroundEnzymatic and chemical reactions are key for understanding biological processes in cells. Curated databases of chemical reactions exist but these databases struggle to keep up with the exponential growth of the biomedical literature. Conventional text mining pipelines provide tools to automatically extract entities and relationships from the scientific literature, and partially replace expert curation, but such machine learning frameworks often require a large amount of labeled training data and thus lack scalability for both larger document corpora and new relationship types.ResultsWe developed an application of Snorkel, a weakly supervised learning framework, for extracting chemical reaction relationships from biomedical literature abstracts. For this work, we defined a chemical reaction relationship as the transformation of chemical A to chemical B. We built and evaluated our system on small annotated sets of chemical reaction relationships from two corpora: curated bacteria-related abstracts from the MetaCyc database (MetaCyc_Corpus) and a more general set of abstracts annotated with MeSH (Medical Subject Headings) term Bacteria (Bacteria_Corpus; a superset of MetaCyc_Corpus). For the MetaCyc_Corpus, we obtained 84% precision and 41% recall (55% F1 score). Extending to the more general Bacteria_Corpus decreased precision to 62% with only a four-point drop in recall to 37% (46% F1 score). Overall, the Bacteria_Corpus contained two orders of magnitude more candidate chemical reaction relationships (nine million candidates vs 68,0000 candidates) and had a larger class imbalance (2.5% positives vs 5% positives) as compared to the MetaCyc_Corpus. In total, we extracted 6871 chemical reaction relationships from nine million candidates in the Bacteria_Corpus.ConclusionsWith this work, we built a database of chemical reaction relationships from almost 900,000 scientific abstracts without a large training set of labeled annotations. Further, we showed the generalizability of our initial application built on MetaCyc documents enriched with chemical reactions to a general set of articles related to bacteria.",
+    "pmcid": "PMC7251675",
+    "collection_path": "Janus｜小分子生物活性阴性证据/03 阴性价值与挖掘方法",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/08.pdf",
+    "pdf_sha256": "a60518e2165be7b3d7b932ba20c05c68ad4b0b3436902ff2cd24cedc63c4a07a",
+    "locators": [
+      {
+        "term": "labeling functions",
+        "pdf_pages": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          11
+        ]
+      },
+      {
+        "term": "weak supervision",
+        "pdf_pages": [
+          14,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "order": "09",
+    "doi": "10.1021/acs.jcim.0c00155",
+    "group": "04 已有数据集与资源",
+    "alias": "LIT-PCBA 真实活性与非活性基准",
+    "reason": "查看如何从 PubChem 实测记录整理筛选基准。",
+    "focus": "摘要；数据筛选流程；Supporting Information。",
+    "question": "负例来自实际实验还是人工构造？作者做了哪些过滤？",
+    "caution": "标题中的 Unbiased 是论文主张，不是永久保证；不同版本和计数单位不能混用。2025有后续泄漏审计预印本，尚未独立复核。",
+    "terms": [
+      "inactive",
+      "149",
+      "407"
+    ],
+    "core": true,
+    "title": "LIT-PCBA: An Unbiased Data Set for Machine Learning and Virtual Screening",
+    "DOI": "10.1021/acs.jcim.0c00155",
+    "year": "2020",
+    "itemType": "journalArticle",
+    "publicationTitle": "Journal of chemical information and modeling",
+    "volume": "60",
+    "issue": "9",
+    "pages": "4263-4273",
+    "url": "https://doi.org/10.1021/acs.jcim.0c00155",
+    "creators": [
+      {
+        "firstName": "Viet-Khoa",
+        "lastName": "Tran-Nguyen",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Célien",
+        "lastName": "Jacquemard",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Didier",
+        "lastName": "Rognan",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "Comparative evaluation of virtual screening methods requires a rigorous benchmarking procedure on diverse, realistic, and unbiased data sets. Recent investigations from numerous research groups unambiguously demonstrate that artificially constructed ligand sets classically used by the community (e.g., DUD, DUD-E, MUV) are unfortunately biased by both obvious and hidden chemical biases, therefore overestimating the true accuracy of virtual screening methods. We herewith present a novel data set (LIT-PCBA) specifically designed for virtual screening and machine learning. LIT-PCBA relies on 149 dose-response PubChem bioassays that were additionally processed to remove false positives and assay artifacts and keep active and inactive compounds within similar molecular property ranges. To ascertain that the data set is suited to both ligand-based and structure-based virtual screening, target sets were restricted to single protein targets for which at least one X-ray structure is available in complex with ligands of the same phenotype (e.g., inhibitor, inverse agonist) as that of the PubChem active compounds. Preliminary virtual screening on the 21 remaining target sets with state-of-the-art orthogonal methods (2D fingerprint similarity, 3D shape similarity, molecular docking) enabled us to select 15 target sets for which at least one of the three screening methods is able to enrich the top 1%-ranked compounds in true actives by at least a factor of 2. The corresponding ligand sets (training, validation) were finally unbiased by the recently described asymmetric validation embedding (AVE) procedure to afford the LIT-PCBA data set, consisting of 15 targets and 7844 confirmed active and 407,381 confirmed inactive compounds. The data set mimics experimental screening decks in terms of hit rate (ratio of active to inactive compounds) and potency distribution. It is available online at http://drugdesign.unistra.fr/LIT-PCBA for download and for benchmarking novel virtual screening methods, notably those relying on machine learning.",
+    "pmcid": "",
+    "collection_path": "Janus｜小分子生物活性阴性证据/04 已有数据集与资源",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "not verified",
+    "staged_pdf": "staging/09.pdf",
+    "pdf_sha256": "05a2a1afef1b11f02bc84b1ec19f7cf74b9817d7e920118bf1df3831a2d16007",
+    "locators": [
+      {
+        "term": "inactive",
+        "pdf_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "term": "149",
+        "pdf_pages": [
+          5,
+          11,
+          12,
+          14
+        ]
+      },
+      {
+        "term": "407",
+        "pdf_pages": [
+          4,
+          19
+        ]
+      }
+    ]
+  },
+  {
+    "order": "10",
+    "doi": "10.1186/s13321-025-00999-1",
+    "group": "04 已有数据集与资源",
+    "alias": "InertDB 阴性分子资源",
+    "reason": "明确与我们直接重叠的已有工作。",
+    "focus": "实测整理与生成扩展两条路线；下游对照。",
+    "question": "哪些分子有实验记录，哪些由生成模型产生？这些证据能否混用？",
+    "caution": "生成分子不能当作实验测得的阴性观察。",
+    "terms": [
+      "3,205",
+      "64,368",
+      "generated"
+    ],
+    "core": false,
+    "title": "InertDB as a generative AI-expanded resource of biologically inactive small molecules from PubChem",
+    "DOI": "10.1186/s13321-025-00999-1",
+    "year": "2025",
+    "itemType": "journalArticle",
+    "publicationTitle": "Journal of cheminformatics",
+    "volume": "17",
+    "issue": "1",
+    "pages": "49",
+    "url": "https://doi.org/10.1186/s13321-025-00999-1",
+    "creators": [
+      {
+        "firstName": "Seungchan",
+        "lastName": "An",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Yeonjin",
+        "lastName": "Lee",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Junpyo",
+        "lastName": "Gong",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Seokyoung",
+        "lastName": "Hwang",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "In Guk",
+        "lastName": "Park",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Jayhyun",
+        "lastName": "Cho",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Min Ju",
+        "lastName": "Lee",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Minkyu",
+        "lastName": "Kim",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Yun Pyo",
+        "lastName": "Kang",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Minsoo",
+        "lastName": "Noh",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "The development of robust artificial intelligence (AI)-driven predictive models relies on high-quality, diverse chemical datasets. However, the scarcity of negative data and a publication bias toward positive results often hinder accurate biological activity prediction. To address this challenge, we introduce InertDB, a comprehensive database comprising 3,205 curated inactive compounds (CICs) identified through rigorous review of over 4.6 million compound records in PubChem. CIC selection prioritized bioassay diversity, determined using natural language processing (NLP)-based clustering metrics, while ensuring minimal biological activity across all evaluated bioassays. Notably, 97.2% of CICs adhere to the Rule of Five, a proportion significantly higher than that of overall PubChem dataset. To further expand the chemical space, InertDB also features 64,368 generated inactive compounds (GICs) produced using a deep generative AI model trained on the CIC dataset. Compared to conventional approaches such as random sampling or property-matched decoys, InertDB significantly improves predictive AI performance, particularly for phenotypic activity prediction by providing reliable inactive compound sets.Scientific contributionsInertDB addresses a critical gap in AI-driven drug discovery by providing a comprehensive repository of biologically inactive compounds, effectively resolving the scarcity of negative data that limits prediction accuracy and model reliability. By leveraging language model-based bioassay diversity metrics and generative AI, InertDB integrates rigorously curated inactive compounds with an expanded chemical space. InertDB serves as a valuable alternative to random sampling and decoy generation, offering improved training datasets and enhancing the accuracy of phenotypic pharmacological activity prediction.",
+    "pmcid": "PMC11983867",
+    "collection_path": "Janus｜小分子生物活性阴性证据/04 已有数据集与资源",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/10.pdf",
+    "pdf_sha256": "0814680d808394361eed063bca4e832b7250ccfa763bf8c966510cf62b61af67",
+    "locators": [
+      {
+        "term": "3,205",
+        "pdf_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          10,
+          11
+        ]
+      },
+      {
+        "term": "64,368",
+        "pdf_pages": [
+          1,
+          2,
+          5,
+          6,
+          10,
+          12
+        ]
+      },
+      {
+        "term": "generated",
+        "pdf_pages": [
+          1,
+          2,
+          5,
+          6,
+          7,
+          10,
+          11,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "order": "11",
+    "doi": "10.1093/nar/gkae904",
+    "group": "04 已有数据集与资源",
+    "alias": "ECBD 完整筛选流程数据库",
+    "reason": "查看阳性、阴性和复筛结果如何随实验流程一起保存。",
+    "focus": "数据库设计；primary screening 和 counter-screening；数据访问。",
+    "question": "完整筛选流程的记录与论文中精选结果有何不同？",
+    "caution": "前瞻性数据保存与历史文献恢复解决的是不同环节。",
+    "terms": [
+      "negative",
+      "counter-screening"
+    ],
+    "core": false,
+    "title": "ECBD: European chemical biology database",
+    "DOI": "10.1093/nar/gkae904",
+    "year": "2025",
+    "itemType": "journalArticle",
+    "publicationTitle": "Nucleic acids research",
+    "volume": "53",
+    "issue": "D1",
+    "pages": "D1383-D1392",
+    "url": "https://doi.org/10.1093/nar/gkae904",
+    "creators": [
+      {
+        "firstName": "Ctibor",
+        "lastName": "Škuta",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Tomáš",
+        "lastName": "Müller",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Milan",
+        "lastName": "Voršilák",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Martin",
+        "lastName": "Popr",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Trevor",
+        "lastName": "Epp",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Katholiki E",
+        "lastName": "Skopelitou",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Federica",
+        "lastName": "Rossella",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Bahne",
+        "lastName": "Stechmann",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Bahne",
+        "lastName": "Stechmann",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Philip",
+        "lastName": "Gribbon",
+        "creatorType": "author"
+      },
+      {
+        "firstName": "Petr",
+        "lastName": "Bartůněk",
+        "creatorType": "author"
+      }
+    ],
+    "abstractNote": "The European Chemical Biology Database (ECBD, https://ecbd.eu) serves as the central repository for data generated by the EU-OPENSCREEN research infrastructure consortium. It is developed according to FAIR principles, which emphasize findability, accessibility, interoperability and reusability of data. This data is made available to the scientific community following open access principles. The ECBD stores both positive and negative results from the entire chemical biology project pipeline, including data from primary or counter-screening assays. The assays utilize a defined and diverse library of over 107 000 compounds, the annotations of which are continuously enriched by external user supported screening projects and by internal EU-OPENSCREEN bioprofiling efforts. These compounds were screened in 89 currently deposited datasets (assays), with 48 already being publicly accessible, while the remaining will be published after a publication embargo period of up to 3 years. Together these datasets encompass ∼4.3 million experimental data points. All public data within ECBD can be accessed through its user interface, API or by database dump under the CC-BY 4.0 license.",
+    "pmcid": "PMC11701612",
+    "collection_path": "Janus｜小分子生物活性阴性证据/04 已有数据集与资源",
+    "review_required": false,
+    "evidence": [
+      "Europe PMC verified DOI metadata",
+      "publisher abstract",
+      "local PDF keyword locations; not exhaustive full-text review"
+    ],
+    "license": "cc by",
+    "staged_pdf": "staging/11.pdf",
+    "pdf_sha256": "d6737dc3ea04ec0cf312cbce1d2ff95222a023226fae52cb8f8ab62aec1afc15",
+    "locators": [
+      {
+        "term": "negative",
+        "pdf_pages": [
+          1,
+          2
+        ]
+      },
+      {
+        "term": "counter-screening",
+        "pdf_pages": [
+          1,
+          2,
+          4
+        ]
+      }
+    ]
+  }
+]

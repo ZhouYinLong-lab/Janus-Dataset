@@ -1,0 +1,423 @@
+{
+  "id": "32460703",
+  "source": "MED",
+  "pmid": "32460703",
+  "pmcid": "PMC7251675",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC7251675"
+    ]
+  },
+  "doi": "10.1186/s12859-020-03542-1",
+  "title": "Extracting chemical reactions from text using Snorkel.",
+  "authorString": "Mallory EK, de Rochemonteix M, Ratner A, Acharya A, Re C, Bright RA, Altman RB.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Mallory EK",
+        "firstName": "Emily K",
+        "lastName": "Mallory",
+        "initials": "EK",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Biomedical Informatics Training Program, Stanford University, Stanford, CA, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "de Rochemonteix M",
+        "firstName": "Matthieu",
+        "lastName": "de Rochemonteix",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Statistics, Stanford University, Stanford, CA, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Ratner A",
+        "firstName": "Alex",
+        "lastName": "Ratner",
+        "initials": "A",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Computer Science, Stanford University, Stanford, CA, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Acharya A",
+        "firstName": "Ambika",
+        "lastName": "Acharya",
+        "initials": "A",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Computer Science, Stanford University, Stanford, CA, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Re C",
+        "firstName": "Chris",
+        "lastName": "Re",
+        "initials": "C",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Computer Science, Stanford University, Stanford, CA, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Bright RA",
+        "firstName": "Roselie A",
+        "lastName": "Bright",
+        "initials": "RA",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Office of Health Informatics, Office of the Chief Scientist, Office of the Commissioner, Food and Drug Administration, Silver Spring, MD, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Altman RB",
+        "firstName": "Russ B",
+        "lastName": "Altman",
+        "initials": "RB",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-3859-2905"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Departments of Medicine, Genetics, Bioengineering, and Biomedical Data Science, Stanford University, Stanford, CA, USA. russ.altman@stanford.edu."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0003-3859-2905"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "1",
+    "volume": "21",
+    "journalIssueId": 2949202,
+    "dateOfPublication": "2020 May",
+    "monthOfPublication": 5,
+    "yearOfPublication": 2020,
+    "printPublicationDate": "2020-05-01",
+    "journal": {
+      "title": "BMC bioinformatics",
+      "medlineAbbreviation": "BMC Bioinformatics",
+      "issn": "1471-2105",
+      "nlmid": "100965194",
+      "isoabbreviation": "BMC Bioinformatics",
+      "essn": "1471-2105"
+    }
+  },
+  "pubYear": "2020",
+  "pageInfo": "217",
+  "abstractText": "<h4>Background</h4>Enzymatic and chemical reactions are key for understanding biological processes in cells. Curated databases of chemical reactions exist but these databases struggle to keep up with the exponential growth of the biomedical literature. Conventional text mining pipelines provide tools to automatically extract entities and relationships from the scientific literature, and partially replace expert curation, but such machine learning frameworks often require a large amount of labeled training data and thus lack scalability for both larger document corpora and new relationship types.<h4>Results</h4>We developed an application of Snorkel, a weakly supervised learning framework, for extracting chemical reaction relationships from biomedical literature abstracts. For this work, we defined a chemical reaction relationship as the transformation of chemical A to chemical B. We built and evaluated our system on small annotated sets of chemical reaction relationships from two corpora: curated bacteria-related abstracts from the MetaCyc database (MetaCyc_Corpus) and a more general set of abstracts annotated with MeSH (Medical Subject Headings) term Bacteria (Bacteria_Corpus; a superset of MetaCyc_Corpus). For the MetaCyc_Corpus, we obtained 84% precision and 41% recall (55% F1 score). Extending to the more general Bacteria_Corpus decreased precision to 62% with only a four-point drop in recall to 37% (46% F1 score). Overall, the Bacteria_Corpus contained two orders of magnitude more candidate chemical reaction relationships (nine million candidates vs 68,0000 candidates) and had a larger class imbalance (2.5% positives vs 5% positives) as compared to the MetaCyc_Corpus. In total, we extracted 6871 chemical reaction relationships from nine million candidates in the Bacteria_Corpus.<h4>Conclusions</h4>With this work, we built a database of chemical reaction relationships from almost 900,000 scientific abstracts without a large training set of labeled annotations. Further, we showed the generalizability of our initial application built on MetaCyc documents enriched with chemical reactions to a general set of articles related to bacteria.",
+  "affiliation": "Biomedical Informatics Training Program, Stanford University, Stanford, CA, USA.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "FA87501720095",
+        "agency": "Defense Advanced Research Projects Agency",
+        "orderIn": 0
+      },
+      {
+        "grantId": "GM102365",
+        "agency": "National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R01 GM102365",
+        "agency": "NIGMS NIH HHS",
+        "acronym": "GM",
+        "orderIn": 0
+      },
+      {
+        "grantId": "FA87501720095",
+        "agency": "Defense Advanced Research Projects Agency (US)",
+        "orderIn": 0
+      },
+      {
+        "grantId": "U01 FD004979",
+        "agency": "FDA HHS",
+        "acronym": "FD",
+        "orderIn": 0
+      },
+      {
+        "grantId": "N000141712266",
+        "agency": "National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R01 LM005652",
+        "agency": "NLM NIH HHS",
+        "acronym": "LM",
+        "orderIn": 0
+      },
+      {
+        "grantId": "U01 FD005978",
+        "agency": "FDA HHS",
+        "acronym": "FD",
+        "orderIn": 0
+      },
+      {
+        "grantId": "ACI-1429830",
+        "agency": "National Science Foundation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "CCF1563078",
+        "agency": "National Science Foundation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "DGE-114747",
+        "agency": "National Science Foundation (US)",
+        "orderIn": 0
+      },
+      {
+        "grantId": "FA86501827865",
+        "agency": "Defense Advanced Research Projects Agency",
+        "orderIn": 0
+      },
+      {
+        "grantId": "N000141712266",
+        "agency": "NIH HHS",
+        "acronym": "NH",
+        "orderIn": 0
+      },
+      {
+        "grantId": "DGE-114747",
+        "agency": "National Science Foundation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "GM102365",
+        "agency": "NIH HHS",
+        "acronym": "NH",
+        "orderIn": 0
+      },
+      {
+        "grantId": "LM012354",
+        "agency": "National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "LM05652",
+        "agency": "NIH HHS",
+        "acronym": "NH",
+        "orderIn": 0
+      },
+      {
+        "grantId": "LM05652",
+        "agency": "National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "N000141712266",
+        "agency": "Office of Naval Research",
+        "orderIn": 0
+      },
+      {
+        "grantId": "ACI-1429830",
+        "agency": "National Science Foundation (US)",
+        "orderIn": 0
+      },
+      {
+        "grantId": "CCF1763315",
+        "agency": "National Science Foundation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "F31 LM012354",
+        "agency": "NLM NIH HHS",
+        "acronym": "LM",
+        "orderIn": 0
+      },
+      {
+        "grantId": "LM012354",
+        "agency": "NIH HHS",
+        "acronym": "NH",
+        "orderIn": 0
+      },
+      {
+        "grantId": "U01FD004979",
+        "agency": "U.S. Food and Drug Administration",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Humans"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Bacteria",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "ME",
+              "qualifierName": "metabolism",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Biochemical Phenomena"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Publications"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Software"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Databases, Factual"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Data Mining",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "MT",
+              "qualifierName": "methods",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Machine Learning"
+      }
+    ]
+  },
+  "keywordList": {
+    "keyword": [
+      "Database",
+      "Chemical reactions",
+      "Curation",
+      "Text Mining",
+      "Snorkel"
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Unpaywall",
+        "url": "https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-020-03542-1"
+      },
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1186/s12859-020-03542-1"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC7251675"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC7251675?pdf=render"
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 10,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "doi"
+    ]
+  },
+  "dateOfCompletion": "2020-07-23",
+  "dateOfCreation": "2020-05-29",
+  "firstIndexDate": "2020-05-29",
+  "fullTextReceivedDate": "2025-02-03",
+  "dateOfRevision": "2026-03-24",
+  "electronicPublicationDate": "2020-05-27",
+  "firstPublicationDate": "2020-05-27"
+}

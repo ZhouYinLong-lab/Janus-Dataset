@@ -1,0 +1,371 @@
+{
+  "id": "31453694",
+  "source": "MED",
+  "pmid": "31453694",
+  "pmcid": "PMC8194363",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC8194363"
+    ]
+  },
+  "doi": "10.1021/acs.jcim.9b00164",
+  "title": "Data Mining Approach for Extraction of Useful Information About Biologically Active Compounds from Publications.",
+  "authorString": "Tarasova OA, Biziukova NY, Filimonov DA, Poroikov VV, Nicklaus MC.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Tarasova OA",
+        "firstName": "Olga A",
+        "lastName": "Tarasova",
+        "initials": "OA",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-3723-7832"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Bioinformatics , Institute of Biomedical Chemistry , 10 Building 8, Pogodinskaya Street , Moscow 119121 , Russia."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Biziukova NY",
+        "firstName": "Nadezhda Yu",
+        "lastName": "Biziukova",
+        "initials": "NY",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-2044-1327"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Bioinformatics , Institute of Biomedical Chemistry , 10 Building 8, Pogodinskaya Street , Moscow 119121 , Russia."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Filimonov DA",
+        "firstName": "Dmitry A",
+        "lastName": "Filimonov",
+        "initials": "DA",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-0339-8478"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Bioinformatics , Institute of Biomedical Chemistry , 10 Building 8, Pogodinskaya Street , Moscow 119121 , Russia."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Poroikov VV",
+        "firstName": "Vladimir V",
+        "lastName": "Poroikov",
+        "initials": "VV",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-7937-2621"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Bioinformatics , Institute of Biomedical Chemistry , 10 Building 8, Pogodinskaya Street , Moscow 119121 , Russia."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Nicklaus MC",
+        "firstName": "Marc C",
+        "lastName": "Nicklaus",
+        "initials": "MC",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-4775-7030"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Computer-Aided Drug Design Group, Chemical Biology Laboratory, Center for Cancer Research , National Cancer Institute , Frederick , Maryland 21702 , United States."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-7937-2621"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-0339-8478"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-2044-1327"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-3723-7832"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-4775-7030"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "9",
+    "volume": "59",
+    "journalIssueId": 2861242,
+    "dateOfPublication": "2019 Sep",
+    "monthOfPublication": 9,
+    "yearOfPublication": 2019,
+    "printPublicationDate": "2019-09-01",
+    "journal": {
+      "title": "Journal of chemical information and modeling",
+      "medlineAbbreviation": "J Chem Inf Model",
+      "issn": "1549-9596",
+      "nlmid": "101230060",
+      "isoabbreviation": "J Chem Inf Model",
+      "essn": "1549-960X"
+    }
+  },
+  "pubYear": "2019",
+  "pageInfo": "3635-3644",
+  "abstractText": "A lot of high quality data on the biological activity of chemical compounds are required throughout the whole drug discovery process: from development of computational models of the structure-activity relationship to experimental testing of lead compounds and their validation in clinics. Currently, a large amount of such data is available from databases, scientific publications, and patents. Biological data are characterized by incompleteness, uncertainty, and low reproducibility. Despite the existence of free and commercially available databases of biological activities of compounds, they usually lack unambiguous information about peculiarities of biological assays. On the other hand, scientific papers are the primary source of new data disclosed to the scientific community for the first time. In this study, we have developed and validated a data-mining approach for extraction of text fragments containing description of bioassays. We have used this approach to evaluate compounds and their biological activity reported in scientific publications. We have found that categorization of papers into relevant and irrelevant may be performed based on the machine-learning analysis of the abstracts. Text fragments extracted from the full texts of publications allow their further partitioning into several classes according to the peculiarities of bioassays. We demonstrate the applicability of our approach to the comparison of the endpoint values of biological activity and cytotoxicity of reference compounds.",
+  "affiliation": "Department of Bioinformatics , Institute of Biomedical Chemistry , 10 Building 8, Pogodinskaya Street , Moscow 119121 , Russia.",
+  "publicationStatus": "ppublish",
+  "language": "eng",
+  "pubModel": "Print-Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "Research Support, Non-U.S. Gov't",
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "Z01 BC010517",
+        "agency": "Intramural NIH HHS",
+        "acronym": "ImNIH",
+        "orderIn": 0
+      },
+      {
+        "grantId": "17 54 30015 NIH_a",
+        "agency": "Russian Foundation for Basic Research",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Humans"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "HIV-1",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "DE",
+              "qualifierName": "drug effects",
+              "majorTopic_YN": "N"
+            },
+            {
+              "abbreviation": "EN",
+              "qualifierName": "enzymology",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "HIV Infections",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "DT",
+              "qualifierName": "drug therapy",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Reverse Transcriptase Inhibitors",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "PD",
+              "qualifierName": "pharmacology",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "PubMed"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Databases, Factual"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "HIV Reverse Transcriptase",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "AI",
+              "qualifierName": "antagonists & inhibitors",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Drug Discovery",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "MT",
+              "qualifierName": "methods",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Data Mining",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "MT",
+              "qualifierName": "methods",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "chemicalList": {
+    "chemical": [
+      {
+        "name": "Reverse Transcriptase Inhibitors",
+        "registryNumber": "0"
+      },
+      {
+        "name": "HIV Reverse Transcriptase",
+        "registryNumber": "EC 2.7.7.49"
+      },
+      {
+        "name": "reverse transcriptase, Human immunodeficiency virus 1",
+        "registryNumber": "EC 2.7.7.-"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "html",
+        "site": "Unpaywall",
+        "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8194363"
+      },
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acs.jcim.9b00164"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC8194363"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC8194363?pdf=render"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acs.jcim.9b00164"
+      }
+    ]
+  },
+  "isOpenAccess": "N",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 11,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "hasEvaluations": "N",
+  "authMan": "Y",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "Y",
+  "manuscriptId": "NIHMS1704180",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "doi"
+    ]
+  },
+  "dateOfCompletion": "2020-09-10",
+  "dateOfCreation": "2019-08-28",
+  "firstIndexDate": "2019-08-28",
+  "fullTextReceivedDate": "2025-02-02",
+  "dateOfRevision": "2025-05-30",
+  "electronicPublicationDate": "2019-09-10",
+  "firstPublicationDate": "2019-09-10"
+}

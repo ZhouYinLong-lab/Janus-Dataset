@@ -1,0 +1,398 @@
+{
+  "id": "31430292",
+  "source": "MED",
+  "pmid": "31430292",
+  "pmcid": "PMC6701836",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC6701836"
+    ]
+  },
+  "doi": "10.1371/journal.pone.0220113",
+  "title": "Hidden bias in the DUD-E dataset leads to misleading performance of deep learning in structure-based virtual screening.",
+  "authorString": "Chen L, Cruz A, Ramsey S, Dickson CJ, Duca JS, Hornak V, Koes DR, Kurtzman T.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Chen L",
+        "firstName": "Lieyang",
+        "lastName": "Chen",
+        "initials": "L",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-1583-8039"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Lehman College, Bronx, New York, United States of America."
+            },
+            {
+              "affiliation": "Ph.D. program in Biochemistry, The Graduate Center of the City University of New York, New York, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Cruz A",
+        "firstName": "Anthony",
+        "lastName": "Cruz",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-2904-7684"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Lehman College, Bronx, New York, United States of America."
+            },
+            {
+              "affiliation": "Ph.D. program in Chemistry, The Graduate Center of the City University of New York, New York, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Ramsey S",
+        "firstName": "Steven",
+        "lastName": "Ramsey",
+        "initials": "S",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Lehman College, Bronx, New York, United States of America."
+            },
+            {
+              "affiliation": "Ph.D. program in Biochemistry, The Graduate Center of the City University of New York, New York, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Dickson CJ",
+        "firstName": "Callum J",
+        "lastName": "Dickson",
+        "initials": "CJ",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Computer-Aided Drug Discovery, Global Discovery Chemistry, Novartis Institutes for Biomedical Research, Cambridge, Massachusetts, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Duca JS",
+        "firstName": "Jose S",
+        "lastName": "Duca",
+        "initials": "JS",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-0880-5618"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Computer-Aided Drug Discovery, Global Discovery Chemistry, Novartis Institutes for Biomedical Research, Cambridge, Massachusetts, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Hornak V",
+        "firstName": "Viktor",
+        "lastName": "Hornak",
+        "initials": "V",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Computer-Aided Drug Discovery, Global Discovery Chemistry, Novartis Institutes for Biomedical Research, Cambridge, Massachusetts, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Koes DR",
+        "firstName": "David R",
+        "lastName": "Koes",
+        "initials": "DR",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-6892-6614"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Computational and System Biology, University of Pittsburgh, Pittsburgh, Pennsylvania, United States of America."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Kurtzman T",
+        "firstName": "Tom",
+        "lastName": "Kurtzman",
+        "initials": "T",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-0900-772X"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Lehman College, Bronx, New York, United States of America."
+            },
+            {
+              "affiliation": "Ph.D. program in Biochemistry, The Graduate Center of the City University of New York, New York, United States of America."
+            },
+            {
+              "affiliation": "Ph.D. program in Chemistry, The Graduate Center of the City University of New York, New York, United States of America."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0002-0880-5618"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-1583-8039"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-2904-7684"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-6892-6614"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-0900-772X"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "8",
+    "volume": "14",
+    "journalIssueId": 2843511,
+    "dateOfPublication": "2019 ",
+    "monthOfPublication": 0,
+    "yearOfPublication": 2019,
+    "printPublicationDate": "2019-01-01",
+    "journal": {
+      "title": "PloS one",
+      "medlineAbbreviation": "PLoS One",
+      "isoabbreviation": "PLoS One",
+      "essn": "1932-6203",
+      "issn": "1932-6203",
+      "nlmid": "101285081"
+    }
+  },
+  "pubYear": "2019",
+  "pageInfo": "e0220113",
+  "abstractText": "Recently much effort has been invested in using convolutional neural network (CNN) models trained on 3D structural images of protein-ligand complexes to distinguish binding from non-binding ligands for virtual screening. However, the dearth of reliable protein-ligand x-ray structures and binding affinity data has required the use of constructed datasets for the training and evaluation of CNN molecular recognition models. Here, we outline various sources of bias in one such widely-used dataset, the Directory of Useful Decoys: Enhanced (DUD-E). We have constructed and performed tests to investigate whether CNN models developed using DUD-E are properly learning the underlying physics of molecular recognition, as intended, or are instead learning biases inherent in the dataset itself. We find that superior enrichment efficiency in CNN models can be attributed to the analogue and decoy bias hidden in the DUD-E dataset rather than successful generalization of the pattern of protein-ligand interactions. Comparing additional deep learning models trained on PDBbind datasets, we found that their enrichment performances using DUD-E are not superior to the performance of the docking program AutoDock Vina. Together, these results suggest that biases that could be present in constructed datasets should be thoroughly evaluated before applying them to machine learning based methodology development.",
+  "affiliation": "Department of Chemistry, Lehman College, Bronx, New York, United States of America.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic-eCollection",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article",
+      "Research Support, N.I.H., Extramural"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "R01 GM108340",
+        "agency": "NIGMS NIH HHS",
+        "acronym": "GM",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R01-GM108340",
+        "agency": "Foundation for the National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R01 GM100946",
+        "agency": "NIGMS NIH HHS",
+        "acronym": "GM",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R01-GM100946",
+        "agency": "Foundation for the National Institutes of Health",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Proteins",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "ME",
+              "qualifierName": "metabolism",
+              "majorTopic_YN": "N"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Pharmaceutical Preparations",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "ME",
+              "qualifierName": "metabolism",
+              "majorTopic_YN": "N"
+            },
+            {
+              "abbreviation": "CH",
+              "qualifierName": "chemistry",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Ligands"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Drug Evaluation, Preclinical",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "MT",
+              "qualifierName": "methods",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "User-Computer Interface"
+      },
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Databases, Pharmaceutical"
+      },
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Deep Learning"
+      }
+    ]
+  },
+  "chemicalList": {
+    "chemical": [
+      {
+        "name": "Proteins",
+        "registryNumber": "0"
+      },
+      {
+        "name": "Pharmaceutical Preparations",
+        "registryNumber": "0"
+      },
+      {
+        "name": "Ligands",
+        "registryNumber": "0"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1371/journal.pone.0220113"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC6701836"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC6701836?pdf=render"
+      }
+    ]
+  },
+  "commentCorrectionList": {
+    "commentCorrection": [
+      {
+        "id": "PPR74277",
+        "source": "PPR",
+        "type": "Preprint in",
+        "note": "CrossRef Pre-print loader",
+        "orderIn": 10002
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 167,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "pdb"
+    ]
+  },
+  "dateOfCompletion": "2020-02-28",
+  "dateOfCreation": "2019-08-21",
+  "firstIndexDate": "2019-08-21",
+  "fullTextReceivedDate": "2025-02-03",
+  "dateOfRevision": "2020-02-28",
+  "electronicPublicationDate": "2019-08-20",
+  "firstPublicationDate": "2019-08-20"
+}

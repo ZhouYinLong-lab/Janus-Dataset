@@ -1,0 +1,641 @@
+{
+  "id": "26501955",
+  "source": "MED",
+  "pmid": "26501955",
+  "doi": "10.1038/nbt.3374",
+  "title": "Comprehensive characterization of the Published Kinase Inhibitor Set.",
+  "authorString": "Elkins JM, Fedele V, Szklarz M, Abdul Azeez KR, Salah E, Mikolajczyk J, Romanov S, Sepetov N, Huang XP, Roth BL, Al Haj Zen A, Fourches D, Muratov E, Tropsha A, Morris J, Teicher BA, Kunkel M, Polley E, Lackey KE, Atkinson FL, Overington JP, Bamborough P, Müller S, Price DJ, Willson TM, Drewry DH, Knapp S, Zuercher WJ.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Elkins JM",
+        "firstName": "Jonathan M",
+        "lastName": "Elkins",
+        "initials": "JM",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-2858-8929"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Fedele V",
+        "firstName": "Vita",
+        "lastName": "Fedele",
+        "initials": "V",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Szklarz M",
+        "firstName": "Marta",
+        "lastName": "Szklarz",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Abdul Azeez KR",
+        "firstName": "Kamal R",
+        "lastName": "Abdul Azeez",
+        "initials": "KR",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Salah E",
+        "firstName": "Eidarus",
+        "lastName": "Salah",
+        "initials": "E",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-7552-4966"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Mikolajczyk J",
+        "firstName": "Jowita",
+        "lastName": "Mikolajczyk",
+        "initials": "J",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Nanosyn, Inc., Santa Clara, California, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Romanov S",
+        "firstName": "Sergei",
+        "lastName": "Romanov",
+        "initials": "S",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Nanosyn, Inc., Santa Clara, California, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Sepetov N",
+        "firstName": "Nikolai",
+        "lastName": "Sepetov",
+        "initials": "N",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Nanosyn, Inc., Santa Clara, California, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Huang XP",
+        "firstName": "Xi-Ping",
+        "lastName": "Huang",
+        "initials": "XP",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "The National Institute of Mental Health Psychoactive Active Drug Screening Program, (NIMH PDSP), Department of Pharmacology and Division of Chemical Biology and Medicinal Chemistry, The University of North Carolina Chapel Hill School of Medicine, Chapel Hill, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Roth BL",
+        "firstName": "Bryan L",
+        "lastName": "Roth",
+        "initials": "BL",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "The National Institute of Mental Health Psychoactive Active Drug Screening Program, (NIMH PDSP), Department of Pharmacology and Division of Chemical Biology and Medicinal Chemistry, The University of North Carolina Chapel Hill School of Medicine, Chapel Hill, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Al Haj Zen A",
+        "firstName": "Ayman",
+        "lastName": "Al Haj Zen",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-2145-2925"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "British Heart Foundation Centre of Research Excellence, Division of Cardiovascular Medicine, Radcliffe Department of Medicine, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Fourches D",
+        "firstName": "Denis",
+        "lastName": "Fourches",
+        "initials": "D",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-5642-8303"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratory for Molecular Modeling Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill, Chapel Hill, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Muratov E",
+        "firstName": "Eugene",
+        "lastName": "Muratov",
+        "initials": "E",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4616-7036"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratory for Molecular Modeling Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill, Chapel Hill, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Tropsha A",
+        "firstName": "Alex",
+        "lastName": "Tropsha",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-3802-8896"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratory for Molecular Modeling Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill, Chapel Hill, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Morris J",
+        "firstName": "Joel",
+        "lastName": "Morris",
+        "initials": "J",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Division of Cancer Treatment and Diagnosis, National Cancer Institute, Rockville, Maryland, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Teicher BA",
+        "firstName": "Beverly A",
+        "lastName": "Teicher",
+        "initials": "BA",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Division of Cancer Treatment and Diagnosis, National Cancer Institute, Rockville, Maryland, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Kunkel M",
+        "firstName": "Mark",
+        "lastName": "Kunkel",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Division of Cancer Treatment and Diagnosis, National Cancer Institute, Rockville, Maryland, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Polley E",
+        "firstName": "Eric",
+        "lastName": "Polley",
+        "initials": "E",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Division of Cancer Treatment and Diagnosis, National Cancer Institute, Rockville, Maryland, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Lackey KE",
+        "firstName": "Karen E",
+        "lastName": "Lackey",
+        "initials": "KE",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Medical University of South Carolina, Charleston, South Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Atkinson FL",
+        "firstName": "Francis L",
+        "lastName": "Atkinson",
+        "initials": "FL",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4688-959X"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "European Molecular Biology Laboratory-European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus, Hinxton, Cambridge, UK.",
+              "affiliationOrgId": "ror.org/02catss52"
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Overington JP",
+        "firstName": "John P",
+        "lastName": "Overington",
+        "initials": "JP",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-5859-1064"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "European Molecular Biology Laboratory-European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus, Hinxton, Cambridge, UK.",
+              "affiliationOrgId": "ror.org/02catss52"
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Bamborough P",
+        "firstName": "Paul",
+        "lastName": "Bamborough",
+        "initials": "P",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Chemical Sciences, GlaxoSmithKline, Stevenage, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Müller S",
+        "firstName": "Susanne",
+        "lastName": "Müller",
+        "initials": "S",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Price DJ",
+        "firstName": "Daniel J",
+        "lastName": "Price",
+        "initials": "DJ",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Chemical Sciences, GlaxoSmithKline, Research Triangle Park, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Willson TM",
+        "firstName": "Timothy M",
+        "lastName": "Willson",
+        "initials": "TM",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4181-8223"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Chemical Sciences, GlaxoSmithKline, Research Triangle Park, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Drewry DH",
+        "firstName": "David H",
+        "lastName": "Drewry",
+        "initials": "DH",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-5973-5798"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Chemical Sciences, GlaxoSmithKline, Research Triangle Park, North Carolina, USA."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Knapp S",
+        "firstName": "Stefan",
+        "lastName": "Knapp",
+        "initials": "S",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-5995-6494"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK."
+            },
+            {
+              "affiliation": "Institute for Pharmaceutical Chemistry, Johann Wolfgang Goethe-University, Frankfurt am Main, Germany."
+            },
+            {
+              "affiliation": "Buchmann Institute for Molecular Life Sciences (BMLS), Frankfurt am Main, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zuercher WJ",
+        "firstName": "William J",
+        "lastName": "Zuercher",
+        "initials": "WJ",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Chemical Sciences, GlaxoSmithKline, Research Triangle Park, North Carolina, USA."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-5642-8303"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-5973-5798"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-5995-6494"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-7552-4966"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-2145-2925"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-5859-1064"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-2402-4157"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-2858-8929"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-3802-8896"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4181-8223"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4616-7036"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4688-959X"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "related_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "1",
+    "volume": "34",
+    "journalIssueId": 2360556,
+    "dateOfPublication": "2016 Jan",
+    "monthOfPublication": 1,
+    "yearOfPublication": 2016,
+    "printPublicationDate": "2016-01-01",
+    "journal": {
+      "title": "Nature biotechnology",
+      "medlineAbbreviation": "Nat Biotechnol",
+      "isoabbreviation": "Nat Biotechnol",
+      "essn": "1546-1696",
+      "issn": "1087-0156",
+      "nlmid": "9604648"
+    }
+  },
+  "pubYear": "2016",
+  "pageInfo": "95-103",
+  "abstractText": "Despite the success of protein kinase inhibitors as approved therapeutics, drug discovery has focused on a small subset of kinase targets. Here we provide a thorough characterization of the Published Kinase Inhibitor Set (PKIS), a set of 367 small-molecule ATP-competitive kinase inhibitors that was recently made freely available with the aim of expanding research in this field and as an experiment in open-source target validation. We screen the set in activity assays with 224 recombinant kinases and 24 G protein-coupled receptors and in cellular assays of cancer cell proliferation and angiogenesis. We identify chemical starting points for designing new chemical probes of orphan kinases and illustrate the utility of these leads by developing a selective inhibitor for the previously untargeted kinases LOK and SLK. Our cellular screens reveal compounds that modulate cancer cell growth and angiogenesis in vitro. These reagents and associated data illustrate an efficient way forward to increasing understanding of the historically untargeted kinome.",
+  "affiliation": "Structural Genomics Consortium and Target Discovery Institute, Nuffield Department of Clinical Medicine, Old Road Campus, University of Oxford, Oxford, UK.",
+  "publicationStatus": "ppublish",
+  "language": "eng",
+  "pubModel": "Print-Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "Research Support, Non-U.S. Gov't",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "104104",
+        "agency": "Wellcome Trust",
+        "orderIn": 0
+      },
+      {
+        "grantId": "RE/13/1/30181",
+        "agency": "British Heart Foundation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "106169/Z/14/Z",
+        "agency": "Wellcome Trust",
+        "acronym": "WT",
+        "orderIn": 0
+      },
+      {
+        "grantId": "106169",
+        "agency": "Wellcome Trust",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Phosphotransferases",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "AI",
+              "qualifierName": "antagonists & inhibitors",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Protein Kinase Inhibitors",
+        "meshQualifierList": {
+          "meshQualifier": [
+            {
+              "abbreviation": "PD",
+              "qualifierName": "pharmacology",
+              "majorTopic_YN": "Y"
+            }
+          ]
+        }
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Glycosylation"
+      }
+    ]
+  },
+  "chemicalList": {
+    "chemical": [
+      {
+        "name": "Protein Kinase Inhibitors",
+        "registryNumber": "0"
+      },
+      {
+        "name": "Phosphotransferases",
+        "registryNumber": "EC 2.7.-"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Unpaywall",
+        "url": "https://www.nature.com/articles/nbt.3374.pdf"
+      },
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1038/nbt.3374"
+      }
+    ]
+  },
+  "isOpenAccess": "N",
+  "inEPMC": "N",
+  "inPMC": "N",
+  "hasPDF": "N",
+  "hasBook": "N",
+  "hasSuppl": "N",
+  "citedByCount": 270,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "Y",
+  "dbCrossReferenceList": {
+    "dbName": [
+      "PDB"
+    ]
+  },
+  "hasLabsLinks": "Y",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "N",
+  "dateOfCompletion": "2016-05-11",
+  "dateOfCreation": "2015-10-27",
+  "firstIndexDate": "2015-10-28",
+  "dateOfRevision": "2022-03-21",
+  "electronicPublicationDate": "2015-10-26",
+  "firstPublicationDate": "2015-10-26"
+}

@@ -1,0 +1,12 @@
+order,filename,local_status,notes,sha256
+01,01-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,0D046E32CB6E67B8CA3FCF730141F823FB71B64FD806940EE4F19BECAC97B5FD
+02,02-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,8E6DA4198B06B3C3393E868E033BA2A26243C7B5C425C86FEB87A876D677F2CE
+03,03-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,D811634C9D4E506AC972B678162FD5A826A0967C7A44CA257B0347872561C0E3
+04,04-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,2A8B4991C6B05D081C59739B2B0A59F49F98A7112D53F2F3051707D7C67D4D5E
+05,05-reading.pdf,web_export,Publisher landing-page reading export; formal Nature PDF requires institutional access,DF49038F8CDE353B2AA94D62D6EFA2E60B681679C654753446AEB55E3DC795D0
+06,06-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,7D047AB89A14204F0798E1144A5C120149D9514353EFFADCB69592594D7BB487
+07,07-reading.pdf,annotated_pdf,PMC PDF with reading highlights,372C4CFED17B2FC8E9236A2470BEC89F0C713BB643A5DB4CBEB61A30010E2074
+08,08-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,0620DB8E5F60332415673AD004046F1FB660A3A9A79458062D8892B25D8BA243
+09,09-reading.pdf,author_version_chapter,Open thesis chapter corresponding to LIT-PCBA; not the ACS typeset PDF,DA692D8E4122DB9923700F1BC8855FD2E6B45B666102D6AAA29617303BA32D8C
+10,10-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,B3FB0C3EB019C0621C350D1794B7F49423DDF5998F0486771DE2DAE155857811
+11,11-reading.pdf,annotated_pdf,Publisher PDF with reading highlights,1D2931F21F9A99E40F83C0D050F6B3AC43BDA3A5FB5123A7402ADB6BA281605D

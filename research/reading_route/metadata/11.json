@@ -1,0 +1,386 @@
+{
+  "id": "39441065",
+  "source": "MED",
+  "pmid": "39441065",
+  "pmcid": "PMC11701612",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC11701612"
+    ]
+  },
+  "doi": "10.1093/nar/gkae904",
+  "title": "ECBD: European chemical biology database.",
+  "authorString": "Škuta C, Müller T, Voršilák M, Popr M, Epp T, Skopelitou KE, Rossella F, Stechmann B, Stechmann B, Gribbon P, Bartůněk P.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Škuta C",
+        "firstName": "Ctibor",
+        "lastName": "Škuta",
+        "initials": "C",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-5325-4934"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Müller T",
+        "firstName": "Tomáš",
+        "lastName": "Müller",
+        "initials": "T",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Voršilák M",
+        "firstName": "Milan",
+        "lastName": "Voršilák",
+        "initials": "M",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-8923-1627"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Popr M",
+        "firstName": "Martin",
+        "lastName": "Popr",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Epp T",
+        "firstName": "Trevor",
+        "lastName": "Epp",
+        "initials": "T",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-2684-4247"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Skopelitou KE",
+        "firstName": "Katholiki E",
+        "lastName": "Skopelitou",
+        "initials": "KE",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-6103-5387"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "EU-OPENSCREEN ERIC, Robert-Rössle-Str. 10, Berlin 13125, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Rossella F",
+        "firstName": "Federica",
+        "lastName": "Rossella",
+        "initials": "F",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "EU-OPENSCREEN ERIC, Robert-Rössle-Str. 10, Berlin 13125, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Stechmann B",
+        "firstName": "Bahne",
+        "lastName": "Stechmann",
+        "initials": "B",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-2759-5924"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "EU-OPENSCREEN ERIC, Robert-Rössle-Str. 10, Berlin 13125, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Stechmann B",
+        "firstName": "Bahne",
+        "lastName": "Stechmann",
+        "initials": "B",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-1440-1545"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "EU-OPENSCREEN ERIC, Robert-Rössle-Str. 10, Berlin 13125, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Gribbon P",
+        "firstName": "Philip",
+        "lastName": "Gribbon",
+        "initials": "P",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-7655-2459"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "EU-OPENSCREEN ERIC, Robert-Rössle-Str. 10, Berlin 13125, Germany."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Bartůněk P",
+        "firstName": "Petr",
+        "lastName": "Bartůněk",
+        "initials": "P",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-5325-4934"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-6103-5387"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-7655-2459"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-8923-1627"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-1440-1545"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-2684-4247"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-2759-5924"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "D1",
+    "volume": "53",
+    "journalIssueId": 3884742,
+    "dateOfPublication": "2025 Jan",
+    "monthOfPublication": 1,
+    "yearOfPublication": 2025,
+    "printPublicationDate": "2025-01-01",
+    "journal": {
+      "title": "Nucleic acids research",
+      "medlineAbbreviation": "Nucleic Acids Res",
+      "essn": "1362-4962",
+      "issn": "0305-1048",
+      "isoabbreviation": "Nucleic Acids Res",
+      "nlmid": "0411011"
+    }
+  },
+  "pubYear": "2025",
+  "pageInfo": "D1383-D1392",
+  "abstractText": "The European Chemical Biology Database (ECBD, https://ecbd.eu) serves as the central repository for data generated by the EU-OPENSCREEN research infrastructure consortium. It is developed according to FAIR principles, which emphasize findability, accessibility, interoperability and reusability of data. This data is made available to the scientific community following open access principles. The ECBD stores both positive and negative results from the entire chemical biology project pipeline, including data from primary or counter-screening assays. The assays utilize a defined and diverse library of over 107 000 compounds, the annotations of which are continuously enriched by external user supported screening projects and by internal EU-OPENSCREEN bioprofiling efforts. These compounds were screened in 89 currently deposited datasets (assays), with 48 already being publicly accessible, while the remaining will be published after a publication embargo period of up to 3 years. Together these datasets encompass ∼4.3 million experimental data points. All public data within ECBD can be accessed through its user interface, API or by database dump under the CC-BY 4.0 license.",
+  "affiliation": "CZ-OPENSCREEN: National Infrastructure for Chemical Biology, Institute of Molecular Genetics of the Czech Academy of Sciences, Vídeňská 1083, Prague 14220, Czech Republic.",
+  "publicationStatus": "ppublish",
+  "language": "eng",
+  "pubModel": "Print",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "101046133",
+        "agency": "H2020 Research Infrastructures",
+        "orderIn": 0
+      },
+      {
+        "grantId": "101132028,823893",
+        "agency": "H2020 Research Infrastructures",
+        "orderIn": 0
+      },
+      {
+        "grantId": "LM2023052",
+        "agency": "Ministerstvo Školství, Mládeže a Tělovýchovy",
+        "orderIn": 0
+      },
+      {
+        "grantId": "101058427",
+        "agency": "H2020 Research Infrastructures",
+        "orderIn": 0
+      },
+      {
+        "grantId": "101058620",
+        "agency": "H2020 Research Infrastructures",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Humans"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Internet"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Software"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "User-Computer Interface"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Europe"
+      },
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Databases, Chemical"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1093/nar/gkae904"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11701612"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11701612?pdf=render"
+      }
+    ]
+  },
+  "commentCorrectionList": {
+    "commentCorrection": [
+      {
+        "id": "39868541",
+        "source": "MED",
+        "reference": "Nucleic Acids Res. 2025 Jan 24;53(3):gkaf026. doi: 10.1093/nar/gkaf026.",
+        "type": "Erratum in",
+        "orderIn": 1
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 11,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "doi"
+    ]
+  },
+  "dateOfCompletion": "2025-01-08",
+  "dateOfCreation": "2024-10-23",
+  "firstIndexDate": "2024-10-24",
+  "fullTextReceivedDate": "2025-12-03",
+  "dateOfRevision": "2025-02-05",
+  "firstPublicationDate": "2025-01-01"
+}

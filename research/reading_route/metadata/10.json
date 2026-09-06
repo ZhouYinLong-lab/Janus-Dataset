@@ -1,0 +1,278 @@
+{
+  "id": "40211375",
+  "source": "MED",
+  "pmid": "40211375",
+  "pmcid": "PMC11983867",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC11983867"
+    ]
+  },
+  "doi": "10.1186/s13321-025-00999-1",
+  "title": "InertDB as a generative AI-expanded resource of biologically inactive small molecules from PubChem.",
+  "authorString": "An S, Lee Y, Gong J, Hwang S, Park IG, Cho J, Lee MJ, Kim M, Kang YP, Noh M.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "An S",
+        "firstName": "Seungchan",
+        "lastName": "An",
+        "initials": "S",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-5840-8987"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Lee Y",
+        "firstName": "Yeonjin",
+        "lastName": "Lee",
+        "initials": "Y",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Gong J",
+        "firstName": "Junpyo",
+        "lastName": "Gong",
+        "initials": "J",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Hwang S",
+        "firstName": "Seokyoung",
+        "lastName": "Hwang",
+        "initials": "S",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Park IG",
+        "firstName": "In Guk",
+        "lastName": "Park",
+        "initials": "IG",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Cho J",
+        "firstName": "Jayhyun",
+        "lastName": "Cho",
+        "initials": "J",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Lee MJ",
+        "firstName": "Min Ju",
+        "lastName": "Lee",
+        "initials": "MJ",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Kim M",
+        "firstName": "Minkyu",
+        "lastName": "Kim",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Kang YP",
+        "firstName": "Yun Pyo",
+        "lastName": "Kang",
+        "initials": "YP",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Noh M",
+        "firstName": "Minsoo",
+        "lastName": "Noh",
+        "initials": "M",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea. minsoonoh@snu.ac.kr."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0002-5840-8987"
+      },
+      {
+        "type": "ORCID",
+        "value": "0009-0007-0146-9467"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "1",
+    "volume": "17",
+    "journalIssueId": 3922254,
+    "dateOfPublication": "2025 Apr",
+    "monthOfPublication": 4,
+    "yearOfPublication": 2025,
+    "printPublicationDate": "2025-04-01",
+    "journal": {
+      "title": "Journal of cheminformatics",
+      "medlineAbbreviation": "J Cheminform",
+      "issn": "1758-2946",
+      "nlmid": "101516718",
+      "isoabbreviation": "J Cheminform",
+      "essn": "1758-2946"
+    }
+  },
+  "pubYear": "2025",
+  "pageInfo": "49",
+  "abstractText": "The development of robust artificial intelligence (AI)-driven predictive models relies on high-quality, diverse chemical datasets. However, the scarcity of negative data and a publication bias toward positive results often hinder accurate biological activity prediction. To address this challenge, we introduce InertDB, a comprehensive database comprising 3,205 curated inactive compounds (CICs) identified through rigorous review of over 4.6 million compound records in PubChem. CIC selection prioritized bioassay diversity, determined using natural language processing (NLP)-based clustering metrics, while ensuring minimal biological activity across all evaluated bioassays. Notably, 97.2% of CICs adhere to the Rule of Five, a proportion significantly higher than that of overall PubChem dataset. To further expand the chemical space, InertDB also features 64,368 generated inactive compounds (GICs) produced using a deep generative AI model trained on the CIC dataset. Compared to conventional approaches such as random sampling or property-matched decoys, InertDB significantly improves predictive AI performance, particularly for phenotypic activity prediction by providing reliable inactive compound sets.Scientific contributionsInertDB addresses a critical gap in AI-driven drug discovery by providing a comprehensive repository of biologically inactive compounds, effectively resolving the scarcity of negative data that limits prediction accuracy and model reliability. By leveraging language model-based bioassay diversity metrics and generative AI, InertDB integrates rigorously curated inactive compounds with an expanded chemical space. InertDB serves as a valuable alternative to random sampling and decoy generation, offering improved training datasets and enhancing the accuracy of phenotypic pharmacological activity prediction.",
+  "affiliation": "College of Pharmacy, Natural Products Research Institute, Seoul National University, Seoul, 08826, Republic of Korea.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "RS-2024-00331849",
+        "agency": "Ministry of Food and Drug Safety",
+        "orderIn": 0
+      },
+      {
+        "grantId": "RS-2024-00399364",
+        "agency": "National Research Foundation of Korea",
+        "orderIn": 0
+      }
+    ]
+  },
+  "keywordList": {
+    "keyword": [
+      "Virtual Screening",
+      "Generative Model",
+      "Predictive Pharmacology",
+      "Inactive Compounds",
+      "Large-scale Bioassay",
+      "Synthetic Negative Data"
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1186/s13321-025-00999-1"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11983867"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11983867?pdf=render"
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 3,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "doi"
+    ]
+  },
+  "dateOfCreation": "2025-04-11",
+  "firstIndexDate": "2025-04-11",
+  "fullTextReceivedDate": "2025-12-02",
+  "dateOfRevision": "2025-04-13",
+  "electronicPublicationDate": "2025-04-10",
+  "firstPublicationDate": "2025-04-10"
+}

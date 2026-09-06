@@ -1,0 +1,195 @@
+{
+  "id": "32282202",
+  "source": "MED",
+  "pmid": "32282202",
+  "doi": "10.1021/acs.jcim.0c00155",
+  "title": "LIT-PCBA: An Unbiased Data Set for Machine Learning and Virtual Screening.",
+  "authorString": "Tran-Nguyen VK, Jacquemard C, Rognan D.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Tran-Nguyen VK",
+        "firstName": "Viet-Khoa",
+        "lastName": "Tran-Nguyen",
+        "initials": "VK",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-7497-333X"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratoire d'Innovation Thérapeutique, UMR 7200 CNRS-Université de Strasbourg, 67400 Illkirch, France."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Jacquemard C",
+        "firstName": "Célien",
+        "lastName": "Jacquemard",
+        "initials": "C",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratoire d'Innovation Thérapeutique, UMR 7200 CNRS-Université de Strasbourg, 67400 Illkirch, France."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Rognan D",
+        "firstName": "Didier",
+        "lastName": "Rognan",
+        "initials": "D",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-0577-641X"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Laboratoire d'Innovation Thérapeutique, UMR 7200 CNRS-Université de Strasbourg, 67400 Illkirch, France."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-7497-333X"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-0577-641X"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics"
+    ]
+  },
+  "journalInfo": {
+    "issue": "9",
+    "volume": "60",
+    "journalIssueId": 3022562,
+    "dateOfPublication": "2020 Sep",
+    "monthOfPublication": 9,
+    "yearOfPublication": 2020,
+    "printPublicationDate": "2020-09-01",
+    "journal": {
+      "title": "Journal of chemical information and modeling",
+      "medlineAbbreviation": "J Chem Inf Model",
+      "isoabbreviation": "J Chem Inf Model",
+      "essn": "1549-960X",
+      "issn": "1549-9596",
+      "nlmid": "101230060"
+    }
+  },
+  "pubYear": "2020",
+  "pageInfo": "4263-4273",
+  "abstractText": "Comparative evaluation of virtual screening methods requires a rigorous benchmarking procedure on diverse, realistic, and unbiased data sets. Recent investigations from numerous research groups unambiguously demonstrate that artificially constructed ligand sets classically used by the community (e.g., DUD, DUD-E, MUV) are unfortunately biased by both obvious and hidden chemical biases, therefore overestimating the true accuracy of virtual screening methods. We herewith present a novel data set (LIT-PCBA) specifically designed for virtual screening and machine learning. LIT-PCBA relies on 149 dose-response PubChem bioassays that were additionally processed to remove false positives and assay artifacts and keep active and inactive compounds within similar molecular property ranges. To ascertain that the data set is suited to both ligand-based and structure-based virtual screening, target sets were restricted to single protein targets for which at least one X-ray structure is available in complex with ligands of the same phenotype (e.g., inhibitor, inverse agonist) as that of the PubChem active compounds. Preliminary virtual screening on the 21 remaining target sets with state-of-the-art orthogonal methods (2D fingerprint similarity, 3D shape similarity, molecular docking) enabled us to select 15 target sets for which at least one of the three screening methods is able to enrich the top 1%-ranked compounds in true actives by at least a factor of 2. The corresponding ligand sets (training, validation) were finally unbiased by the recently described asymmetric validation embedding (AVE) procedure to afford the LIT-PCBA data set, consisting of 15 targets and 7844 confirmed active and 407,381 confirmed inactive compounds. The data set mimics experimental screening decks in terms of hit rate (ratio of active to inactive compounds) and potency distribution. It is available online at http://drugdesign.unistra.fr/LIT-PCBA for download and for benchmarking novel virtual screening methods, notably those relying on machine learning.",
+  "affiliation": "Laboratoire d'Innovation Thérapeutique, UMR 7200 CNRS-Université de Strasbourg, 67400 Illkirch, France.",
+  "publicationStatus": "ppublish",
+  "language": "eng",
+  "pubModel": "Print-Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "Research Support, Non-U.S. Gov't",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "agency": "Universit? de Strasbourg",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Proteins"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Ligands"
+      },
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Molecular Docking Simulation"
+      },
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Machine Learning"
+      }
+    ]
+  },
+  "chemicalList": {
+    "chemical": [
+      {
+        "name": "Proteins",
+        "registryNumber": "0"
+      },
+      {
+        "name": "Ligands",
+        "registryNumber": "0"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Unpaywall",
+        "url": "https://hal.science/hal-03013622"
+      },
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acs.jcim.0c00155"
+      }
+    ]
+  },
+  "isOpenAccess": "N",
+  "inEPMC": "N",
+  "inPMC": "N",
+  "hasPDF": "N",
+  "hasBook": "N",
+  "hasSuppl": "N",
+  "citedByCount": 178,
+  "hasData": "N",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "N",
+  "dateOfCompletion": "2021-06-17",
+  "dateOfCreation": "2020-04-14",
+  "firstIndexDate": "2020-04-16",
+  "dateOfRevision": "2025-01-06",
+  "electronicPublicationDate": "2020-04-23",
+  "firstPublicationDate": "2020-04-23"
+}

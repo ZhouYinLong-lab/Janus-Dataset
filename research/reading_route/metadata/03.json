@@ -1,0 +1,265 @@
+{
+  "id": "38834746",
+  "source": "MED",
+  "pmid": "38834746",
+  "pmcid": "PMC11150475",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC11150475"
+    ]
+  },
+  "doi": "10.1038/s42004-024-01204-4",
+  "title": "Benchmarking compound activity prediction for real-world drug discovery applications.",
+  "authorString": "Tian T, Li S, Zhang Z, Chen L, Zou Z, Zhao D, Zeng J.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Tian T",
+        "firstName": "Tingzhong",
+        "lastName": "Tian",
+        "initials": "T",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4899-0632"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Institute for Interdisciplinary Information Sciences, Tsinghua University, Beijing, China."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Li S",
+        "firstName": "Shuya",
+        "lastName": "Li",
+        "initials": "S",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0009-0003-2878-0926"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Institute for Interdisciplinary Information Sciences, Tsinghua University, Beijing, China."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zhang Z",
+        "firstName": "Ziting",
+        "lastName": "Zhang",
+        "initials": "Z",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Automation, Tsinghua University, Beijing, China."
+            },
+            {
+              "affiliation": "MOE Key Laboratory of Bioinformatics, Tsinghua University, Beijing, China."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Chen L",
+        "firstName": "Lin",
+        "lastName": "Chen",
+        "initials": "L",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Silexon AI Technology Co., Ltd., Nanjing, Jiangsu Province, China."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zou Z",
+        "firstName": "Ziheng",
+        "lastName": "Zou",
+        "initials": "Z",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Silexon AI Technology Co., Ltd., Nanjing, Jiangsu Province, China."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zhao D",
+        "firstName": "Dan",
+        "lastName": "Zhao",
+        "initials": "D",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-0195-6031"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Institute for Interdisciplinary Information Sciences, Tsinghua University, Beijing, China. zhaodan2018@tsinghua.edu.cn."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zeng J",
+        "firstName": "Jianyang",
+        "lastName": "Zeng",
+        "initials": "J",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-0950-7716"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Institute for Interdisciplinary Information Sciences, Tsinghua University, Beijing, China. zengjy@westlake.edu.cn."
+            },
+            {
+              "affiliation": "School of Engineering, Westlake University, Hangzhou, Zhejiang Province, China. zengjy@westlake.edu.cn."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0003-0195-6031"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-0950-7716"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4899-0632"
+      },
+      {
+        "type": "ORCID",
+        "value": "0009-0003-2878-0926"
+      }
+    ]
+  },
+  "journalInfo": {
+    "issue": "1",
+    "volume": "7",
+    "journalIssueId": 3778449,
+    "dateOfPublication": "2024 Jun",
+    "monthOfPublication": 6,
+    "yearOfPublication": 2024,
+    "printPublicationDate": "2024-06-01",
+    "journal": {
+      "title": "Communications chemistry",
+      "medlineAbbreviation": "Commun Chem",
+      "isoabbreviation": "Commun Chem",
+      "essn": "2399-3669",
+      "issn": "2399-3669",
+      "nlmid": "101725670"
+    }
+  },
+  "pubYear": "2024",
+  "pageInfo": "127",
+  "abstractText": "Identifying active compounds for target proteins is fundamental in early drug discovery. Recently, data-driven computational methods have demonstrated promising potential in predicting compound activities. However, there lacks a well-designed benchmark to comprehensively evaluate these methods from a practical perspective. To fill this gap, we propose a Compound Activity benchmark for Real-world Applications (CARA). Through carefully distinguishing assay types, designing train-test splitting schemes and selecting evaluation metrics, CARA can consider the biased distribution of current real-world compound activity data and avoid overestimation of model performances. We observed that although current models can make successful predictions for certain proportions of assays, their performances varied across different assays. In addition, evaluation of several few-shot training strategies demonstrated different performances related to task types. Overall, we provide a high-quality dataset for developing and evaluating compound activity prediction models, and the analyses in this work may inspire better applications of data-driven models in drug discovery.",
+  "affiliation": "Institute for Interdisciplinary Information Sciences, Tsinghua University, Beijing, China.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "T2125007",
+        "agency": "National Natural Science Foundation of China",
+        "orderIn": 0
+      },
+      {
+        "grantId": "T2125007",
+        "agency": "National Natural Science Foundation of China (National Science Foundation of China)",
+        "orderIn": 0
+      },
+      {
+        "grantId": "31900862",
+        "agency": "National Natural Science Foundation of China",
+        "orderIn": 0
+      },
+      {
+        "grantId": "31900862",
+        "agency": "National Natural Science Foundation of China (National Science Foundation of China)",
+        "orderIn": 0
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1038/s42004-024-01204-4"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11150475"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC11150475?pdf=render"
+      }
+    ]
+  },
+  "commentCorrectionList": {
+    "commentCorrection": [
+      {
+        "id": "PPR647854",
+        "source": "PPR",
+        "type": "Preprint in",
+        "note": "CrossRef Pre-print loader",
+        "orderIn": 10002
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 12,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "N",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "N",
+  "dateOfCreation": "2024-06-04",
+  "firstIndexDate": "2024-06-06",
+  "fullTextReceivedDate": "2024-06-10",
+  "dateOfRevision": "2024-06-07",
+  "electronicPublicationDate": "2024-06-04",
+  "firstPublicationDate": "2024-06-04"
+}

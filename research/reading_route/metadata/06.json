@@ -1,0 +1,276 @@
+{
+  "id": "26500705",
+  "source": "MED",
+  "pmid": "26500705",
+  "pmcid": "PMC4619454",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC4619454"
+    ]
+  },
+  "doi": "10.1186/s13321-015-0098-y",
+  "title": "Target prediction utilising negative bioactivity data covering large chemical space.",
+  "authorString": "Mervin LH, Afzal AM, Drakakis G, Lewis R, Engkvist O, Bender A.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Mervin LH",
+        "firstName": "Lewis H",
+        "lastName": "Mervin",
+        "initials": "LH",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-7271-0824"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Afzal AM",
+        "firstName": "Avid M",
+        "lastName": "Afzal",
+        "initials": "AM",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Drakakis G",
+        "firstName": "Georgios",
+        "lastName": "Drakakis",
+        "initials": "G",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-6635-9273"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Lewis R",
+        "firstName": "Richard",
+        "lastName": "Lewis",
+        "initials": "R",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-6642-5771"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Engkvist O",
+        "firstName": "Ola",
+        "lastName": "Engkvist",
+        "initials": "O",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4970-6461"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Discovery Sciences, Chemistry Innovation Centre, AstraZeneca R&D, 43183 Mölndal, Sweden."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Bender A",
+        "firstName": "Andreas",
+        "lastName": "Bender",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-6683-7546"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-6642-5771"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-6635-9273"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-6683-7546"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-7271-0824"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4970-6461"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "volume": "7",
+    "journalIssueId": 2256403,
+    "dateOfPublication": "2015 ",
+    "monthOfPublication": 0,
+    "yearOfPublication": 2015,
+    "printPublicationDate": "2015-01-01",
+    "journal": {
+      "title": "Journal of cheminformatics",
+      "medlineAbbreviation": "J Cheminform",
+      "issn": "1758-2946",
+      "nlmid": "101516718",
+      "isoabbreviation": "J Cheminform",
+      "essn": "1758-2946"
+    }
+  },
+  "pubYear": "2015",
+  "pageInfo": "51",
+  "abstractText": "<h4>Background</h4>In silico analyses are increasingly being used to support mode-of-action investigations; however many such approaches do not utilise the large amounts of inactive data held in chemogenomic repositories. The objective of this work is concerned with the integration of such bioactivity data in the target prediction of orphan compounds to produce the probability of activity and inactivity for a range of targets. To this end, a novel human bioactivity data set was constructed through the assimilation of over 195 million bioactivity data points deposited in the ChEMBL and PubChem repositories, and the subsequent application of a sphere-exclusion selection algorithm to oversample presumed inactive compounds.<h4>Results</h4>A Bernoulli Naïve Bayes algorithm was trained using the data and evaluated using fivefold cross-validation, achieving a mean recall and precision of 67.7 and 63.8 % for active compounds and 99.6 and 99.7 % for inactive compounds, respectively. We show the performances of the models are considerably influenced by the underlying intraclass training similarity, the size of a given class of compounds, and the degree of additional oversampling. The method was also validated using compounds extracted from WOMBAT producing average precision-recall AUC and BEDROC scores of 0.56 and 0.85, respectively. Inactive data points used for this test are based on presumed inactivity, producing an approximated indication of the true extrapolative ability of the models. A distance-based applicability domain analysis was also conducted; indicating an average Tanimoto Coefficient distance of 0.3 or greater between a test and training set can be used to give a global measure of confidence in model predictions. A final comparison to a method trained solely on active data from ChEMBL performed with precision-recall AUC and BEDROC scores of 0.45 and 0.76.<h4>Conclusions</h4>The inclusion of inactive data for model training produces models with superior AUC and improved early recognition capabilities, although the results from internal and external validation of the models show differing performance between the breadth of models. The realised target prediction protocol is available at https://github.com/lhm30/PIDGIN.Graphical abstractThe inclusion of large scale negative training data for in silico target prediction improves the precision and recall AUC and BEDROC scores for target models.",
+  "affiliation": "Department of Chemistry, Centre for Molecular Informatics, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW UK.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic-eCollection",
+  "pubTypeList": {
+    "pubType": [
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "agency": "AstraZeneca",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1374343",
+        "agency": "Engineering and Physical Sciences Research Council",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1372344",
+        "agency": "Biotechnology and Biological Sciences Research Council",
+        "acronym": "BB_",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1127853",
+        "agency": "Engineering and Physical Sciences Research Council",
+        "orderIn": 0
+      },
+      {
+        "agency": "Biotechnology and Biological Sciences Research Council",
+        "acronym": "BB_",
+        "orderIn": 0
+      },
+      {
+        "agency": "Eli Lilly and Company",
+        "orderIn": 0
+      },
+      {
+        "agency": "Engineering and Physical Sciences Research Council",
+        "orderIn": 0
+      }
+    ]
+  },
+  "keywordList": {
+    "keyword": [
+      "QSAR",
+      "data mining",
+      "Similarity Search",
+      "Cheminformatics",
+      "Bedroc"
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1186/s13321-015-0098-y"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC4619454"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC4619454?pdf=render"
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "N",
+  "citedByCount": 80,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "Y",
+  "tmAccessionTypeList": {
+    "accessionType": [
+      "uniprot"
+    ]
+  },
+  "dateOfCompletion": "2015-10-27",
+  "dateOfCreation": "2015-10-27",
+  "firstIndexDate": "2015-10-27",
+  "fullTextReceivedDate": "2020-07-10",
+  "dateOfRevision": "2023-11-04",
+  "electronicPublicationDate": "2015-10-24",
+  "firstPublicationDate": "2015-10-24"
+}

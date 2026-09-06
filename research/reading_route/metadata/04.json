@@ -1,0 +1,616 @@
+{
+  "id": "32184967",
+  "source": "MED",
+  "pmid": "32184967",
+  "pmcid": "PMC7073879",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC7073879"
+    ]
+  },
+  "doi": "10.1021/acsmedchemlett.9b00399",
+  "title": "SGC-AAK1-1: A Chemical Probe Targeting AAK1 and BMP2K.",
+  "authorString": "Wells C, Couñago RM, Limas JC, Almeida TL, Cook JG, Drewry DH, Elkins JM, Gileadi O, Kapadia NR, Lorente-Macias A, Pickett JE, Riemen A, Ruela-de-Sousa RR, Willson TM, Zhang C, Zuercher WJ, Zutshi R, Axtman AD.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Wells C",
+        "firstName": "Carrow",
+        "lastName": "Wells",
+        "initials": "C",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4799-6792"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Couñago RM",
+        "firstName": "Rafael M",
+        "lastName": "Couñago",
+        "initials": "RM",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-1847-5090"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "SGC, Departamento de Genética e Evolução, Instituto de Biologia, Universidade Estadual de Campinas (UNICAMP), Campinas, SP 13083-886, Brazil."
+            },
+            {
+              "affiliation": "Centro de Química Medicinal, Centro de Biologia Molecular e Engenharia Genética, UNICAMP, Campinas, SP 13083-875, Brazil."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Limas JC",
+        "firstName": "Juanita C",
+        "lastName": "Limas",
+        "initials": "JC",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-6384-8787"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Pharmacology, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Almeida TL",
+        "firstName": "Tuanny L",
+        "lastName": "Almeida",
+        "initials": "TL",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "SGC, Departamento de Genética e Evolução, Instituto de Biologia, Universidade Estadual de Campinas (UNICAMP), Campinas, SP 13083-886, Brazil."
+            },
+            {
+              "affiliation": "Centro de Química Medicinal, Centro de Biologia Molecular e Engenharia Genética, UNICAMP, Campinas, SP 13083-875, Brazil."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Cook JG",
+        "firstName": "Jeanette Gowen",
+        "lastName": "Cook",
+        "initials": "JG",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Biochemistry and Biophysics, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Drewry DH",
+        "firstName": "David H",
+        "lastName": "Drewry",
+        "initials": "DH",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-5973-5798"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Elkins JM",
+        "firstName": "Jonathan M",
+        "lastName": "Elkins",
+        "initials": "JM",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "SGC, Departamento de Genética e Evolução, Instituto de Biologia, Universidade Estadual de Campinas (UNICAMP), Campinas, SP 13083-886, Brazil."
+            },
+            {
+              "affiliation": "SGC, Nuffield Department of Clinical Medicine, University of Oxford, Old Road Campus Research Building, Oxford, OX3 7DQ, U.K."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Gileadi O",
+        "firstName": "Opher",
+        "lastName": "Gileadi",
+        "initials": "O",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "SGC, Departamento de Genética e Evolução, Instituto de Biologia, Universidade Estadual de Campinas (UNICAMP), Campinas, SP 13083-886, Brazil."
+            },
+            {
+              "affiliation": "SGC, Nuffield Department of Clinical Medicine, University of Oxford, Old Road Campus Research Building, Oxford, OX3 7DQ, U.K."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Kapadia NR",
+        "firstName": "Nirav R",
+        "lastName": "Kapadia",
+        "initials": "NR",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-2826-1689"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Lorente-Macias A",
+        "firstName": "Alvaro",
+        "lastName": "Lorente-Macias",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0001-9510-714X"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Departamento de Química Farmacéutica y Orgánica, University of Granada, Granada, 18071, Spain."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Pickett JE",
+        "firstName": "Julie E",
+        "lastName": "Pickett",
+        "initials": "JE",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-9535-8528"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Riemen A",
+        "firstName": "Alexander",
+        "lastName": "Riemen",
+        "initials": "A",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Luceome Biotechnologies, LLC, Tucson, Arizona 85719, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Ruela-de-Sousa RR",
+        "firstName": "Roberta R",
+        "lastName": "Ruela-de-Sousa",
+        "initials": "RR",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "SGC, Departamento de Genética e Evolução, Instituto de Biologia, Universidade Estadual de Campinas (UNICAMP), Campinas, SP 13083-886, Brazil."
+            },
+            {
+              "affiliation": "Centro de Química Medicinal, Centro de Biologia Molecular e Engenharia Genética, UNICAMP, Campinas, SP 13083-875, Brazil."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Willson TM",
+        "firstName": "Timothy M",
+        "lastName": "Willson",
+        "initials": "TM",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4181-8223"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zhang C",
+        "firstName": "Cunyu",
+        "lastName": "Zhang",
+        "initials": "C",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Platform Technology Sciences, GlaxoSmithKline, Collegeville, Pennsylvania 19426, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zuercher WJ",
+        "firstName": "William J",
+        "lastName": "Zuercher",
+        "initials": "WJ",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Lineberger Comprehensive Cancer Center (LCCC), UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Zutshi R",
+        "firstName": "Reena",
+        "lastName": "Zutshi",
+        "initials": "R",
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Luceome Biotechnologies, LLC, Tucson, Arizona 85719, United States."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Axtman AD",
+        "firstName": "Alison D",
+        "lastName": "Axtman",
+        "initials": "AD",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4779-9932"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States."
+            },
+            {
+              "affiliation": "Division of Chemical Biology and Medicinal Chemistry, UNC Eshelman School of Pharmacy, UNC-CH, Chapel Hill, North Carolina 27599, United States."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0001-5973-5798"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-6384-8787"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0001-9510-714X"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-2826-1689"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-9535-8528"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-1847-5090"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4181-8223"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4779-9932"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4799-6792"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "altmetrics",
+      "related_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "3",
+    "volume": "11",
+    "journalIssueId": 2925211,
+    "dateOfPublication": "2020 Mar",
+    "monthOfPublication": 3,
+    "yearOfPublication": 2020,
+    "printPublicationDate": "2020-03-01",
+    "journal": {
+      "title": "ACS medicinal chemistry letters",
+      "medlineAbbreviation": "ACS Med Chem Lett",
+      "isoabbreviation": "ACS Med Chem Lett",
+      "essn": "1948-5875",
+      "issn": "1948-5875",
+      "nlmid": "101521073"
+    }
+  },
+  "pubYear": "2020",
+  "pageInfo": "340-345",
+  "abstractText": "Inhibitors based on a 3-acylaminoindazole scaffold were synthesized to yield potent dual AAK1/BMP2K inhibitors. Optimization furnished a small molecule chemical probe (SGC-AAK1-1, <b>25</b>) that is potent and selective for AAK1/BMP2K over other NAK family members, demonstrates narrow activity in a kinome-wide screen, and is functionally active in cells. This inhibitor represents one of the best available small molecule tools to study the functions of AAK1 and BMP2K.",
+  "affiliation": "Structural Genomics Consortium (SGC), UNC Eshelman School of Pharmacy, University of North Carolina at Chapel Hill (UNC-CH), Chapel Hill, North Carolina 27599, United States.",
+  "publicationStatus": "epublish",
+  "language": "eng",
+  "pubModel": "Electronic-eCollection",
+  "pubTypeList": {
+    "pubType": [
+      "rapid-communication",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "106169/ZZ14/Z",
+        "agency": "Wellcome Trust",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1R44TR001916",
+        "agency": "U.S. Department of Health and Human Services",
+        "orderIn": 0
+      },
+      {
+        "grantId": "2014/50897-0",
+        "agency": "Funda??o de Amparo ? Pesquisa do Estado de S?o Paulo",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1UM2AI30836-01",
+        "agency": "National Institutes of Health",
+        "orderIn": 0
+      },
+      {
+        "grantId": "2013/50724-5",
+        "agency": "Funda??o de Amparo ? Pesquisa do Estado de S?o Paulo",
+        "orderIn": 0
+      },
+      {
+        "grantId": "GM083024",
+        "agency": "National Institute of General Medical Sciences",
+        "orderIn": 0
+      },
+      {
+        "agency": "Ontario Ministry of Economic Development and Innovation",
+        "orderIn": 0
+      },
+      {
+        "grantId": "2017-IDG-1025",
+        "agency": "North Carolina Biotechnology Center",
+        "orderIn": 0
+      },
+      {
+        "grantId": "465651/2014-3",
+        "agency": "Conselho Nacional de Desenvolvimento Cient?fico e Tecnol?gico",
+        "orderIn": 0
+      },
+      {
+        "grantId": "R25GM089569",
+        "agency": "National Institute of General Medical Sciences",
+        "orderIn": 0
+      },
+      {
+        "agency": "Canada Foundation for Innovation",
+        "orderIn": 0
+      },
+      {
+        "agency": "Genome Canada",
+        "orderIn": 0
+      },
+      {
+        "agency": "Merck Sharp and Dohme",
+        "orderIn": 0
+      },
+      {
+        "agency": "Takeda Pharmaceutical Company",
+        "orderIn": 0
+      },
+      {
+        "agency": "Janssen Pharmaceuticals",
+        "orderIn": 0
+      },
+      {
+        "grantId": "P30 CA016086",
+        "agency": "National Cancer Institute",
+        "orderIn": 0
+      },
+      {
+        "grantId": "T32GM007040",
+        "agency": "National Institute of General Medical Sciences",
+        "orderIn": 0
+      },
+      {
+        "grantId": "GT10886",
+        "agency": "Howard Hughes Medical Institute",
+        "orderIn": 0
+      },
+      {
+        "agency": "AbbVie",
+        "orderIn": 0
+      },
+      {
+        "agency": "Bayer",
+        "orderIn": 0
+      },
+      {
+        "grantId": "115766",
+        "agency": "Innovative Medicines Initiative",
+        "orderIn": 0
+      },
+      {
+        "grantId": "2016/17469-0",
+        "agency": "Funda??o de Amparo ? Pesquisa do Estado de S?o Paulo",
+        "orderIn": 0
+      },
+      {
+        "agency": "Boehringer Ingelheim",
+        "orderIn": 0
+      },
+      {
+        "agency": "Eshelman Institute for Innovation, University of North Carolina",
+        "orderIn": 0
+      },
+      {
+        "agency": "Merck KGaA",
+        "orderIn": 0
+      },
+      {
+        "agency": "Novartis Pharma",
+        "orderIn": 0
+      },
+      {
+        "grantId": "1097737",
+        "agency": "Structural Genomics Consortium",
+        "orderIn": 0
+      },
+      {
+        "grantId": "14/00818",
+        "agency": "Ministerio de Educaci?n, Cultura y Deporte",
+        "orderIn": 0
+      },
+      {
+        "grantId": "2018-IDG-1030",
+        "agency": "North Carolina Biotechnology Center",
+        "orderIn": 0
+      },
+      {
+        "agency": "Pfizer",
+        "orderIn": 0
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acsmedchemlett.9b00399"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC7073879"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC7073879?pdf=render"
+      },
+      {
+        "availability": "Free",
+        "availabilityCode": "F",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acsmedchemlett.9b00399"
+      }
+    ]
+  },
+  "commentCorrectionList": {
+    "commentCorrection": [
+      {
+        "id": "PPR91052",
+        "source": "PPR",
+        "type": "Preprint in",
+        "note": "CrossRef Pre-print loader",
+        "orderIn": 10002
+      }
+    ]
+  },
+  "isOpenAccess": "N",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 45,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "Y",
+  "dbCrossReferenceList": {
+    "dbName": [
+      "CHEMBL"
+    ]
+  },
+  "hasLabsLinks": "Y",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "N",
+  "dateOfCreation": "2020-03-19",
+  "firstIndexDate": "2020-03-19",
+  "fullTextReceivedDate": "2025-02-03",
+  "dateOfRevision": "2026-05-23",
+  "electronicPublicationDate": "2019-10-23",
+  "firstPublicationDate": "2019-10-23",
+  "embargoDate": "2021-03-12"
+}

@@ -1,0 +1,230 @@
+{
+  "id": "37439496",
+  "source": "MED",
+  "pmid": "37439496",
+  "pmcid": "PMC10445286",
+  "fullTextIdList": {
+    "fullTextId": [
+      "PMC10445286"
+    ]
+  },
+  "doi": "10.1021/acs.chemrestox.3c00042",
+  "title": "Identifying Differences in the Performance of Machine Learning Models for Off-Targets Trained on Publicly Available and Proprietary Data Sets.",
+  "authorString": "Smajić A, Rami I, Sosnin S, Ecker GF.",
+  "authorList": {
+    "author": [
+      {
+        "fullName": "Smajić A",
+        "firstName": "Aljoša",
+        "lastName": "Smajić",
+        "initials": "A",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-0847-3860"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Pharmaceutical Sciences, University of Vienna, Josef-Holaubek-Platz 2, 1090 Vienna, Austria."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Rami I",
+        "firstName": "Iris",
+        "lastName": "Rami",
+        "initials": "I",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0009-0002-9781-9233"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Pharmaceutical Sciences, University of Vienna, Josef-Holaubek-Platz 2, 1090 Vienna, Austria."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Sosnin S",
+        "firstName": "Sergey",
+        "lastName": "Sosnin",
+        "initials": "S",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0002-3042-7369"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Pharmaceutical Sciences, University of Vienna, Josef-Holaubek-Platz 2, 1090 Vienna, Austria."
+            }
+          ]
+        }
+      },
+      {
+        "fullName": "Ecker GF",
+        "firstName": "Gerhard F",
+        "lastName": "Ecker",
+        "initials": "GF",
+        "authorId": {
+          "type": "ORCID",
+          "value": "0000-0003-4209-6883"
+        },
+        "authorAffiliationDetailsList": {
+          "authorAffiliation": [
+            {
+              "affiliation": "Department of Pharmaceutical Sciences, University of Vienna, Josef-Holaubek-Platz 2, 1090 Vienna, Austria."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "authorIdList": {
+    "authorId": [
+      {
+        "type": "ORCID",
+        "value": "0000-0002-0847-3860"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0002-3042-7369"
+      },
+      {
+        "type": "ORCID",
+        "value": "0000-0003-4209-6883"
+      },
+      {
+        "type": "ORCID",
+        "value": "0009-0002-9781-9233"
+      }
+    ]
+  },
+  "dataLinksTagsList": {
+    "dataLinkstag": [
+      "supporting_data"
+    ]
+  },
+  "journalInfo": {
+    "issue": "8",
+    "volume": "36",
+    "journalIssueId": 3617254,
+    "dateOfPublication": "2023 Aug",
+    "monthOfPublication": 8,
+    "yearOfPublication": 2023,
+    "printPublicationDate": "2023-08-01",
+    "journal": {
+      "title": "Chemical research in toxicology",
+      "medlineAbbreviation": "Chem Res Toxicol",
+      "essn": "1520-5010",
+      "issn": "0893-228X",
+      "isoabbreviation": "Chem Res Toxicol",
+      "nlmid": "8807448"
+    }
+  },
+  "pubYear": "2023",
+  "pageInfo": "1300-1312",
+  "abstractText": "Each year, publicly available databases are updated with new compounds from different research institutions. Positive experimental outcomes are more likely to be reported; therefore, they account for a considerable fraction of these entries. Established publicly available databases such as ChEMBL allow researchers to use information without constrictions and create predictive tools for a broad spectrum of applications in the field of toxicology. Therefore, we investigated the distribution of positive and nonpositive entries within ChEMBL for a set of off-targets and its impact on the performance of classification models when applied to pharmaceutical industry data sets. Results indicate that models trained on publicly available data tend to overpredict positives, and models based on industry data sets predict negatives more often than those built using publicly available data sets. This is strengthened even further by the visualization of the prediction space for a set of 10,000 compounds, which makes it possible to identify regions in the chemical space where predictions converge. Finally, we highlight the utilization of these models for consensus modeling for potential adverse events prediction.",
+  "affiliation": "Department of Pharmaceutical Sciences, University of Vienna, Josef-Holaubek-Platz 2, 1090 Vienna, Austria.",
+  "publicationStatus": "ppublish",
+  "language": "eng",
+  "pubModel": "Print-Electronic",
+  "pubTypeList": {
+    "pubType": [
+      "Research Support, Non-U.S. Gov't",
+      "research-article",
+      "Journal Article"
+    ]
+  },
+  "grantsList": {
+    "grant": [
+      {
+        "grantId": "AW012321",
+        "agency": "Austrian Science Fund FWF",
+        "orderIn": 0
+      },
+      {
+        "grantId": "777365",
+        "agency": "Innovative Medicines Initiative",
+        "orderIn": 0
+      },
+      {
+        "agency": "Horizon 2020 Framework Programme",
+        "orderIn": 0
+      }
+    ]
+  },
+  "meshHeadingList": {
+    "meshHeading": [
+      {
+        "majorTopic_YN": "N",
+        "descriptorName": "Databases, Factual"
+      },
+      {
+        "majorTopic_YN": "Y",
+        "descriptorName": "Machine Learning"
+      }
+    ]
+  },
+  "subsetList": {
+    "subset": [
+      {
+        "code": "IM",
+        "name": "Index Medicus"
+      }
+    ]
+  },
+  "fullTextUrlList": {
+    "fullTextUrl": [
+      {
+        "availability": "Subscription required",
+        "availabilityCode": "S",
+        "documentStyle": "doi",
+        "site": "DOI",
+        "url": "https://doi.org/10.1021/acs.chemrestox.3c00042"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "html",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC10445286"
+      },
+      {
+        "availability": "Open access",
+        "availabilityCode": "OA",
+        "documentStyle": "pdf",
+        "site": "Europe_PMC",
+        "url": "https://europepmc.org/articles/PMC10445286?pdf=render"
+      }
+    ]
+  },
+  "isOpenAccess": "Y",
+  "inEPMC": "Y",
+  "inPMC": "Y",
+  "hasPDF": "Y",
+  "hasBook": "N",
+  "hasSuppl": "Y",
+  "citedByCount": 11,
+  "hasData": "Y",
+  "hasReferences": "Y",
+  "hasTextMinedTerms": "Y",
+  "hasDbCrossReferences": "N",
+  "hasLabsLinks": "Y",
+  "license": "cc by",
+  "hasEvaluations": "N",
+  "authMan": "N",
+  "epmcAuthMan": "N",
+  "nihAuthMan": "N",
+  "hasTMAccessionNumbers": "N",
+  "dateOfCompletion": "2023-08-22",
+  "dateOfCreation": "2023-07-13",
+  "firstIndexDate": "2023-07-13",
+  "fullTextReceivedDate": "2023-08-25",
+  "dateOfRevision": "2023-08-25",
+  "electronicPublicationDate": "2023-07-13",
+  "firstPublicationDate": "2023-07-13"
+}
