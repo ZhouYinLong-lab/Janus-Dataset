@@ -1,3 +1,4 @@
 zotero-automation/private/
 zotero-automation/staging/
 __pycache__/
+tmp/

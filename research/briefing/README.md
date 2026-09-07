@@ -8,6 +8,9 @@
 - [`briefing_notes.md`](briefing_notes.md)：约 8 分钟的短版汇报提纲，可直接据此口头说明。
 - [`claim_evidence_matrix.csv`](claim_evidence_matrix.csv)：逐条记录核心主张、证据、反证或限制和当前置信度。
 - [`evidence/`](evidence/)：对结论影响较大的新增论文及来源说明。
+- [`contact_attachment.md`](contact_attachment.md)：初步交流附件的可追踪文本源稿。
+- [`可编辑 DOCX`](../../output/documents/小分子生物活性阴性数据初步调研.docx)：可直接修改的三页附件。
+- [`发送版 PDF`](../../output/pdf/小分子生物活性阴性数据初步调研.pdf)：由 DOCX 导出的三页附件。
 
 ## 当前结论
 
