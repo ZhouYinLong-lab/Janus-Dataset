@@ -38,42 +38,15 @@ Assay = EGFR kinase activity assay
 negative = 0
 ```
 
-但二者的：
-
-- 实验背景
-- 测量结果
-- 数据质量
-- 证据可信度
-
-并不完全相同。
+但二者的实验背景、测量结果、数据质量、证据可信度并不完全相同。
 
 这说明一个简单的二元标签可能会把不同科学含义的数据压缩到同一个训练目标中。
 
 ## 3. LIT-PCBA 与上游实验记录的差异
 
-LIT-PCBA 的 MAPK1 数据中，官方将：
+LIT-PCBA 的 MAPK1 数据中，官方将 308 个 active、61,567 个 inactive 整理为较直接的 active.smi、inactive.smi。
 
-- 308 个 active
-- 61,567 个 inactive
-
-整理为较直接的：
-
-- active.smi
-- inactive.smi
-
-文件中只保留：
-
-- SMILES + PubChem SID
-
-接近机器学习训练所需的数据表示。而对应的 PubChem BioAssay AID 995 中，上游实验记录会区分更多状态，例如：
-
-- full titration curve
-- partial curve
-- single-point activity
-- inactive
-- inconclusive
-
-同时还可能保留具体测量值、activity score、assay 信息和数据质量状态。
+文件中只保留 SMILES + PubChem SID，接近机器学习训练所需的数据表示。而对应的 PubChem BioAssay AID 995 中，上游实验记录会区分更多状态，例如 full titration curve、partial curve、single-point activity、inactive、inconclusive，同时还可能保留具体测量值、activity score、assay 信息和数据质量状态。
 
 因此可以粗略理解为一个信息压缩过程：
 
@@ -91,24 +64,13 @@ SMILES + 0/1
 
 ## 4. 需要避免的简单判断
 
-把复杂 assay 记录压缩成 `SMILES + 0/1` 并不一定是不合理的。对于明确的二分类任务，这种表示具有明显优势：
-
-- 标签统一
-- 数据结构简单
-- 更容易进行模型训练与比较
-- 避免模型直接依赖过多异质实验字段
+把复杂 assay 记录压缩成 `SMILES + 0/1` 并不一定是不合理的。对于明确的二分类任务，这种表示具有明显优势：标签统一、数据结构简单、更容易进行模型训练与比较、避免模型直接依赖过多异质实验字段。
 
 因此，真正值得研究的问题并不是信息被压缩了所以这种数据表示不好，而应该是：
 
 > 在被压掉的信息中，是否存在对模型训练具有额外价值的部分？
 
-更进一步，需要考察：
-
-- 是否改善预测性能；
-- 是否改善分布外泛化；
-- 是否改善模型校准；
-- 是否有助于不确定性判断；
-- 是否能减少不同实验语义被错误合并的问题。
+更进一步，需要考察是否改善预测性能、是否改善分布外泛化、是否改善模型校准、是否有助于不确定性判断、是否能减少不同实验语义被错误合并的问题。
 
 ## 5. 可以考虑的三种数据表示层级
 
@@ -137,12 +99,7 @@ molecule -> relative_negative
 
 相比简单的 0/1，这种表示保留了“为什么它是阴性”的部分信息。
 
-可能适合：
-
-- 多任务学习；
-- 分层标签；
-- ranking；
-- weak supervision。
+可能适合多任务学习、分层标签、ranking、weak supervision。
 
 ### Level 3：带实验上下文与证据的数据表示
 
@@ -170,12 +127,7 @@ evidence
 
 而且这种收益可能具有明显的任务依赖性。
 
-例如，一个可能的现象是：
-
-- 对普通随机切分二分类任务，0/1 标签可能已经足够；
-- 对新 assay 或分布外任务，assay context 可能更重要；
-- 对模型 calibration，validity / confidence 可能具有价值；
-- 对排序任务，IC50 > x 或相对活性关系可能比直接二值化更合适。
+例如，一个可能的现象是：0/1 标签对于普通随机切分二分类任务可能已经足够、assay context 对新 assay 或分布外任务可能更重要、validity / confidence 对模型 calibration 可能具有价值、IC50 > x 或相对活性关系对排序任务可能比直接二值化更合适。
 
 因此，这里更像是一个：
 
@@ -183,20 +135,15 @@ evidence
 
 ## 7. 数据层面
 
-- 从真实 assay 到 benchmark 的过程中，具体丢失了哪些信息？
-- 哪些信息是有意简化，哪些属于可能影响训练的语义损失？
-- 不同类型的 negative 是否被统一压缩成了同一个标签？
+从真实 assay 到 benchmark 的过程中，具体丢失了哪些信息、哪些信息是有意简化而哪些属于可能影响训练的语义损失、不同类型的 negative 是否被统一压缩成了同一个标签？
 
 ### 模型层面
 
-- 被压缩的信息是否具有独立训练价值？
-- 这种价值是否只存在于特定任务？
-- 加入 context 后的收益，能否排除只是增加特征数量或数据量造成的影响？
+被压缩的信息是否具有独立训练价值、这种价值是否只存在于特定任务、加入 context 后的收益能否排除只是增加特征数量或数据量造成的影响？
 
 ### 泛化层面
 
-- 哪些信息对 random split 没有明显帮助，但对 scaffold split、temporal split 或 unseen assay 更重要？
-- validity、confidence、relation 等字段是否能改善模型校准或不确定性判断？
+哪些信息对 random split 没有明显帮助但对 scaffold split、temporal split 或 unseen assay 更重要、validity、confidence、relation 等字段是否能改善模型校准或不确定性判断？
 
 不能简单得出保存的信息越多，模型一定越好。
 
