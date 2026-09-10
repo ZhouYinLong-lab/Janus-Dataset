@@ -49,3 +49,9 @@
 {"time":"2026-09-06T07:14:19.722Z","run":"janus-reading-20260906","action":"create_reading_note","key":"7LMQAQFU"}
 {"time":"2026-09-06T07:14:20.359Z","run":"janus-reading-20260906","action":"import_pdf","key":"RFN8PM2K"}
 {"time":"2026-09-06T07:14:20.408Z","run":"janus-reading-20260906","action":"complete","key":null}
+{"time":"2026-09-10T07:10:05.990Z","run":"janus-biominer-20260910","action":"create_item","key":"FRTL4AH9","detail":"BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature"}
+{"time":"2026-09-10T07:10:06.049Z","run":"janus-biominer-20260910","action":"add_membership","key":"FRTL4AH9","detail":"03 阴性价值与挖掘方法"}
+{"time":"2026-09-10T07:10:06.125Z","run":"janus-biominer-20260910","action":"create_reading_note","key":"Z2NEEC56","detail":"Janus 阅读导引 12"}
+{"time":"2026-09-10T07:10:07.139Z","run":"janus-biominer-20260910","action":"import_pdf","key":"KMMGF6KF","detail":"Janus 12｜BioMiner arXiv PDF"}
+{"time":"2026-09-10T07:10:07.144Z","run":"janus-biominer-20260910","action":"complete_item","key":"FRTL4AH9","detail":"BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature"}
+{"time":"2026-09-10T07:10:07.149Z","run":"janus-biominer-20260910","action":"complete","key":null,"detail":{"failures":0}}

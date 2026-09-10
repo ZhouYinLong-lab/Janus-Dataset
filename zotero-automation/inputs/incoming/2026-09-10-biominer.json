@@ -1,0 +1,52 @@
+[
+  {
+    "order": "12",
+    "data": {
+      "itemType": "preprint",
+      "title": "BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature",
+      "creators": [
+        { "firstName": "Jiaxian", "lastName": "Yan", "creatorType": "author" },
+        { "firstName": "Jintao", "lastName": "Zhu", "creatorType": "author" },
+        { "firstName": "Yuhang", "lastName": "Yang", "creatorType": "author" },
+        { "firstName": "Qi", "lastName": "Liu", "creatorType": "author" },
+        { "firstName": "Kai", "lastName": "Zhang", "creatorType": "author" },
+        { "firstName": "Zaixi", "lastName": "Zhang", "creatorType": "author" },
+        { "firstName": "Xukai", "lastName": "Liu", "creatorType": "author" },
+        { "firstName": "Boyan", "lastName": "Zhang", "creatorType": "author" },
+        { "firstName": "Kaiyuan", "lastName": "Gao", "creatorType": "author" },
+        { "firstName": "Jinchuan", "lastName": "Xiao", "creatorType": "author" },
+        { "firstName": "Enhong", "lastName": "Chen", "creatorType": "author" }
+      ],
+      "DOI": "10.48550/arXiv.2604.21508",
+      "url": "https://arxiv.org/abs/2604.21508",
+      "repository": "arXiv",
+      "archive": "arXiv",
+      "archiveID": "2604.21508",
+      "date": "2026-04-23",
+      "genre": "Preprint",
+      "abstractNote": "BioMiner is a multimodal system for extracting protein-ligand bioactivity records from scientific literature. It combines document retrieval, layout-aware parsing, visual understanding and structured extraction, and introduces the BioVista benchmark. The authors report a benchmark containing 16,457 entries from 500 papers and a mined collection of 82,262 records from 11,683 papers, followed by downstream evaluations in bioactivity prediction and drug discovery tasks.",
+      "tags": [
+        { "tag": "status/unread" },
+        { "tag": "status/core" },
+        { "tag": "type/method" },
+        { "tag": "topic/bioactivity" },
+        { "tag": "topic/literature-mining" },
+        { "tag": "topic/negative-evidence" }
+      ],
+      "extra": "Janus reading route 12; arXiv:2604.21508; submitted 23 April 2026"
+    },
+    "collection_path": "Janus｜小分子生物活性阴性证据/03 阴性价值与挖掘方法",
+    "role": "多模态生物活性文献抽取的直接相邻工作",
+    "reason": "用于判断一般生物活性抽取已经达到什么程度，以及阴性证据专项抽取还剩下哪些缺口。",
+    "note_marker": "Janus 阅读导引 12",
+    "note": "<h1>Janus 阅读导引 12</h1><p>这是目前与文献生物活性抽取设想最接近的工作之一，重点是从正文、表格和图像中恢复蛋白—配体活性记录。</p><p>先读：系统流程；BioVista 基准的构建与评价；三个下游应用。</p><p>读后回答：它抽取的是一般活性三元组，还是专门识别定性阴性、截断值和失败原因？评价指标能否证明阴性证据被正确恢复？</p><p>边界：这是 2026 年 arXiv 预印本，尚不能按同行评议论文看待；工作主要面向通用生物活性抽取，并未把阴性语义、未测试与无效的区分作为核心评价对象。</p><p>来源：https://arxiv.org/abs/2604.21508</p>",
+    "pdf_path": "D:\\Projects\\Dog\\Janus-Dataset\\zotero-automation\\staging\\12-biominer.pdf",
+    "pdf_url": "https://arxiv.org/pdf/2604.21508",
+    "pdf_sha256": "5EE4BD1C4F2BB50F7238B379F47B74EB33ACDB43DD9D00C53B6CA0D0DEC64310",
+    "review_required": false,
+    "evidence": [
+      "official arXiv record",
+      "verified 20-page arXiv PDF"
+    ]
+  }
+]

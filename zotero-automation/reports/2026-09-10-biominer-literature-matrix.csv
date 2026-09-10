@@ -1,0 +1,2 @@
+order,title,year,source,type,target_collection,relevance,limitation,status
+12,"BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature",2026,arXiv,preprint,"03 阴性价值与挖掘方法","多模态生物活性文献抽取的直接相邻工作","未把定性阴性、截断阴性、失败原因及未测试/无效区分作为核心评价对象",unread
