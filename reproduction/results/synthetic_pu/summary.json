@@ -1,0 +1,14 @@
+{
+  "n_runs": 20,
+  "interpretation": "The correction is evaluated against latent true labels in a synthetic random-positive-selection setting; it is a sanity check, not a full reproduction of the paper's PUlasso algorithm.",
+  "mean_metrics": {
+    "naive_auc": 0.8691718086602549,
+    "pu_auc": 0.8691718086602549,
+    "naive_ap": 0.8486956533830241,
+    "pu_ap": 0.8486956533830241,
+    "naive_brier": 0.2795215412952922,
+    "pu_brier": 0.16022620880395205,
+    "naive_logloss": 0.7789398172253148,
+    "pu_logloss": 0.6814598825428279
+  }
+}

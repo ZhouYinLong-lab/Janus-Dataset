@@ -1,0 +1,41 @@
+# Enrichment baseline 对照复现
+
+## 目的
+
+Song 等人的分析不仅比较了 PU learning 与作者方法，还把 PU 模型与基于 log-enrichment score 的方法进行对照。这里单独复现这一部分，用同一数据划分、同一 `py1` 和同一批随机种子，比较每个测试折上的 AUC。
+
+## 作者实现
+
+代码来自作者分析仓库：
+
+- `code/enrich_comparison/enr_test_fit.R`
+- `code/enrich_comparison/enr_test_summarize.R`
+- `functions/v.enr.R`
+- `functions/log_enrichment_score.R`
+
+作者脚本的原始设置是每个数据集 10 次重复、每次 10 折；`py1` 从 `data-r/py1values.rda` 读取，种子为 `19462020 * r`。本地脚本 `run_enrichment_baseline.R` 保留这一逻辑，并把每个重复的日志、RDS 和逐折指标单独保存。
+
+## 运行方式
+
+```powershell
+$env:R_LIBS_USER = 'D:/Scoop/persist/r/site-library'
+Rscript reproduction/run_enrichment_baseline.R DXS reproduction/results/enrichment 10 10 2 1000
+```
+
+参数依次为：数据集、输出目录、重复次数、折数、并行 worker 数、最大迭代次数。首次验证可使用较小的 `nrep` 或 `nfolds`，但小设置不能直接当作论文原始设置的最终结果。
+
+## 作者仓库中的可用证据
+
+作者提交的 `PU_enr_pvalue_diff.csv` 报告了 PU AUC 与 enrichment AUC 的配对差异检验。其 `mean_diff` 在十个数据集上均为正：LGK 0.000241、PyKS 0.000492、DXS 0.002690、rocker 0.010200、SUMO1 0.007006、HA 0.001830、UBE2I 0.003216、TPK1 0.002796、Bgl3 0.016694、GB1 0.004746；对应的 p 值均小于 0.001。
+
+这支持作者方法在该特定数据和评价设置下优于 enrichment baseline，但不能单独证明优势只来自 PU 标签处理；还需要查看数据划分、模型参数、特征表示和重复实验是否严格一致。本地复现结果以 `*_enrichment_detail.csv`、`*_enrichment_summary.csv` 和每个重复的 `.log` 为准。
+
+## 本地链路验证
+
+已在 DXS 上完成 1 次重复、3 折的快速验证：enrichment 平均 AUC 为 0.976956，PU 平均 AUC 为 0.979634，配对差值为 +0.002677。该结果仅证明脚本、作者函数和指标提取链路可运行；由于重复次数和折数低于作者设置，不能替代十次重复的统计结论。
+
+随后按作者的 10 次重复、10 折设置完成了 DXS。10 次重复的平均差值为 +0.002690，重复间标准差为 0.00000205，配对 t 检验 `p = 1.37 × 10^-29`。这与作者汇总文件中 DXS 的 `mean_diff = 0.002690` 基本一致。由于上游 `v.enr.R` 没有把 `log_enrichment_score` 导出到 Windows PSOCK worker，本地复现将 enrichment 部分固定为单 worker；这改变运行速度，不改变 enrichment 计算公式或数据划分。
+
+## 已知限制
+
+作者仓库中的 `res_comp.Rdata` 采用 Git LFS，但该仓库当前 LFS 服务不可用，因此本地不能直接读取该二进制汇总文件；可读的 `PU_enr_pvalue_diff.csv` 和源代码仍然存在。本文档区分“作者已提交的汇总证据”和“本地重新运行的结果”，不把前者冒充本地复现。

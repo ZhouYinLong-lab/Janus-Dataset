@@ -1,0 +1,2 @@
+"dataset","n_unique","labeled_reads","unlabeled_reads","nfolds","nhyperparam","selected_py","auc_corrected","auc_pu","reference_auc","difference_from_reference","status"
+"GB1",536962,259540723,323082194,3,5,0.0223606797749979,0.851626963291609,0.843764345365191,0.869844250134942,-0.0182172868433326,"ok"
