@@ -69,3 +69,5 @@ GB1 已完成 3×5 预检，校正 AUC 为 0.851627，作者参考值为 0.86984
 | rocker | 未运行 | — | 0.818176 | — | 作者示例已单独复现 |
 
 跨批次汇总由 `aggregate_multidataset.R` 生成，输出为 `../results/multidataset/metrics_all.csv`；PyKS 的高设置结果单独位于 `../results/multidataset_high_setting/metrics_all.csv`。这些文件把每个数据集的独立指标文件合并，避免后续批次覆盖前一批的汇总结果。
+
+图由 `make_summary_plots.R` 生成，保存在 `../results/figures/multidataset_auc_vs_reference.png` 和 `../results/figures/enrichment_pu_auc_difference.png`。

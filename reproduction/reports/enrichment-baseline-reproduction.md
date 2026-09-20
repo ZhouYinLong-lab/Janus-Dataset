@@ -36,6 +36,8 @@ Rscript reproduction/run_enrichment_baseline.R DXS reproduction/results/enrichme
 
 随后按作者的 10 次重复、10 折设置完成了 DXS。10 次重复的平均差值为 +0.002690，重复间标准差为 0.00000205，配对 t 检验 `p = 1.37 × 10^-29`。这与作者汇总文件中 DXS 的 `mean_diff = 0.002690` 基本一致。由于上游 `v.enr.R` 没有把 `log_enrichment_score` 导出到 Windows PSOCK worker，本地复现将 enrichment 部分固定为单 worker；这改变运行速度，不改变 enrichment 计算公式或数据划分。
 
+LGK 也按 10 次重复、10 折设置完成。10 次重复的平均差值为 +0.0002411，重复间标准差为 0.00000790，配对 t 检验 `p = 6.97 × 10^-15`；作者汇总文件中的 LGK `mean_diff = 0.0002413`，两者在数值上吻合。LGK 的逐折和逐重复结果保存在 `reproduction/results/enrichment/LGK_enrichment_detail.csv` 与 `LGK_enrichment_summary.csv`。
+
 ## 已知限制
 
 作者仓库中的 `res_comp.Rdata` 采用 Git LFS，但该仓库当前 LFS 服务不可用，因此本地不能直接读取该二进制汇总文件；可读的 `PU_enr_pvalue_diff.csv` 和源代码仍然存在。本文档区分“作者已提交的汇总证据”和“本地重新运行的结果”，不把前者冒充本地复现。
