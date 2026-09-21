@@ -7,11 +7,15 @@ fig_dir <- file.path("reproduction", "results", "figures")
 dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 
 metrics <- read.csv(file.path("reproduction", "results", "multidataset", "metrics_all.csv"), check.names = FALSE)
-high_file <- file.path("reproduction", "results", "multidataset_high_setting", "PyKS_metrics.csv")
+high_file <- file.path("reproduction", "results", "multidataset_high_setting", "metrics_all.csv")
 if (file.exists(high_file)) {
   high <- read.csv(high_file, check.names = FALSE)
   high$source_file <- basename(high_file)
-  metrics <- rbind(metrics[metrics$dataset != "PyKS", , drop = FALSE], high)
+  replace_datasets <- intersect(metrics$dataset, high$dataset)
+  metrics <- rbind(
+    metrics[!metrics$dataset %in% replace_datasets, , drop = FALSE],
+    high
+  )
 }
 metrics <- metrics[order(metrics$reference_auc), , drop = FALSE]
 metrics$dataset <- factor(metrics$dataset, levels = metrics$dataset)

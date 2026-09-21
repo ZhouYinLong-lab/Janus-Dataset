@@ -15,12 +15,12 @@ Song et al., *Inferring protein sequence-function relationships with large-scale
 - `make_summary_plots.R`：生成 AUC 对照图和 enrichment 差值图；
 - `results/author_example/`：运行日志和输出结果；
 - `results/multidataset/`：十个数据集的 3×5/5×10 预检结果；
-- `results/multidataset_high_setting/`：PyKS 5×10 结果，以及正在推进的 GB1/Bgl3_LT 高设置结果；
+- `results/multidataset_high_setting/`：PyKS、GB1、Bgl3_LT 的 5×10 高设置结果；
 - `results/enrichment/`：DXS 和 LGK 的 10×10、10 次重复 baseline 对照；
 - `reports/`：复现说明与结果解释。
 
 ## 当前边界
 
-当前已经覆盖作者分析仓库中的十个数据集：DXS、GB1、PyKS、UBE2I、Bgl3_LT、SUMO1、TPK1、LGK、HA，以及单独的 rocker 示例。DXS、LGK、HA 使用了 5×10 设置；PyKS 已完成 5×10 复核；其余部分先完成 3×5 预检。GB1 和 Bgl3_LT 的 5×10 高设置正在单独运行，因为低设置与作者参考 AUC 的差异较大。
+当前已经覆盖作者分析仓库中的十个数据集：DXS、GB1、PyKS、UBE2I、Bgl3_LT、SUMO1、TPK1、LGK、HA，以及单独的 rocker 示例。DXS、LGK、HA、PyKS、GB1 和 Bgl3_LT 已完成 5×10 设置；SUMO1、TPK1、UBE2I 保留 3×5 预检结果。GB1 在高设置下接近作者参考 AUC，Bgl3_LT 在高设置下仍明显偏低，后者需要单独排查数据或实现差异。
 
 enrichment baseline 已在 DXS 和 LGK 上按作者的 10 次重复、10 折设置完成。作者仓库的原始 `res_comp.Rdata` 受 Git LFS 服务不可用影响，不能直接读取；本地结果因此区分“作者提交的 CSV 汇总”和“本地重新运行的结果”。
