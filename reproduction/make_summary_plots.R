@@ -29,6 +29,21 @@ if (file.exists(author_bgl3_file)) {
     metrics$nhyperparam[bgl3_idx[1]] <- author_bgl3$nhyperparam[1]
   }
 }
+author_setting_file <- file.path("reproduction", "results", "multidataset_author_setting",
+                                "metrics_all.csv")
+if (file.exists(author_setting_file)) {
+  author_setting <- read.csv(author_setting_file, check.names = FALSE)
+  for (dataset_name in author_setting$dataset) {
+    idx <- which(metrics$dataset == dataset_name)
+    src <- which(author_setting$dataset == dataset_name)[1]
+    if (length(idx)) {
+      metrics$auc_corrected[idx[1]] <- author_setting$auc_corrected[src]
+      metrics$reference_auc[idx[1]] <- author_setting$reference_auc[src]
+      metrics$nfolds[idx[1]] <- author_setting$nfolds[src]
+      metrics$nhyperparam[idx[1]] <- author_setting$nhyperparam[src]
+    }
+  }
+}
 metrics <- metrics[order(metrics$reference_auc), , drop = FALSE]
 metrics$dataset <- factor(metrics$dataset, levels = metrics$dataset)
 metrics_long <- rbind(

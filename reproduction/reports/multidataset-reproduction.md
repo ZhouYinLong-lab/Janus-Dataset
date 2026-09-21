@@ -4,6 +4,8 @@
 
 本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，SUMO1、TPK1、UBE2I 使用 3 折 × 5 个 `py` 值预检。`rocker` 示例另有独立复现记录。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
 
+此外，DXS、LGK、HA 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；对应汇总见 `../results/multidataset_author_setting/metrics_all.csv`。
+
 ## 结果
 
 下面优先列出当前批次的最高设置结果；对于只做 3×5 预检的数据集，单独保留预检表，不将两类设置混在一起。
@@ -18,6 +20,14 @@
 | HA | 141,286 | 5×10 | 0.6802494 | 0.6800692 | 0.6804548 | −0.0002054 | 完成 |
 
 DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT 的自动选参结果明显偏低，但这不是与作者结果相同的协议：作者专用脚本固定 `py1=0.35`，而通用复现脚本会自动搜索 `py` 并将其选为 `0.001`。因此，自动选参结果只能作为诊断，不能直接判定实现失败。
+
+作者级设置结果如下：
+
+| 数据集 | folds × `py` | 选定 `py` | 校正 AUC | 作者参考 AUC | 差值 |
+|---|---:|---:|---:|---:|---:|
+| DXS | 10×20 | 0.001000 | 0.9796445 | 0.9796445 | 约 0 |
+| LGK | 10×20 | 0.013690 | 0.7440990 | 0.7440990 | 约 0 |
+| HA | 10×20 | 0.001000 | 0.6804548 | 0.6804548 | 约 0 |
 
 按作者专用协议重跑后，Bgl3_LT 的 10 折校正 AUC 为 `0.794615994869779`，作者参考值也是 `0.794615994869779`，差值为浮点舍入误差。这一结果排除了“Bgl3 数据无法复现”的初步判断，说明此前的大偏差主要由参数协议不一致造成。对应脚本、日志、RDS 和指标文件分别为 `../run_bgl3_author_protocol.R`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.log`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.rds` 和 `../results/multidataset_high_setting/Bgl3_LT_author_protocol_metrics.csv`。
 
@@ -44,6 +54,8 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 - `../results/multidataset_high_setting/metrics_all.csv`：PyKS、GB1、Bgl3_LT 的 5×10 高设置汇总；
 - `../results/multidataset_high_setting/GB1_metrics.csv`；
 - `../results/multidataset_high_setting/Bgl3_LT_metrics.csv`；
+- `../results/multidataset_author_setting/metrics_all.csv`：DXS、LGK、HA 的作者级 10×20 汇总；
+- `../results/multidataset_author_setting/DXS.log`、`LGK.log`、`HA.log`：作者级运行日志；
 - 对应的 `.rds`、`.log` 文件，以及每个数据集的独立 `_metrics.csv`。
 
 ## Bgl3_LT 协议诊断
