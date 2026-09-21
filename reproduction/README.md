@@ -21,6 +21,6 @@ Song et al., *Inferring protein sequence-function relationships with large-scale
 
 ## 当前边界
 
-当前已经覆盖作者分析仓库中的十个数据集：DXS、GB1、PyKS、UBE2I、Bgl3_LT、SUMO1、TPK1、LGK、HA，以及单独的 rocker 示例。DXS、LGK、HA、PyKS、GB1 和 Bgl3_LT 已完成 5×10 设置；SUMO1、TPK1、UBE2I 保留 3×5 预检结果。GB1 在高设置下接近作者参考 AUC，Bgl3_LT 在高设置下仍明显偏低，后者需要单独排查数据或实现差异。
+当前已经覆盖作者分析仓库中的十个数据集：DXS、GB1、PyKS、UBE2I、Bgl3_LT、SUMO1、TPK1、LGK、HA，以及单独的 rocker 示例。DXS、LGK、HA、PyKS、GB1 和 Bgl3_LT 已完成 5×10 设置；SUMO1、TPK1、UBE2I 保留 3×5 预检结果。GB1 在高设置下接近作者参考 AUC。Bgl3_LT 的通用自动选参结果曾明显偏低，但按作者专用脚本固定 `py1=0.35`、10 折、1 个超参数严格重跑后，AUC 与作者参考值完全一致；因此此前偏差已定位为协议不一致，而不是当前实现链路无法复现。
 
 enrichment baseline 已在 DXS 和 LGK 上按作者的 10 次重复、10 折设置完成。作者仓库的原始 `res_comp.Rdata` 受 Git LFS 服务不可用影响，不能直接读取；本地结果因此区分“作者提交的 CSV 汇总”和“本地重新运行的结果”。

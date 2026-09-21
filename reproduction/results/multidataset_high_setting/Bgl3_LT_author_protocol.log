@@ -1,0 +1,34 @@
+dataset=Bgl3_LT
+protocol=author_vfit_Bgl3_LT.R
+py1=0.35
+nfolds=10
+nhyperparam=1
+n_unique=614576
+creating a parallel environment...
+fitting with a fold 1 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 2 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 3 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 4 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 5 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 6 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 7 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 8 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 9 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a fold 10 ...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+obtaining an average ROC curve for each py1...
+  |                                                          |                                                  |   0%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+fitting with a full dataset...
+  dataset              protocol  py1 nfolds nhyperparam n_unique auc_corrected
+1 Bgl3_LT author_vfit_Bgl3_LT.R 0.35     10           1   614576      0.794616
+     auc_pu reference_auc difference_from_reference
+1 0.6915004      0.794616             -1.110223e-16

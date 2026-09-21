@@ -1,0 +1,2 @@
+"dataset","protocol","py1","nfolds","nhyperparam","n_unique","auc_corrected","auc_pu","reference_auc","difference_from_reference"
+"Bgl3_LT","author_vfit_Bgl3_LT.R",0.35,10,1,614576,0.794615994869779,0.691500396665356,0.794615994869779,-1.11022302462516e-16

@@ -17,6 +17,18 @@ if (file.exists(high_file)) {
     high
   )
 }
+author_bgl3_file <- file.path("reproduction", "results", "multidataset_high_setting",
+                             "Bgl3_LT_author_protocol_metrics.csv")
+if (file.exists(author_bgl3_file)) {
+  author_bgl3 <- read.csv(author_bgl3_file, check.names = FALSE)
+  bgl3_idx <- which(metrics$dataset == "Bgl3_LT")
+  if (length(bgl3_idx)) {
+    metrics$auc_corrected[bgl3_idx[1]] <- author_bgl3$auc_corrected[1]
+    metrics$reference_auc[bgl3_idx[1]] <- author_bgl3$reference_auc[1]
+    metrics$nfolds[bgl3_idx[1]] <- author_bgl3$nfolds[1]
+    metrics$nhyperparam[bgl3_idx[1]] <- author_bgl3$nhyperparam[1]
+  }
+}
 metrics <- metrics[order(metrics$reference_auc), , drop = FALSE]
 metrics$dataset <- factor(metrics$dataset, levels = metrics$dataset)
 metrics_long <- rbind(
