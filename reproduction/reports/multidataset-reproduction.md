@@ -2,9 +2,9 @@
 
 ## 当前状态
 
-本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，SUMO1、TPK1、UBE2I 使用 3 折 × 5 个 `py` 值预检。`rocker` 示例另有独立复现记录。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
+本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，UBE2I、SUMO1 已进一步完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。`rocker` 示例另有独立复现记录。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
 
-此外，DXS、LGK、HA 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；对应汇总见 `../results/multidataset_author_setting/metrics_all.csv`。
+此外，DXS、LGK、HA、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；对应汇总见 `../results/multidataset_author_setting/metrics_all.csv` 和 `../results/multidataset_author_setting_remaining/metrics_all.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
 
 ## 结果
 
@@ -28,6 +28,8 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 | DXS | 10×20 | 0.001000 | 0.9796445 | 0.9796445 | 约 0 |
 | LGK | 10×20 | 0.013690 | 0.7440990 | 0.7440990 | 约 0 |
 | HA | 10×20 | 0.001000 | 0.6804548 | 0.6804548 | 约 0 |
+| UBE2I | 10×20 | 0.001000 | 0.8032755 | 0.8032755 | 约 0 |
+| SUMO1 | 10×20 | 0.001000 | 0.7632213 | 0.7632213 | 约 0 |
 
 按作者专用协议重跑后，Bgl3_LT 的 10 折校正 AUC 为 `0.794615994869779`，作者参考值也是 `0.794615994869779`，差值为浮点舍入误差。这一结果排除了“Bgl3 数据无法复现”的初步判断，说明此前的大偏差主要由参数协议不一致造成。对应脚本、日志、RDS 和指标文件分别为 `../run_bgl3_author_protocol.R`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.log`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.rds` 和 `../results/multidataset_high_setting/Bgl3_LT_author_protocol_metrics.csv`。
 
@@ -55,6 +57,8 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 - `../results/multidataset_high_setting/GB1_metrics.csv`；
 - `../results/multidataset_high_setting/Bgl3_LT_metrics.csv`；
 - `../results/multidataset_author_setting/metrics_all.csv`：DXS、LGK、HA 的作者级 10×20 汇总；
+- `../results/multidataset_author_setting_remaining/metrics_all.csv`：UBE2I、SUMO1 的作者级 10×20 汇总；
+- `author-setting-batch-coverage.md`：本批次的设置、完成结果和 TPK1 资源边界记录；
 - `../results/multidataset_author_setting/DXS.log`、`LGK.log`、`HA.log`：作者级运行日志；
 - 对应的 `.rds`、`.log` 文件，以及每个数据集的独立 `_metrics.csv`。
 
@@ -64,7 +68,7 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 
 ## 重要限制
 
-除 Bgl3_LT 外，表中的通用多数据集结果仍不是论文作者原始 10 folds × 20 `py` 值的逐项完全复现；当前 5×10 结果用于验证实现链路，3×5 结果只用于快速预检。Bgl3_LT 已另行完成作者专用的 10 折固定参数协议，因此该数据集的严格 AUC 可以与作者参考值直接比较。
+除已列出的作者级结果外，表中的通用多数据集结果仍不是论文作者原始 10 folds × 20 `py` 值的逐项完全复现；当前 5×10 结果用于验证实现链路，3×5 结果只用于快速预检。Bgl3_LT 已另行完成作者专用的 10 折固定参数协议，TPK1 的作者级任务则在第 8 折中断，因此二者不能混同：前者有严格 AUC，后者目前只有预检值。
 
 ## 轻量预检结果
 
@@ -86,11 +90,11 @@ GB1 的 3×5 预检为 0.851627，升级到 5×10 后为 0.866974，已明显接
 | DXS | 5×10 | 0.979652 | 0.979645 | +0.000007 | 与参考值一致 |
 | GB1 | 5×10 | 0.866974 | 0.869844 | −0.002870 | 高设置后接近 |
 | PyKS | 5×10 | 0.847844 | 0.849753 | −0.001909 | 高设置复核后明显接近 |
-| UBE2I | 3×5 | 0.803229 | 0.803275 | −0.000046 | 预检一致 |
+| UBE2I | 10×20 | 0.803275 | 0.803275 | 约 0 | 作者级一致 |
 | Bgl3_LT | 5×10 自动选参 | 0.692801 | 0.794616 | −0.101815 | 与作者专用协议不一致 |
 | Bgl3_LT | 10×1，固定 `py1=0.35` | 0.794616 | 0.794616 | 0.000000 | 严格协议一致 |
-| SUMO1 | 3×5 | 0.763162 | 0.763221 | −0.000059 | 预检一致 |
-| TPK1 | 3×5 | 0.762067 | 0.761576 | +0.000492 | 预检一致 |
+| SUMO1 | 10×20 | 0.763221 | 0.763221 | 约 0 | 作者级一致 |
+| TPK1 | 3×5 | 0.762067 | 0.761576 | +0.000492 | 仅有预检；作者级任务中断 |
 | LGK | 5×10 | 0.744314 | 0.744099 | +0.000215 | 与参考值接近 |
 | HA | 5×10 | 0.680249 | 0.680455 | −0.000205 | 与参考值接近 |
 | rocker | 未运行 | — | 0.818176 | — | 作者示例已单独复现 |
