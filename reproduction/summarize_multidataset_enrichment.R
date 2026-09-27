@@ -18,7 +18,7 @@ inputs <- data.frame(
     "reproduction/results/enrichment_sumo1_full/SUMO1_enrichment_summary.csv",
     "reproduction/results/enrichment_ube2i_full/UBE2I_enrichment_summary.csv",
     "reproduction/results/enrichment_tpk1_full/TPK1_enrichment_summary.csv",
-    "reproduction/results/enrichment_bgl3_full/Bgl3_enrichment_summary.csv",
+    "reproduction/results/enrichment_bgl3_full/Bgl3_LT_enrichment_summary.csv",
     "reproduction/results/enrichment_gb1_full/GB1_enrichment_summary.csv"
   ),
   detail_file = c(
@@ -30,7 +30,7 @@ inputs <- data.frame(
     "reproduction/results/enrichment_sumo1_full/SUMO1_enrichment_detail.csv",
     "reproduction/results/enrichment_ube2i_full/UBE2I_enrichment_detail.csv",
     "reproduction/results/enrichment_tpk1_full/TPK1_enrichment_detail.csv",
-    "reproduction/results/enrichment_bgl3_full/Bgl3_enrichment_detail.csv",
+    "reproduction/results/enrichment_bgl3_full/Bgl3_LT_enrichment_detail.csv",
     "reproduction/results/enrichment_gb1_full/GB1_enrichment_detail.csv"
   ),
   author_mean_difference = c(0.002690, 0.000241, 0.000492, 0.010200, 0.001830,
