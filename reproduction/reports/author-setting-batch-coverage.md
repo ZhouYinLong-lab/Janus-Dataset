@@ -29,9 +29,17 @@ TPK1 因此不计入作者级完成数，也没有生成可用于最终比较的
 
 ## 当前作者级覆盖
 
-已完成并与参考 AUC 精确一致的数据集为 DXS、LGK、HA、Bgl3_LT、UBE2I、SUMO1 和 rocker，共 7 个。rocker 的作者级 10 折 × 20 候选值复现在单独目录 `../results/multidataset_author_setting_rocker/`；其余结果保存在 `multidataset_author_setting/` 和 `multidataset_high_setting/`；Bgl3_LT 使用作者专用的固定 `py1=0.35` 协议。
+已完成并与参考 AUC 精确一致的数据集为 DXS、LGK、HA、PyKS、Bgl3_LT、UBE2I、SUMO1 和 rocker，共 8 个。rocker 的作者级 10 折 × 20 候选值复现在单独目录 `../results/multidataset_author_setting_rocker/`；PyKS 保存在 `../results/multidataset_author_setting_extra/`；其余结果保存在 `multidataset_author_setting/` 和 `multidataset_high_setting/`；Bgl3_LT 使用作者专用的固定 `py1=0.35` 协议。
 
-TPK1 是原始 UBE2I、SUMO1、TPK1 批次中唯一未完成的数据集，GB1 仍保留 5×10 高设置结果。此前未升级的 PyKS 现已启动独立的 10×20 作者级任务，完成前仍只报告其 5×10 结果。
+TPK1 是原始 UBE2I、SUMO1、TPK1 批次中唯一未完成的数据集，GB1 仍保留 5×10 高设置结果。此前未升级的 PyKS 已完成独立的 10×20 作者级任务，校正 AUC 为 `0.849753278800652`，作者参考值相同，差值为 `-3.33×10⁻¹⁶`；选定 `py=0.03652259`，PU AUC 为 `0.836979382800671`。结果文件位于 `../results/multidataset_author_setting_extra/PyKS_metrics.csv`，运行日志和完整 RDS 输出保留在同目录。
+
+PyKS 批次命令为：
+
+```powershell
+Rscript reproduction/run_multidataset.R PyKS reproduction/results/multidataset_author_setting_extra 10 20 2
+```
+
+十个数据集目前已有 8 个完成作者级或作者专用协议复现：DXS、LGK、HA、PyKS、UBE2I、SUMO1、rocker 和 Bgl3_LT；TPK1 因内存边界停止，GB1 目前为 5×10 高设置，尚未完成 10×20 作者级复现。
 
 ## 解释边界
 

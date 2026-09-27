@@ -2,9 +2,9 @@
 
 ## 当前状态
 
-本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，UBE2I、SUMO1、rocker 已完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。PyKS 的 10 折 × 20 个作者级设置正在另行运行。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
+本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，DXS、LGK、HA、PyKS、UBE2I、SUMO1、rocker 已完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
 
-此外，DXS、LGK、HA、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；rocker 同设置结果也与参考 AUC 一致，汇总分别见 `../results/multidataset_author_setting/metrics_all.csv`、`../results/multidataset_author_setting_remaining/metrics_all.csv` 和 `../results/multidataset_author_setting_rocker/rocker_metrics.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
+此外，DXS、LGK、HA、PyKS、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果均与参考 AUC 完全一致；rocker 同设置结果也与参考 AUC 一致，汇总分别见 `../results/multidataset_author_setting/metrics_all.csv`、`../results/multidataset_author_setting_remaining/metrics_all.csv`、`../results/multidataset_author_setting_rocker/rocker_metrics.csv` 和 `../results/multidataset_author_setting_extra/PyKS_metrics.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
 
 ## 结果
 
@@ -28,6 +28,7 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 | DXS | 10×20 | 0.001000 | 0.9796445 | 0.9796445 | 约 0 |
 | LGK | 10×20 | 0.013690 | 0.7440990 | 0.7440990 | 约 0 |
 | HA | 10×20 | 0.001000 | 0.6804548 | 0.6804548 | 约 0 |
+| PyKS | 10×20 | 0.036523 | 0.8497533 | 0.8497533 | 约 0 |
 | UBE2I | 10×20 | 0.001000 | 0.8032755 | 0.8032755 | 约 0 |
 | SUMO1 | 10×20 | 0.001000 | 0.7632213 | 0.7632213 | 约 0 |
 
@@ -58,6 +59,7 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 - `../results/multidataset_high_setting/Bgl3_LT_metrics.csv`；
 - `../results/multidataset_author_setting/metrics_all.csv`：DXS、LGK、HA 的作者级 10×20 汇总；
 - `../results/multidataset_author_setting_remaining/metrics_all.csv`：UBE2I、SUMO1 的作者级 10×20 汇总；
+- `../results/multidataset_author_setting_extra/PyKS_metrics.csv`：PyKS 作者级 10×20 复现结果；
 - `author-setting-batch-coverage.md`：本批次的设置、完成结果和 TPK1 资源边界记录；
 - `../results/multidataset_author_setting/DXS.log`、`LGK.log`、`HA.log`：作者级运行日志；
 - 对应的 `.rds`、`.log` 文件，以及每个数据集的独立 `_metrics.csv`。
