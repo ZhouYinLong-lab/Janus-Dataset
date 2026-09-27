@@ -40,7 +40,11 @@ LGK 也按 10 次重复、10 折设置完成。10 次重复的平均差值为 +0
 
 rocker 也按 10 次重复、10 折设置完成。逐重复平均后，enrichment AUC 为 `0.8079594`，PU AUC 为 `0.8181656`，配对差值为 `+0.0102063`（重复间标准差 `8.94 × 10^-6`，95% t 区间 `[0.0101999, 0.0102127]`，对 10 个重复级差值进行单样本 t 检验得到 `p < 2.2 × 10^-16`）。作者汇总文件报告 rocker `mean_diff = 0.010200`，本地复现相差约 `6.3 × 10^-6`。结果见 `reproduction/results/enrichment_rocker_full/rocker_enrichment_detail.csv`、`rocker_enrichment_summary.csv` 和 `rocker_enrichment_repro_summary.csv`；每个重复的日志、逐折指标和 RDS 在同目录的 `rocker/` 子目录中。
 
-当前 DXS、LGK 和 rocker 三个数据集均完成作者的 10×10 设置，且 PU 相对 enrichment 的平均 AUC 差为正并与作者报告值接近。三数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。HA 的同设置批次正在运行，完成后再更新跨数据集汇总和图表。
+当前 DXS、LGK、PyKS 和 rocker 四个数据集均完成作者的 10×10 设置，PU 相对 enrichment 的平均 AUC 差均为正，并与作者报告值接近。四数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。HA 的同设置批次正在运行，完成后再更新五数据集汇总和图表。
+
+PyKS 的 10×10 批次也已完成。enrichment 平均 AUC 为 `0.8492676`，PU 平均 AUC 为 `0.8497528`，重复级差值均值为 `+0.0004852`（标准差 `3.34 × 10^-6`，95% t 区间 `[0.0004828, 0.0004876]`，重复级单样本 t 检验 `p = 5.65 × 10^-21`）。作者报告 `mean_diff = 0.000492`，本地差约 `−6.8 × 10^-6`。统计上差异稳定为正，但绝对 AUC 增益约 `0.0005`，实际大小有限；不能只凭很小的 p 值称为显著的实际性能提升。结果见 `reproduction/results/enrichment_pyks_full/PyKS_enrichment_detail.csv`、`PyKS_enrichment_summary.csv` 和 `PyKS_enrichment_repro_summary.csv`；重复日志、逐折指标和 RDS 保存在 `PyKS/` 子目录。
+
+HA 同设置批次仍在运行；完成后会追加 HA 的聚合统计并重新生成五数据集图。
 
 ## 已知限制
 
