@@ -2,9 +2,9 @@
 
 ## 当前状态
 
-本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，UBE2I、SUMO1 已进一步完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。`rocker` 示例另有独立复现记录。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
+本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，UBE2I、SUMO1、rocker 已完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。PyKS 的 10 折 × 20 个作者级设置正在另行运行。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
 
-此外，DXS、LGK、HA、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；对应汇总见 `../results/multidataset_author_setting/metrics_all.csv` 和 `../results/multidataset_author_setting_remaining/metrics_all.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
+此外，DXS、LGK、HA、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果分别与参考 AUC 完全一致；rocker 同设置结果也与参考 AUC 一致，汇总分别见 `../results/multidataset_author_setting/metrics_all.csv`、`../results/multidataset_author_setting_remaining/metrics_all.csv` 和 `../results/multidataset_author_setting_rocker/rocker_metrics.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
 
 ## 结果
 
@@ -97,7 +97,7 @@ GB1 的 3×5 预检为 0.851627，升级到 5×10 后为 0.866974，已明显接
 | TPK1 | 3×5 | 0.762067 | 0.761576 | +0.000492 | 仅有预检；作者级任务中断 |
 | LGK | 5×10 | 0.744314 | 0.744099 | +0.000215 | 与参考值接近 |
 | HA | 5×10 | 0.680249 | 0.680455 | −0.000205 | 与参考值接近 |
-| rocker | 未运行 | — | 0.818176 | — | 作者示例已单独复现 |
+| rocker | 10×20 | 0.818176 | 0.818176 | 0.000000 | 作者级设置复现完成 |
 
 跨批次汇总由 `aggregate_multidataset.R` 生成，输出为 `../results/multidataset/metrics_all.csv` 和 `../results/multidataset_high_setting/metrics_all.csv`。这些文件把每个数据集的独立指标文件合并，避免后续批次覆盖前一批的汇总结果。
 

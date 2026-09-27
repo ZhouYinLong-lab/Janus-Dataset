@@ -29,9 +29,9 @@ TPK1 因此不计入作者级完成数，也没有生成可用于最终比较的
 
 ## 当前作者级覆盖
 
-已完成并与参考 AUC 精确一致的数据集为 DXS、LGK、HA、Bgl3_LT、UBE2I 和 SUMO1，共 6 个。既有结果分别保存在 `multidataset_author_setting/` 和 `multidataset_high_setting/` 目录中；Bgl3_LT 使用作者专用的固定 `py1=0.35` 协议。
+已完成并与参考 AUC 精确一致的数据集为 DXS、LGK、HA、Bgl3_LT、UBE2I、SUMO1 和 rocker，共 7 个。rocker 的作者级 10 折 × 20 候选值复现在单独目录 `../results/multidataset_author_setting_rocker/`；其余结果保存在 `multidataset_author_setting/` 和 `multidataset_high_setting/`；Bgl3_LT 使用作者专用的固定 `py1=0.35` 协议。
 
-TPK1 是当前批次唯一未完成的数据集。GB1 和 PyKS 仍保留 5×10 高设置结果，没有启动更重的 10×20 作者级任务。这样保留了资源边界，也避免把不同协议的结果混在同一张表中。
+TPK1 是原始 UBE2I、SUMO1、TPK1 批次中唯一未完成的数据集，GB1 仍保留 5×10 高设置结果。此前未升级的 PyKS 现已启动独立的 10×20 作者级任务，完成前仍只报告其 5×10 结果。
 
 ## 解释边界
 
