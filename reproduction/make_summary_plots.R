@@ -83,6 +83,7 @@ if (file.exists(tpk1_file)) enr_tables <- c(enr_tables, list(read.csv(tpk1_file)
 if (file.exists(bgl3_file)) enr_tables <- c(enr_tables, list(read.csv(bgl3_file)))
 if (file.exists(gb1_file)) enr_tables <- c(enr_tables, list(read.csv(gb1_file)))
 enr <- do.call(rbind, lapply(enr_tables, function(x) x[, c("dataset", "difference")]))
+enr$dataset[enr$dataset == "Bgl3_LT"] <- "Bgl3"
 enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "PyKS", "rocker", "HA", "SUMO1", "UBE2I", "TPK1", "Bgl3", "GB1"))
 p_diff <- ggplot(enr, aes(dataset, difference, fill = dataset)) +
   geom_boxplot(width = 0.45, alpha = 0.65, outlier.shape = NA) +
