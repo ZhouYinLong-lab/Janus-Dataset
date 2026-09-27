@@ -46,13 +46,15 @@ rocker 也按 10 次重复、10 折设置完成。逐重复平均后，enrichmen
 Rscript reproduction/summarize_enrichment_reproduction.R reproduction/results/enrichment_rocker_full/rocker_enrichment_summary.csv 0.010200 10
 ```
 
-当前 DXS、LGK、PyKS、rocker、HA 和 SUMO1 六个数据集均完成作者的 10×10 设置，PU 相对 enrichment 的平均 AUC 差均为正，并与作者报告值接近。六数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。
+当前 DXS、LGK、PyKS、rocker、HA、SUMO1 和 UBE2I 七个数据集均完成作者的 10×10 设置，PU 相对 enrichment 的平均 AUC 差均为正，并与作者报告值接近。七数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。
 
 PyKS 的 10×10 批次也已完成。enrichment 平均 AUC 为 `0.8492676`，PU 平均 AUC 为 `0.8497528`，重复级差值均值为 `+0.0004852`（标准差 `3.34 × 10^-6`，95% t 区间 `[0.0004828, 0.0004876]`，重复级单样本 t 检验 `p = 5.65 × 10^-21`）。作者报告 `mean_diff = 0.000492`，本地差约 `−6.8 × 10^-6`。统计上差异稳定为正，但绝对 AUC 增益约 `0.0005`，实际大小有限；不能只凭很小的 p 值称为显著的实际性能提升。结果见 `reproduction/results/enrichment_pyks_full/PyKS_enrichment_detail.csv`、`PyKS_enrichment_summary.csv` 和 `PyKS_enrichment_repro_summary.csv`；重复日志、逐折指标和 RDS 保存在 `PyKS/` 子目录。
 
 HA 的 10×10 批次已完成。enrichment 平均 AUC 为 `0.6786324`，PU 平均 AUC 为 `0.6804630`，重复级差值均值为 `+0.0018305`（标准差 `4.61 × 10^-6`，95% t 区间 `[0.0018272, 0.0018338]`，重复级单样本 t 检验 `p = 6.62 × 10^-25`）；作者报告 `mean_diff = 0.001830`，本地结果与其吻合。结果见 `reproduction/results/enrichment_ha_full/HA_enrichment_detail.csv`、`HA_enrichment_summary.csv` 和 `HA_enrichment_repro_summary.csv`；十次重复的逐折指标、日志和 RDS 保存在 `HA/` 子目录。首轮计算在最终汇总时异常退出；使用断点续跑重读全部十份完整逐折指标后，批次脚本正常生成 detail 和 summary，统计脚本再生成置信区间与检验结果。
 
 SUMO1 的 10×10 批次亦已完成。enrichment 平均 AUC 为 `0.7562202`，PU 平均 AUC 为 `0.7632235`，重复级差值均值为 `+0.0070034`（标准差 `3.64 × 10^-6`，95% t 区间 `[0.0070008, 0.0070060]`，重复级单样本 t 检验 `p = 4.50 × 10^-31`）；作者报告 `mean_diff = 0.007006`，本地结果非常接近。结果见 `reproduction/results/enrichment_sumo1_full/SUMO1_enrichment_detail.csv`、`SUMO1_enrichment_summary.csv` 和 `SUMO1_enrichment_repro_summary.csv`；十次重复的逐折指标、日志和 RDS 保存在 `SUMO1/` 子目录。
+
+UBE2I 的 10×10 批次亦已完成。enrichment 平均 AUC 为 `0.8000677`，PU 平均 AUC 为 `0.8032789`，重复级差值均值为 `+0.0032113`（标准差 `2.67 × 10^-6`，95% t 区间 `[0.0032094, 0.0032132]`，重复级单样本 t 检验 `p = 3.08 × 10^-29`）；作者报告 `mean_diff = 0.003216`，本地结果与其非常接近。结果见 `reproduction/results/enrichment_ube2i_full/UBE2I_enrichment_detail.csv`、`UBE2I_enrichment_summary.csv` 和 `UBE2I_enrichment_repro_summary.csv`；十次重复的逐折指标、日志和 RDS 保存在 `UBE2I/` 子目录。
 
 ## 已知限制
 

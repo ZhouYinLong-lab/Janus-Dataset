@@ -1,0 +1,2 @@
+"dataset","nrep","nfolds","mean_enrichment_auc","mean_pu_auc","mean_difference","sd_replicate_difference","ci95_lower","ci95_upper","replicate_level_t_p_value","author_mean_difference"
+"UBE2I",10,10,0.800067653200147,0.803278928653537,0.00321127545339024,2.67175743241031e-06,0.00320936419325989,0.0032131867135206,3.07570673571543e-29,0.003216
