@@ -68,12 +68,14 @@ lgk <- read.csv(file.path("reproduction", "results", "enrichment", "LGK_enrichme
 ha_full_file <- file.path("reproduction", "results", "enrichment_ha_full", "HA_enrichment_summary.csv")
 pyks_file <- file.path("reproduction", "results", "enrichment_pyks_full", "PyKS_enrichment_summary.csv")
 rocker_file <- file.path("reproduction", "results", "enrichment_rocker_full", "rocker_enrichment_summary.csv")
+sumo1_file <- file.path("reproduction", "results", "enrichment_sumo1_full", "SUMO1_enrichment_summary.csv")
 enr_tables <- list(dxs, lgk)
 if (file.exists(pyks_file)) enr_tables <- c(enr_tables, list(read.csv(pyks_file)))
 if (file.exists(rocker_file)) enr_tables <- c(enr_tables, list(read.csv(rocker_file)))
 if (file.exists(ha_full_file)) enr_tables <- c(enr_tables, list(read.csv(ha_full_file)))
+if (file.exists(sumo1_file)) enr_tables <- c(enr_tables, list(read.csv(sumo1_file)))
 enr <- do.call(rbind, lapply(enr_tables, function(x) x[, c("dataset", "difference")]))
-enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "PyKS", "rocker", "HA"))
+enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "PyKS", "rocker", "HA", "SUMO1"))
 p_diff <- ggplot(enr, aes(dataset, difference, fill = dataset)) +
   geom_boxplot(width = 0.45, alpha = 0.65, outlier.shape = NA) +
   geom_jitter(width = 0.08, size = 2, alpha = 0.8) +
