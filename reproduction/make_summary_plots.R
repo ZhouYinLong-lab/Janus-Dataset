@@ -70,14 +70,16 @@ pyks_file <- file.path("reproduction", "results", "enrichment_pyks_full", "PyKS_
 rocker_file <- file.path("reproduction", "results", "enrichment_rocker_full", "rocker_enrichment_summary.csv")
 sumo1_file <- file.path("reproduction", "results", "enrichment_sumo1_full", "SUMO1_enrichment_summary.csv")
 ube2i_file <- file.path("reproduction", "results", "enrichment_ube2i_full", "UBE2I_enrichment_summary.csv")
+tpk1_file <- file.path("reproduction", "results", "enrichment_tpk1_full", "TPK1_enrichment_summary.csv")
 enr_tables <- list(dxs, lgk)
 if (file.exists(pyks_file)) enr_tables <- c(enr_tables, list(read.csv(pyks_file)))
 if (file.exists(rocker_file)) enr_tables <- c(enr_tables, list(read.csv(rocker_file)))
 if (file.exists(ha_full_file)) enr_tables <- c(enr_tables, list(read.csv(ha_full_file)))
 if (file.exists(sumo1_file)) enr_tables <- c(enr_tables, list(read.csv(sumo1_file)))
 if (file.exists(ube2i_file)) enr_tables <- c(enr_tables, list(read.csv(ube2i_file)))
+if (file.exists(tpk1_file)) enr_tables <- c(enr_tables, list(read.csv(tpk1_file)))
 enr <- do.call(rbind, lapply(enr_tables, function(x) x[, c("dataset", "difference")]))
-enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "PyKS", "rocker", "HA", "SUMO1", "UBE2I"))
+enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "PyKS", "rocker", "HA", "SUMO1", "UBE2I", "TPK1"))
 p_diff <- ggplot(enr, aes(dataset, difference, fill = dataset)) +
   geom_boxplot(width = 0.45, alpha = 0.65, outlier.shape = NA) +
   geom_jitter(width = 0.08, size = 2, alpha = 0.8) +
