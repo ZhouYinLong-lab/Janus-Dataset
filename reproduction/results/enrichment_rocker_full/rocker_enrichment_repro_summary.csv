@@ -1,0 +1,2 @@
+dataset,nrep,nfolds,mean_enrichment_auc,mean_pu_auc,mean_difference,sd_replicate_difference,ci95_lower,ci95_upper,paired_t_p_value,author_mean_difference
+rocker,10,10,0.8079593652,0.8181656372,0.0102062720,0.0000089379,0.01019988,0.01021267,<2.2e-16,0.010200

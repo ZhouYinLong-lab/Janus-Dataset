@@ -22,7 +22,7 @@ $env:R_LIBS_USER = 'D:/Scoop/persist/r/site-library'
 Rscript reproduction/run_enrichment_baseline.R DXS reproduction/results/enrichment 10 10 2 1000
 ```
 
-参数依次为：数据集、输出目录、重复次数、折数、并行 worker 数、最大迭代次数。首次验证可使用较小的 `nrep` 或 `nfolds`，但小设置不能直接当作论文原始设置的最终结果。
+参数依次为：数据集、输出目录、重复次数、折数、PU 模型的并行 worker 数、最大迭代次数，以及是否断点续跑（默认为 `true`）。开启续跑时，脚本会跳过已有且包含完整折数指标的重复，仅重算缺失或不完整的重复；设为 `false` 可强制重跑。首次验证可使用较小的 `nrep` 或 `nfolds`，但小设置不能直接当作论文原始设置的最终结果。
 
 ## 作者仓库中的可用证据
 
@@ -37,6 +37,10 @@ Rscript reproduction/run_enrichment_baseline.R DXS reproduction/results/enrichme
 随后按作者的 10 次重复、10 折设置完成了 DXS。10 次重复的平均差值为 +0.002690，重复间标准差为 0.00000205，配对 t 检验 `p = 1.37 × 10^-29`。这与作者汇总文件中 DXS 的 `mean_diff = 0.002690` 基本一致。由于上游 `v.enr.R` 没有把 `log_enrichment_score` 导出到 Windows PSOCK worker，本地复现将 enrichment 部分固定为单 worker；这改变运行速度，不改变 enrichment 计算公式或数据划分。
 
 LGK 也按 10 次重复、10 折设置完成。10 次重复的平均差值为 +0.0002411，重复间标准差为 0.00000790，配对 t 检验 `p = 6.97 × 10^-15`；作者汇总文件中的 LGK `mean_diff = 0.0002413`，两者在数值上吻合。LGK 的逐折和逐重复结果保存在 `reproduction/results/enrichment/LGK_enrichment_detail.csv` 与 `LGK_enrichment_summary.csv`。
+
+rocker 也按 10 次重复、10 折设置完成。逐重复平均后，enrichment AUC 为 `0.8079594`，PU AUC 为 `0.8181656`，配对差值为 `+0.0102063`（重复间标准差 `8.94 × 10^-6`，95% t 区间 `[0.0101999, 0.0102127]`，对 10 个重复级差值进行单样本 t 检验得到 `p < 2.2 × 10^-16`）。作者汇总文件报告 rocker `mean_diff = 0.010200`，本地复现相差约 `6.3 × 10^-6`。结果见 `reproduction/results/enrichment_rocker_full/rocker_enrichment_detail.csv`、`rocker_enrichment_summary.csv` 和 `rocker_enrichment_repro_summary.csv`；每个重复的日志、逐折指标和 RDS 在同目录的 `rocker/` 子目录中。
+
+当前 DXS、LGK 和 rocker 三个数据集均完成作者的 10×10 设置，且 PU 相对 enrichment 的平均 AUC 差为正并与作者报告值接近。三数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。HA 的同设置批次正在运行，完成后再更新跨数据集汇总和图表。
 
 ## 已知限制
 

@@ -12,6 +12,7 @@ nrep <- as.integer(get_arg(3, "10"))
 nfolds <- as.integer(get_arg(4, "10"))
 nCores <- as.integer(get_arg(5, "2"))
 maxit <- as.integer(get_arg(6, "1000"))
+resume <- tolower(get_arg(7, "true")) %in% c("true", "t", "1", "yes", "y")
 
 if (!requireNamespace("pudms", quietly = TRUE)) stop("pudms is not installed")
 library(pudms)
@@ -37,7 +38,7 @@ refstate <- if (protein.name == "DXS") "A" else NULL
 
 cat("dataset=", protein.name, "\n", sep = "")
 cat("py1=", py1val, "\n", sep = "")
-cat("nrep=", nrep, " nfolds=", nfolds, " nCores=", nCores, "\n", sep = "")
+cat("nrep=", nrep, " nfolds=", nfolds, " nCores=", nCores, " resume=", resume, "\n", sep = "")
 enr_nCores <- 1L
 cat("enrichment_nCores=", enr_nCores, " (the upstream v.enr source does not export log_enrichment_score to PSOCK workers)\n", sep = "")
 cat("unique_sequences=", nrow(protein_dat), "\n", sep = "")
@@ -46,6 +47,20 @@ all_rows <- list()
 for (r in seq_len(nrep)) {
   rep_dir <- file.path(out_dir, protein.name)
   dir.create(rep_dir, recursive = TRUE, showWarnings = FALSE)
+  metrics_file <- file.path(rep_dir, paste0("rep_", r, "_metrics.csv"))
+  if (resume && file.exists(metrics_file)) {
+    cached <- tryCatch(read.csv(metrics_file, stringsAsFactors = FALSE), error = function(e) NULL)
+    valid_cached <- !is.null(cached) && all(c("dataset", "rep", "fold", "enrichment_auc", "pu_auc", "difference") %in% names(cached)) &&
+      nrow(cached) == nfolds && all(cached$dataset == protein.name) && all(cached$rep == r) &&
+      setequal(cached$fold, seq_len(nfolds)) && all(is.finite(cached$enrichment_auc)) &&
+      all(is.finite(cached$pu_auc)) && all(is.finite(cached$difference)) &&
+      isTRUE(all.equal(cached$difference, cached$pu_auc - cached$enrichment_auc, tolerance = 1e-12))
+    if (valid_cached) {
+      all_rows <- c(all_rows, list(cached))
+      cat("resume_skip_rep=", r, "\n", sep = "")
+      next
+    }
+  }
   log_file <- file.path(rep_dir, paste0("rep_", r, ".log"))
   zz <- file(log_file, open = "wt")
   sink(zz, type = "output")
@@ -74,7 +89,7 @@ for (r in seq_len(nrep)) {
       difference = pu_auc[seq_len(min(length(enr_auc), length(pu_auc)))] - enr_auc[seq_len(min(length(enr_auc), length(pu_auc)))],
       py1 = py1val, nfolds = nfolds, stringsAsFactors = FALSE
     )
-    write.csv(row, file.path(rep_dir, paste0("rep_", r, "_metrics.csv")), row.names = FALSE)
+    write.csv(row, metrics_file, row.names = FALSE)
     saveRDS(list(enrichment = venrfit, pu = vfit), file.path(rep_dir, paste0("rep_", r, ".rds")))
     # Use ordinary assignment here: tryCatch evaluates the body in the
     # caller's environment, and indexed <<- assignment is fragile in Rscript.

@@ -65,8 +65,13 @@ ggsave(file.path(fig_dir, "multidataset_auc_vs_reference.png"), p_auc,
 
 dxs <- read.csv(file.path("reproduction", "results", "enrichment", "DXS_enrichment_summary.csv"))
 lgk <- read.csv(file.path("reproduction", "results", "enrichment", "LGK_enrichment_summary.csv"))
-enr <- rbind(dxs[, c("dataset", "difference")], lgk[, c("dataset", "difference")])
-enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK"))
+ha_full_file <- file.path("reproduction", "results", "enrichment_ha_full", "HA_enrichment_summary.csv")
+rocker_file <- file.path("reproduction", "results", "enrichment_rocker_full", "rocker_enrichment_summary.csv")
+enr_tables <- list(dxs, lgk)
+if (file.exists(rocker_file)) enr_tables <- c(enr_tables, list(read.csv(rocker_file)))
+if (file.exists(ha_full_file)) enr_tables <- c(enr_tables, list(read.csv(ha_full_file)))
+enr <- do.call(rbind, lapply(enr_tables, function(x) x[, c("dataset", "difference")]))
+enr$dataset <- factor(enr$dataset, levels = c("DXS", "LGK", "rocker", "HA"))
 p_diff <- ggplot(enr, aes(dataset, difference, fill = dataset)) +
   geom_boxplot(width = 0.45, alpha = 0.65, outlier.shape = NA) +
   geom_jitter(width = 0.08, size = 2, alpha = 0.8) +
@@ -75,8 +80,8 @@ p_diff <- ggplot(enr, aes(dataset, difference, fill = dataset)) +
        title = "PU vs enrichment baseline: paired AUC differences") +
   theme_classic(base_size = 13) +
   theme(legend.position = "none")
-ggsave(file.path(fig_dir, "enrichment_pu_auc_difference.png"), p_diff,
+ggsave(file.path(fig_dir, "enrichment_pu_auc_difference_all.png"), p_diff,
        width = 6.5, height = 5.2, dpi = 220)
 
 cat("wrote", file.path(fig_dir, "multidataset_auc_vs_reference.png"), "\n")
-cat("wrote", file.path(fig_dir, "enrichment_pu_auc_difference.png"), "\n")
+cat("wrote", file.path(fig_dir, "enrichment_pu_auc_difference_all.png"), "\n")
