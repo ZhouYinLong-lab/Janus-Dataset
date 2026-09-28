@@ -46,7 +46,11 @@ rocker 也按 10 次重复、10 折设置完成。逐重复平均后，enrichmen
 Rscript reproduction/summarize_enrichment_reproduction.R reproduction/results/enrichment_rocker_full/rocker_enrichment_summary.csv 0.010200 10
 ```
 
-当前 DXS、LGK、PyKS、rocker、HA、SUMO1、UBE2I 和 TPK1 八个数据集均完成作者的 10×10 设置，PU 相对 enrichment 的平均 AUC 差均为正，并与作者报告值接近。八数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。
+当前 DXS、LGK、PyKS、rocker、HA、SUMO1、UBE2I、TPK1、Bgl3 和 GB1 十个数据集均完成作者的 10×10 设置，PU 相对 enrichment 的平均 AUC 差均为正，并与作者报告值接近。十数据集逐重复差值图为 `reproduction/results/figures/enrichment_pu_auc_difference_all.png`。
+
+Bgl3_LT 的 10×10 批次已完成。enrichment 平均 AUC 为 `0.7779160`，PU 平均 AUC 为 `0.7946104`，重复级差值均值为 `+0.0166945`（标准差 `1.06 × 10^-5`，95% t 区间 `[0.0166869, 0.0167020]`，重复级单样本 t 检验 `p = 2.61 × 10^-30`）；作者报告 `mean_diff = 0.016694`，本地值与之接近。结果见 `reproduction/results/enrichment_bgl3_full/Bgl3_LT_enrichment_detail.csv`、`Bgl3_LT_enrichment_summary.csv`；原始数据集名称为 `Bgl3_LT`，跨数据集汇总中简写为 `Bgl3`。
+
+GB1 的 10×10 批次已全部完成。enrichment 平均 AUC 为 `0.8650980`，PU 平均 AUC 为 `0.8698443`，重复级差值均值为 `+0.0047463`（标准差 `4.19 × 10^-8`，95% t 区间 `[0.0047462, 0.0047463]`，重复级单样本 t 检验 `p = 5.29 × 10^-47`）；作者报告 `mean_diff = 0.004746`，本地值与之接近。每个重复均得到 10 折指标且 `status=ok`；逐折指标和汇总分别见 `reproduction/results/enrichment_gb1_full/GB1_enrichment_detail.csv`、`GB1_enrichment_summary.csv`，逐重复日志、指标及 RDS 保存在 `GB1/` 子目录。
 
 PyKS 的 10×10 批次也已完成。enrichment 平均 AUC 为 `0.8492676`，PU 平均 AUC 为 `0.8497528`，重复级差值均值为 `+0.0004852`（标准差 `3.34 × 10^-6`，95% t 区间 `[0.0004828, 0.0004876]`，重复级单样本 t 检验 `p = 5.65 × 10^-21`）。作者报告 `mean_diff = 0.000492`，本地差约 `−6.8 × 10^-6`。统计上差异稳定为正，但绝对 AUC 增益约 `0.0005`，实际大小有限；不能只凭很小的 p 值称为显著的实际性能提升。结果见 `reproduction/results/enrichment_pyks_full/PyKS_enrichment_detail.csv`、`PyKS_enrichment_summary.csv` 和 `PyKS_enrichment_repro_summary.csv`；重复日志、逐折指标和 RDS 保存在 `PyKS/` 子目录。
 
@@ -72,8 +76,12 @@ TPK1 的 10×10 批次现已完成。enrichment 平均 AUC 为 `0.7587795`，PU 
 | SUMO1 | 0.756220 | 0.763224 | +0.007003 | [0.007001, 0.007006] | +0.007006 |
 | UBE2I | 0.800068 | 0.803279 | +0.003211 | [0.003209, 0.003213] | +0.003216 |
 | TPK1 | 0.758780 | 0.761581 | +0.002802 | [0.002800, 0.002803] | +0.002796 |
+| Bgl3 | 0.777916 | 0.794610 | +0.016694 | [0.016687, 0.016702] | +0.016694 |
+| GB1 | 0.865098 | 0.869844 | +0.004746 | [0.004746232, 0.004746292] | +0.004746 |
 
-八个数据集的均值差都为正，且本地值总体复现了作者报告的量级；性能差异并不等大，从 PyKS 的约 `0.0005` 到 rocker 的约 `0.0102`。各重复间标准差很小，因此重复级检验会给出很小的 p 值；这反映的是该计算流程对重复种子的稳定性，不能解释成独立实验样本上的生物学显著性或广泛任务上的普遍性能保证。更重要的是，该比较仍不能单独识别 PU 标签处理的因果贡献，因为模型、特征和训练流程也可能造成差异。
+十个数据集的均值差都为正，且本地值总体复现了作者报告的量级；性能差异并不等大，从 LGK 的约 `0.00024` 到 Bgl3 的约 `0.01669`。各重复间标准差很小，因此重复级检验会给出很小的 p 值；这反映的是该计算流程对重复种子的稳定性，不能解释成独立实验样本上的生物学显著性或广泛任务上的普遍性能保证。更重要的是，该比较仍不能单独识别 PU 标签处理的因果贡献，因为模型、特征和训练流程也可能造成差异。
+
+十个数据集现均完成作者的 10×10 设置。严格完整性检查见 `reproduction/results/enrichment_multidataset_audit.csv`，审计脚本为 `reproduction/audit_multidataset_enrichment.R`。审计逐一确认每个数据集有 10 个重复、每重复 10 折（共 100 条逐折记录），每折差值等于 `PU AUC − enrichment AUC`，重复级汇总可由逐折指标重算得到。
 
 ## 已知限制
 
