@@ -2,9 +2,9 @@
 
 ## 当前状态
 
-本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，DXS、LGK、HA、PyKS、UBE2I、SUMO1、rocker 已完成 10 折 × 20 个 `py` 值作者级设置，TPK1 的作者级任务在第 8 折中途因资源边界停止。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
+本阶段使用作者分析仓库中的整理后 `data-r/*.rda` 文件，调用作者 `pudms::v.pudms` 实现，并与作者仓库 `code/roc/aucs.csv` 中的参考 AUC 比较。当前已对十个数据集完成至少一轮可运行复现；其中 DXS、LGK、HA、PyKS、GB1、Bgl3_LT 已完成 5 折 × 10 个 `py` 值设置，DXS、LGK、HA、PyKS、UBE2I、SUMO1、rocker、TPK1 已完成 10 折 × 20 个 `py` 值作者级设置。TPK1 最终通过 `nCores=1` 完成；此前 `nCores=2` 的运行曾在第 8 折因资源边界停止。Bgl3_LT 还按作者专用脚本 `code/vfits/vfit_Bgl3_LT.R` 完成了固定 `py1=0.35`、10 折、1 个超参数的严格协议复现。
 
-此外，DXS、LGK、HA、PyKS、UBE2I、SUMO1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果均与参考 AUC 完全一致；rocker 同设置结果也与参考 AUC 一致，汇总分别见 `../results/multidataset_author_setting/metrics_all.csv`、`../results/multidataset_author_setting_remaining/metrics_all.csv`、`../results/multidataset_author_setting_rocker/rocker_metrics.csv` 和 `../results/multidataset_author_setting_extra/PyKS_metrics.csv`。TPK1 的同设置任务在第 8 折中途因可用内存降至约 2.1 GB 而安全停止，未生成最终 AUC，详见 `author-setting-batch-coverage.md`。
+此外，DXS、LGK、HA、PyKS、UBE2I、SUMO1、rocker、TPK1 已按作者通用脚本的作者级设置完成 10 折 × 20 个 `py` 值复现，结果均与参考 AUC 一致到浮点误差，汇总分别见 `../results/multidataset_author_setting/metrics_all.csv`、`../results/multidataset_author_setting_remaining/metrics_all.csv`、`../results/multidataset_author_setting_rocker/rocker_metrics.csv`、`../results/multidataset_author_setting_extra/PyKS_metrics.csv` 和 `../results/multidataset_author_setting_tpk1_serial/TPK1_metrics.csv`。TPK1 单核重跑记录见 `author-setting-batch-coverage.md`。
 
 ## 结果
 
@@ -31,6 +31,8 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 | PyKS | 10×20 | 0.036523 | 0.8497533 | 0.8497533 | 约 0 |
 | UBE2I | 10×20 | 0.001000 | 0.8032755 | 0.8032755 | 约 0 |
 | SUMO1 | 10×20 | 0.001000 | 0.7632213 | 0.7632213 | 约 0 |
+| rocker | 10×20 | 0.007117 | 0.8181763 | 0.8181763 | 约 0 |
+| TPK1 | 10×20 | 0.002668 | 0.7615756 | 0.7615756 | 约 0 |
 
 按作者专用协议重跑后，Bgl3_LT 的 10 折校正 AUC 为 `0.794615994869779`，作者参考值也是 `0.794615994869779`，差值为浮点舍入误差。这一结果排除了“Bgl3 数据无法复现”的初步判断，说明此前的大偏差主要由参数协议不一致造成。对应脚本、日志、RDS 和指标文件分别为 `../run_bgl3_author_protocol.R`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.log`、`../results/multidataset_high_setting/Bgl3_LT_author_protocol.rds` 和 `../results/multidataset_high_setting/Bgl3_LT_author_protocol_metrics.csv`。
 
@@ -70,7 +72,7 @@ DXS、LGK、HA、PyKS 和 GB1 的校正 AUC 与作者参考值接近。Bgl3_LT �
 
 ## 重要限制
 
-除已列出的作者级结果外，表中的通用多数据集结果仍不是论文作者原始 10 folds × 20 `py` 值的逐项完全复现；当前 5×10 结果用于验证实现链路，3×5 结果只用于快速预检。Bgl3_LT 已另行完成作者专用的 10 折固定参数协议，TPK1 的作者级任务则在第 8 折中断，因此二者不能混同：前者有严格 AUC，后者目前只有预检值。
+除已列出的作者级结果外，表中的通用多数据集结果仍不是论文作者原始 10 folds × 20 `py` 值的逐项完全复现；当前 5×10 结果用于验证实现链路，3×5 结果只用于快速预检。Bgl3_LT 已另行完成作者专用的 10 折固定参数协议。TPK1 的 10×20 复现使用 `nCores=1` 控制资源占用，折数、`py` 搜索规模、随机种子及评价设置保持不变。
 
 ## 轻量预检结果
 
@@ -96,7 +98,7 @@ GB1 的 3×5 预检为 0.851627，升级到 5×10 后为 0.866974，已明显接
 | Bgl3_LT | 5×10 自动选参 | 0.692801 | 0.794616 | −0.101815 | 与作者专用协议不一致 |
 | Bgl3_LT | 10×1，固定 `py1=0.35` | 0.794616 | 0.794616 | 0.000000 | 严格协议一致 |
 | SUMO1 | 10×20 | 0.763221 | 0.763221 | 约 0 | 作者级一致 |
-| TPK1 | 3×5 | 0.762067 | 0.761576 | +0.000492 | 仅有预检；作者级任务中断 |
+| TPK1 | 10×20 | 0.761576 | 0.761576 | 约 0 | 作者级复现完成；`nCores=1` |
 | LGK | 5×10 | 0.744314 | 0.744099 | +0.000215 | 与参考值接近 |
 | HA | 5×10 | 0.680249 | 0.680455 | −0.000205 | 与参考值接近 |
 | rocker | 10×20 | 0.818176 | 0.818176 | 0.000000 | 作者级设置复现完成 |
