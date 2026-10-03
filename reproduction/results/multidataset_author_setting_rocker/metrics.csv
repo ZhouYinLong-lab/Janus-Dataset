@@ -1,0 +1,2 @@
+"dataset","n_unique","labeled_reads","unlabeled_reads","nfolds","nhyperparam","selected_py","auc_corrected","auc_pu","reference_auc","difference_from_reference","status"
+"rocker",79134,703030,1287155,10,20,0.00711715324658232,0.818176344358205,0.81591183455597,0.818176344358205,0,"ok"

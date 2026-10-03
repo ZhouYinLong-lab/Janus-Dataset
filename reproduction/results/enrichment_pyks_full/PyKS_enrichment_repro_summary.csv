@@ -1,2 +1,2 @@
-dataset,nrep,nfolds,mean_enrichment_auc,mean_pu_auc,mean_difference,sd_replicate_difference,ci95_lower,ci95_upper,replicate_level_t_p_value,author_mean_difference
-PyKS,10,10,0.8492676144,0.8497527831,0.0004851687,0.0000033436,0.0004827769,0.0004875606,5.64521e-21,0.000492
+"dataset","nrep","nfolds","mean_enrichment_auc","mean_pu_auc","mean_difference","sd_replicate_difference","ci95_lower","ci95_upper","replicate_level_t_p_value","author_mean_difference"
+"PyKS",10,10,0.849267614366545,0.84975278311421,0.000485168747665815,3.34359299420552e-06,0.000482776885326655,0.000487560610004975,5.64521112279968e-21,0.000492

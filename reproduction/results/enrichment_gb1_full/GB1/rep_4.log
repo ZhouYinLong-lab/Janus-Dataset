@@ -1,0 +1,152 @@
+rep=4 seed=77848080
+fitting with a fold 1 ...
+  |                                                          |                                                  |   0%* create a sequence matrix
+  |                                                          |                                                  |   0%  |                                                          |+                                                 |   2%  |                                                          |++                                                |   4%  |                                                          |+++                                               |   5%  |                                                          |++++                                              |   7%  |                                                          |++++                                              |   9%  |                                                          |+++++                                             |  11%  |                                                          |++++++                                            |  12%  |                                                          |+++++++                                           |  14%  |                                                          |++++++++                                          |  16%  |                                                          |+++++++++                                         |  18%  |                                                          |++++++++++                                        |  20%  |                                                          |+++++++++++                                       |  21%  |                                                          |++++++++++++                                      |  23%  |                                                          |++++++++++++                                      |  25%  |                                                          |+++++++++++++                                     |  27%  |                                                          |++++++++++++++                                    |  29%  |                                                          |+++++++++++++++                                   |  30%  |                                                          |++++++++++++++++                                  |  32%  |                                                          |+++++++++++++++++                                 |  34%  |                                                          |++++++++++++++++++                                |  36%  |                                                          |+++++++++++++++++++                               |  38%  |                                                          |++++++++++++++++++++                              |  39%  |                                                          |+++++++++++++++++++++                             |  41%  |                                                          |+++++++++++++++++++++                             |  43%  |                                                          |++++++++++++++++++++++                            |  45%  |                                                          |+++++++++++++++++++++++                           |  46%  |                                                          |++++++++++++++++++++++++                          |  48%  |                                                          |+++++++++++++++++++++++++                         |  50%  |                                                          |++++++++++++++++++++++++++                        |  52%  |                                                          |+++++++++++++++++++++++++++                       |  54%  |                                                          |++++++++++++++++++++++++++++                      |  55%  |                                                          |+++++++++++++++++++++++++++++                     |  57%  |                                                          |+++++++++++++++++++++++++++++                     |  59%  |                                                          |++++++++++++++++++++++++++++++                    |  61%  |                                                          |+++++++++++++++++++++++++++++++                   |  62%  |                                                          |++++++++++++++++++++++++++++++++                  |  64%  |                                                          |+++++++++++++++++++++++++++++++++                 |  66%  |                                                          |++++++++++++++++++++++++++++++++++                |  68%  |                                                          |+++++++++++++++++++++++++++++++++++               |  70%  |                                                          |++++++++++++++++++++++++++++++++++++              |  71%  |                                                          |+++++++++++++++++++++++++++++++++++++             |  73%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  75%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  77%  |                                                          |+++++++++++++++++++++++++++++++++++++++           |  79%  |                                                          |++++++++++++++++++++++++++++++++++++++++          |  80%  |                                                          |+++++++++++++++++++++++++++++++++++++++++         |  82%  |                                                          |++++++++++++++++++++++++++++++++++++++++++        |  84%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++       |  86%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++      |  88%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++     |  89%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  91%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  93%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++   |  95%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++  |  96%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++++ |  98%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+* obtain ``reference`` amino-acid states
+  |                                                          |                                                  |   0%  |                                                          |+                                                 |   2%  |                                                          |++                                                |   4%  |                                                          |+++                                               |   5%  |                                                          |++++                                              |   7%  |                                                          |++++                                              |   9%  |                                                          |+++++                                             |  11%  |                                                          |++++++                                            |  12%  |                                                          |+++++++                                           |  14%  |                                                          |++++++++                                          |  16%  |                                                          |+++++++++                                         |  18%  |                                                          |++++++++++                                        |  20%  |                                                          |+++++++++++                                       |  21%  |                                                          |++++++++++++                                      |  23%  |                                                          |++++++++++++                                      |  25%  |                                                          |+++++++++++++                                     |  27%  |                                                          |++++++++++++++                                    |  29%  |                                                          |+++++++++++++++                                   |  30%  |                                                          |++++++++++++++++                                  |  32%  |                                                          |+++++++++++++++++                                 |  34%  |                                                          |++++++++++++++++++                                |  36%  |                                                          |+++++++++++++++++++                               |  38%  |                                                          |++++++++++++++++++++                              |  39%  |                                                          |+++++++++++++++++++++                             |  41%  |                                                          |+++++++++++++++++++++                             |  43%  |                                                          |++++++++++++++++++++++                            |  45%  |                                                          |+++++++++++++++++++++++                           |  46%  |                                                          |++++++++++++++++++++++++                          |  48%  |                                                          |+++++++++++++++++++++++++                         |  50%  |                                                          |++++++++++++++++++++++++++                        |  52%  |                                                          |+++++++++++++++++++++++++++                       |  54%  |                                                          |++++++++++++++++++++++++++++                      |  55%  |                                                          |+++++++++++++++++++++++++++++                     |  57%  |                                                          |+++++++++++++++++++++++++++++                     |  59%  |                                                          |++++++++++++++++++++++++++++++                    |  61%  |                                                          |+++++++++++++++++++++++++++++++                   |  62%  |                                                          |++++++++++++++++++++++++++++++++                  |  64%  |                                                          |+++++++++++++++++++++++++++++++++                 |  66%  |                                                          |++++++++++++++++++++++++++++++++++                |  68%  |                                                          |+++++++++++++++++++++++++++++++++++               |  70%  |                                                          |++++++++++++++++++++++++++++++++++++              |  71%  |                                                          |+++++++++++++++++++++++++++++++++++++             |  73%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  75%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  77%  |                                                          |+++++++++++++++++++++++++++++++++++++++           |  79%  |                                                          |++++++++++++++++++++++++++++++++++++++++          |  80%  |                                                          |+++++++++++++++++++++++++++++++++++++++++         |  82%  |                                                          |++++++++++++++++++++++++++++++++++++++++++        |  84%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++       |  86%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++      |  88%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++     |  89%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  91%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  93%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++   |  95%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++  |  96%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++++ |  98%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+* check number of unique factors in each position
+  |                                                          |                                                  |   0%  |                                                          |+                                                 |   2%  |                                                          |++                                                |   4%  |                                                          |+++                                               |   5%  |                                                          |++++                                              |   7%  |                                                          |++++                                              |   9%  |                                                          |+++++                                             |  11%  |                                                          |++++++                                            |  12%  |                                                          |+++++++                                           |  14%  |                                                          |++++++++                                          |  16%  |                                                          |+++++++++                                         |  18%  |                                                          |++++++++++                                        |  20%  |                                                          |+++++++++++                                       |  21%  |                                                          |++++++++++++                                      |  23%  |                                                          |++++++++++++                                      |  25%  |                                                          |+++++++++++++                                     |  27%  |                                                          |++++++++++++++                                    |  29%  |                                                          |+++++++++++++++                                   |  30%  |                                                          |++++++++++++++++                                  |  32%  |                                                          |+++++++++++++++++                                 |  34%  |                                                          |++++++++++++++++++                                |  36%  |                                                          |+++++++++++++++++++                               |  38%  |                                                          |++++++++++++++++++++                              |  39%  |                                                          |+++++++++++++++++++++                             |  41%  |                                                          |+++++++++++++++++++++                             |  43%  |                                                          |++++++++++++++++++++++                            |  45%  |                                                          |+++++++++++++++++++++++                           |  46%  |                                                          |++++++++++++++++++++++++                          |  48%  |                                                          |+++++++++++++++++++++++++                         |  50%  |                                                          |++++++++++++++++++++++++++                        |  52%  |                                                          |+++++++++++++++++++++++++++                       |  54%  |                                                          |++++++++++++++++++++++++++++                      |  55%  |                                                          |+++++++++++++++++++++++++++++                     |  57%  |                                                          |+++++++++++++++++++++++++++++                     |  59%  |                                                          |++++++++++++++++++++++++++++++                    |  61%  |                                                          |+++++++++++++++++++++++++++++++                   |  62%  |                                                          |++++++++++++++++++++++++++++++++                  |  64%  |                                                          |+++++++++++++++++++++++++++++++++                 |  66%  |                                                          |++++++++++++++++++++++++++++++++++                |  68%  |                                                          |+++++++++++++++++++++++++++++++++++               |  70%  |                                                          |++++++++++++++++++++++++++++++++++++              |  71%  |                                                          |+++++++++++++++++++++++++++++++++++++             |  73%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  75%  |                                                          |++++++++++++++++++++++++++++++++++++++            |  77%  |                                                          |+++++++++++++++++++++++++++++++++++++++           |  79%  |                                                          |++++++++++++++++++++++++++++++++++++++++          |  80%  |                                                          |+++++++++++++++++++++++++++++++++++++++++         |  82%  |                                                          |++++++++++++++++++++++++++++++++++++++++++        |  84%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++       |  86%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++      |  88%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++     |  89%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  91%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++    |  93%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++   |  95%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++  |  96%  |                                                          |+++++++++++++++++++++++++++++++++++++++++++++++++ |  98%  |                                                          |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+
+fitting with a fold 2 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 3 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 4 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 5 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 6 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 7 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 8 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 9 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+fitting with a fold 10 ...
+* create a sequence matrix
+* obtain ``reference`` amino-acid states
+* check number of unique factors in each position
+* convert to the sparse one-hot-encoding model matrix
+
+* remove sequences which contain a feature whose nmuts <= 10
+
+* check whether there exist any duplicated columns
+no duplicated columns in the filtered X 
+
+* check whether a filtered X is a full rank matrix
+filtered X is a full rank matrix
+obtaining an average ROC curve for each py1...
+fitting with a fold 1 ...
+  |                                                          |                                                  |   0%
+fitting with a fold 2 ...
+fitting with a fold 3 ...
+fitting with a fold 4 ...
+fitting with a fold 5 ...
+fitting with a fold 6 ...
+fitting with a fold 7 ...
+fitting with a fold 8 ...
+fitting with a fold 9 ...
+fitting with a fold 10 ...
+obtaining an average ROC curve for each py1...
+mean_enrichment_auc=0.865098
+mean_pu_auc=0.8698443
+mean_difference=0.004746283
+status=ok
