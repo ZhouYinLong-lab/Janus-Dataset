@@ -1,0 +1,4 @@
+split,measured_rows,unique_pair_keys,duplicate_pair_keys,multivalued_duplicate_pair_keys,train_rows,test_rows,train_unique_pair_keys,test_unique_pair_keys,pair_keys_in_train_and_test,percent_test_pairs_also_in_train
+ck,141193,141193,0,0,120015,21178,120015,21178,0,0.000000
+ligand,141193,141193,0,0,120129,21064,120129,21064,0,0.000000
+cluster,141193,141193,0,0,114408,26785,114408,26785,0,0.000000

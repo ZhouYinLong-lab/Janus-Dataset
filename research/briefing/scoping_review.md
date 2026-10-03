@@ -2,7 +2,7 @@
 
 **文献类型：** 初步范围综述  
 **版本：** 0.1  
-**检索更新：** 2026-09-06  
+**检索更新：** 2026-10-01
 **当前范围：** 小分子化合物与蛋白靶点的生物活性数据
 
 ## 摘要
@@ -89,6 +89,8 @@ Mervin 等人在 2015 年整合 ChEMBL 与 PubChem 的大规模活性数据，�
 
 InertDB 报告其整理和生成的 inactive 数据在部分下游设置中优于随机 inactive 或性质匹配 decoy。反应预测领域的研究也显示负反应数据可以提升小样本任务，但化学反应失败与蛋白生物活性阴性不是同一种观察。
 
+**新查到的强先例：** Boser、Spies 与 Glorius 的 PAYN 于 2026 年在 JACS 发表。作者在四类全标签高通量反应数据上人为隐藏低产率/负向标签，构造 PU 训练集，再从未标注池筛出“reliable negatives”；报告其相对 positives-only 反应yield模型的误差改善。它直接证明“在分子科学某些领域用推断负例处理偏倚并获得模型收益”已经有人做过，因此这不能再作为 Janus 的宽泛创新点。关键边界是：PAYN 输出的是由模型推断的可靠负例，主要评估由全标签 HTE 数据模拟的偏倚；它没有从历史论文中抽取作者已报告的具体失败/阴性证据、保存逐观察原文/assay 语境，也没有测量真实发表遗漏率。详见 [`../2026-09-30-payn-positive-unlabeled-prior-art-audit.md`](../2026-09-30-payn-positive-unlabeled-prior-art-audit.md)。
+
 现有证据足以否定“阴性数据没有价值”，还不足以证明“任何阴性数据都会改善任何模型”。真正需要比较的是实测 inactive、推定阴性、人工 decoy 和文献恢复阴性在同一任务中的差异。
 
 ### 4.4 文献活性抽取已经进入大规模、多模态阶段
@@ -116,7 +118,7 @@ BioMiner 改变了课题的新颖性边界。现在不能再声称“尚无从�
 
 ### 5.3 还缺什么
 
-本轮检索尚未发现一个以“阴性证据”为核心、同时完成以下工作的成熟方案：
+在目前界定的**小分子—蛋白生物活性历史文献恢复范围**内，本轮尚未发现一个以“来源确认的阴性观察”为核心、同时完成以下工作的成熟方案；此判断不覆盖化学反应中的PU推断补负例，PAYN 已是该方向的重要先例：
 
 - 区分实测 inactive、截断值、定性无效、相对变差、失败和 unknown；
 - 将化合物、靶点、assay、条件、判定规则和原文证据位置绑定到同一观察；
@@ -161,6 +163,8 @@ BioMiner 改变了课题的新颖性边界。现在不能再声称“尚无从�
 
 这样才能区分收益来自更多样本、真实阴性、上下文信息，还是偶然的数据泄漏。主要指标应包含 PR-AUC、校准误差和 assay 级表现，不能只报告随机切分下的 ROC-AUC。
 
+**2026-09-30 增补：** Visani 等已提供酶 promiscuity 任务中的同记录监督对照：BRENDA 已知 inhibitor 在一组实验中作为显式 hard negative，在另一组中保留为 similarity-weighted unlabeled。realistic split/reduced dataset 下，EPP-HMCNF 的 AP 由 0.131 升至 0.149、R-PREC 由 0.111 升至 0.126、AUROC 由 0.849 升至 0.857。这说明“分子模型完全没有检验负类监督价值”不能成立；但 inhibitor 与实测 non-substrate/no-detect 不是同一标签，且该结果没有测试历史文献回收记录。另有 Pertusi 等人工检索酶底物阴性的先例、Goldman 等的 dense-screen 标准化工作及 EnzymARC 结构破坏 decoy benchmark。故新贡献需同时证明文献记录级恢复、现有库新增覆盖、以及对同一模型/测试集的独立增量价值。详细对照见 [`../2026-09-30-enzyme-negative-label-prior-art-comparison.md`](../2026-09-30-enzyme-negative-label-prior-art-comparison.md)。
+
 ## 7. 先做可行性验证
 
 ### 7.1 最小试验
@@ -199,9 +203,25 @@ BioMiner 改变了课题的新颖性边界。现在不能再声称“尚无从�
 
 ## 9. 当前判断
 
-这个方向有论文潜力，但题目必须缩小。2026 年 BioMiner 已经占据“大规模文献生物活性抽取加模型应用”的重要位置，InertDB 和 ECBD 分别占据 inactive 资源与完整筛选流程保存的位置。剩余空间集中在阴性语义、证据等级、unknown 的处理和增量价值验证。
+这个方向有论文潜力，但题目必须缩小。2026 年 BioMiner 已经占据“大规模文献生物活性抽取加模型应用”的重要位置；InertDB 与 ECBD 分别占据 inactive 资源和完整筛选流程保存的位置；PAYN 则在有机反应预测中占据“PU推断可靠负例并验证yield模型收益”的位置。可争取的交叉点不是再泛称“补负例提高模型”，而是**从生物活性论文中恢复可回链的、作者实际测量/报告的阴性观察，表达其证据类型与上下文，测出既有资源的精确覆盖缺口，并把来源确认数据与PU推断/decoy分开比较**。这项交叉空白仍需通过有固定抽样框的系统检索验证，不能现阶段宣称无人做过。PAYN作者代码现已完成单元测试检查与一折缩小烟测；本地结果方向与作者报告相同，但训练样本规模/构成不匹配，不能据此归因于阴性数据本身，完整论文指标未复现。考虑其与本课题主线相邻而非同一问题，暂不优先投入完整反应模型复现，先完成酶学样本的盲标注和精确数据库覆盖审计。
 
 下一步合理顺序是先提交这份范围综述并确认研究问题，再进行 50 篇论文级别的可行性试验。此时不宜直接建设全领域数据集，也不宜先训练复杂模型。
+
+**酶学数据库交叉核验补充：** 对 GH1 NIMS pilot 的第二个公开资源核查显示，SABIO-RK 能提供底物、酶、反应动力学与来源等结构化信息，也有与木二糖、纤维二糖和乳糖同名底物相关的反应记录；但这些记录没有与抽查的样本蛋白/Heins 来源论文形成精确匹配，也未确认实测阴性状态。因此它适合用作正向反应与动力学信息的交叉库，不能把其未命中当作数据库外独有阴性。完整查询范围与限制见 [`../2026-09-30-sabio-rk-cross-database-audit.md`](../2026-09-30-sabio-rk-cross-database-audit.md)。
+
+**BRENDA 交叉表计数更新（100-row pilot的34蛋白范围）：** 仅在四类由 NCBI EC 注释选出的 BRENDA 序列集里，仍是21/34个样本蛋白、62/86条观察精确匹配；随后用GenBank→UniProt/UniParc映射补做索引检索，扩展为24/34个蛋白、68/86条观察存在精确序列实体。此前精确蛋白过滤的26个enzyme页面在该pilot范围内均没有底物/天然底物/文献表项。这里的68条是“未在这些精确过滤酶学表中找到”的候选增量，不是跨库或全文核对后的独有阴性率。早先动态页摘要中的21/62去重数已按行级数据修正为初始22/63；之后加两页为24蛋白/68观察。详见 [`../2026-09-30-genbank-uniprot-brenda-crosswalk-update.md`](../2026-09-30-genbank-uniprot-brenda-crosswalk-update.md)。
+
+**BRENDA交叉核验扩展至96蛋白核心池：** 86个可解析accession中，64个与四个相关EC序列集合精确匹配，覆盖1,176/1,803个源`<0.1` cell；33个为同EC匹配，覆盖597 cell。76个精确EC/物种/UniProt页面全部身份核实，其中6页有底物或参考记录。BAE87008.1/Q25BW5的6个NIMS cellobiose条件值均`<0.1`；BRENDA已有评论称cellobiose是同种另一异构酶BGL1B的底物、但不是Q25BW5对应BGL1A的底物。该评论可追到 Nijikken 等2007年论文，其[PubMed摘要](https://pubmed.ncbi.nlm.nih.gov/17376440/)明确表示BGL1A不水解cellobiose；这证明定性底物阴性已进入现有资源，但不证明Heins六个条件读数逐项入库。出版社全文在本次核验时返回403，未获得2007研究的assay条件，故不声称两篇文章的测量上下文相同。对6个有内容页面的自由文本扫描得到4条negative/qualifier候选，只有1条与池底物精确重合；相近词xylopyranoside不等同于xylobiose。详情与逐记录来源映射见 [`../2026-09-30-gh1-core96-brenda-coverage-audit.md`](../2026-09-30-gh1-core96-brenda-coverage-audit.md) 和 [`../pilots/gh1-nims/brenda_core96_source_traceability.csv`](../pilots/gh1-nims/brenda_core96_source_traceability.csv)。
+
+**第二个酶学便利样例（非代表性）用于测试抽取字段：** Godse 等2025年 LpBgl5 论文在同一材料中同时给出 pNP 面板的相对活性0/正文“未检测到活性”，以及 arbutin/cellobiose 到96小时TLC均未见水解；方法提供了底物量、蛋白量、pH、温度、时间和正/负对照。此例说明对清晰的特征化论文，阴性实体与主要语境可从表格、正文和图注中重建，但不能由此推断分散文献的普遍可抽取性：检测限未报告，TLC结论定性，原始重复数据需向作者请求，且未做既有数据库覆盖核验或模型效用实验。详见 [`../2026-09-30-lpbgl5-negative-extraction-audit.md`](../2026-09-30-lpbgl5-negative-extraction-audit.md) 与 [`../pilots/enzyme-negative-literature/lpbgl5_negative_extraction.csv`](../pilots/enzyme-negative-literature/lpbgl5_negative_extraction.csv)。
+
+**版本化 accession 例外：** 未映射的ABV62413.1后来查明已被NCBI的ABV62413.2替换；新版匹配UniProt A8FDU6与BRENDA序列，但旧版样本序列并不完全一致。因此不把这一条current-version实体并入精确序列命中或assay覆盖率；应保留 accession version 和序列哈希。详见 [`../2026-09-30-abv62413-versioned-accession-audit.md`](../2026-09-30-abv62413-versioned-accession-audit.md)。
+
+**GH1阴性池的统计单位核对：** 1,803个表达标记为1的`<0.1`源cell来自96个蛋白、277个有阴性读数的酶–底物pair和1,800个独特条件键；113个pair在其他pH/温度下又有高于背景的数值，不能把pair永久标成inactive。随机拆分1,803个cell会让同一pair跨越训练/测试。另查到CAJ88232.1在pH8/90重复行并缺pH5/40，使Table2完整八条件ID数从旧记107/108更正为106/108。该面板可证明结构化补充表抽取可行及条件语境不可丢，但不能单独证明广泛模型收益或历史散文挖掘能力。详见 [`../2026-09-30-gh1-nims-pool-granularity-audit.md`](../2026-09-30-gh1-nims-pool-granularity-audit.md)。
+
+**GH1阴性标签的验证边界：** Heins等报告，选出的9个NIMS底物未检出酶在天然底物HPLC面板中也没有可检出活性；但论文没有把这9个酶逐一映射到补充表的1,803条`<0.1`观察。与此同时，特定亚群中23/26个对NIMS及天然底物未检出的酶仍可水解磷酸化底物pNPβG6P。因而这是“指定底物、assay和条件下未检出”，不是酶全局无功能；这篇筛选论文也没有检验机器学习收益。详见 [`../2026-09-30-gh1-nims-negative-validation-audit.md`](../2026-09-30-gh1-nims-negative-validation-audit.md)。
+
+**低表达酶的阴性读数不应被误作未测试：** 另有273条`<0.1`来自12个`Expression_binary=0`蛋白，且12个在Table 2中均有实际NIMS读数。它们可保留为实测的低表达证据层，但可溶表达量只有0.001–0.014 mg/mL，可能混淆“酶本身不作用于底物”的解释；故不应与高表达层无区分合并。36个酶–底物组合中5个在不同条件下同时有低于和高于背景的读数。另有跨表标记需保留未决：ACK43071.1的Table 2 cellobiose值跨条件有4低/4高；ACI21065.1的8个相应值全为`<0.1`，但Table 3将其标为cellobiose NIMS阳性。详见 [`../2026-09-30-gh1-expression-zero-readout-audit.md`](../2026-09-30-gh1-expression-zero-readout-audit.md)。
 
 ## 参考文献
 

@@ -4,6 +4,8 @@
 **Status:** preliminary; based on the seed search documented in [`search_log.csv`](search_log.csv)  
 **Scope:** small-molecule bioactivity and molecular ML, with adjacent chemistry and materials evidence retained when directly informative.
 
+**Update note (2026-09-30):** Later evidence has been appended to the master tracker; the current model-utility synthesis is more nuanced than this first-pass report. See [`research_tracker.md`](research_tracker.md) T026–T029 and [`2026-09-30-negative-value-expanded-audit.md`](2026-09-30-negative-value-expanded-audit.md). In particular, InertDB's matched replacement test does not show a consistent gain over benchmark-measured inactives, and Pogodin et al. show target-specific measured labels generally outperform untested-as-negative training with target-dependent exceptions.
+
 ## Executive assessment
 
 The broad premise is supported, but the original version is not yet a sufficient novelty claim.
@@ -66,6 +68,10 @@ The following claims should not yet be made:
 The most defensible gap hypothesis is:
 
 > Existing work treats negative data mainly as inactive examples, decoys, failed reactions, or model-side bias variables. There is room for a context-preserving and evidence-grounded representation that distinguishes tested negative observations from unknown or untested cases, records qualitative and relative evidence without inventing numbers, and evaluates whether the resulting data improves realistic molecular ML tasks.
+
+**2026-09-30 prior-art update:** This gap hypothesis must be bounded by PAYN (Boser et al., JACS 2026): organic reaction modeling now has a peer-reviewed PU framework that infers reliable negatives from unlabeled reactions and reports downstream yield-model gains under simulated reporting bias. Therefore the broad “negative augmentation for molecular ML” claim is not novel. The remaining candidate gap is narrower: source-confirmed measured negative evidence recovered from bioactivity/molecular papers, with observation-level provenance/context, compared against curated databases and evaluated separately from model-inferred negatives. PAYN's HTE-label masking experiment does not itself quantify real publication failure or extract author-reported negative spans/table cells. See [`2026-09-30-payn-positive-unlabeled-prior-art-audit.md`](2026-09-30-payn-positive-unlabeled-prior-art-audit.md).
+
+**2026-10-03 cross-domain resource update:** Targeted broad search surfaced two additional public project-level precedents. [NegBioDB](https://huggingface.co/datasets/jang1563/NegBioDB) describes a five-domain biomedical negative-results resource and dual ML/LLM benchmark, with DTI inactivity thresholds documented in its [configuration](https://huggingface.co/datasets/jang1563/NegBioDB/blob/main/config.yaml). It narrows claims that broad negative-data aggregation or benchmark construction is absent, but the five labels have distinct meanings; the public DTI overview count (30,459,583) differs from the listed ~25M all-negative DTI parquet, and this pass did not inspect rows or locate a peer-reviewed article. [Scandium Labs' SSB dataset](https://github.com/ScandiumLabs-in/Scandium-Labs-Solid-State-Battery-Dataset) documents negative labels from computational candidate-screening proxies, plus an explicit unknown state when no proxy can be computed. This is useful schema prior art, but not a measured failure/inactive assay or historical paper-mining result. Accordingly, “no unified negative dataset” is too broad; a narrower potential contribution must concern source-linked experimental observations, outcome semantics and context, exact incremental coverage, and controlled utility. Full bounded audit: [`2026-10-02-cross-domain-negative-resource-update.md`](2026-10-02-cross-domain-negative-resource-update.md), E127–E128, J072–J073, T148–T149.
 
 This is a hypothesis from the first-pass landscape, not a final novelty conclusion.
 

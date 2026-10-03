@@ -1,5 +1,11 @@
 # LIT-PCBA 与 PubChem BioAssay 的初步对照观察
 
+> **来源核查补充（2026-09-30）：** 下文列出的 SID 440151760 和 SID 440230063 分别对应 PubChem KDR/AID 1785989 与 EGFR/AID 1788980，不是 MAPK1/AID 995 记录；本地 MAPK1 active/inactive 文件也均未包含这两个 SID。因此它们不能支撑“LIT-PCBA MAPK1 相较 AID 995 丢失了这些测量上下文”的结论，只能作为同一化合物在不同靶点 assay 中存在不同结果的例子。对 AID 995 的本地清单已完成全量 SID join，并与官方完整包逐字节核对。计数需区分层级：full 文件 62,629 inactive；AVE `inactive_T`+`inactive_V` 为 46,317+15,250=61,567；差额 1,062 是 full-only、未进入 AVE train/validation split，不是未测或未进入 LIT-PCBA Full。AID 995 中仍有 3,852 条二元 outcome 和 5,215 条 inconclusive 未进入 full package，逐记录筛选原因待查。审计细节见 [`2026-09-30-litpcba-provenance-audit.md`](../2026-09-30-litpcba-provenance-audit.md)。
+
+> **后续核查更新（2026-09-30）：** 上述小样本标签核对已被 AID 995 全量 concise join 取代（本地 Full 的 62,937 个 SID 全部匹配）。计数差现已由官方包成员表解释：Full inactive 为 62,629；AVE train+validation inactive 合计 61,567；差额 1,062 只表示未进入 AVE 两个 split。维护页有可用的官方 Full/AVE 下载链接，且本地 Full 文件与官方下载成员文件 SHA-256 完全一致。3,852 个有二元结果但未进入 Full package 的 SID 的逐记录排除原因仍待查。见 [`2026-09-30-litpcba-provenance-audit.md`](../2026-09-30-litpcba-provenance-audit.md)。
+
+> **原始 SI 核查更新（2026-09-30）：** LIT-PCBA 2020 原始补充信息 Table S3 将 MAPK1 的 3,449 条 inactive 差额按汇总步骤闭合：无机分子 170、极端理化性质 3,256、3D/电离处理失败 23；Table S2 将 403 条 omitted active 按步骤闭合：无机分子 4、Hill slope 293、hit frequency 12、artifact 80、理化范围 14、3D/电离处理 0。两类总数均对账，但 SI 未给逐 SID 的 reason mapping。当前 PubChem CID/XLogP 近似分类与历史 aggregate 不匹配，故不能当作逐条复现。PDF、审计输入和计算脚本见 [`2026-09-30-litpcba-provenance-audit.md`](../2026-09-30-litpcba-provenance-audit.md)。
+
 在完成前期调研并联系导师后，我尝试进一步“看数据本身”。
 
 目前选取了 **LIT-PCBA 的 MAPK1 子集**，并同时查看其对应的 **PubChem BioAssay AID 995**，希望通过二者对照，试着理解一个较接近机器学习训练格式的数据集，与其上游实验记录之间，到底发生了哪些信息压缩。
@@ -44,7 +50,7 @@ negative = 0
 
 ## 3. LIT-PCBA 与上游实验记录的差异
 
-LIT-PCBA 的 MAPK1 数据中，官方将 308 个 active、61,567 个 inactive 整理为较直接的 active.smi、inactive.smi。
+原始论文、维护中项目页及 2024 年论文 Table 2 将 LIT-PCBA MAPK1 报告为 308 个 active、61,567 个 inactive；本地文件、旧域名页面及 2023 年补充表则出现 308/62,629（补充表 docking 后为 308/62,525）。目前尚无校验包或逐 SID 对照解释差异，不应将其简单归因于版本变化。详见来源审计。
 
 文件中只保留 SMILES + PubChem SID，接近机器学习训练所需的数据表示。而对应的 PubChem BioAssay AID 995 中，上游实验记录会区分更多状态，例如 full titration curve、partial curve、single-point activity、inactive、inconclusive，同时还可能保留具体测量值、activity score、assay 信息和数据质量状态。
 

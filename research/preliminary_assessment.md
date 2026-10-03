@@ -16,6 +16,8 @@
 
 如果问题是“有没有人意识到阴性数据、失败实验和 inactive 样本有价值”，答案是肯定的。
 
+问题存在性方面，SPD 二级药理资源给出了比“数据库里阳性多、阴性少”的泛化观察更直接的比较：对 1,958 种药物、200 个 assay 的系统测试结果中，作者报告约 95% 的 drug-assay 结果未见于其对照的 ChEMBL、DrugCentral 和订阅资源；高活性结果 (`AC50 <1 μM`) 的独有比例约 36%，inactive 结果的独有比例最高。我们进一步检查 Zenodo 公布的 Supplementary Data 1：按三种资源 AC50 median 缺失统计，高活性组独有 36.40%，总体独有 92.85%；把单浓度证据也算作已覆盖后分别为 36.07% 和 92.53%。高活性组与作者约 36% 相符，但总体尚未复现作者约 95%，可能涉及代表记录、分母或匹配规则。这里的“独有”只表示未在所比对资源中找到，不代表从未发表；因此它强力支持资源覆盖/报告差异，但对因果意义上的发表偏倚只能作为支持性证据。[论文](https://doi.org/10.1038/s41467-023-40064-9) · [Zenodo 数据与补充表](https://zenodo.org/records/8103950)
+
 如果问题是“有没有人做过一个覆盖所有分子科学领域的、能够从文献中系统找回阴性证据、保留完整上下文，并证明其能改善模型的统一数据集和方法”，截至目前这轮检索，尚未发现成熟的完整方案。
 
 这个判断不是“没有人做过”的绝对断言，而是基于当前检索范围的阶段性结论。已有工作更多是分散在不同任务和数据类型中，彼此之间还没有形成完全一致的定义、数据模式和评价标准。
@@ -53,6 +55,12 @@ ChEMBL、PubChem BioAssay 以及一些虚拟筛选 benchmark 中都包含 inacti
 它直接说明“构建一个阴性分子资源”本身已经有人做过。因此，Janus 如果继续推进，不能只在数量上重新收集 inactive 化合物，也不能把生成出来的分子和真实实验阴性观测混为一谈。
 
 此外，2015 年的 [Mervin 等人研究](https://doi.org/10.1186/s13321-015-0098-y) 已经报告了将 presumed-inactive 数据纳入大规模靶点预测的效果；2019 年的 [Lee 等人研究](https://www.repository.cam.ac.uk/items/2a26b764-7e66-4db3-b5d0-2e41192c33c3) 还将 high-quality negative data 用于分析 active-negative chemical correlations。由此看，Janus 的新意不能停留在“把阴性样本加入模型”。
+
+对“模型有没有从阴性数据受益”还需更细地说。Pogodin 等人在 152 个激酶上发现，靶点特异的实验 active/inactive 标签总体优于把其他靶点未测试的化合物当作 conditionally inactive 的合并训练；但有 13 个 kinase 在早期识别上偏好合并方案。这主要说明“未测不能直接等于阴性”，而不是测得阴性带来的独立因果收益。[Pogodin et al. 2018](https://doi.org/10.3389/fchem.2018.00133)
+
+InertDB 的全文结果也比摘要中的“提升性能”更有区分度：CIC/GIC 负例来源在部分 LIT-PCBA/MUV 比较中优于随机 PubChem/ZINC 抽样或 DeepCoy decoy；但在同一 benchmark hold-out 下，用它们替换原来 verified inactives 时，LIT-PCBA 未见显著提升，MUV 仅 CIC 有小幅显著改善。且 GIC 是生成结构而非实测分子，CIC 是跨 PubChem assay 筛出的 inactive 化合物，并非对每个目标逐一实测。因此现有证据支持“负例来源和 assay/化学空间匹配会影响结果”，而非“加入更多负例普遍提高模型”。[InertDB full text](https://doi.org/10.1186/s13321-025-00999-1)
+
+另一个 2024 年 PD-L1 docking-based scoring 研究显示，inactive-enriched 模型可大幅优于 active-only；但实测 PubChem inactive 并没有显著优于数量大得多的随机构造 decoy，且增加 decoy 数量会改变模型表现。它进一步说明“是否放入负类”“负类有多少”“负类怎样选”是不同问题；此结果仅适用于该靶点的 docking 结构打分，不可泛化到所有分子活性模型。[Gómez-Sacristán et al. 2024](https://doi.org/10.1016/j.jare.2024.01.024)
 
 ### 5. 化学文献抽取技术已经比较活跃
 
@@ -108,7 +116,7 @@ ChEMBL、PubChem BioAssay 以及一些虚拟筛选 benchmark 中都包含 inacti
 
 ### 4. publication bias 仍不能直接当作既定事实
 
-现阶段可以较谨慎地讨论 reporting bias、curation bias 和 selection bias，但不能仅凭公开数据库中阳性结果较多，就直接证明所有失败实验都没有发表。这个因果链需要更专门的证据。
+现阶段可以较谨慎地讨论 reporting bias、curation bias 和 selection bias。SPD 为常用汇编资源中 inactive 结果覆盖较低提供了直接经验依据，但其“资源中未找到”仍不等于“论文中未发表”；论文作者也指出部分 SPD 独有观察可经手动文献检索找到。故不能仅凭资源差异证明所有失败实验都没有发表，这条因果链仍需对原始文献与资源覆盖作可追溯的记录级比较。
 
 ## 五、Janus 还有没有必要做？
 
@@ -138,6 +146,12 @@ ChEMBL、PubChem BioAssay 以及一些虚拟筛选 benchmark 中都包含 inacti
 > 阴性数据、失败实验、分子数据偏差和化学文献抽取都已经有先行研究；大规模 presumed-inactive 建模、完整筛选流程中的正负数据保存，以及专门的 inactive compound 资源也已经出现。但是，面向分子科学的、以观察为单位、区分 unknown 与 negative、保留实验上下文和证据出处，并用真实任务验证数据价值的完整方案，仍然没有被充分解决。
 
 因此，Janus 不应再以“发现阴性数据的重要性”作为主要贡献，而应把贡献集中到“证据驱动的阴性观察表示与评价”上。下一轮查重需要重点确认这个交叉空白是否真实存在，以及是否已经有工作完成了其中的关键环节。
+
+### 2026-09-30—2026-10-01 PAYN 先行工作及复现边界
+
+Boser 等人 2026 年 JACS 的 PAYN 已在有机反应产率预测中用 positive-unlabeled 学习从未标注反应中推断可靠负例，并在完整 HTE 真值上模拟报告偏倚、比较 positives-only 与增强模型，作者报告多套反应数据上的性能改善。[论文](https://doi.org/10.1021/jacs.6c00127) [本文审计](2026-09-30-payn-positive-unlabeled-prior-art-audit.md)
+
+因此，不能再把“分子科学中阴性缺失影响模型”“从正—未标记数据推断负例”或“加入补出的负例可能改善预测”写成宽泛的新颖点。PAYN 的边界也同样明确：其负例为模型推断标签，验证主要通过隐藏完整 HTE 矩阵中的既知结果，并非从历史生物活性论文中提取原作者已报告的阴性证据或证明其相对 ChEMBL/PubChem 的逐观察增量。Janus 的候选贡献应收窄到**来源可追溯的实测生物活性阴性抽取、证据语义/实验上下文、数据库精确覆盖差额，以及与推断负例和 decoy 的同任务比较**。截至2026-10-01，本地一折PAYN smoke与作者报告方向一致，但属于单fold缩小设置且对照训练集不匹配；它不改变上述新颖性判断，也不能证明阴性本身的独立增益。完整PAYN复现对Janus主线的边际价值较低，当前更应完成文献负例的盲标注、逐观察数据库重叠和匹配预算的证据类型消融。
 
 ## 参考工作
 

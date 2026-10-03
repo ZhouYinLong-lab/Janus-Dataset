@@ -1,0 +1,6 @@
+subset,rows,rule,unique_rows,unique_fraction,interpretation
+All SPD rows,121097,"All DrugCentral, ChEMBL, subscription median AC50 fields missing",112438,0.9284953384,"Below paper-reported approximately 95%; exact denominator/selection rule unresolved"
+SPD AC50 <1 uM,3069,"All three comparator median AC50 fields missing",1117,0.3639622027,"Close to paper-reported approximately 36%"
+All SPD rows,121097,"All three comparator median AC50 fields and ChEMBL/subscription single-concentration fields missing",112054,0.9253243268,"Sensitivity definition; close to but below paper-reported approximately 95%"
+SPD AC50 <1 uM,3069,"All three comparator median AC50 fields and ChEMBL/subscription single-concentration fields missing",1107,0.3607038126,"Close to paper-reported approximately 36%"
+SPD AC50 >=10 uM,112800,"All three comparator median AC50 fields missing",107616,0.9540425532,"Threshold-defined subset; not asserted to equal the paper's all-inactive statistic"

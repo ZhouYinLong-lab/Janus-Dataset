@@ -1,0 +1,2 @@
+﻿uniprot_accession,ec_number,organism,sample_accessions,sample_observation_count,filtered_page_identity_confirmed,substrate_product_count,natural_substrate_count,reference_entry_count,scope_note
+P49235,3.2.1.21,Zea mays,not_in_GH1_pilot,0,true,18,1,7,Exact BRENDA EC/organism/UniProt view only; not a global literature-absence claim

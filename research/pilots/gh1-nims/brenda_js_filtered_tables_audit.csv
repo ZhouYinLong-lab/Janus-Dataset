@@ -1,0 +1,3 @@
+﻿genbank_accession,uniprot_accession,organism,pilot_observations,ec_number,filtered_page_identity_confirmed,substrate_product_rows,natural_substrate_rows,reference_entry_total,rendered_reference_data_rows,interpretation
+CBL17177.1,D4LC32,Ruminococcus champanellensis,7,3.2.1.21,true,0,0,0,0,No rows exposed by this exact filtered public BRENDA page after JavaScript rendering; not evidence of absence from all BRENDA records or source literature
+CAJ88232.1,A0ACM7,Streptomyces ambofaciens,1,3.2.1.21,true,0,0,0,0,No rows exposed by this exact filtered public BRENDA page after JavaScript rendering; not evidence of absence from all BRENDA records or source literature

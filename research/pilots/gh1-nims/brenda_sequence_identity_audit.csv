@@ -1,0 +1,5 @@
+﻿genbank_accession,uniprot_accession,brenda_sequence_id,pilot_observations,ncbi_length_aa,brenda_length_aa,exact_sequence_match,interpretation
+CBL17177.1,D4LC32,22386123,7,444,444,true,Exact protein identity verified; this still does not establish assay-row coverage
+CAJ88232.1,A0ACM7,21664329,1,424,424,true,Exact protein identity verified; this still does not establish assay-row coverage
+AAT59229.1,Q6HMK2,24116899,1,479,479,true,Exact protein identity verified; this still does not establish assay-row coverage
+AAU43012.1,Q65D52,24101727,4,472,472,true,Exact protein identity verified; this still does not establish assay-row coverage

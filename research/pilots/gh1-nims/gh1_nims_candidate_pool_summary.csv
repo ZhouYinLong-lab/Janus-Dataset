@@ -1,0 +1,20 @@
+﻿metric,count,definition,expression_status,substrate,explicit_below_background_cells,proteins_with_at_least_one_negative_cell,negative_enzyme_substrate_pairs,negative_pair_condition_cells
+explicit_<0.1_cells,2076,All Table 2 cells literally equal to <0.1 across joined expression-status groups,,,,,,
+expression_binary_1_cells,1803,Candidate pool retained by the existing conservative expression-status filter,,,,,,
+expression_binary_0_cells,273,Measured below-background cells retained as a separate low-expression stratum; see audit_expression_binary0_context.py,,,,,,
+unjoined_or_unknown_status_cells,0,Explicit <0.1 cells without a joined binary expression status,,,,,,
+expression_binary_1_unique_proteins,96,Distinct literal Table 2 protein accession/species identifiers with at least one candidate negative cell,,,,,,
+expression_binary_1_negative_enzyme_substrate_pairs,277,Distinct protein accession/species × substrate pairs with ≥1 explicit <0.1 condition cell,,,,,,
+expression_binary_1_unique_protein_substrate_pH_temperature_keys,1800,Distinct condition keys; may be lower than source-cell rows if the supplement repeats a protein-condition key,,,,,,
+duplicate_protein_substrate_pH_temperature_key_groups,3,Number of condition keys represented by multiple explicit <0.1 source cells,,,,,,
+extra_source_cells_on_duplicate_condition_keys,3,"Additional source cells beyond one per duplicated condition key; retained, not deduplicated",,,,,,
+condition_cells_per_negative_pair_mean,6.509,Mean pH-temperature cells below background per negative enzyme-substrate pair; not independent proteins,,,,,,
+reported_biological_replicates_per_cell,3,Triplicate design reported by paper; individual replicate values are not present in this supplement table,,,,,,
+nominal_replicate_measurements_for_expression_binary_1_cells,5409,Arithmetic only; cannot call all replicates individually negative because only cell-level mean/censored result is supplied,,,,,,
+sampled_rows_present_in_candidate_pool,100,Existing 100-row sample checked by exact protein-substrate-pH-temperature key,,,,,,
+enzyme_substrate_pairs__above_background_only,11,Pair-level outcome class across all Table 2 pH-temperature contexts; not an independent-paper/generalization count,,,,,,
+enzyme_substrate_pairs__explicit_below_background_no_above_readout,164,Pair-level outcome class across all Table 2 pH-temperature contexts; not an independent-paper/generalization count,,,,,,
+enzyme_substrate_pairs__mixed_below_and_above_across_conditions,113,Pair-level outcome class across all Table 2 pH-temperature contexts; not an independent-paper/generalization count,,,,,,
+,,,expression_binary=1,xylobiose,729,96,96,728
+,,,expression_binary=1,cellobiose,523,90,90,522
+,,,expression_binary=1,lactose,551,91,91,550

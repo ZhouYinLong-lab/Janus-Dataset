@@ -1,0 +1,21 @@
+source_id,title,year_or_release,domain,url,used_for,limitations_or_caution
+S01,BRENDA in 2026,2025/2026,enzyme database,https://academic.oup.com/nar/article/54/D1/D527/8315798,规模/知识图谱/下载/数据来源,数据库论文不能证明任务级完整率
+S02,BRENDA Statistics,2026.1,enzyme database,https://www.brenda-enzymes.org/statistics.php,字段与记录数量,计数是特定组合出现次数不是完整率
+S03,BRENDA download,2026.1,enzyme database,https://www.brenda-enzymes.org/download.php,下载格式与许可证,官方说明不等于数据质量评估
+S04,BRENDA JSON schema 2.0.0,2026,enzyme data schema,https://www.brenda-enzymes.org/schemas/2.0.0/brenda.schema.json,字段结构,JSON合法不等于科学语义正确
+S05,An empirical analysis of enzyme function reporting,2018,enzyme data quality,https://pmc.ncbi.nlm.nih.gov/articles/PMC6258184/,实验条件缺失证据,样本和期刊范围有限
+S06,STRENDA DB enabling validation and sharing,2018,enzyme standardization,https://pmc.ncbi.nlm.nih.gov/articles/PMC6005732/,最低信息与验证,规范存在不等于历史文献遵守
+S07,STRENDA Guidelines,current,enzyme standardization,https://www.beilstein-strenda-db.org/strenda/public/guidelines.xhtml,条件/检测限/误差要求,不能直接提供历史阴性数据
+S08,EnzymeML seamless data flow and modeling,2022,enzyme data standard,https://www.nature.com/articles/s41592-022-01763-1,结构化动力学/FAIR,不是阴性文献挖掘工作
+S09,SABIO-RK 2018,2018,biochemical kinetics,https://pmc.ncbi.nlm.nih.gov/articles/PMC5753344/,条件化反应记录/人工整理,主要围绕已报告动力学
+S10,Inferring protein sequence-function relationships with large-scale PU learning,2021,protein ML,https://pmc.ncbi.nlm.nih.gov/articles/PMC7856229/,DMS负例稀缺/PU,任务特定
+S11,Negative Example Selection for Protein Function Prediction,2014,protein function prediction,https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003644,open-world/推定负例,不是实测酶学阴性
+S12,Rank-guided learning accelerates automated enzyme engineering,2026,enzyme engineering,https://www.nature.com/articles/s41467-026-76264-2,排序+点预测,不涉及统一负例证据schema
+S13,Descriptor-augmented ML for enzyme-chemical interactions,2024,enzyme ML,https://pmc.ncbi.nlm.nih.gov/articles/PMC10915406/,连续活性预测,任务和数据范围有限
+S14,A combinatorially complete epistatic fitness landscape,2024,enzyme engineering,https://pmc.ncbi.nlm.nih.gov/articles/PMC11317637/,高密度连续适应度数据,实验设计特殊不代表文献普遍可得
+S15,Structured information extraction from scientific text with LLMs,2024,scientific IE,https://pmc.ncbi.nlm.nih.gov/articles/PMC10869356/,JSON/实体关系抽取,格式正确不等于事实正确
+S16,Extracting structured data from organic synthesis procedures,2024,chemical IE,https://pmc.ncbi.nlm.nih.gov/articles/PMC11322921/,schema-guided JSON抽取,不是酶学阴性抽取
+S17,ReactionSeek,2026,chemical literature mining,https://www.nature.com/articles/s41467-026-70180-1,专门领域抽取效果,不能外推为通用科学事实抽取
+S18,From text to insight: LLMs for chemical data extraction,2025,chemical IE review,https://pubs.rsc.org/en/content/articlehtml/2025/cs/d4cs00913d,抽取风险/评价方法,综述不是新的数据集验证
+S19,Extracting chemical reactions from text using Snorkel,2020,weak supervision,https://pmc.ncbi.nlm.nih.gov/articles/PMC7251675/,labeling functions/ABSTAIN,负标签是关系抽取标签不是生物阴性
+S20,Measuring Faithfulness in Chain-of-Thought Reasoning,2023,LLM interpretability,https://arxiv.org/abs/2307.13702,CoT与忠实性区分,预印本且非化学任务

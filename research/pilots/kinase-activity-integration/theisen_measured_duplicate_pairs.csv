@@ -1,0 +1,1 @@
+canonical_smiles,uniprot_id,rows,activity_values,distinct_activity_values,activity_range_abs,ck_splits,ligand_splits,cluster_splits,ck_train_test_overlap,ligand_train_test_overlap,cluster_train_test_overlap
