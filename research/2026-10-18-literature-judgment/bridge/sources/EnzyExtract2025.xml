@@ -1,0 +1,781 @@
+
+<!DOCTYPE article
+  PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD with MathML3 v1.4 20241031//EN" "JATS-archivearticle1-4-mathml3.dtd">
+<article id="pro70251" xml:lang="en" article-type="methods-article" dtd-version="1.4"><?da-xref-anchor-style superscripted?><processing-meta base-tagset="archiving" mathml-version="3.0" table-model="xhtml" tagset-family="jats"><restricted-by>pmc</restricted-by></processing-meta><front><journal-meta><journal-id journal-id-type="nlm-ta">Protein Sci</journal-id><journal-id journal-id-type="iso-abbrev">Protein Sci</journal-id><journal-id journal-id-type="pmc-domain-id">507</journal-id><journal-id journal-id-type="pmc-domain">prosci</journal-id><journal-id journal-id-type="nlm-id">9211750</journal-id><journal-id journal-id-type="publisher-id">PRO</journal-id><journal-title-group><journal-title>Protein Science : A Publication of the Protein Society</journal-title></journal-title-group><issn pub-type="ppub">0961-8368</issn><issn pub-type="epub">1469-896X</issn><?publisher_abbrev blackwell?><publisher><publisher-name>Wiley</publisher-name></publisher></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC12355964</article-id><article-id pub-id-type="pmcid-ver">PMC12355964.1</article-id><article-id pub-id-type="pmcaid">12355964</article-id><article-id pub-id-type="pmcaiid">12355964</article-id><article-id pub-id-type="pmid">40815276</article-id><article-id pub-id-type="doi">10.1002/pro.70251</article-id><article-id pub-id-type="publisher-id">PRO70251</article-id><article-version article-version-type="pmc-version">1</article-version><article-categories><subj-group subj-group-type="overline"><subject>Tools for Protein Science</subject></subj-group><subj-group subj-group-type="heading"><subject>Tools for Protein Science</subject></subj-group></article-categories><title-group><article-title>Finding the dark matter: Large language model‐based enzyme kinetic data extractor and its validation</article-title><alt-title alt-title-type="left-running-head">Wei et al.</alt-title></title-group><contrib-group><contrib id="pro70251-cr-0001" contrib-type="author"><name name-style="western"><surname>Wei</surname><given-names initials="G">Galen</given-names></name><xref rid="pro70251-aff-0001" ref-type="aff">
+<sup>1</sup>
+</xref></contrib><contrib id="pro70251-cr-0002" contrib-type="author"><name name-style="western"><surname>Ran</surname><given-names initials="X">Xinchun</given-names></name><xref rid="pro70251-aff-0001" ref-type="aff">
+<sup>1</sup>
+</xref></contrib><contrib id="pro70251-cr-0003" contrib-type="author"><name name-style="western"><surname>AI‐Abssi</surname><given-names initials="R">Runeem</given-names></name><xref rid="pro70251-aff-0001" ref-type="aff">
+<sup>1</sup>
+</xref></contrib><contrib id="pro70251-cr-0004" contrib-type="author" corresp="yes"><name name-style="western"><surname>Yang</surname><given-names initials="Z">Zhongyue</given-names></name><contrib-id contrib-id-type="orcid" authenticated="false">https://orcid.org/0000-0003-0395-6617</contrib-id><xref rid="pro70251-aff-0001" ref-type="aff">
+<sup>1</sup>
+</xref><xref rid="pro70251-aff-0002" ref-type="aff">
+<sup>2</sup>
+</xref><xref rid="pro70251-aff-0003" ref-type="aff">
+<sup>3</sup>
+</xref><xref rid="pro70251-aff-0004" ref-type="aff">
+<sup>4</sup>
+</xref><xref rid="pro70251-aff-0005" ref-type="aff">
+<sup>5</sup>
+</xref><address><email>zhongyue.yang@vanderbilt.edu</email></address></contrib></contrib-group><aff id="pro70251-aff-0001">
+<label>
+<sup>1</sup>
+</label>
+<named-content content-type="organisation-division">Department of Chemistry</named-content>
+<institution>Vanderbilt University</institution>
+<city>Nashville</city>
+<named-content content-type="country-part">Tennessee</named-content>
+<country country="US">USA</country>
+</aff><aff id="pro70251-aff-0002">
+<label>
+<sup>2</sup>
+</label>
+<named-content content-type="organisation-division">Center for Structural Biology</named-content>
+<institution>Vanderbilt University</institution>
+<city>Nashville</city>
+<named-content content-type="country-part">Tennessee</named-content>
+<country country="US">USA</country>
+</aff><aff id="pro70251-aff-0003">
+<label>
+<sup>3</sup>
+</label>
+<named-content content-type="organisation-division">Vanderbilt Institute of Chemical Biology</named-content>
+<institution>Vanderbilt University</institution>
+<city>Nashville</city>
+<named-content content-type="country-part">Tennessee</named-content>
+<country country="US">USA</country>
+</aff><aff id="pro70251-aff-0004">
+<label>
+<sup>4</sup>
+</label>
+<named-content content-type="organisation-division">Data Science Institute</named-content>
+<institution>Vanderbilt University</institution>
+<city>Nashville</city>
+<named-content content-type="country-part">Tennessee</named-content>
+<country country="US">USA</country>
+</aff><aff id="pro70251-aff-0005">
+<label>
+<sup>5</sup>
+</label>
+<named-content content-type="organisation-division">Department of Chemical and Biomolecular Engineering</named-content>
+<institution>Vanderbilt University</institution>
+<city>Nashville</city>
+<named-content content-type="country-part">Tennessee</named-content>
+<country country="US">USA</country>
+</aff><author-notes><corresp id="correspondenceTo">
+<label>*</label>
+<bold>Correspondence</bold>
+<break/>
+Zhongyue Yang, Department of Chemical and Biomolecular Engineering, Vanderbilt University, Nashville, Tennessee 37235, USA.<break/>
+Email: <email>zhongyue.yang@vanderbilt.edu</email>
+<break/>
+</corresp></author-notes><pub-date pub-type="epub"><day>15</day><month>8</month><year>2025</year></pub-date><pub-date pub-type="collection"><month>9</month><year>2025</year></pub-date><volume>34</volume><issue seq="150">9</issue><issue-id pub-id-type="pmc-issue-id">495053</issue-id><issue-id pub-id-type="doi">10.1002/pro.v34.9</issue-id><elocation-id>e70251</elocation-id><history>
+<date date-type="rev-recd"><day>20</day><month>6</month><year>2025</year></date>
+<date date-type="received"><day>18</day><month>4</month><year>2025</year></date>
+<date date-type="accepted"><day>19</day><month>7</month><year>2025</year></date>
+</history><pub-history><event event-type="pmc-release"><date><day>15</day><month>08</month><year>2025</year></date></event><event event-type="pmc-live"><date><day>16</day><month>08</month><year>2025</year></date></event><event event-type="pmc-last-change"><date iso-8601-date="2026-09-24 03:37:31.733"><day>24</day><month>09</month><year>2026</year></date></event></pub-history><permissions><copyright-statement content-type="article-copyright">© 2025 The Author(s). <italic toggle="yes">Protein Science</italic> published by Wiley Periodicals LLC on behalf of The Protein Society.</copyright-statement><license><ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/" specific-use="textmining" content-type="ccbylicense">https://creativecommons.org/licenses/by/4.0/</ali:license_ref><license-p>This is an open access article under the terms of the <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link> License, which permits use, distribution and reproduction in any medium, provided the original work is properly cited.</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" content-type="pmc-pdf" xlink:href="PRO-34-e70251.pdf"><?pdf-name PRO-34-e70251.pdf?><?pdf-size 1924557?><?pdf-md5 2a85e2ecf5459f645439e81ec3e04568?><?pdf-image-server-status NEVER_LOAD?><?pdf-cloudpmc-urn urn:app:ac7b/12355964/2a85e2ecf545/PRO-34-e70251.pdf?></self-uri><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" content-type="pdf" xlink:href="file:PRO-34-e70251.pdf"/><abstract><title>Abstract</title><p>Despite the vast number of enzymatic kinetic measurements reported across decades of biochemical literature, the majority of relational enzyme kinetic data—linking amino acid sequence, substrate identity, kinetic parameters, and assay conditions—remains uncollected and inaccessible in structured form. This constitutes a significant portion of the “dark matter” of enzymology. Unlocking these hidden data through automated extraction offers an opportunity to expand enzyme dataset diversity and size, critical for building accurate, generalizable models that drive predictive enzyme engineering. To address this limitation, we built EnzyExtract, a large language model‐powered pipeline that automates the extraction, verification, and structuring of enzyme kinetics data from scientific literature. By processing 137,892 full‐text publications (PDF/XML), EnzyExtract collected more than 218,095 enzyme–substrate–kinetics entries, including 218,095 <italic toggle="no">k</italic>
+<sub>cat</sub> and 167,794 <italic toggle="no">K</italic>
+<sub>
+<italic toggle="no">m</italic>
+</sub> values. These entries are mapped to enzymes spanning 3569 unique four‐digit EC numbers, with a total of 84,464 entries assigned at least a first‐digit EC number. EnzyExtract identified 89,544 unique kinetic entries (<italic toggle="no">k</italic>
+<sub>cat</sub> and <italic toggle="no">K</italic>
+<sub>
+<italic toggle="no">m</italic>
+</sub> combined) absent from BRENDA, significantly expanding the known enzymology dataset. The newly curated dataset was compiled into a database named EnzyExtractDB. EnzyExtract demonstrates high accuracy when benchmarked against manually curated datasets and strong consistency with BRENDA‐derived data. To create model‐ready datasets, enzyme and substrate sequences were aligned to UniProt and PubChem, yielding 92,286 high‐confidence, sequence‐mapped kinetic entries. To assess the practical utility of our dataset, we retrained several state‐of‐the‐art <italic toggle="no">k</italic>
+<sub>cat</sub> predictors (including MESI, DLKcat, and TurNuP) using EnzyExtractDB. Across held‐out test sets, all models demonstrate improved predictive performance in terms of RMSE, MAE, and <italic toggle="no">R</italic>
+<sup>2</sup>, highlighting the value of high‐quality, large‐scale, literature‐derived EnzyExtractDB for enhancing predictive modeling of enzyme kinetics. The EnzyExtract source code and the database are openly available at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/ChemBioHTP/EnzyExtract" ext-link-type="uri">https://github.com/ChemBioHTP/EnzyExtract</ext-link>, and an interactive demo can be accessed via Google Colab at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://colab.research.google.com/drive/1MwKSEZzLPNOseksRshbzkkFoO_cgJhva" ext-link-type="uri">https://colab.research.google.com/drive/1MwKSEZzLPNOseksRshbzkkFoO_cgJhva</ext-link>.</p></abstract><kwd-group kwd-group-type="author-generated"><kwd id="pro70251-kwd-0001">deep learning</kwd><kwd id="pro70251-kwd-0002">enzymology data</kwd><kwd id="pro70251-kwd-0003">kinetics parameter</kwd><kwd id="pro70251-kwd-0004">large language model</kwd></kwd-group><funding-group><award-group id="funding-0001"><funding-source>
+<institution-wrap><institution>OpenAI Researcher Access Program</institution></institution-wrap>
+</funding-source><award-id>N/A</award-id></award-group><award-group id="funding-0002"><funding-source>
+<institution-wrap><institution>Arnold and Mabel Beckman Foundation</institution><institution-id institution-id-type="doi">10.13039/100000997</institution-id></institution-wrap>
+</funding-source></award-group><award-group id="funding-0003"><funding-source>
+<institution-wrap><institution>National Institute of General Medical Sciences of the National Institutes of Health</institution></institution-wrap>
+</funding-source><award-id>R35GM146982</award-id></award-group><award-group id="funding-0004"><funding-source>
+<institution-wrap><institution>National Science Foundation</institution><institution-id institution-id-type="doi">10.13039/100000001</institution-id></institution-wrap>
+</funding-source><award-id>BIO200057.102</award-id></award-group></funding-group><counts><fig-count count="4"/><table-count count="2"/><page-count count="11"/><word-count count="8000"/></counts><custom-meta-group><custom-meta><meta-name>pmc-status-qastatus</meta-name><meta-value>0</meta-value></custom-meta><custom-meta><meta-name>pmc-status-live</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-status-embargo</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-status-released</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-access</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-legally-suppressed</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-supplement</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-pdf-only</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-suppress-copyright</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-real-version</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-scanned-article</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-in-epmc</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-license-ref</meta-name><meta-value>CC BY</meta-value></custom-meta><custom-meta><meta-name>source-schema-version-number</meta-name><meta-value>2.0</meta-value></custom-meta><custom-meta><meta-name>cover-date</meta-name><meta-value>September 2025</meta-value></custom-meta><custom-meta><meta-name>details-of-publishers-convertor</meta-name><meta-value>Converter:WILEY_ML3GV2_TO_JATSPMC version:6.6.0 mode:remove_FC converted:15.08.2025</meta-value></custom-meta></custom-meta-group></article-meta><notes><p content-type="self-citation">
+<mixed-citation publication-type="journal" id="pro70251-cit-9001">
+<string-name name-style="western">
+<surname>Wei</surname>
+<given-names>G</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ran</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>AI‐Abssi</surname>
+<given-names>R</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>Z</given-names>
+</string-name>. <article-title>Finding the dark matter: Large language model‐based enzyme kinetic data extractor and its validation</article-title>. <source>Protein Science</source>. <year>2025</year>;<volume>34</volume>(<issue>9</issue>):<elocation-id>e70251</elocation-id>. <pub-id pub-id-type="doi">10.1002/pro.70251</pub-id>
+<pub-id pub-id-type="pmcid">PMC12355964</pub-id><pub-id pub-id-type="pmid">40815276</pub-id></mixed-citation>
+</p><fn-group id="pro70251-ntgp-0001"><fn id="pro70251-note-0001" fn-type="equal"><p>Galen Wei and Xinchun Ran have contributed equally to this study.</p></fn><fn id="pro70251-note-0002"><p>
+<bold>Review Editor:</bold> Nir Ben‐Tal</p></fn></fn-group></notes></front><body id="pro70251-body-0001"><sec id="pro70251-sec-0001"><label>1</label><title>INTRODUCTION</title><p>Enzyme kinetic data are essential for uncovering the catalytic origin of enzymatic function and evolution (Markin et al., <xref rid="pro70251-bib-0013" ref-type="bibr">2021</xref>). They serve as the foundation for training predictive AI models of enzymatic rate constant and specificity constant (Kroll et al., <xref rid="pro70251-bib-0009" ref-type="bibr">2023</xref>). While thousands of scientific publications report detailed enzyme kinetic data each year, the vast majority of this critical information—enzyme kinetic parameters linked to sequence, substrate, and experimental conditions—remains scattered throughout the literature, essentially forming what we call the “dark matter” of enzymology data. The gap between published knowledge and structured, machine‐readable data poses a major obstacle to advancing quantitative modeling across biochemistry, computational enzyme engineering, metabolic engineering, and systems biology (Jurich et al., <xref rid="pro70251-bib-0007" ref-type="bibr">2025</xref>; Yang et al., <xref rid="pro70251-bib-0030" ref-type="bibr">2023</xref>).</p><p>Traditional approaches to enzyme data curation rely on painstaking manual extraction by expert curators, which remains essential for capturing enzyme function knowledge in FAIR open knowledgebases. However, these efforts simply cannot keep pace with the exponential growth of new discoveries and publications. Despite the existence of BRENDA (Schomburg et al., <xref rid="pro70251-bib-0022" ref-type="bibr">2002</xref>) and SABIO‐RK (Wittig et al., <xref rid="pro70251-bib-0027" ref-type="bibr">2012</xref>) for enzyme kinetic data storage, databases capture only a fraction of the published kinetic parameters, leaving a wealth of sequence–function–condition relationships unexplored. Specifically, in 2024 alone, over 19,700 articles containing the keyword “enzyme kinetics” were published (searched using Google Scholar), and more than 200,000 related publications have accumulated over the past two decades. The vast reservoir of kinetic data is still locked in the literature, far exceeding the size of any existing well‐curated kinetic database. Standardization initiatives such as EnzymeML (Lauterbach et al., <xref rid="pro70251-bib-0011" ref-type="bibr">2023</xref>) offer promising frameworks for the structured reporting and exchange of enzymatic data; however, their adoption by the broader experimental community remains limited, and much of the available data continues to exist in unstructured formats. This persistent lack of accessible, high‐quality kinetic datasets constitutes a significant bottleneck for the development of data‐driven approaches, particularly for machine learning models that require large, diverse, and well‐annotated datasets.</p><p>Recent efforts have emerged that leverage AI‐assisted approaches to extract enzymology data from literature. FuncFetch introduced a large language model (LLM)‐assisted workflow that integrates multiple tools with GPT‐4 to screen thousands of manuscripts for enzyme‐substrate interactions (Smith et al., <xref rid="pro70251-bib-0024" ref-type="bibr">2025</xref>). When applied to plant enzyme families, FuncFetch was used to screen over 26,000 papers and extract qualitative information about enzyme activities from over 5400 selected papers. Similarly, EnzChemRED (Lai et al., <xref rid="pro70251-bib-0010" ref-type="bibr">2024</xref>) was developed to collect a specialized dataset of 1210 expert‐curated abstracts with annotated enzymes and chemical reactions using identifiers from UniProtKB and ChEBI. However, neither tool can extract quantitative kinetic parameters of enzyme catalysis. The development of enzyme Co‐Scientist (Jiang et al., <xref rid="pro70251-bib-0005" ref-type="bibr">2025</xref>) from Zhejiang lab represents meaningful progress, extracting over 91,000 <italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> records from the literature, but this dataset cannot be readily used for predictive modeling due to the lack of mapping to protein sequences. This highlights a critical gap in current approaches: the need for comprehensive extraction of quantitative kinetic data tied to specific sequences. Meanwhile, advances in high‐throughput experimental enzymology, such as HT‐MEK (Markin et al., <xref rid="pro70251-bib-0013" ref-type="bibr">2021</xref>; Muir et al., <xref rid="pro70251-bib-0014" ref-type="bibr">2025</xref>), have begun generating large‐scale, sequence‐resolved kinetic datasets. These efforts highlight the growing need for structured, interoperable datasets that link enzyme sequence, substrate, and kinetic parameters across both legacy literature and new experimental sources. Bridging this gap calls for automated pipelines capable of formatting, standardizing, and aligning extracted data with existing protein and compound databases.</p><p>To address these limitations, we developed EnzyExtract, an AI‐powered pipeline designed specifically to extract, validate, and structure quantitative enzyme kinetic data from the scientific literature at scale. EnzyExtract goes beyond existing approaches by targeting not only the enzyme‐substrate relationships but also the specific kinetic parameters (<italic toggle="yes">k</italic>
+<sub>cat</sub>, <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>) and experimental conditions (pH, temperature, mutations) that are essential for predictive modeling of enzyme functions and properties (Jurich et al., <xref rid="pro70251-bib-0007" ref-type="bibr">2025</xref>). By leveraging a fine‐tuned version of GPT‐4o‐mini, specialized optical character recognition, and sophisticated entity disambiguation techniques, EnzyExtract efficiently processes tens of thousands of full‐text publications to create a comprehensive, sequence‐mapped enzymology database. We have successfully extracted 218,095 enzyme‐substrate‐kinetic data points entries from 137,892 scientific publications. These datapoints were further curated into 176,463 enzyme–substrate–sequence entries categorized by data confidence: 92,286 high‐confidence entries, 54,550 medium‐confidence entries, and 29,627 low‐confidence entries. This curated dataset has been organized into a structured database, EnzyExtractDB. Each data point is enriched with critical contextual information and aligned with established reference databases such as UniProt (Consortium, U, <xref rid="pro70251-bib-0003" ref-type="bibr">2015</xref>) and PubChem (Kim et al., <xref rid="pro70251-bib-0008" ref-type="bibr">2023</xref>), enabling immediate integration with computational workflows. Rigorous validation against manually curated datasets demonstrates the accuracy of our extraction process, and retraining of state‐of‐the‐art enzyme kinetics predictors with our data shows significant improvements in predictive performance. EnzyExtract represents an advance in automated enzyme data extraction. By illuminating the “dark matter” of enzymology, EnzyExtract provides a valuable resource for the scientific community.</p></sec><sec id="pro70251-sec-0002"><label>2</label><title>METHOD AND IMPLEMENTATION</title><sec id="pro70251-sec-0003"><label>2.1</label><title>Development of the <styled-content style="fixed-case" toggle="no">EnzyExtract</styled-content> pipeline</title><fig position="float" fig-type="FIGURE" id="pro70251-fig-0001" orientation="portrait"><label>FIGURE 1</label><caption><p>Overview of the enzymatic kinetics data extraction and processing pipeline. The first step involves retrieving 137,892 scientific papers from the OpenAlex API using a set of curated keywords derived from BRENDA and SABIO‐RK (e.g., “<italic toggle="yes">k</italic>
+<sub>cat</sub>”, “kinetics”). The retrieved articles in PDF and XML formats are then parsed using the PyMuPDF library, and an optical character recognition (OCR) model (ResNet18) is employed to extract figures and tables. To enhance unit recognition, a fine‐tuned OCR model is applied to standardize numerical values and units within extracted tables. Once the data is converted into plain text, a fine‐tuned GPT‐4o model processes the extracted information to generate structured JSON files containing enzymatic reaction conditions, including enzyme name, organism, substrate name, pH, temperature, <italic toggle="yes">k</italic>
+<sub>cat</sub>, <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>, and other reaction parameters.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="anchor" id="jats-graphic-1" orientation="portrait" xlink:href="PRO-34-e70251-g001.jpg"><?image-name PRO-34-e70251-g001.jpg?><?image-size 108140?><?image-md5 fc24ceb72a9a86fd602ad8d8343a5668?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 853?><?image-original-width 1064?><?image-scaled-height 568?><?image-scaled-width 709?><?image-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/fc24ceb72a9a/PRO-34-e70251-g001.jpg?><?thumb-name PRO-34-e70251-g001.gif?><?thumb-size 4263?><?thumb-md5 c84cebd454e01879896ef542ff197745?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 100?><?thumb-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/c84cebd454e0/PRO-34-e70251-g001.gif?></graphic></fig><p>The EnzyExtract pipeline begins with the large‐scale acquisition of full‐text scientific literature, sourced from multiple publishing platforms and enriched with enzymology‐specific content (Figure <xref rid="pro70251-fig-0001" ref-type="fig">1</xref>). To construct this ensemble, we queried OpenAlex using 13 targeted keywords related to <italic toggle="yes">k</italic>
+<sub>cat</sub> and Michaelis–Menten kinetics, retrieving 60,567 PDF and 85,534 XML files (146,101 publications in total). A complementary search on Web of Science with 16 additional terms further expanded the dataset (see Text S1 for the full list of keywords). Document identifiers, including DOIs and PubMed IDs, were collected via indexing services, and full‐text access was obtained through Elsevier and Wiley's text and data mining APIs, while open‐access documents were retrieved using the OpenAlex REST API (Priem et al., <xref rid="pro70251-bib-0016" ref-type="bibr">2022</xref>). After excluding documents with duplication, entry errors, or abstract‐only content, the final ensemble was refined to 137,892 unique articles. These documents, spanning both PDF and XML formats, were parsed using custom scripts that segment textual content, figures, and tables. A ResNet‐18 model (He et al., <xref rid="pro70251-bib-0004" ref-type="bibr">2016</xref>), fine‐tuned with two fully connected layers, was employed to correct recognition of kinetic parameter units during PDF parsing. This allows EnzyExtract to recover enzymology‐relevant data across diverse publication formats, including information often overlooked by traditional text‐only pipelines.</p><p>Following the initial extraction of raw content for XML files (using BeautifulSoup; Richardson, <xref rid="pro70251-bib-0019" ref-type="bibr">2007</xref>) and PDFs (using PyMuPDF; Adhikari &amp; Agarwal, <xref rid="pro70251-bib-0001" ref-type="bibr">2024</xref>), a standardization pipeline is applied to harmonize formatting and prepare the data for downstream analysis (Figure <xref rid="pro70251-fig-0001" ref-type="fig">1</xref>). Tables embedded within PDF documents are processed using the TableTransformer model (Smock et al., <xref rid="pro70251-bib-0025" ref-type="bibr">2022</xref>), and are subsequently converted into Markdown format to ensure structural consistency during parsing. To assess parsing fidelity across data sources, we benchmarked two Markdown conversion strategies, OCR‐based parsing and PyMuPDF‐based extraction, on a shared test set of 384 enzyme‐related documents (Table <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref>). The results show notable differences in structural accuracy, runtime efficiency, and downstream parse success rates. Specifically, incorporating TableTransformer as a deep‐learning‐based table preprocessing step enhances alignment between table values and headers, thereby improving structural accuracy. This is reflected in an increase in precision from 0.71 to 0.80 and recall from 0.68 to 0.86, resulting in a higher F1‐score (0.69 vs. 0.83) and accuracy (0.53 vs. 0.71) on <italic toggle="yes">k</italic>
+<sub>cat</sub> extraction (see Table <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1a</xref>). In contrast, a ResNet‐18‐based preprocessing step had minimal effect on <italic toggle="yes">k</italic>
+<sub>cat</sub> extraction but improved <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> accuracy due to better unit classification, which improves accuracy from 0.46 to 0.66 on <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> extraction (Table <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1b</xref>). However, TableTransformer comes with a trade‐off in runtime efficiency: it can process ~500 PDFs in 15 min, whereas PyMuPDF processes them in just 30 s. Nonetheless, the improvements in structural fidelity and downstream parse success rates justify the additional computational cost. As such, we adopted OCR preprocessing combined with TableTransformer‐based table extraction in our final pipeline to maximize overall performance in enzyme kinetic data extraction.</p><p>The curated textual and tabular data are then passed through a fine‐tuned large language model (GPT‐4o‐mini‐2024‐07‐18), trained on 62 manually curated articles (52 for training, 10 for validation) over three epochs with a batch size of 3 and a learning rate of 1.8 (SI.zip). This model is optimized to identify and extract essential enzymology metadata, including enzyme names, organism source, substrate identity, pH, temperature, as well as kinetic parameters (<italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>), encoding them into structured JSON entries (<italic toggle="yes">bottom</italic>, Figure <xref rid="pro70251-fig-0001" ref-type="fig">1</xref>). Compared to the base GPT‐4o model, the fine‐tuned EnzyExtract pipeline improves metadata extraction accuracy—particularly in row name identification, and delivers robust, balanced performance across both <italic toggle="yes">k</italic>
+<sub>cat</sub> (F1 = 0.83) and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> (F1 = 0.80) extractions. While Claude 3.7 achieves slightly higher precision on some tasks, EnzyExtract matches or exceeds it in recall, all while operating at just 1/30th the inference cost, making it a more scalable and cost‐effective solution for high‐throughput enzyme kinetics extraction (see Table <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref>). This evaluation was performed on another manually curated set of 384 literature documents used in the OCR benchmarking (SI.zip). At this stage of the pipeline, a total of 242,116 raw data entries have been extracted from the processed PDFs and XMLs. After removing duplicate rows, excluding documents present in both PDF and XML forms, and excluding all entirely empty rows lacking any data in the enzyme, substrate, or kinetics columns, we obtained a total of 218,095 rows, including 218,095 <italic toggle="yes">k</italic>
+<sub>cat</sub> and 167,794 <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> values.</p><p>To enhance data accuracy, we systematically examined and marked the data. We detected LLM hallucinations by checking the original PDF or XML document for the reported numeric values. If a significant proportion of numeric values cannot be located by regex search, then we consider the LLM response to be hallucinated. Likewise, LLMs are known to generate repetitive content (Yang et al., <xref rid="pro70251-bib-0030" ref-type="bibr">2023</xref>). Papers with an insufficient proportion of unique numerical values are excluded. Finally, rows with scientific notation are marked as possibly inaccurate due to ambiguity in the sign of the exponent. 15,444 rows (7.1%) are marked as possibly hallucinated; 9630 (4.4%) as repetitive; and 20,890 (9.6%) as containing scientific notation. Though numerous legitimate values are present in these rows, we exclude them to enhance the overall quality of the dataset.</p><p>After these curation steps, 176,463 <italic toggle="yes">k</italic>
+<sub>cat</sub> and 135,527 <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> values remain. This dataset was compiled into a new database named EnzyExtractDB (see Data and Software Availability section). The distribution of reported assay temperatures spans from 0°C to 100°C, with an average of 25.9°C, while pH values range from 2.0 to 12.0, averaging 7.2 (Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref>). The database encompasses 3569 unique four‐digit EC numbers. Based on the distribution of the first digit of EC numbers, a total of 84,464 entries are classified, comprising EC 1 (oxidoreductases): 27,879; EC 2 (transferases): 16,301; EC 3 (hydrolases): 27,514; EC 4 (lyases): 5507; EC 5 (isomerases): 3128; EC 6 (ligases): 3044; and EC 7 (translocases): 1091 (Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref>). Log<sub>10</sub>‐transformed kinetic parameters exhibit broad ranges as well, with Log<sub>10</sub>(<italic toggle="yes">k</italic>
+<sub>cat</sub>) values from −5.8 to 5.3 and Log<sub>10</sub>(<italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>) values from −5.5 to 4.5, both displaying approximately Gaussian distributions (Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S2</xref>).</p><p>To integrate with existing databases, we cross‐referenced the metadata: enzyme names are linked to UniProt accession numbers, and substrate names are translated into SMILES strings via PubChem. For the substrate names represented as abbreviations, EnzyExtract employs GPT‐4o to recover the full chemical names prior to querying PubChem. In cases where multiple PubChem matches are returned, the top‐ranked result is selected. A key challenge arises from the frequent omission of explicit sequence identifiers in the source literature. To address this, EnzyExtract retrieves up to five metadata fields from each article, including: enzyme name, organism name, UniProt ID, NCBI accession number, and PDB ID. If any of the identifiers (e.g., UniProt ID or NCBI accession) are available, they are used to directly retrieve the corresponding sequence. If no identifier is present, a combined search using enzyme and organism names is performed against UniProt, and the top‐ranked hit is selected. To evaluate the fidelity of sequence retrieval in a quantitative manner, we implemented a confidence scoring system based on the number of metadata fields successfully extracted from each article. Entries were classified as “high‐confidence” if at least three out of five metadata fields were retrieved, “medium‐confidence” if two fields were present, and “low‐confidence” if only a single field could be extracted. By automating what was once a manual and error‐prone curation process, EnzyExtract not only scales data collection but also ensures compatibility with existing enzymology database data structures. As a result, we curated a total of 176,463 enzyme–sequence–substrate pairs, comprising 92,286 high‐confidence entries, 54,550 medium‐confidence entries, and 29,627 low‐confidence entries.</p></sec><sec id="pro70251-sec-0004"><label>2.2</label><title>Enhancement of the data extraction fidelity</title><p>One of the most deceptively simple yet impactful challenges in enzymology data extraction lies in correctly interpreting measurement units, especially distinguishing between the Greek letter “μ” (micro) and the lowercase “m” (milli). This subtle difference can lead to a thousand‐fold errors in kinetic constants like <italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>, compromising the biological validity of the extracted data. Automated optical character recognition (OCR) tools frequently misclassify these symbols, especially in low‐resolution figures and scanned PDFs, posing a critical barrier to accurate downstream data structuring.</p><p>To address unit misrecognition issues, particularly distinguishing between visually similar glyphs like “m” and “μ”, we developed a custom unit recognition module by fine‐tuning a ResNet‐18 convolutional neural network (He et al., <xref rid="pro70251-bib-0004" ref-type="bibr">2016</xref>) on a curated dataset of 11,994 symbol instances sourced from 1200 scientific articles (Figure <xref rid="pro70251-fig-0002" ref-type="fig">2</xref>). This dataset includes a balanced mix of 5295 instances of “m” 6103 instances of “μ” and 596 examples of other confusable characters. The model was trained for 10 epochs using the Adam optimizer with a learning rate of 0.001 on 9595 training samples and evaluated on an independent test set of 2399 symbols. It achieves an accuracy of 99.8% on the test set and 99.5% on an extended benchmark of 17,433 images, demonstrating strong generalization across diverse formatting styles, font resolutions, and document layouts (Figure <xref rid="pro70251-fig-0002" ref-type="fig">2</xref>).</p><fig position="float" fig-type="FIGURE" id="pro70251-fig-0002" orientation="portrait"><label>FIGURE 2</label><caption><p>Overview of the optical character recognition (OCR) pipeline. Accurate recognition of the “μ” (micro) symbol is essential, as confusion with the “m” (milli) symbol can lead to errors by a factor of 1000. To address this, we curated a dataset of 11,994 labeled symbol instances, comprising 5295 instances of “m”, 6103 instances of “μ”, and 596 instances of other symbols. From this dataset, symbols were extracted from 1200 scientific articles: 1000 articles were used for training (9595 symbols), and 200 were held out for testing (2399 symbols). AResNet‐18 model pretrained on ImageNet‐1k (He et al., <xref rid="pro70251-bib-0004" ref-type="bibr">2016</xref>) was fine‐tuned using transfer learning, achieving 99.8% accuracy on the test set after 10 epochs. Figures and tables were parsed using PyMuPDF, and the fine‐tuned ResNet‐18 model was applied to ensure accurate symbol recognition. The recognized content was then converted into structured JSON using a fine‐tuned GPT‐4o model, capturing key experimental details such as enzyme name, organism, substrate, pH, temperature, <italic toggle="yes">k</italic>
+<sub>cat</sub>, <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>, and other reaction parameters for downstream analysis and integration into a searchable database.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="anchor" id="jats-graphic-3" orientation="portrait" xlink:href="PRO-34-e70251-g004.jpg"><?image-name PRO-34-e70251-g004.jpg?><?image-size 51209?><?image-md5 2793ce3abd5f67f083304d8cac3ace59?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 628?><?image-original-width 1064?><?image-scaled-height 418?><?image-scaled-width 709?><?image-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/2793ce3abd5f/PRO-34-e70251-g004.jpg?><?thumb-name PRO-34-e70251-g004.gif?><?thumb-size 3570?><?thumb-md5 b6068c6b38248f34b59d0eaba79baa1c?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 135?><?thumb-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/b6068c6b3824/PRO-34-e70251-g004.gif?></graphic></fig><p>Accurate unit recognition is essential for preserving the integrity of kinetic values during the GPT‐4o‐based extraction process. The resulting clean data was then passed to the GPT‐4o model, which could associate reaction parameters with the correct quantitative context, enabling precise and reliable structuring of enzymology datasets at scale.</p></sec></sec><sec id="pro70251-sec-0005"><label>3</label><title>RESULTS AND DISCUSSION</title><sec id="pro70251-sec-0006"><label>3.1</label><title>Validation of the <styled-content style="fixed-case" toggle="no">EnzyExtract</styled-content> pipeline</title><p>To ensure the reliability of enzymatic kinetic parameters extracted by EnzyExtract, we benchmarked its data extraction performance against both a manually curated gold‐standard dataset and the widely used BRENDA database (Table <xref rid="pro70251-tbl-0001" ref-type="table">1</xref>). The ground‐truth dataset was constructed by re‐curating 223 scientific articles previously indexed by BRENDA (see SI.zip). Each entry in this dataset was carefully annotated to include a unique key—composed of enzyme name, mutation identifier (if applicable), substrate name, and organism name—and its associated value, namely <italic toggle="yes">k</italic>
+<sub>cat</sub> or <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> along with their corresponding units. This standardized key–value pair allows for consistent comparison across datasets. EnzyExtract was evaluated by scanning the same literature ensemble to generate comparable key–value pairs, enabling a parallel and fair assessment relative to BRENDA.</p><p>To systematically assess extraction quality, we employed strict alignment criteria. An optimal pairing was found with linear sum assignment (Schilling‐Wilhelmi et al., <xref rid="pro70251-bib-0020" ref-type="bibr">2025</xref>), and enzyme names and organism descriptors were considered a match if they achieved at least 90% string similarity, while substrate alignment required either an exact string match or identical SMILES representation. Only upon successful alignment of both enzyme and substrate descriptors were the numerical values and units of <italic toggle="yes">k</italic>
+<sub>cat</sub> or <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> compared (see Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S3</xref>). Under these criteria, a true positive (TP) is defined as a case where the extracted entry matched the ground truth in both key and numerical value (including correct units). A false negative (FN) occurred when the model failed to extract any value for a valid key present in the ground truth. A false positive (FP) referred to cases where a partially correct extraction was made—e.g., a correct key but an incorrect or mismatched value. Cases where no matching key was expected and none was returned were considered true negatives (TN), although these cannot be explicitly reported due to the nature of the benchmarking design (Schilling‐Wilhelmi et al., <xref rid="pro70251-bib-0020" ref-type="bibr">2025</xref>). Evaluating precision is particularly critical in this context because the errors in these numerical values can propagate through downstream analyses and affect the fidelity of predictive enzyme models for systems biology and enzyme engineering (Schilling‐Wilhelmi et al., <xref rid="pro70251-bib-0020" ref-type="bibr">2025</xref>). We also reported a distinct category termed “Unresolved” which denotes entries for which neither a correct enzyme–substrate pair nor a corresponding numerical value could be identified. These cases represent complete mismatches and are not included in the calculation of accuracy or precision, as they fall outside the defined true positive, false positive, and false negative categories.</p><p>Using this framework, EnzyExtract achieves an accuracy of 0.80 and a precision of 0.84 for <italic toggle="yes">k</italic>
+<sub>cat</sub> values, and an accuracy of 0.76 and a precision of 0.79 for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> (Table <xref rid="pro70251-tbl-0001" ref-type="table">1a</xref>). Twenty <italic toggle="yes">k</italic>
+<sub>cat</sub> values are off by a factor of 10<sup>3</sup>, which is the result of misrecognized scientific notation from one PMID. For <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>, 49 values are off by 1000‐fold, likely due to unit misrecognition or glyph confusion such as “μ” versus “m”. In contrast, BRENDA's curated entries for the same literature exhibit comparable accuracy (0.67 for <italic toggle="yes">k</italic>
+<sub>cat</sub>, 0.78 for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>) and precision (0.83 for <italic toggle="yes">k</italic>
+<sub>cat</sub>, 0.78 for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>), indicating significant challenges in consistency even within user‐curated resources (Table <xref rid="pro70251-tbl-0001" ref-type="table">1b</xref>).</p><table-wrap position="float" id="pro70251-tbl-0001" content-type="TABLE" orientation="portrait"><label>TABLE 1</label><caption><p>Data validation results for EnzyExtract (a) and BRENDA (b), using manually curated datasets as ground truth.</p></caption><table frame="hsides" rules="groups"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><thead valign="bottom"><tr style="border-bottom:solid 1px #000000"><th align="left" valign="bottom" rowspan="1" colspan="1">EnzyExtract vs. ground truth data</th><th align="left" valign="bottom" rowspan="1" colspan="1">FP</th><th align="left" valign="bottom" rowspan="1" colspan="1">FN</th><th align="left" valign="bottom" rowspan="1" colspan="1">TP</th><th align="left" valign="bottom" rowspan="1" colspan="1">Off by 10</th><th align="left" valign="bottom" rowspan="1" colspan="1">Off by 10<sup>2</sup>
+</th><th align="left" valign="bottom" rowspan="1" colspan="1">Off by 10<sup>3</sup>
+</th><th align="left" valign="bottom" rowspan="1" colspan="1">Accuracy</th><th align="left" valign="bottom" rowspan="1" colspan="1">Unresolved</th><th align="left" valign="bottom" rowspan="1" colspan="1">Precision</th></tr></thead><tbody valign="top"><tr><td align="left" valign="top" rowspan="1" colspan="1">
+<italic toggle="yes">k</italic>
+<sub>cat</sub>
+</td><td align="left" valign="top" rowspan="1" colspan="1">59</td><td align="left" valign="top" rowspan="1" colspan="1">17</td><td align="left" valign="top" rowspan="1" colspan="1">301</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">20</td><td align="left" valign="top" rowspan="1" colspan="1">0.80</td><td align="left" valign="top" rowspan="1" colspan="1">779</td><td align="left" valign="top" rowspan="1" colspan="1">0.84</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">
+<italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>
+</td><td align="left" valign="top" rowspan="1" colspan="1">127</td><td align="left" valign="top" rowspan="1" colspan="1">26</td><td align="left" valign="top" rowspan="1" colspan="1">486</td><td align="left" valign="top" rowspan="1" colspan="1">3</td><td align="left" valign="top" rowspan="1" colspan="1">1</td><td align="left" valign="top" rowspan="1" colspan="1">49</td><td align="left" valign="top" rowspan="1" colspan="1">0.76</td><td align="left" valign="top" rowspan="1" colspan="1">560</td><td align="left" valign="top" rowspan="1" colspan="1">0.79</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">BRENDA vs. ground truth data</td><td align="left" valign="top" rowspan="1" colspan="1">FP</td><td align="left" valign="top" rowspan="1" colspan="1">FN</td><td align="left" valign="top" rowspan="1" colspan="1">TP</td><td align="left" valign="top" rowspan="1" colspan="1">Off by 10</td><td align="left" valign="top" rowspan="1" colspan="1">Off by 10<sup>2</sup>
+</td><td align="left" valign="top" rowspan="1" colspan="1">Off by 10<sup>3</sup>
+</td><td align="left" valign="top" rowspan="1" colspan="1">Accuracy</td><td align="left" valign="top" rowspan="1" colspan="1">Unresolved</td><td align="left" valign="top" rowspan="1" colspan="1">Precision</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">
+<italic toggle="yes">k</italic>
+<sub>cat</sub>
+</td><td align="left" valign="top" rowspan="1" colspan="1">16</td><td align="left" valign="top" rowspan="1" colspan="1">23</td><td align="left" valign="top" rowspan="1" colspan="1">80</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">0.67</td><td align="left" valign="top" rowspan="1" colspan="1">2489</td><td align="left" valign="top" rowspan="1" colspan="1">0.83</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">
+<italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>
+</td><td align="left" valign="top" rowspan="1" colspan="1">314</td><td align="left" valign="top" rowspan="1" colspan="1">9</td><td align="left" valign="top" rowspan="1" colspan="1">1134</td><td align="left" valign="top" rowspan="1" colspan="1">18</td><td align="left" valign="top" rowspan="1" colspan="1">0</td><td align="left" valign="top" rowspan="1" colspan="1">51</td><td align="left" valign="top" rowspan="1" colspan="1">0.78</td><td align="left" valign="top" rowspan="1" colspan="1">1450</td><td align="left" valign="top" rowspan="1" colspan="1">0.78</td></tr></tbody></table><table-wrap-foot id="pro70251-ntgp-0003"><fn id="pro70251-note-0004"><p>
+<italic toggle="yes">Note</italic>: The alignment process consists of three steps: (1) matching enzyme name and organisms with a 90% similarity cutoff, (2) aligning substrate structures using 100% similarity on SMILES strings, and (3) matching kinetic parameters (<italic toggle="yes">k</italic>
+<sub>cat</sub>, <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>) based on the previous two steps. False Positives (FP), False Negatives (FN), and True Positives (TP) follow standard statistical definitions, using <italic toggle="yes">k</italic>
+<sub>cat</sub> as the reference metric. Accuracy is defined as <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" id="jats-math-1" display="inline" overflow="scroll"><mml:mrow><mml:mrow><mml:mfrac><mml:mi mathvariant="bold">TP</mml:mi><mml:mrow><mml:mi mathvariant="bold">TP</mml:mi><mml:mo>+</mml:mo><mml:mi mathvariant="bold">FP</mml:mi><mml:mo>+</mml:mo><mml:mi mathvariant="bold">FN</mml:mi></mml:mrow></mml:mfrac></mml:mrow></mml:mrow></mml:math> and Precision as <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" id="jats-math-2" display="inline" overflow="scroll"><mml:mrow><mml:mrow><mml:mfrac><mml:mi mathvariant="bold">TP</mml:mi><mml:mrow><mml:mi mathvariant="bold">TP</mml:mi><mml:mo>+</mml:mo><mml:mi mathvariant="bold">FP</mml:mi></mml:mrow></mml:mfrac></mml:mrow></mml:mrow></mml:math>. “Off by 10”, “Off by10<sup>2</sup>”, and “Off by 10<sup>3</sup>” refer to extracted values that differ from the ground truth by corresponding numerical factors. “Unresolved” indicates cases where no match was found in the first two alignment steps.</p></fn></table-wrap-foot></table-wrap><p>These results highlight EnzyExtract's robustness and accuracy for automated data extraction at scale. Compared to BRENDA, EnzyExtract exhibits comparable or slightly superior performance (for <italic toggle="yes">k</italic>
+<sub>cat</sub>) across all metrics, with fewer large‐scale numerical discrepancies and a stronger ability to correctly associate quantitative values with biochemical contexts. This positions EnzyExtract as a trustworthy alternative for kinetic data curation, capable of supporting large‐scale enzymology initiatives with both accuracy and efficiency.</p><p>To further evaluate the consistency of the extracted kinetic parameters at scale, we conducted a correlation analysis between values extracted by EnzyExtract and those reported in the BRENDA database. We aligned 14,472 <italic toggle="yes">k</italic>
+<sub>cat</sub> and 23,308 <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> datapoints by matching identical enzyme–substrate pairs, applying the same criteria as in our earlier benchmark: ≥ 90% name similarity for enzymes and a 100% exact match for substrate names or SMILES strings. This large‐scale comparison reveals strong statistical consistency between EnzyExtract and BRENDA across both parameters (Figure <xref rid="pro70251-fig-0003" ref-type="fig">3</xref>). For <italic toggle="yes">k</italic>
+<sub>cat</sub>, Spearman's ρ was 0.94 and Pearson's <italic toggle="yes">R</italic> was 0.93 (<italic toggle="yes">R</italic>
+<sup>2</sup> = 0.85), with a mean absolute deviation (MAD) of 0.14 and root mean square deviation (RMSD) of 0.57. For <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>, Spearman's ρ reached 0.88 and Pearson's <italic toggle="yes">R</italic> was 0.86 (<italic toggle="yes">R</italic>
+<sup>2</sup> = 0.75), with a MAD of 0.19 and RMSD of 0.70. These low deviation values indicate that most EnzyExtract‐derived values fall within a narrow margin of their BRENDA‐reported counterparts, even when extracted from unstructured full texts. Notably, the slightly greater deviation values observed for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> may stem from the greater contextual ambiguity in units and conditions reported for Michaelis constants, as well as the broader dynamic range of valid <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> values. Nonetheless, these metrics confirm that EnzyExtract yields kinetic data quantitatively consistent with manually curated data, validating its use for large‐scale, high‐throughput extraction.</p><fig position="float" fig-type="FIGURE" id="pro70251-fig-0003" orientation="portrait"><label>FIGURE 3</label><caption><p>Correlation analysis of kinetic parameters extracted by EnzyExtract and those from the BRENDA database. The left plot compares log<sub>10</sub>(<italic toggle="yes">k</italic>
+<sub>cat</sub>) values, while the right plot compares log<sub>10</sub>(<italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>) values. Each point represents a matched enzyme‐substrate pair, with EnzyExtract‐extracted values plotted against their corresponding BRENDA values. Strong correlations are observed, with Spearman ρ = 0.94 and Pearson <italic toggle="yes">R</italic> = 0.93 for <italic toggle="yes">k</italic>
+<sub>
+<italic toggle="yes">cat</italic>
+</sub> (<italic toggle="yes">R</italic>
+<sup>2</sup> = 0.85), and Spearman's ρ = 0.88 and Pearson's <italic toggle="yes">R</italic> = 0.86 for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> (<italic toggle="yes">R</italic>
+<sup>2</sup> = 0.75). These results show the reliability of EnzyExtract's pipeline for extracting kinetic constants and demonstrate its potential utility in identifying systematic inconsistencies present in manually curated databases. Rather than replacing human curation, EnzyExtract provides a scalable, interpretable layer of validation that enhances the fidelity of biochemical databases, particularly in contexts where unit precision plays a critical role in downstream modeling and inference.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="anchor" id="jats-graphic-5" orientation="portrait" xlink:href="PRO-34-e70251-g003.jpg"><?image-name PRO-34-e70251-g003.jpg?><?image-size 70400?><?image-md5 3813cc093e67377435546d205f7cf7bd?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 529?><?image-original-width 1064?><?image-scaled-height 353?><?image-scaled-width 709?><?image-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/3813cc093e67/PRO-34-e70251-g003.jpg?><?thumb-name PRO-34-e70251-g003.gif?><?thumb-size 5754?><?thumb-md5 2e700bc50874fb97626566d1db0a89a1?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 160?><?thumb-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/2e700bc50874/PRO-34-e70251-g003.gif?></graphic></fig><p>Visual inspection of the scatter plots offers additional insight. While the majority of datapoints cluster along the identity line (y = x), several secondary clusters appear in parallel trajectories, with one cluster highlighted in a gray circle in Figure <xref rid="pro70251-fig-0003" ref-type="fig">3</xref>, suggesting consistent value shifts by fixed logarithmic intervals. These patterns are likely indicative of unit inconsistencies in BRENDA, such as misinterpretations between s<sup>−1</sup> and min<sup>−1</sup> for <italic toggle="yes">k</italic>
+<sub>cat</sub>, or between μM and mM for <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub>. Notably, such discrepancies are more likely to arise from legacy literature or earlier curation pipelines where unit markings, especially those involving visually similar glyphs such as “μ” and “m”, may be difficult to discern due to font resolution, scanning artifacts, or PDF degradation. Notably, EnzyExtract incorporates a unit‐aware recognition module specifically designed to resolve ambiguities in visual typography. By integrating convolutional neural network models trained to disambiguate confusable units, the system is better positioned to flag and correct systematic errors that might be introduced during manual annotation. In contrast, manual curation efforts, while meticulous, may not consistently detect such errors, particularly when reviewing older or low‐quality sources.</p><p>Further examination of the outliers (highlighted with a gray circle) identified six data points with substantial deviations attributable to apparent inaccuracies in BRENDA. Manual reinspection of the original sources (PubMed IDs: 14561748, 25577493, 12021281, 15010546, 15200387, and 15746370) confirms that in these cases EnzyExtract's extracted values accurately reflect the published figures, whereas discrepancies in BRENDA are due to misassigned units or numerical misreadings during prior curation.</p><p>EnzyExtract's final raw output includes 218,095 datapoints, surpassing BRENDA's 157,000 raw entries prior to sequence or SMILES filtering. For key biological entities, EnzyExtract consistently involves higher diversity: 22,687 unique enzyme names versus 4821 in BRENDA, 6245 unique organisms compared to BRENDA's 3732, and 16,070 unique mutation types versus 15,724 in BRENDA. To assess the breadth of enzyme–substrate pairs captured by EnzyExtract, we conducted a dimensionality reduction analysis using UMAP on the combined datasets from EnzyExtract and BRENDA. Key categorical features, including enzyme name, organism, substrate identity, and site‐specific mutations, were label‐encoded and projected into a 2D space using UMAP (n_neighbors = 15, min_dist = 0.1, Figure <xref rid="pro70251-fig-0004" ref-type="fig">4</xref>). The resulting visualization reveals a broader distribution for EnzyExtract (blue) compared to BRENDA (red), with EnzyExtract's entries forming a denser and more expansive coverage of the enzymology space. In contrast, BRENDA exhibits tighter clustering, reflecting its reliance on historical accumulation, selective manual curation, and an emphasis on canonical enzymatic pathways. EnzyExtract's broader coverage suggests its capacity to extract underrepresented or emerging enzyme mutant–substrate pairs from unstructured literature sources, which is evidenced by a more extensive region in the mutational embedding space (Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S4</xref>).</p><fig position="float" fig-type="FIGURE" id="pro70251-fig-0004" orientation="portrait"><label>FIGURE 4</label><caption><p>UMAP visualization of enzymology kinetics datasets comparing EnzyExtract (blue) and BRENDA (red). Key features used for embedding include organism, enzyme name, substrate, and mutations, which were label‐encoded before applying UMAP with n_neighbors = 15 and min_dist = 0.1 for dimensionality reduction. The visualization reveals that EnzyExtract provides broader coverage, capturing additional enzyme‐substrate relationships beyond those in BRENDA. The distributional differences suggest that EnzyExtract can uncover new enzymology knowledge from unstructured sources, complementing existing databases.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="anchor" id="jats-graphic-7" orientation="portrait" xlink:href="PRO-34-e70251-g002.jpg"><?image-name PRO-34-e70251-g002.jpg?><?image-size 122525?><?image-md5 e188afc1ae639b7b5bf8cf2069409956?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 850?><?image-original-width 827?><?image-scaled-height 566?><?image-scaled-width 551?><?image-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/e188afc1ae63/PRO-34-e70251-g002.jpg?><?thumb-name PRO-34-e70251-g002.gif?><?thumb-size 21736?><?thumb-md5 5af258c55f3e793e3ac503fc0a11ea71?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 103?><?thumb-scaled-width 100?><?thumb-cloudpmc-urn urn:cdn:blobs/ac7b/12355964/5af258c55f3e/PRO-34-e70251-g002.gif?></graphic></fig><p>Notably, EnzyExtract yields fewer distinct substrate entries: 8294 versus BRENDA's 12,000. We attribute this gap to two main factors. First, the LLM backbone of EnzyExtract may struggle with generic or ambiguous polymeric substrate names (e.g., DNA, RNA, or proteins), which often appear without accompanying structural descriptors. Second, the current extraction pipeline lacks an image‐to‐SMILES module, limiting its ability to interpret molecular structures embedded as figures or diagrams in PDF files (Rajan et al., <xref rid="pro70251-bib-0017" ref-type="bibr">2023</xref>). These constraints are particularly evident in instances where substrate identity is provided only as images in the original literature, limiting automated extraction and downstream analyses. Despite these limitations, the substrate space represented in EnzyExtractDB spans a broad range of chemical diversity (see Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S3</xref> for Morgan fingerprint‐based clustering).</p></sec><sec id="pro70251-sec-0007"><label>3.2</label><title>Application: Enhancing predictive modeling for enzyme kinetics</title><p>To evaluate the impact of EnzyExtract‐derived large‐scale dataset on predictive modeling of a total 44,376 datapoints, we retrained three previously published machine learning kcal predictors (i.e., MESI [Nie et al., <xref rid="pro70251-bib-0015" ref-type="bibr">2024</xref>], DLKcat [Li et al., <xref rid="pro70251-bib-0012" ref-type="bibr">2022</xref>], and TurNuP [Kroll et al., <xref rid="pro70251-bib-0009" ref-type="bibr">2023</xref>]) using a curated training set of 36,980 kcat entries extracted via EnzyExtract. Performance was assessed on a held‐out test set of 7396 entries, evaluated using five performance metrics: root mean squared error (RMSE), mean absolute error (MAE), Pearson's correlation coefficient (<italic toggle="yes">R</italic>), coefficient of determination (<italic toggle="yes">R</italic>
+<sup>2</sup>), and Spearman's rank correlation coefficient (ρ) (Table <xref rid="pro70251-tbl-0002" ref-type="table">2</xref>). These three models differ in both architectural design and dataset splitting strategy. DLKcat (Li et al., <xref rid="pro70251-bib-0012" ref-type="bibr">2022</xref>), a sequence‐based neural network model, uses a random split of enzyme–substrate pairs without controlling for sequence similarity, causing identical or highly similar enzymes to appear in both training and test sets. TurNuP (Kroll et al., <xref rid="pro70251-bib-0009" ref-type="bibr">2023</xref>) incorporates protein language models and attention mechanisms, splitting data by enzyme so that each unique enzyme sequence appears in only one dataset partition, with test performance further stratified by sequence identity to the training set. MESI (Nie et al., <xref rid="pro70251-bib-0015" ref-type="bibr">2024</xref>) adopts a similar approach, assigning enzymes to distinct splits and evaluating performance across defined sequence identity thresholds, including on remote homologs with &lt;40% similarity. In our retraining experiments, we followed each model's original data‐splitting protocol to ensure consistency and comparability of performance (see Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S4</xref> for details).</p><table-wrap position="float" id="pro70251-tbl-0002" content-type="TABLE" orientation="portrait"><label>TABLE 2</label><caption><p>Performance comparison of kinetic parameter prediction models retrained using EnzyExtract‐derived data.</p></caption><table frame="hsides" rules="groups"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><thead valign="bottom"><tr style="border-bottom:solid 1px #000000"><th align="left" valign="bottom" rowspan="1" colspan="1">Models</th><th align="left" valign="bottom" rowspan="1" colspan="1">RMSE (s<sup>−1</sup>)</th><th align="left" valign="bottom" rowspan="1" colspan="1">MAE (s<sup>−1</sup>)</th><th align="left" valign="bottom" rowspan="1" colspan="1">Pearson R</th><th align="left" valign="bottom" rowspan="1" colspan="1">
+<italic toggle="yes">R</italic>
+<sup>2</sup>
+</th><th align="left" valign="bottom" rowspan="1" colspan="1">Spearman ρ</th></tr></thead><tbody valign="top"><tr><td align="left" valign="top" rowspan="1" colspan="1">MESI</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.42</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.36</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.87</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.65</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.82</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">MESI (original)</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.86</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.94</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.72</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.46</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.69</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">DLKcat</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.54</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.32</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.80</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.59</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.79</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">DLKcat (original)</td><td align="char" char="." valign="top" rowspan="1" colspan="1">2.31</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.98</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.67</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.43</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.64</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">TurNuP</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.73</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.23</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.83</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.62</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.86</td></tr><tr><td align="left" valign="top" rowspan="1" colspan="1">TurNuP (original)</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.79</td><td align="char" char="." valign="top" rowspan="1" colspan="1">1.74</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.74</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.57</td><td align="char" char="." valign="top" rowspan="1" colspan="1">0.72</td></tr></tbody></table><table-wrap-foot id="pro70251-ntgp-0002"><fn id="pro70251-note-0003"><p>
+<italic toggle="yes">Note</italic>: The models were trained on 36,980 data points and evaluated on 7396 test data points, with key performance metrics reported, including RMSE, MAE, Pearson <italic toggle="yes">R</italic>, <italic toggle="yes">R</italic>
+<sup>2</sup>, and Spearman ρ. Retrained models (MESI, DLKcat, and TurNuP) using EnzyExtract data show significant performance improvements over their original versions, with reductions in RMSE and MAE, and increases in Pearson's <italic toggle="yes">R</italic>, <italic toggle="yes">R</italic>
+<sup>2</sup>, and Spearman's ρ. These results demonstrate the benefit of incorporating EnzyExtract‐derived enzymology data for enhancing predictive accuracy in kinetic parameter estimation.</p></fn></table-wrap-foot></table-wrap><p>Across all models, retraining with EnzyExtract data led to improvements in predictive performance. MESI achieves an RMSE of 1.42 s<sup>−1</sup> and MAE of 1.36 s<sup>−1</sup>—marked enhancements over its original implementation (RMSE 1.86 s<sup>−1</sup>, MAE 1.94 s<sup>−1</sup>)—as well as higher Pearson <italic toggle="yes">R</italic> (0.87 vs. 0.72), <italic toggle="yes">R</italic>
+<sup>2</sup> (0.65 vs. 0.46), and Spearman ρ (0.82 vs. 0.69). DLKcat also exhibits improved predictive accuracy following retraining (RMSE 1.54 s<sup>−1</sup>, <italic toggle="yes">R</italic>
+<sup>2</sup> 0.59) relative to its original benchmark (RMSE 2.31 s<sup>−1</sup>, <italic toggle="yes">R</italic>
+<sup>2</sup> 0.43). TurNuP, despite being a strong baseline model, also benefits from the enriched dataset and achieves the lowest MAE (1.23 s<sup>−1</sup> vs. original: 1.74 s<sup>−1</sup>) and the highest Spearman's ρ (0.86 vs. original: 0.72) among the three.</p><p>These findings underscore the utility of larger‐scale enzymology datasets for developing robust predictive models. By expanding the volume and diversity of training data beyond manually curated repositories, EnzyExtract enables improved model generalization across a broader enzymatic landscape. Consequently, future modeling efforts leveraging such data are likely to achieve greater accuracy, robustness, and practical relevance for enzyme design, metabolic modeling, and biotechnological innovation.</p></sec></sec><sec sec-type="discussion" id="pro70251-sec-0008"><label>4</label><title>DISCUSSION</title><p>In this study, we presented EnzyExtract, a high‐throughput and fully automated pipeline for extracting structured enzymology data from full‐text scientific literature using large language models. By integrating OCR, table parsing, metadata resolution, and prompt‐engineered GPT‐4 extraction, EnzyExtract enables the systematic recovery of relational data linking enzyme sequence, substrate identity, kinetic parameters, and assay conditions. The pipeline extracted over 242,116 raw enzyme‐substrate‐kinetic datapoints, which were further curated into 176,463 enzyme–substrate–sequence entries categorized by data confidence: 92,286 high‐confidence entries, 54,550 medium‐confidence entries, and 29,627 low‐confidence entries. This stratification allows researchers to balance data quantity with quality in downstream applications. To demonstrate its utility, we retrained state‐of‐the‐art kinetic predictors—including DLKcat, MESI, and TurNuP—using EnzyExtract‐derived datasets. All models showed consistent improvements in RMSE, MAE, and <italic toggle="yes">R</italic>
+<sup>2</sup> on held‐out test sets, confirming that high‐confidence, literature‐mined data can meaningfully enhance predictive enzyme modeling.</p><p>While EnzyExtract demonstrates strong performance in extracting enzyme kinetic parameters at scale, several limitations remain that present opportunities for future improvement. First, our current implementation relies solely on GPT‐4 for language understanding and extraction. We did not benchmark or compare performance across other large language models (LLMs) such as Claude, Gemini, or open‐source models like Mistral or DeepSeek, which may offer complementary strengths or cost efficiencies. Evaluating a broader set of LLMs, as demonstrated in the Co‐Scientist (Jiang et al., <xref rid="pro70251-bib-0005" ref-type="bibr">2025</xref>) study, could boost EnzyExtract's robustness and generalizability.</p><p>Second, while the current pipeline operates in a fully automated manner, expert‐level accuracy still necessitates manual curation. At present, the system incorporates only minimal safeguards against errors, relying primarily on heuristic filters to identify hallucinations and repetitive outputs. To enhance reliability, future iterations could adopt a hybrid framework in which algorithmic predictions are systematically reviewed, corrected, or prioritized by human annotators—particularly in cases involving ambiguity or low‐confidence extractions. Such a collaborative approach, integrating automated scalability with expert oversight, has the potential to substantially improve overall accuracy.</p><p>Third, EnzyExtract currently concentrates on extracting kinetic parameters such as <italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> while assay conditions and reaction details are only partially captured. The present pipeline can retrieve a limited set of experimental conditions, including assay pH, temperature, and cofactors; however, many additional functional descriptors frequently reported in the literature—such as enzyme stability (e.g., melting temperature, half‐life), optimal temperature profiles, product identities and yields, reaction stoichiometry, inhibition constants (<italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">i</italic>
+</sub>) and mutational effects—remain unexploited (Xie &amp; Warshel, <xref rid="pro70251-bib-0028" ref-type="bibr">2023</xref>). Expanding extraction capabilities to include these parameters would significantly enrich enzyme knowledge bases, support more detailed mechanistic studies, and improve the development of predictive models for enzyme design and engineering. As the extraction scope broadens, downstream data curation will require context‐specific filtering; for instance: selecting datasets with complete kinetic and product annotations for pathway modeling or isolating high‐confidence mutational and inhibition data for machine learning‐based activity prediction.</p><p>Despite its ability to extract large volumes of kinetic data with structured metadata, the current version of EnzyExtract lacks experiment‐level standardization, particularly in distinguishing or aggregating identical enzyme–substrate pairs measured under varying assay conditions across different laboratories. At present, the pipeline does not group kinetic measurements based on experimental protocols, nor does it incorporate controlled vocabularies or ontological frameworks to assess the reproducibility or comparability of reported values. Instead, data harmonization is performed statistically, based on extracted numerical features and confidence scores, without formally accounting for contextual experimental variability. Although sequence and substrate identifiers can often be matched to external resources such as UniProt and PubChem, the fraction of entries for which complete metadata—such as pH, temperature, or cofactor information—can be reliably linked remains limited. To improve the granularity, quality, and reusability of extracted datasets, future versions of EnzyExtract could adopt formal reporting standards such as EnzymeML (Lauterbach et al., <xref rid="pro70251-bib-0011" ref-type="bibr">2023</xref>) and STRENDA (Swainston et al., <xref rid="pro70251-bib-0026" ref-type="bibr">2018</xref>). EnzymeML provides a machine‐readable markup format for storing kinetic measurements along with detailed reaction conditions, while STRENDA Guidelines define minimum information requirements for reporting enzymology data. Integration with STRENDA DB, which is a curated, DOI‐registered repository for compliant kinetic datasets, would facilitate rigorous validation of extracted parameters and promote reproducibility across publications. By aligning with these standards, EnzyExtract could better support benchmarking, comparison, and reuse of enzymology data across studies, ultimately advancing its utility for machine learning applications and mechanistic modeling.</p><p>While the identifier‐based resolution strategy employed by EnzyExtract significantly enhances the ability to retrieve enzyme sequences and substrate structures, it does not guarantee high fidelity to the exact molecular entities used in the original kinetic experiments. In many cases, the specific protein construct employed in an enzymology study, such as a mutant, fusion tag, or truncated variant, is not explicitly reported in the manuscript. Instead, researchers may reference a canonical template sequence through a UniProt or PDB ID without noting experimental modifications, leading to discrepancies when aligning extracted metadata to external databases. As a result, the inferred sequences may represent the closest available approximation, but not necessarily the precise variant tested in the assay.</p><p>A similar limitation applies to substrate annotation: while common small molecules can typically be mapped to PubChem using name‐based searches, complex substrates such as protease targets, nucleic acids (e.g., DNA, RNA), and polysaccharides (e.g., starch) often lack clear SMILES string representations or are ambiguously named in the literature. In such cases, the current pipeline is unable to reliably resolve the substrate to a canonical chemical structure, highlighting an area where future model improvements, such as the integration of domain‐specific ontologies or experimental metadata standards, could further enhance the precision and completeness of the extracted dataset. In parallel, product information, such as product structure, yield, and specificity (Xing et al., <xref rid="pro70251-bib-0029" ref-type="bibr">2024</xref>), is inconsistently reported and currently not captured by EnzyExtract. Including such data would provide valuable mechanistic context and support a wider range of applications, including pathway modeling, yield optimization, and selectivity prediction. Together, improved resolution of both substrate and product entities would directly benefit downstream tools such as EnzyKR (Ran et al., <xref rid="pro70251-bib-0018" ref-type="bibr">2023</xref>), CLEAN (Yu et al., <xref rid="pro70251-bib-0031" ref-type="bibr">2023</xref>), which rely on accurate molecular representations to predict enzyme–substrate selectivity and reaction outcomes.</p><p>Finally, integration with computational enzymology platforms such as EnzyHTP (Shao et al., <xref rid="pro70251-bib-0023" ref-type="bibr">2022</xref>, <xref rid="pro70251-bib-0032" ref-type="bibr">2023</xref>, <xref rid="pro70251-bib-0033" ref-type="bibr">2025</xref>), AlphaFold2 (Jumper et al., <xref rid="pro70251-bib-0006" ref-type="bibr">2021</xref>), or Rosetta (Ahern et al., <xref rid="pro70251-bib-0002" ref-type="bibr">2025</xref>) could streamline structure–function pipelines and enable closed‐loop design and discovery. By embedding EnzyExtract as a modular data layer, the broader vision of a fully automated enzyme engineering and annotation platform comes closer to reality.</p></sec><sec id="pro70251-sec-0013"><title>AUTHOR CONTRIBUTIONS</title><p>
+<bold>Galen Wei:</bold> Methodology; software; data curation; investigation; writing – original draft; writing – review and editing. <bold>Xinchun Ran:</bold> Conceptualization; investigation; methodology; software; data curation; writing – original draft; writing – review and editing. <bold>Runeem AI‐Abssi:</bold> Methodology; investigation; validation; data curation. <bold>Zhongyue Yang:</bold> Conceptualization; writing – original draft; writing – review and editing; project administration; resources; methodology; investigation; funding acquisition.</p></sec><sec sec-type="COI-statement" id="pro70251-sec-0010"><title>CONFLICT OF INTEREST STATEMENT</title><p>The authors declare no competing financial interest.</p></sec><sec sec-type="supplementary-material"><title>Supporting information</title><supplementary-material id="pro70251-supitem-0001" position="float" content-type="local-data" orientation="portrait"><caption><p>
+<bold>DATA S1.</bold> Table  reports the performance benchmarking of EnzyExtract. Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref> lists the keywords used for literature search, and Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S2</xref> describes the prompt template employed in EnzyExtract. Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S3</xref> provides details on the extraction and comparison methods, while Text <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S4</xref> outlines the dataset splitting strategies used in TurNuP, MESI, and DLKcat. Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref> shows the temperature and pH distribution in EnzyExtractDB; Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref> presents the distribution of <italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> values; Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S3</xref> illustrates the Morgan fingerprint diversity; and Figure <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S4</xref> highlights the mutation diversity across the database.</p></caption><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="PRO-34-e70251-s001.pdf" position="float" orientation="portrait"><?suppdata-name PRO-34-e70251-s001.pdf?><?suppdata-size 1608801?><?suppdata-md5 2b59b0c7c9e879dc0a3143c6f95e9fae?><?suppdata-image-server-status NEVER_LOAD?><?suppdata-mime-type application?><?suppdata-mime-sub-type pdf?><?suppdata-cloudpmc-urn urn:app:ac7b/12355964/2b59b0c7c9e8/PRO-34-e70251-s001.pdf?></media></supplementary-material><supplementary-material id="pro70251-supitem-0002" position="float" content-type="local-data" orientation="portrait"><caption><p>
+<bold>DATA S2.</bold> Supporting Information.</p></caption><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="PRO-34-e70251-s002.zip" position="float" orientation="portrait"><?suppdata-name PRO-34-e70251-s002.zip?><?suppdata-size 117835112?><?suppdata-md5 04aa7458201609aaf0d4a2b06f421626?><?suppdata-image-server-status NEVER_LOAD?><?suppdata-mime-type application?><?suppdata-mime-sub-type zip?><?suppdata-cloudpmc-urn urn:app:ac7b/12355964/04aa74582016/PRO-34-e70251-s002.zip?></media></supplementary-material></sec></body><back><ack id="pro70251-sec-0009"><title>ACKNOWLEDGMENTS</title><p>This research was supported by a startup grant from Vanderbilt University, a fellowship from the Vanderbilt Institute of Chemical Biology, and the Rosetta Commons Seed Grant Award. Funding was also provided by the National Institute of General Medical Sciences of the National Institutes of Health under award number R35GM146982. Computational resources were made available by the SDSC Dell Cluster with AMD Rome HDR IB at Expanse through the Advanced Cyberinfrastructure Coordination Ecosystem: Services &amp; Support (ACCESS) program, funded by National Science Foundation grant BIO200057.102. The authors also acknowledge research support facilitated by the OpenAI Researcher Access Program. Galen Wei acknowledges funding provided by the Arnold and Mabel Beckman Foundation Beckman Scholars Program 2025 grant (Crossref DOI: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://doi.org/10.13039/100000997" ext-link-type="uri">https://doi.org/10.13039/100000997</ext-link>).</p></ack><sec sec-type="data-availability" id="pro70251-sec-0012"><title>DATA AVAILABILITY STATEMENT</title><p>The raw data for EnzyExtractDB are available in the accompanying SI.zip file, which contains the following 10 folders: (1) dataset_223_EnzyExtract_BRENDA_manual_curation, providing the data underlying Table <xref rid="pro70251-tbl-0001" ref-type="table">1</xref>; (2) dataset_384_pipeline_benchmark_dataset, used to generate Table <xref rid="pro70251-supitem-0001" ref-type="supplementary-material">S1</xref>; (3) dataset_aligned_sequence_dataset, containing data aligned with external databases; (4) dataset_crude_database, comprising the raw output from the EnzyExtract pipeline; (5) dataset_enzyextract_brenda_correlation, including all datapoints utilized to plot the <italic toggle="yes">k</italic>
+<sub>cat</sub> and <italic toggle="yes">K</italic>
+<sub>
+<italic toggle="yes">m</italic>
+</sub> parity plot in Figure <xref rid="pro70251-fig-0003" ref-type="fig">3</xref>; (6) dataset_gpt4_finetuned, containing the PubMed article dataset used for fine‐tuning GPT‐4o‐mini; (7) dataset_OCR_dataset, which holds the data used to fine‐tune ResNet‐18; (8) dataset_retrain_kcat_predictor, providing the dataset used to retrain the kcat predictor; (9) EnzyExtractDB, containing a parquet format 176,463 datapoints of database; and (10) EnzyExtract‐main, which includes the source code. The EnzyExtract source code and EnzyExtractDB are also publicly available at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/ChemBioHTP/EnzyExtract" ext-link-type="uri" specific-use="software is-supplemented-by">https://github.com/ChemBioHTP/EnzyExtract</ext-link>, with an interactive Google Colab demo provided at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://colab.research.google.com/drive/1MwKSEZzLPNOseksRshbzkkFoO_cgJhva" ext-link-type="uri" specific-use="software is-supplemented-by">https://colab.research.google.com/drive/1MwKSEZzLPNOseksRshbzkkFoO_cgJhva</ext-link>.</p></sec><ref-list id="pro70251-bibl-0001" content-type="cited-references"><title>REFERENCES</title><ref id="pro70251-bib-0001"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0001">
+<string-name name-style="western">
+<surname>Adhikari</surname>, <given-names>N. S.</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Agarwal</surname>, <given-names>S.</given-names>
+</string-name>
+<year>2024</year>
+<article-title>A comparative study of PDF parsing tools across diverse document categories</article-title>. arXiv preprint arXiv:2410.09871 2024.</mixed-citation></ref><ref id="pro70251-bib-0002"><mixed-citation publication-type="journal" id="pro70251-cit-0002">
+<string-name name-style="western">
+<surname>Ahern</surname>
+<given-names>W</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yim</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Tischer</surname>
+<given-names>D</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Salike</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Woodbury</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Kim</surname>
+<given-names>D</given-names>
+</string-name>, et al. <article-title>Atom level enzyme active site scaffolding using RFdiffusion2</article-title>. <source>bioRxiv</source>. <year>2025</year>;<elocation-id>2025.2004.2009.648075</elocation-id>.<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41592-025-02975-x</pub-id><pub-id pub-id-type="pmcid">PMC12791007</pub-id><pub-id pub-id-type="pmid">41339749</pub-id></mixed-citation></ref><ref id="pro70251-bib-0003"><mixed-citation publication-type="journal" id="pro70251-cit-0003">
+<collab collab-type="authors">Consortium, U</collab>
+. <article-title>UniProt: a hub for protein information</article-title>. <source>Nucleic Acids Res</source>. <year>2015</year>;<volume>43</volume>(<issue>D1</issue>):<fpage>D204</fpage>–<lpage>D212</lpage>.<pub-id pub-id-type="pmid">25348405</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/gku989</pub-id><pub-id pub-id-type="pmcid">PMC4384041</pub-id></mixed-citation></ref><ref id="pro70251-bib-0004"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0004">
+<string-name name-style="western">
+<surname>He</surname>
+<given-names>K</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Zhang</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ren</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Sun</surname>
+<given-names>J</given-names>
+</string-name>. <article-title>Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition, 2016; pp. 770–778</article-title>. <year>2016</year>.</mixed-citation></ref><ref id="pro70251-bib-0005"><mixed-citation publication-type="journal" id="pro70251-cit-0005">
+<string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Hu</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Xie</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Guo</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Dong</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Fu</surname>
+<given-names>S</given-names>
+</string-name>, et al. <article-title>Enzyme Co‐scientist: harnessing large language models for enzyme kinetic data extraction from literature</article-title>. <source>bioRxiv</source>. <year>2025</year>;<elocation-id>2025.2003.2003.641178</elocation-id>.</mixed-citation></ref><ref id="pro70251-bib-0006"><mixed-citation publication-type="journal" id="pro70251-cit-0006">
+<string-name name-style="western">
+<surname>Jumper</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Evans</surname>
+<given-names>R</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Pritzel</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Green</surname>
+<given-names>T</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Figurnov</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ronneberger</surname>
+<given-names>O</given-names>
+</string-name>, et al. <article-title>Highly accurate protein structure prediction with AlphaFold</article-title>. <source>Nature</source>. <year>2021</year>;<volume>596</volume>(<issue>7873</issue>):<fpage>583</fpage>–<lpage>589</lpage>.<pub-id pub-id-type="pmid">34265844</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41586-021-03819-2</pub-id><pub-id pub-id-type="pmcid">PMC8371605</pub-id></mixed-citation></ref><ref id="pro70251-bib-0007"><mixed-citation publication-type="journal" id="pro70251-cit-0007">
+<string-name name-style="western">
+<surname>Jurich</surname>
+<given-names>C</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ran</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ</given-names>
+</string-name>. <article-title>Physics‐based modeling in the new era of enzyme engineering</article-title>. <source>Nat Comput Sci</source>. <year>2025</year>;<volume>5</volume>(<issue>4</issue>):<fpage>279</fpage>–<lpage>291</lpage>.<pub-id pub-id-type="pmid">40275092</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s43588-025-00788-8</pub-id><pub-id pub-id-type="pmcid">PMC12239909</pub-id></mixed-citation></ref><ref id="pro70251-bib-0008"><mixed-citation publication-type="journal" id="pro70251-cit-0008">
+<string-name name-style="western">
+<surname>Kim</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Chen</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Cheng</surname>
+<given-names>T</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Gindulyte</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>He</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>He</surname>
+<given-names>S</given-names>
+</string-name>, et al. <article-title>PubChem 2023 update</article-title>. <source>Nucleic Acids Res</source>. <year>2023</year>;<volume>51</volume>(<issue>D1</issue>):<fpage>D1373</fpage>–<lpage>D1380</lpage>.<pub-id pub-id-type="pmid">36305812</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/gkac956</pub-id><pub-id pub-id-type="pmcid">PMC9825602</pub-id></mixed-citation></ref><ref id="pro70251-bib-0009"><mixed-citation publication-type="journal" id="pro70251-cit-0009">
+<string-name name-style="western">
+<surname>Kroll</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Rousset</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Hu</surname>
+<given-names>X‐P</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Liebrand</surname>
+<given-names>NA</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Lercher</surname>
+<given-names>MJ</given-names>
+</string-name>. <article-title>Turnover number predictions for kinetically uncharacterized enzymes using machine and deep learning</article-title>. <source>Nat Commun</source>. <year>2023</year>;<volume>14</volume>(<issue>1</issue>):<fpage>4139</fpage>.<pub-id pub-id-type="pmid">37438349</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41467-023-39840-4</pub-id><pub-id pub-id-type="pmcid">PMC10338564</pub-id></mixed-citation></ref><ref id="pro70251-bib-0010"><mixed-citation publication-type="journal" id="pro70251-cit-0010">
+<string-name name-style="western">
+<surname>Lai</surname>
+<given-names>P‐T</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Coudert</surname>
+<given-names>E</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Aimo</surname>
+<given-names>L</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Axelsen</surname>
+<given-names>K</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Breuza</surname>
+<given-names>L</given-names>
+</string-name>, <string-name name-style="western">
+<surname>De Castro</surname>
+<given-names>E</given-names>
+</string-name>, et al. <article-title>EnzChemRED, a rich enzyme chemistry relation extraction dataset</article-title>. <source>Sci Data</source>. <year>2024</year>;<volume>11</volume>(<issue>1</issue>):<elocation-id>982</elocation-id>.<pub-id pub-id-type="pmid">39251610</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41597-024-03835-7</pub-id><pub-id pub-id-type="pmcid">PMC11384730</pub-id></mixed-citation></ref><ref id="pro70251-bib-0011"><mixed-citation publication-type="journal" id="pro70251-cit-0011">
+<string-name name-style="western">
+<surname>Lauterbach</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Dienhart</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Range</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Malzacher</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Spöring</surname>
+<given-names>J‐D</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Rother</surname>
+<given-names>D</given-names>
+</string-name>, et al. <article-title>EnzymeML: seamless data flow and modeling of enzymatic data</article-title>. <source>Nat Methods</source>. <year>2023</year>;<volume>20</volume>(<issue>3</issue>):<fpage>400</fpage>–<lpage>402</lpage>.<pub-id pub-id-type="pmid">36759590</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41592-022-01763-1</pub-id></mixed-citation></ref><ref id="pro70251-bib-0012"><mixed-citation publication-type="journal" id="pro70251-cit-0012">
+<string-name name-style="western">
+<surname>Li</surname>
+<given-names>F</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yuan</surname>
+<given-names>L</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Lu</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Li</surname>
+<given-names>G</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Chen</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Engqvist</surname>
+<given-names>MK</given-names>
+</string-name>, et al. <article-title>Deep learning‐based k cat prediction enables improved enzyme‐constrained model reconstruction</article-title>. <source>Nat Catal</source>. <year>2022</year>;<volume>5</volume>(<issue>8</issue>):<fpage>662</fpage>–<lpage>672</lpage>.</mixed-citation></ref><ref id="pro70251-bib-0013"><mixed-citation publication-type="journal" id="pro70251-cit-0013">
+<string-name name-style="western">
+<surname>Markin</surname>
+<given-names>CJ</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Mokhtari</surname>
+<given-names>DA</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Sunden</surname>
+<given-names>F</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Appel</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Akiva</surname>
+<given-names>E</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Longwell</surname>
+<given-names>S</given-names>
+</string-name>, et al. <article-title>Revealing enzyme functional architecture via high‐throughput microfluidic enzyme kinetics</article-title>. <source>Science</source>. <year>2021</year>;<volume>373</volume>(<issue>6553</issue>):<elocation-id>eabf8761</elocation-id>.<pub-id pub-id-type="pmid">34437092</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.abf8761</pub-id><pub-id pub-id-type="pmcid">PMC8454890</pub-id></mixed-citation></ref><ref id="pro70251-bib-0014"><mixed-citation publication-type="journal" id="pro70251-cit-0014">
+<string-name name-style="western">
+<surname>Muir</surname>
+<given-names>DF</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Asper</surname>
+<given-names>GP</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Notin</surname>
+<given-names>P</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Posner</surname>
+<given-names>JA</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Marks</surname>
+<given-names>DS</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Keiser</surname>
+<given-names>MJ</given-names>
+</string-name>, et al. <article-title>Evolutionary‐scale enzymology enables exploration of a rugged catalytic landscape</article-title>. <source>Science</source>. <year>2025</year>;<volume>388</volume>(<issue>6752</issue>):<fpage>e</fpage>–<lpage>adu1058</lpage>.<pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.adu1058</pub-id><pub-id pub-id-type="pmcid">PMC12333904</pub-id><pub-id pub-id-type="pmid">40504906</pub-id></mixed-citation></ref><ref id="pro70251-bib-0015"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0015">
+<string-name name-style="western">
+<surname>Nie</surname>
+<given-names>Z</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Zhang</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Liu</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Huang</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Xu</surname>
+<given-names>F</given-names>
+</string-name>, et al. <article-title>Multi‐purpose enzyme‐substrate interaction prediction with progressive conditional deep learning</article-title>. <year>2024</year>.</mixed-citation></ref><ref id="pro70251-bib-0016"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0016">
+<string-name name-style="western">
+<surname>Priem</surname>, <given-names>J.</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Piwowar</surname>, <given-names>H.</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Orr</surname>, <given-names>R.</given-names>
+</string-name>
+<year>2022</year>
+<article-title>OpenAlex: a fully‐open index of scholarly works, authors, venues, institutions, and concepts</article-title>. arXiv preprint arXiv:2205.01833 2022.</mixed-citation></ref><ref id="pro70251-bib-0017"><mixed-citation publication-type="journal" id="pro70251-cit-0017">
+<string-name name-style="western">
+<surname>Rajan</surname>
+<given-names>K</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Brinkhaus</surname>
+<given-names>HO</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Agea</surname>
+<given-names>MI</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Zielesny</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Steinbeck</surname>
+<given-names>C</given-names>
+</string-name>. <article-title>DECIMER. Ai: an open platform for automated optical chemical structure identification, segmentation and recognition in scientific publications</article-title>. <source>Nat Commun</source>. <year>2023</year>;<volume>14</volume>(<issue>1</issue>):<elocation-id>5045</elocation-id>.<pub-id pub-id-type="pmid">37598180</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/s41467-023-40782-0</pub-id><pub-id pub-id-type="pmcid">PMC10439916</pub-id></mixed-citation></ref><ref id="pro70251-bib-0018"><mixed-citation publication-type="journal" id="pro70251-cit-0018">
+<string-name name-style="western">
+<surname>Ran</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ</given-names>
+</string-name>. <article-title>EnzyKR: a chirality‐aware deep learning model for predicting the outcomes of the hydrolase‐catalyzed kinetic resolution</article-title>. <source>Chem Sci</source>. <year>2023</year>;<volume>14</volume>(<issue>43</issue>):<fpage>12073</fpage>–<lpage>12082</lpage>.<pub-id pub-id-type="pmid">37969577</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1039/d3sc02752j</pub-id><pub-id pub-id-type="pmcid">PMC10631226</pub-id></mixed-citation></ref><ref id="pro70251-bib-0019"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0019">
+<string-name name-style="western">
+<surname>Richardson</surname>
+<given-names>L</given-names>
+</string-name>. <article-title>Beautiful soup documentation</article-title>. <year>2007</year>.</mixed-citation></ref><ref id="pro70251-bib-0020"><mixed-citation publication-type="journal" id="pro70251-cit-0020">
+<string-name name-style="western">
+<surname>Schilling‐Wilhelmi</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ríos‐García</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Shabih</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Gil</surname>
+<given-names>MV</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Miret</surname>
+<given-names>S</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Koch</surname>
+<given-names>CT</given-names>
+</string-name>, et al. <article-title>From text to insight: large language models for chemical data extraction</article-title>. <source>Chem Soc Rev</source>. <year>2025</year>;<volume>54</volume>:<fpage>1125</fpage>–<lpage>1150</lpage>.<pub-id pub-id-type="pmid">39703015</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1039/d4cs00913d</pub-id></mixed-citation></ref><ref id="pro70251-bib-0022"><mixed-citation publication-type="journal" id="pro70251-cit-0022">
+<string-name name-style="western">
+<surname>Schomburg</surname>
+<given-names>I</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Chang</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Hofmann</surname>
+<given-names>O</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ebeling</surname>
+<given-names>C</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ehrentreich</surname>
+<given-names>F</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Schomburg</surname>
+<given-names>D</given-names>
+</string-name>. <article-title>BRENDA: a resource for enzyme data and metabolic information</article-title>. <source>Trends Biochem Sci</source>. <year>2002</year>;<volume>27</volume>(<issue>1</issue>):<fpage>54</fpage>–<lpage>56</lpage>.<pub-id pub-id-type="pmid">11796225</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/s0968-0004(01)02027-8</pub-id></mixed-citation></ref><ref id="pro70251-bib-0033"><mixed-citation publication-type="journal" id="pro70251-cit-0033">
+<string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Hollenbeak</surname>
+<given-names>AC</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ran</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Bachmann</surname>
+<given-names>BO</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ.</given-names>
+</string-name>
+<article-title>SubTuner leverages physics‐based modeling to complement AI in enzyme engineering toward non‐native substrates</article-title>. <source>Chem Catalysis</source>. <year>2025</year>;<volume>5</volume>(<issue>6</issue>):<elocation-id>101334</elocation-id>. <pub-id pub-id-type="doi">10.1016/j.checat.2025.101334</pub-id>
+<pub-id pub-id-type="pmid">40717709</pub-id>
+<pub-id pub-id-type="pmcid">PMC12288847</pub-id></mixed-citation></ref><ref id="pro70251-bib-0023"><mixed-citation publication-type="journal" id="pro70251-cit-0023">
+<string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ</given-names>
+</string-name>. <article-title>EnzyHTP: a high‐throughput computational platform for enzyme modeling</article-title>. <source>J Chem Inf Model</source>. <year>2022</year>;<volume>62</volume>(<issue>3</issue>):<fpage>647</fpage>–<lpage>655</lpage>.<pub-id pub-id-type="pmid">35073075</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1021/acs.jcim.1c01424</pub-id></mixed-citation></ref><ref id="pro70251-bib-0032"><mixed-citation publication-type="journal" id="pro70251-cit-0032">
+<string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ</given-names>
+</string-name>. <article-title>EnzyHTP Computational directed evolution with adaptive resource allocation</article-title>. <source>Journal of Chemical Information and Modeling</source>. <year>2023</year>;<volume>63</volume>(<issue>17</issue>):<fpage>5650</fpage>–<lpage>5659</lpage>. <pub-id pub-id-type="doi">10.1021/acs.jcim.3c00618</pub-id>
+<pub-id pub-id-type="pmid">37611241</pub-id>
+<pub-id pub-id-type="pmcid">PMC11211066</pub-id></mixed-citation></ref><ref id="pro70251-bib-0024"><mixed-citation publication-type="journal" id="pro70251-cit-0024">
+<string-name name-style="western">
+<surname>Smith</surname>
+<given-names>N</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Yuan</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Melissinos</surname>
+<given-names>C</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Moghe</surname>
+<given-names>G</given-names>
+</string-name>. <article-title>FuncFetch: an LLM‐assisted workflow enables mining thousands of enzyme–substrate interactions from published manuscripts</article-title>. <source>Bioinformatics</source>. <year>2025</year>;<volume>41</volume>(<issue>1</issue>):<elocation-id>btae756</elocation-id>.<pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/bioinformatics/btae756</pub-id><pub-id pub-id-type="pmcid">PMC11734755</pub-id><pub-id pub-id-type="pmid">39718779</pub-id></mixed-citation></ref><ref id="pro70251-bib-0025"><mixed-citation publication-type="miscellaneous" id="pro70251-cit-0025">
+<string-name name-style="western">
+<surname>Smock</surname>
+<given-names>B</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Pesala</surname>
+<given-names>R</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Abraham</surname>
+<given-names>R</given-names>
+</string-name>. <article-title>PubTables‐1M: Towards comprehensive table extraction from unstructured documents. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2022; pp. 4634–4642</article-title>. <year>2022</year>.</mixed-citation></ref><ref id="pro70251-bib-0026"><mixed-citation publication-type="journal" id="pro70251-cit-0026">
+<string-name name-style="western">
+<surname>Swainston</surname>
+<given-names>N</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Baici</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Bakker</surname>
+<given-names>BM</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Cornish‐Bowden</surname>
+<given-names>A</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Fitzpatrick</surname>
+<given-names>PF</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Halling</surname>
+<given-names>P</given-names>
+</string-name>, et al. <article-title>STRENDA DB: enabling the validation and sharing of enzyme kinetics data</article-title>. <source>FEBS J</source>. <year>2018</year>;<volume>285</volume>(<issue>12</issue>):<fpage>2193</fpage>–<lpage>2204</lpage>.<pub-id pub-id-type="pmid">29498804</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1111/febs.14427</pub-id><pub-id pub-id-type="pmcid">PMC6005732</pub-id></mixed-citation></ref><ref id="pro70251-bib-0027"><mixed-citation publication-type="journal" id="pro70251-cit-0027">
+<string-name name-style="western">
+<surname>Wittig</surname>
+<given-names>U</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Kania</surname>
+<given-names>R</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Golebiewski</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Rey</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Shi</surname>
+<given-names>L</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jong</surname>
+<given-names>L</given-names>
+</string-name>, et al. <article-title>SABIO‐RK—database for biochemical reaction kinetics</article-title>. <source>Nucleic Acids Res</source>. <year>2012</year>;<volume>40</volume>(<issue>D1</issue>):<fpage>D790</fpage>–<lpage>D796</lpage>.<pub-id pub-id-type="pmid">22102587</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/nar/gkr1046</pub-id><pub-id pub-id-type="pmcid">PMC3245076</pub-id></mixed-citation></ref><ref id="pro70251-bib-0028"><mixed-citation publication-type="journal" id="pro70251-cit-0028">
+<string-name name-style="western">
+<surname>Xie</surname>
+<given-names>W</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Warshel</surname>
+<given-names>A</given-names>
+</string-name>. <article-title>Harnessing natural evolution and computation towards systems enzymology</article-title>. <source>Biophys J</source>. <year>2023</year>;<volume>122</volume>(<issue>3</issue>):<fpage>462a</fpage>.</mixed-citation></ref><ref id="pro70251-bib-0029"><mixed-citation publication-type="journal" id="pro70251-cit-0029">
+<string-name name-style="western">
+<surname>Xing</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Cai</surname>
+<given-names>P</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Liu</surname>
+<given-names>D</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Han</surname>
+<given-names>M</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Liu</surname>
+<given-names>J</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Le</surname>
+<given-names>Y</given-names>
+</string-name>, et al. <article-title>High‐throughput prediction of enzyme promiscuity based on substrate–product pairs</article-title>. <source>Brief Bioinform</source>. <year>2024</year>;<volume>25</volume>(<issue>2</issue>):<elocation-id>bbae089</elocation-id>.<pub-id pub-id-type="pmid">38487850</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/bib/bbae089</pub-id><pub-id pub-id-type="pmcid">PMC10940840</pub-id></mixed-citation></ref><ref id="pro70251-bib-0030"><mixed-citation publication-type="journal" id="pro70251-cit-0030">
+<string-name name-style="western">
+<surname>Yang</surname>
+<given-names>ZJ</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Shao</surname>
+<given-names>Q</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jurich</surname>
+<given-names>C</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Ran</surname>
+<given-names>X</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Juarez</surname>
+<given-names>RJ</given-names>
+</string-name>, et al. <article-title>Mutexa: a computational ecosystem for intelligent protein engineering</article-title>. <source>J Chem Theory Comput</source>. <year>2023</year>;<volume>19</volume>(<issue>21</issue>):<fpage>7459</fpage>–<lpage>7477</lpage>.<pub-id pub-id-type="pmid">37828731</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1021/acs.jctc.3c00602</pub-id><pub-id pub-id-type="pmcid">PMC10653112</pub-id></mixed-citation></ref><ref id="pro70251-bib-0031"><mixed-citation publication-type="journal" id="pro70251-cit-0031">
+<string-name name-style="western">
+<surname>Yu</surname>
+<given-names>T</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Cui</surname>
+<given-names>H</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Li</surname>
+<given-names>JC</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Luo</surname>
+<given-names>Y</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Jiang</surname>
+<given-names>G</given-names>
+</string-name>, <string-name name-style="western">
+<surname>Zhao</surname>
+<given-names>H</given-names>
+</string-name>. <article-title>Enzyme function prediction using contrastive learning</article-title>. <source>Science</source>. <year>2023</year>;<volume>379</volume>(<issue>6639</issue>):<fpage>1358</fpage>–<lpage>1363</lpage>.<pub-id pub-id-type="pmid">36996195</pub-id>
+<pub-id pub-id-type="doi" assigning-authority="pmc">10.1126/science.adf2465</pub-id></mixed-citation></ref></ref-list></back></article>

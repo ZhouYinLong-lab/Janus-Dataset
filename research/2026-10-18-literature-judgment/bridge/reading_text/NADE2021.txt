@@ -1,0 +1,488 @@
+## PDF page 1
+   NADE: A Benchmark for Robust Adverse Drug Events Extraction
+                            in Face of Negations
+
+           Simone Scaboro1   Beatrice Portelli1   Emmanuele Chersoni2
+                        Enrico Santus3   Giuseppe Serra1
+                                       1 University of Udine, Italy
+                        2 The Hong Kong Polytechnic University, Hong Kong
+                         3 DSIG - Bayer Pharmaceuticals, New Jersey, USA
+        {scaboro.simone,portelli.beatrice}@spes.uniud.it,
+                emmanuele.chersoni@polyu.edu.hk,
+            esantus@gmail.com, giuseppe.serra@uniud.it
+
+                Abstract                     Gonzalez-Hernandez, 2017; Weissenbacher et al.,
+                                                2018, 2019; Klein et al., 2020).
+    Adverse Drug Event (ADE) extraction mod-
+                                                 Although these models have seen great advance-     els can rapidly examine large collections of so-
+     cial media texts, detecting mentions of drug-      ments in the last years, also thanks to the intro-
+    related adverse reactions and trigger medical       duction of pre-trained Transformers-based archi-
+     investigations. However, despite the recent ad-        tectures (Vaswani et al., 2017; Devlin et al., 2019),
+    vances in NLP, it is currently unknown if such           it is still unknown how robust they are in face of
+    models are robust in face of negation, which is                                          some pervasive linguistic phenomena such as nega-
+    pervasive across language varieties.
+                                                           tion. However, general investigations on machine
+    In this paper we evaluate three state-of-the-art       comprehension and question answering tasks con-
+    systems, showing their fragility against nega-                                         ﬁrmed that such phenomena often pose a serious
+     tion, and then we introduce two possible strate-
+                                                  challenge (Ribeiro et al., 2020). Managing to efﬁ-
+    gies to increase the robustness of these mod-
+                                                       ciently handle the scope of negations and specula-     els: a pipeline approach, relying on a speciﬁc
+                                                       tions in clinical notes is a key problem in biomed-    component for negation detection; an augmen-
+     tation of an ADE extraction dataset to artiﬁ-        ical NLP (Velldal et al., 2012; Cruz Díaz, 2013),
+     cially create negated samples and further train      and similarly, for digital pharmacovigilance it is
+    the models.                                        essential to recognize whether the association be-
+   We show that both strategies bring signiﬁcant      tween a drug and an ADE is actually being stated
+    increases in performance, lowering the num-       or negated because the consequences of extract-
+    ber of spurious entities predicted by the mod-       ing misleading information about the possible side
+     els. Our dataset and code will be publicly re-        effects of drugs can be extremely serious.
+    leased to encourage research on the topic.
+                                                     In this paper, we analyze the performance of
+1  Introduction                          some of the latest state-of-the-art ADE detection
+                                               systems on NADE: a new dataset derived from
+Exploring social media texts is becoming more and   SMM4H data, which contains a relevant amount of
+more important in the ﬁeld of pharmacovigilance    annotated samples with negated ADEs. We also
+(Karimi et al., 2015b; Sarker and Gonzalez, 2015),   introduce and analyze two strategies to increase the
+since it is common for Internet users to report their    robustness of the models: adding a negation detec-
+personal experiences with drugs on forums and    tion module in a pipeline fashion to exclude the
+microblogging platforms. Given the inherent nois-   negated ADEs predicted by the models; augment-
+iness of social media texts (colloquial language,   ing the training set with artiﬁcially negated samples.
+slang and metaphors, non-standard syntactic con-  As a further contribution, our dataset and scripts
+structions etc.), the Natural Language Processing    will be made publicly available for researchers to
+(NLP) community dedicated a consistent effort in     test the robustness of their ADE extraction systems
+developing robust methods for mining biomedical    against negation.1
+information from social media outlets. This also
+led to the creation of several dedicated shared tasks
+series on ADE detection (SMM4H – Social Media      1https://github.com/AilabUdineGit/
+Mining for Health) (Paul et al., 2016; Sarker and   NADE-dataset
+                                        230
+
+  Proceedings of the 2021 EMNLP Workshop W-NUT: The Seventh Workshop on Noisy User-generated Text, pages 230–237
+                     November 11, 2021. ©2021 Association for Computational Linguistics
+
+## PDF page 2
+2  Related Work                            and use the splits by Portelli et al. (2021a), which
+                                                  balance positive and negative samples;
+Detecting negation scopes is a traditional topic of
+                                                       b) SMM4H19cls and SMM4H20cls (Weissenbacher
+NLP research. An early, popular system was in-
+                                                           et al., 2019; Klein et al., 2020). The training sets
+troduced by Chapman et al. (2001), whose NegEx
+                                                        for SMM4H classiﬁcation Tasks, containing tweets
+algorithm exploited regular expressions to identify
+                                                    labeled as ADE or noADE (1:9 ratio).
+negations in clinical documents in English. Later,
+                                            The community focused on the ADE extraction
+machine learning approaches became more popular
+                                                         task, so most datasets are made of samples that
+after the publication of a common gold standard,
+                                                        either do or do not contain an ADE. Because of
+i.e. the BioScope corpus (Vincze et al., 2008). Sev-
+                                                                 this, they include a small number of negated ADEs
+eral proposals consisted of a two-steps methodol-
+                                          by construction: no particular attention is given
+ogy: a ﬁrst classiﬁer to detect which token in a sen-
+                                                        to these samples when curating the data and when
+tence is a negation/speculation cue, and a second
+                                                   they are present they are treated as noADE samples
+classiﬁer to determine which tokens in the sentence
+                                              and not explicitly labelled. This leads to their class
+are within the scope of the cue word (Morante et al.,
+                                                 being misrepresented and makes it harder to study
+2008; Cruz Díaz et al., 2012; Attardi et al., 2015;
+                                                            this phenomenon.
+Zou et al., 2015).
+  More recently, approaches based on neural net-   3.1  Data Augmentation
+works (CNN, Qian et al. 2016; BiLSTM, Fancellu                                                   In order to perform our analysis we created a
+et al. 2016, 2017; Dalloux et al. 2019) have been                                       new set of samples containing negated ADEs
+introduced in the literature, showing some crosslin-                                               (negADE) in two ways: looking for real samples
+guistic and crossdomain transferability. Moreover,                                                  negating the presence of an ADE in SMM4H19cls
+BERT-based models have been proposed to handle                                            and SMM4H20cls (negADE_r); manually creating
+this phenomenon (Khandelwal and Sawant, 2020;                                                  negated versions for the ADE tweets in the test split
+Britto and Khandelwal, 2020), also with the aid of                                                   of SMM4H19ext (negADE_g). The original test split
+multitask learning architectures (Khandelwal and                                                     includes 260 tweets, 7 of which were discarded dur-
+Britto, 2020).                                                   ing the generation process, leading to 253 samples.
+  To our knowledge, the research in biomedical                                                   Further details in Appendix A.
+NLP mostly focused on scope detection per se and
+on more formal types of texts (e.g. clinical notes,   Recovery of Real Samples
+articles). In our research we focus instead on the   SMM4H19cls and SMM4H20cls contain a total of
+speciﬁc task of ADE detection and on the impact of   24857 unique noADE tweets, so there is an high
+negation on the performance of ADE systems for   chance of encountering negated ADEs. The sam-
+noisy social media texts (e.g. tweets, blog posts),   ples have no other annotation apart from their bi-
+with the goal of making them able to distinguish   nary labels and analyzing all of them manually
+between factual and non-factual information.       would be extremely time-consuming. We per-
+                                            formed a preliminary ﬁltering, keeping only the
+3 NADE Dataset                                                  tweets containing a negation cue. Then we manu-
+While there are several datasets for ADE detection    ally analyzed the ﬁltered tweets, assessing whether
+on social media texts (Karimi et al., 2015a; Alvaro    the negation refers to an ADE and if the message
+et al., 2017), the biggest collection of tweets tagged    actually negates the presence of the ADE. In the fol-
+for ADE mentions is the one released yearly for   lowing examples: the ﬁrst tweet is valid (it negates
+the SMM4H Workshop and Shared Task. We used    the ADE); the second one contains a negation, but
+the following resources:                          does not negate the ADE.
+   a) SMM4H19ext. The training set for the ADE       1. This #HUMIRA shot has me feeling like a normal
+extraction Task of SMM4H19 (Weissenbacher et al.,      human... No pain no inﬂammation no nothinggggh
+2019), consisting of 2276 tweets that mention at       2. But I’m not on adderall and I am feasting.
+least one drug name. 1300 of them contain ADEs,     The tweets were evaluated by four volunteer an-
+and annotations of their position in the text (ADE    notators with a high level of proﬁciency in English,
+class). The other 976 are control samples with no   and we only kept the samples for which they were
+ADE mentions (noADE). As the blind test set is not    in agreement. As a result we obtained negADE_r,
+publicly available, we rely on the training set only   a set of real tweets containing negated ADEs, that
+                                        231
+
+## PDF page 3
+allows us to create a test set containing up to 16%    4.2  Negation Detection Models
+negated samples.                                We introduce two negation detection modules:
+                                          NegEx, a Python implementation (Pizarro et al.,
+Generation of Artiﬁcial Samples                                               2020) of the NegEx algorithm, based on simple reg-
+The generation process for the negADE_g samples    ular expressions, which evaluates whether named
+was carried out by the same four volunteers as be-    entities are negated; BERTneg, a BERT model
+fore. Each one of them was given part of the 260    (bert-base-uncased) that we ﬁnetuned for token
+tweets from the SMM4H19ext test set, and was asked    classiﬁcation. We trained BERTneg on the Bio-
+to alter them (as conservatively as possible) to gen-   Scope dataset, which consists in medical texts anno-
+erate a new version of the tweet that negates the    tated for the presence of negation and speculation
+presence of the ADE. Each volunteer was asked   cues and their related scopes. We selected 3190
+to review the tweets generated by the other partic-   sentences (2801 of which with a negation scope)
+ipants and to propose modiﬁcations, in case the   and ﬁnetuned the model for scope detection (10
+tweets looked ambiguous or unnatural. If no agree-   epochs, learning rate 0.0001).
+ment was found about the edits, the augmented
+                                                    4.3  Pipeline Modelstweets were discarded. The result of this procedure
+is negADE_g, a new set of tweets denying the pres-   Let us consider a text t, a ADE extraction base
+ence of an ADE. Here is an example of an original   model B and a negation detection module N.
+tweet and its negated version (highlighting the cue   Given t, B outputs a set of substrings of t that are
+word added to negate the ADE):                     labeled as ADE mentions: B(t) = {b1, . . . , bm}.
+   Original: ﬂuoxetine, got me going crazy.               Similarly, N takes a text and outputs a set of sub-
+                                                           strings, which are considered to be entities within  Negated: ﬂuoxetine, didn’t get me going crazy.
+                                                 a negation scope: N(t) = {n1, . . . , nt}.
+                               A combined pipeline model is obtained by dis-3.2  Data Partitioning
+                                                 carding all ADE spans bi ∈B(t) that overlap one
+We split the available data in a train and a test    of the negation spans nj ∈N(t):
+set, both containing the three categories of tweets:   BN(t) = {bi ∈B(t) | ∀j(nj ∈N(t) ∧bi ∩nj = ∅)}
+ADE, noADE and negADE (Table 1). Given the small
+amount of negADE_r tweets, we use all of them in   5  Experiments
+the test set to evaluate the performance only on real
+                                                   All the reported results are the average over 5 runs.
+tweets. Conversely, the training set only contains
+                                               For the Transformer models we used the same hy-
+the manually generated negADE_g samples.
+                                                  perparameters reported by Portelli et al. (2021a).
+                                        As metrics, we consider the number of false             ADE      noADE    negADE   Total
+    Train  842 45%   785 42%   253 13%   1880        positive predictions (FP) and the relaxed preci-
+      Test  200 43%   195 42%    73 16%    468       sion (P), recall (R) and F1 score as deﬁned in the
+                                   SMM4H shared tasks (Weissenbacher et al., 2019):
+     Table 1: Distribution of samples in NADE.                                                    the scores take into account “partial” matches, in
+                                           which it is sufﬁcient for a prediction to partially
+                                                   overlap with the gold annotation.
+4  Analyzed models                                          As a preliminary step, the two negation detection
+                                              models are trained and used to predict the negation
+4.1 ADE Extraction Models
+                                                  scopes for all the test samples once. This allows us
+We choose three Transformer-based models that    to compute the predictions of any pipeline model.
+showed high performance on SMM4H19ext (Portelli    Exp 1: to provide a measure of the initial ro-
+et al., 2021a,b), and are currently at the top of the    bustness of the base models and their general per-
+SMM4H19ext ADE extraction leaderboard: BERT   formance, we train them on the ADE and noADE
+(Devlin et al., 2019), SpanBERT (Joshi et al., 2019)   samples only (842+785 samples). We then test the
+and PubMedBERT (Gu et al., 2020). The models    efﬁcacy of the pipeline negation detection method,
+are ﬁne-tuned for token classiﬁcation, predicting an    applying NegEx and BERTneg to the base models.
+IOB label for each token in the sentence to detect    Exp 2: to test the effect of augmenting the train-
+the boundaries of ADE mentions.                   ing data with artiﬁcial samples (i.e., the second
+                                        232
+
+## PDF page 4
+                            BERT            PubMedBERT           SpanBERT
+                         FP   ADE noADE negADE    FP   ADE noADE negADE    FP   ADE noADE negADE
+        1    B (base model)  161.2   46.2  42.6  73.4     144.2   37.0  40.4  67.4     245.6   66.2  79.8  100.8
+        2        B+NegEx  106.4   41.6  40.4  24.4      93.4   32.0  37.6  23.8     170.8   58.4  74.0  38.6
+        3     B+BERTneg  120.2   40.0  41.0  39.2     106.2   30.6  39.0  36.6     184.0   56.2  74.8  53.2
+        4            B+50  146.6   40.2  38.4  69.0     126.2   34.4  35.4  57.0     183.2   46.2  58.6  79.2
+        5           B+100  166.8   50.4  48.4  69.0     108.0   33.0  34.6  40.4     230.0   58.6  77.4  95.4
+        6           B+150  125.8   43.0  41.4  42.4     100.8   29.8  41.4  29.6     156.8   47.6  50.8  59.2
+        7           B+200  105.4   41.0  36.0  29.0      79.0   29.2  27.6  22.2     134.2   38.6  44.4  51.6
+        8           B+253  101.6   42.6  35.8  23.2      84.2   30.6  34.6  19.0     179.8   55.2  60.6  65.2
+        9    B+NegEx +253   91.6   42.2  35.8  13.6      76.6   29.4  34.6  12.6     136.4   52.0  57.0  27.6
+       10  B+BERTneg +253   93.6   41.0  35.8  16.6      74.2   27.2  34.2  12.8     145.4   51.4  57.4  36.8
+
+Table 2: False Positives for: the base models; the pipeline models; base models trained with an increasing number
+of negADE_g samples; pipeline models trained with all negADE_g samples.
+
+
+                                BERT          PubMedBERT        SpanBERT
+                                P   R    F1       P   R    F1       P   R    F1
+               1    B (base model)     50.15  65.6  56.78      53.24 67.41  59.47      43.65 73.28  54.61
+               2        B+NegEx     55.59 58.03  56.73      59.21 59.76  59.47      48.65 65.04  55.55
+               3     B+BERTneg     54.37  60.7  57.30      57.69 62.64  60.04      47.82 67.39  55.85
+                                                                                          ...                                                                                                                  ...                                                                                                                             ...                                                                                                                             ...
+               8           B+253     58.85 63.86  61.21      63.28 63.33  63.20      48.52 68.76  56.85
+               9    B+NegEx +253     58.65 58.03  58.29      63.24 58.29  60.58      51.63 61.29  55.98
+              10  B+BERTneg +253     59.22 60.17  59.65      64.74 60.98  62.72      51.31 64.10  56.94
+
+Table 3: Precision, Recall and F1 score for: the base models; the pipeline models; base models trained with an
+increasing number of negADE_g samples; pipeline models trained with all negADE_g samples.
+
+
+negation detection method), we add to the train-   neg decreases the number of FP, too, but only by
+ing set an increasing number of negADE_g samples   25%. This is due to the difference between the
+(+50 to +253, in steps of 50 samples). During pre-    brute-force behaviour of NegEx and the contextual
+liminary experiments, we added 100 noADE sam-   prediction of a deep machine learning model. We
+ples from SMM4H19cls to the training set. The per-   can notice that the two pipeline models slightly
+formance of all the models did not vary in this case,   reduce the number of FP also in the ADE category
+showing that the results of Exp 2 are caused by    (e.g. from 66.2 to 56.2 for SpanBERT).
+the nature of the samples, and not simply by the     However, if we look at P and R in the ﬁrst three
+increased size of training set All the base models    rows, we can see that the negation detection mod-
+are then ﬁne-tuned on the resulting dataset.           ules bring an increase in P at the cost of large drops
+  Exp 3: to investigate whether the two methods    in R. Some correct predictions of the base models
+are complementary in their action, we combine the    get discarded, in particular the ADEs that contain
+two strategies, applying the pipeline architecture to   a negation (e.g., “After taking this drug I cannot
+the models trained on the augmented dataset.         sleep anymore”). As this effect is undesirable, we
+                                                     investigated the use of the negADE_g samples to
+5.1  Results                                                     mitigate it.
+Table 2 and 3 contain a summary of the most rel-    Exp 2 (rows 4–8): adding negADE_g samples
+evant metrics for the tested models. We report    to the training set (from +50 to +253) lowers the
+the number of FP both on the whole test set and   number of FP predictions for all models. Using all
+on individual partitions (ADE, noADE and negADE_r    the available samples brings down the number of
+samples).                               FP as much as using NegEx on the initial model
+  Exp 1 (rows 1–3): all base models (row 1) have   (compare +NegEx and +253). This reduction is
+a high number of FP, especially in the negADE cate-   given by the decrease of FP in the negADE set, while
+gory. This strongly suggests that they are not robust    the number of FP in the ADE and noADE categories
+against this phenomenon. When combined with   remains roughly stable.
+NegEx (row 2), the FP decreases by 34%, show-     Comparing row +253 with row 1 shows, as for
+ing that the regular expression module removes   Exp 1, an increase in P and a drop in R. However,
+a great number of unwanted predictions. BERT-   the drop in R is less severe than before (5 points
+                                        233
+
+## PDF page 5
+                  BERT                             PubMedBERT                            SpanBERT
+                                              base model
+ 150                                   +NegEx                                      125                                  200                                         +BERTneg
+                                      100
+ 100                                   75                                                                           100
+     0    50   100   150   200   253     0    50   100   150   200   253     0    50   100   150   200   253
+                                      75       50                                                                            40                                                                                                                                  75                                                                                                                                                  90                                                                                            60                                                            35                                                                                                                  60                       45       45                                      50                                                                            35                                                                                            40                                                                                                                                                  60                                                                                                                  50                                                                                                                                  60                                                            30                       40       40                                      25                                                                            30                                                                                                                  40                                                                                            20                                                                                                                                                  30                                                                                                                                  45                       35          ADE         noADE       negADE            ADE         noADE       negADE            ADE         noADE       negADE
+
+Figure 1: Top: total FP for the three base models and their pipeline versions with the increasing of negADE samples
+in the training set (x-axis: from 50 to 253). Bottom: number of FP for all the models by sample category.
+
+
+at most), meaning that less true positives are being    that current methods lack mechanisms to deal with
+discarded. Also, P increases twice as much, leading    negations. We introduce and compare two strate-
+to an overall increase in F1.                          gies to tackle the problem: using a negation de-
+  Exp 3 (rows 9–10): the effect of augmented    tection module and adding negADE_g samples in
+dataset and negation modules are complementary,   the training set. Both of them bring signiﬁcant
+as shown by the further decrease in FP. However,    increases in performance.
+combining the two approaches does not seem to be     Both the dataset and the code are made publicly
+a winning strategy, as it leads to a further decrease    available for the community to test the robustness
+in R without the beneﬁt of increasing P.              of their systems against negation.
+  The same behaviour can be observed for all the      Future work should focus on more reﬁned tech-
+base models, despite the different initial perfor-   niques to accurately model the semantic properties
+mance (with SpanBERT having a generally higher    of the samples, also by jointly handling negation
+R and PubMedBERT an higher P).                and speculation phenomena. This might be an es-
+                                                         sential requirement for dealing with the noisiness
+  Figure 1 offers another visualization of the effect
+                                            and variety of social media texts. The main short
+that adding negADE_g samples has on the number
+                                                term directions are increasing the quality and quan-
+of False Positives. The number of negADE samples
+                                                                tity of real negADE samples (possibly via crowd-
+in the training set increases from left to right in
+                                                     sourcing), and creating a model that is able to
+each plot (from 0 to 253). The top row shows
+                                                   discard negADE (keeping an high precision level),
+how the total number of predicted FPs decreases
+                                                 without sacriﬁcing recall.
+(for all base and pipeline models) when adding the
+generated negated samples. The plots in the bottom                                       7  Acknowledgments
+row show how the number of FP varies for the three
+categories of samples separately (ADE, noADE and  We would like to thank the three anonymous re-
+negADE, bottom row). As observed in Table 2, the   viewers for their insightful feedback.
+decrease is most signiﬁcant in the negADE partition.
+
+  The results show that introducing a small number   References
+of new samples (even if artiﬁcial) is the best way
+                                                     Nestor Alvaro, Yusuke Miyao, and Nigel Collier. 2017.to directly increase the model knowledge about
+                                                TwiMed: Twitter and PubMed Comparable Corpus
+the phenomenon. However, this solution could be       of Drugs, Diseases, Symptoms, and Their Relations.
+expensive in absence of a large quantity of negated     JMIR Public Health Surveillance, 3(2):e24.
+data. For this reason, the pipeline models might be
+                                                  Giuseppe Attardi, Vittoria Cozza, and Daniele Sartiano.
+a viable alternative, as they maintain the F1 score
+                                                       2015. Detecting the Scope of Negations in Clinical
+while still decreasing the number of false positives.      Notes. In Proceedings of CLiC.it.
+
+6  Conclusions                                    Benita Kathleen Britto and Aditya Khandelwal. 2020.
+                                                       Resolving  the Scope  of Speculation and Nega-
+In this paper, we evaluate the impact of negations       tion using Transformer-Based Architectures. arXiv
+on state-of-the-art ADE detection models. We in-      preprint arXiv:2001.02885.
+troduced NADE, a new dataset speciﬁcally aimed                                          Wendy W Chapman, Will Bridewell, Paul Hanbury,
+at studying this phenomenon. The dataset proves to      Gregory F Cooper, and Bruce G Buchanan. 2001. A
+be a challenging setting and the experiments show      Simple Algorithm for Identifying Negated Findings
+                                        234
+
+## PDF page 6
+  and Diseases in Discharge Summaries.  Journal of    Aditya Khandelwal and Suraj Sawant. 2020.  Neg-
+  Biomedical Informatics, 34(5):301–310.              BERT: A Transfer Learning Approach for Negation
+                                                         Detection and Scope Resolution. In Proceedings of
+Noa P Cruz Díaz. 2013.  Detecting Negated and Un-     LREC.
+   certain Information in Biomedical and Review Texts.
+   In Proceedings of the RANLP Student Research    Ari Klein, Ilseyar Alimova, Ivan Flores, Arjun Magge,
+  Workshop.                                                Zulfat Miftahutdinov, Anne-Lyse Minard, Karen
+                                                    O’Connor, Abeed Sarker, Elena Tutubalina, Davy
+Noa P Cruz Díaz, Manuel J Mana López, Jacinto Mata      Weissenbacher,  et  al. 2020.   Overview  of  the
+                                                                Fifth Social Media Mining for Health Applications  Vázquez, and Victoria Pachón Álvarez. 2012. A
+                                                     Shared Tasks at Coling 2020.  In Proceedings of  Machine-learning Approach to Negation and Spec-
+                                                             the COLING Workshop on Social Media Mining for   ulation Detection in Clinical Texts.  Journal of the
+                                                      Health Applications.  American Society for Information Science and Tech-
+   nology, 63(7):1398–1410.
+                                                   Roser Morante, Anthony Liekens, and Walter Daele-
+                                                    mans. 2008.  Learning the Scope of Negation in
+Clément Dalloux, Vincent Claveau, and Natalia Grabar.
+                                                      Biomedical Texts. In Proceedings of EMNLP.
+  2019.    Speculation and Negation Detection  in
+  French Biomedical Corpora.   In Proceedings of                                                  Michael Paul, Abeed Sarker, John Brownstein, Azadeh
+  RANLP.                                                         Nikfarjam, Matthew Scotch, Karen Smith, and Gra-
+                                                                 ciela Gonzalez. 2016. Social Media Mining for Pub-
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and                                                                          lic Health Monitoring and Surveillance. In Biocom-
+   Kristina Toutanova. 2019.  BERT: Pre-training of                                                              puting, pages 468–479.
+  Deep Bidirectional Transformers for Language Un-
+   derstanding. In Proceedings of NAACL.              Jeno Pizarro, Leon Reteig, and Luke Murray. 2020.
+                                                           jenojp/negspacy: Minor Bug Fix, Improve Chunk
+Federico Fancellu, Adam Lopez, and Bonnie Webber.     Preﬁx Functionality (Version v0.1.9).
+  2016. Neural Networks for Negation Scope Detec-
+   tion. In Proceedings of ACL.                          Beatrice Portelli, Edoardo Lenzi, Emmanuele Cher-
+                                                                soni, Giuseppe Serra, and Enrico Santus. 2021a.
+Federico Fancellu, Adam Lopez, Bonnie Webber, and    BERT Prescriptions to Avoid Unwanted Headaches:
+  Hangfeng He. 2017.  Detecting Negation Scope Is    A Comparison of Transformer Architectures for Ad-
+   Easy, Except When  It Isn’t.   In Proceedings of       verse Drug Event Detection.   In Proceedings of
+  EACL.                                       EACL.
+
+Yu Gu, Robert Tinn, Hao Cheng, Michael Lucas,    Beatrice  Portelli,  Daniele  Passabì, Edoardo Lenzi,
+  Naoto Usuyama, Xiaodong Liu, Tristan Naumann,      Giuseppe Serra, Enrico Santus, and Emmanuele
+   Jianfeng Gao, and Hoifung Poon. 2020.  Domain-      Chersoni. 2021b.  Improving Adverse Drug Event
+  Speciﬁc Language Model Pretraining for Biomed-      Extraction with SpanBERT on Different Text Ty-
+   ical Natural Language Processing.  arXiv preprint       pologies. arXiv preprint arXiv:2105.08882.
+  arXiv:2007.15779.
+                                             Zhong Qian, Peifeng Li, Qiaoming Zhu, Guodong
+                                                    Zhou, Zhunchen Luo, and Wei Luo. 2016. Specu-Mandar Joshi, Danqi Chen, Yinhan Liu, Daniel S.
+                                                                 lation and Negation Scope Detection via Convolu-  Weld, Luke Zettlemoyer, and Omer Levy. 2019.
+                                                                 tional Neural Networks. In Proceedings of EMNLP.  SpanBERT: Improving Pre-training by Representing
+  and Predicting Spans. Transactions of the Associa-
+                                             Marco Tulio Ribeiro, Tongshuang Wu, Carlos Guestrin,
+   tion for Computational Linguistics, 8:64–77.
+                                                   and Sameer Singh. 2020. Beyond Accuracy: Behav-
+                                                                   ioral Testing of NLP Models with CheckList. In Pro-
+Sarvnaz Karimi, Alejandro Metke-Jimenez, Madonna                                                        ceedings of ACL.
+  Kemp, and Chenchen Wang. 2015a.  CADEC: A
+  Corpus of Adverse Drug Event Annotations. Jour-                                             Abeed Sarker and Graciela Gonzalez. 2015. Portable
+   nal of Biomedical Informatics, 55:73–81.                                                     Automatic Text Classiﬁcation for Adverse Drug Re-
+                                                             action Detection via Multi-corpus Training. Journal
+Sarvnaz  Karimi,  Chen  Wang,  Alejandro  Metke-       of Biomedical Informatics, 53:196–207.
+  Jimenez, Raj Gaire, and Cecile Paris. 2015b. Text
+  and Data Mining Techniques in Adverse Drug Re-   Abeed Sarker and Graciela Gonzalez-Hernandez. 2017.
+   action Detection. ACM Computing Surveys (CSUR),     Overview of the Second Social Media Mining for
+  47(4):1–39.                                           Health (SMM4H) Shared Tasks  at AMIA 2017.
+                                                            Training, 1(10,822):1239.
+Aditya Khandelwal and Benita Kathleen Britto. 2020.
+   Multitask Learning of Negation and Speculation us-   Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob
+   ing Transformers. In Proceedings of the EMNLP In-      Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz
+   ternational Workshop on Health Text Mining and In-       Kaiser, and Illia Polosukhin. 2017. Attention Is All
+  formation Analysis.                             You Need. In Proceedings of NIPS.
+                                        235
+
+## PDF page 7
+Erik  Velldal,  Lilja  Øvrelid,  Jonathon  Read,  and      3. I’ve seen so much Tamiﬂu these past couple of
+  Stephan Oepen. 2012.  Speculation and Negation:        days I’m not even surprised I’m shivering and
+   Rules, Rankers, and the Role of Syntax. Computa-
+                                                        experiencing aches right now. *sigh
+   tional Linguistics, 38(2):369–410.
+                                                            4. But I’m not on adderall and I am feasting.
+Veronika Vincze, György Szarvas, Richárd Farkas,
+  György Móra, and János Csirik. 2008.  The Bio-                                            A.2  Generation of Artiﬁcial Samples
+  Scope Corpus: Biomedical Texts Annotated for Un-
+   certainty, Negation and their Scopes. BMC Bioinfor-   According to the split provided by Portelli et al.
+   matics, 9(11):1–9.                                 (2021), we extracted and modiﬁed only the ADE
+                                              samples from the test set (260 samples). The vol-Davy Weissenbacher, Abeed Sarker, Arjun Magge,
+  Ashlynn Daughton, Karen O’Connor, Michael Paul,    unteers were instructed to modify the samples with
+  and Graciela Gonzalez. 2019.  Overview of the    as little edits as possible, while still generating a
+   Fourth Social Media Mining for Health (SMM4H)                                                      plausible tweet. They were encouraged to add one
+  Shared Tasks at ACL 2019.  In Proceedings of the
+                                                    or more negation cue words to negate the ADE re-  ACL Social Media Mining for Health Applications
+   (# SMM4H) Workshop & Shared Task.               ported in the tweet. In the case it was not possible
+                                                      to negate the meaning of the tweet just by adding
+Davy Weissenbacher, Abeed Sarker, Michael Paul, and
+                                                cue words, they were allowed to perform more edits
+   Graciela Gonzalez. 2018.  Overview of the Social
+  Media Mining for Health (SMM4H) Shared Tasks    in the sentence and use longer expressions.
+   at EMNLP 2018.  In Proceedings of the EMNLP     Each annotator was asked to review the edits
+  Workshop on Social Media Mining for Health Appli-   done by the others, and asked to point out which
+   cations.                                              samples seemed unrealistic or failed to negate the
+Bowei Zou, Qiaoming Zhu, and Guodong Zhou. 2015.  ADE. During the augmentation process, if no agree-
+  Negation and Speculation Identiﬁcation in Chinese   ment was found about the edits, the tweet modiﬁed
+  Language. In Proceedings of ACL-IJCNLP.          tweet was discarded. At the end of the process 7
+                                                    tweets were removed from the ﬁnal dataset. Due to
+A  Data Augmentation Process
+                                                     the generation process we implemented, we could
+The data augmentation process was carried out by    not directly measure the inter-annotator agreement,
+four volunteers with a high level of proﬁciency in   which could, however, be inferred by the number
+English. More speciﬁcally, the volunteers were:   of discarded samples.
+two graduate students (Master’s degree in Com-
+                              B  Full Resultsputer Science and Artiﬁcial Intelligence) and two
+Ph.D. in Natural Language Processing. All of them    Table 4 reports the metrics for all the models (aver-
+have a minimum English level of C1.2              age over 5 runs). The table includes also the results
+                                                      for the pipeline models trained with an increas-
+A.1  Recovery of Real Samples
+                                                   ing number of negADE_g samples, which show the
+The noADE samples from the SMM4H19cls and                                          same trend as the base models. The most relevant
+SMM4H20cls binary classiﬁcation datasets have been                                                 combinations (discussed in the main part of the pa-
+ﬁltered using the negation cues from BioScope (e.g.                                                       per) are highlighted in color (base models in gray■,
+none, missing, no longer, etc.). Thanks to this ﬁrst                                                  base models trained with 253 negADE_g samples in
+ﬁltering, only the remaining 3897 samples have   orange■, pipeline models in blue■).
+been analyzed by the volunteers. A tweet was kept
+only if it negated the presence of an ADE.
+  In the following examples, 1 and 2 are valid
+tweets, while 3 and 4 contain negations but do not
+negate the ADE:
+
+  1. This #HUMIRA shot has me feeling like a nor-
+     mal human... No pain no inﬂammation no noth-
+
+     inggggh #RAproblems
+
+  2. @UKingsbrook That’s correct! Metoprolol is NOT
+    known to cause hypokalemia.
+
+  2https://www.efset.org/cefr/c1/
+                                        236
+
+## PDF page 8
+                            False Positives                                             Precision
+ negADE_g samples    0      50     100     150     200     253      negADE_g samples    0      50     100    150    200    253
+ BERT             161.20  146.60  166.80  125.80  105.40  101.60    BERT               50.15   51.47   49.17   54.24   57.82   58.85
+  +NegEx           106.40    97.60  119.20  100.00    90.00    91.60     +NegEx            55.59   56.79   53.52   56.53   58.52   58.65
+  +BERTneg        120.20  111.40  129.40  108.00    94.40    93.60     +BERTneg         54.37   55.34   52.78   55.88   58.53   59.22
+ PubMedBERT      144.20  126.20  108.00  100.80    79.00    84.20    PubMedBERT       53.24   56.43   59.25   59.46   62.94   63.28
+  +NegEx            93.40    85.60    84.00    86.60    68.00    76.60     +NegEx            59.21   61.60   61.98   60.29   63.84   63.24
+  +BERTneg        106.20    91.40    85.40    87.40    67.60    74.20     +BERTneg         57.69   61.24   62.44   61.12   64.84   64.74
+ SpanBERT         245.60  183.20  230.00  156.80  134.20  179.80    SpanBERT          43.65   53.32   45.46   48.24   52.80   48.52
+  +NegEx           170.80  125.40  163.80  115.80    99.80  136.40     +NegEx            48.65   60.44   49.95   52.83   55.95   51.63
+  +BERTneg        184.00  138.40  175.40  124.60  107.20  145.40     +BERTneg         47.82   56.60   49.25   51.43   55.54   51.31
+
+                        F1 score                                                Recall
+ negADE_g samples    0      50     100    150    200    253      negADE_g samples    0      50     100    150    200    253
+ BERT               56.78   56.59   56.18   58.41   59.45   61.21    BERT               65.60   63.04   65.57   63.41   61.85   63.86
+  +NegEx            56.73   56.48   56.10   57.03   57.19   58.29     +NegEx            58.03   56.32   58.97   57.66   56.43   58.03
+  +BERTneg         57.30   56.73   56.61   57.65   58.06   59.65     +BERTneg         60.70   58.38   61.09   59.66   58.16   60.17
+ PubMedBERT       59.47   61.37   62.72   61.59   61.74   63.20    PubMedBERT       67.41   67.44   66.67   64.03   60.67   63.33
+  +NegEx            59.47   60.91   61.26   59.22   59.26   60.58     +NegEx            59.76   60.33   60.59   58.32   55.45   58.29
+  +BERTneg         60.04   62.15   62.70   61.10   61.36   62.72     +BERTneg         62.64   63.19   62.99   61.19   58.36   60.98
+ SpanBERT          54.61   45.76   56.20   49.47   54.75   56.85    SpanBERT          73.28   59.73   74.19   59.22   60.32   68.76
+  +NegEx            55.55   46.54   56.69   48.85   53.44   55.98     +NegEx            65.04   53.01   65.95   52.86   53.91   61.29
+  +BERTneg         55.85   46.61   57.17   49.61   54.49   56.94     +BERTneg         67.39   54.98   68.48   55.14   56.27   64.10
+
+Table 4: All metrics for: the original base models (gray■); the base models trained with different quantities of
+negADE_g samples (the results of training with 253 negADE_g samples in orange■); the two pipeline models (in
+blue■); the combination of the two methods. For each model, in bold is highlighted the best value for the speciﬁc
+evaluation metric.
+
+
+
+
+
+                                        237

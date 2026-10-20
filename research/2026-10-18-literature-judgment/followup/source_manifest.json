@@ -1,0 +1,198 @@
+{
+  "retrieved_utc": "2026-10-18T02:59:48.658939+00:00",
+  "sources": [
+    {
+      "name": "NegSize2014.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4061540/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4061540/fullTextXML",
+      "bytes": 88674,
+      "sha256": "904e274ebc55d40cfa1485ba4cb0a622a5396f48eee5b3eef2abd9abe26faa3d",
+      "status": "ok"
+    },
+    {
+      "name": "NegSource2013.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3626618/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3626618/fullTextXML",
+      "bytes": 79490,
+      "sha256": "88b25bd464493f743404fb08d68866fd2fa7acc3c751bc9ca1aa9a9c177117ad",
+      "status": "ok"
+    },
+    {
+      "name": "Pertusi2017.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7055960/fullTextXML",
+      "status": "error",
+      "error": "500 Server Error:  for url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7055960/fullTextXML"
+    },
+    {
+      "name": "MPro2023.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10323144/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10323144/fullTextXML",
+      "bytes": 260385,
+      "sha256": "b9863b584357f680089a64c2d4b97d85f792532bbf51e36bdaaea27a3812fa16",
+      "status": "ok"
+    },
+    {
+      "name": "PADIF2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12577370/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12577370/fullTextXML",
+      "bytes": 112998,
+      "sha256": "d77b09d284c823852c5222539f9d301596686fe0fa95ed14bb8ba093c02e4c90",
+      "status": "ok"
+    },
+    {
+      "name": "Caceres2020.pdf",
+      "url": "https://www.biorxiv.org/content/10.1101/2020.05.21.107748v1.full.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.biorxiv.org/content/10.1101/2020.05.21.107748v1.full.pdf",
+      "bytes": 3414287,
+      "sha256": "d8ebf96f22799e099e49f81a8a05ba0f28e911c875d73137f2aaf7f271f6c1d7",
+      "pages": 45,
+      "status": "ok"
+    },
+    {
+      "name": "Caceres_thesis.pdf",
+      "url": "https://escholarship.org/content/qt8716h0m5/qt8716h0m5.pdf",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://escholarship.org/content/qt8716h0m5/qt8716h0m5.pdf"
+    },
+    {
+      "name": "RELATE2025.pdf",
+      "url": "https://openreview.net/pdf?id=gcG8dmAUNh",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://openreview.net/pdf?id=gcG8dmAUNh"
+    },
+    {
+      "name": "PreSEPM2026.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13563996/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13563996/fullTextXML",
+      "bytes": 129318,
+      "sha256": "43db73c8096c87fa81890e69c2fe3e663df96af9ca22cf2bfd247df914616b3f",
+      "status": "ok"
+    },
+    {
+      "name": "FNU2020.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7362944/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7362944/fullTextXML",
+      "bytes": 25487,
+      "sha256": "6be0a6a51b517e82b1ae3c952599464831cdb37a47a60b7d52cbb921565975c7",
+      "status": "ok"
+    },
+    {
+      "name": "BioContext2012.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3413385/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3413385/fullTextXML",
+      "bytes": 80810,
+      "sha256": "b3ecb92bce4393ad83c551e311be1f34f7195c8d692142030ef0075d08c931c0",
+      "status": "ok"
+    },
+    {
+      "name": "DeepEventMine2020.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7750964/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7750964/fullTextXML",
+      "bytes": 134905,
+      "sha256": "8e210b5fb9e69756013707ad5876a643481bdeca4afc9f04ae005823ebea23fa",
+      "status": "ok"
+    },
+    {
+      "name": "INDRA2023.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10167483/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10167483/fullTextXML",
+      "bytes": 335482,
+      "sha256": "66cf1c49a1c1d185c74b2ef3043989a26e2a8490d209b947a45777a900e32610",
+      "status": "ok"
+    },
+    {
+      "name": "AssayFrames2017.pdf",
+      "url": "https://acl-bg.org/proceedings/2017/RANLP_W4%202017/pdf/BioNLP003.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://acl-bg.org/proceedings/2017/RANLP_W4%202017/pdf/BioNLP003.pdf",
+      "bytes": 174444,
+      "sha256": "798cd910781afc6ce0d5847d8239f26626b4d6c0a34feb204a1b8c3a4f1d76e5",
+      "pages": 9,
+      "status": "ok"
+    },
+    {
+      "name": "Vapur2020.pdf",
+      "url": "https://aclanthology.org/2020.nlpcovid19-2.21.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://aclanthology.org/2020.nlpcovid19-2.21.pdf",
+      "bytes": 487687,
+      "sha256": "a71208b4fe3afc5df06be322099ec9467db2313c76b2f343f4b78714d59e4c5f",
+      "pages": 16,
+      "status": "ok"
+    },
+    {
+      "name": "Polak2024.pdf",
+      "url": "https://arxiv.org/pdf/2302.04914",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/pdf/2302.04914",
+      "bytes": 1099627,
+      "sha256": "f6dbcdd95337d40cb48e1ebdaac1afccb539bfed294f6937ca7b4605d1f49bd4",
+      "pages": 15,
+      "status": "ok"
+    },
+    {
+      "name": "NegRatio2017.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5383296/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5383296/fullTextXML",
+      "bytes": 96104,
+      "sha256": "17298889a6142db35a55b47d56cc7543310ccb229ab151a22ddeec9f726fb722",
+      "status": "ok"
+    },
+    {
+      "name": "Pertusi2017.pdf",
+      "url": "https://www.osti.gov/servlets/purl/1427497",
+      "status": "error",
+      "error": "HTTPSConnectionPool(host='www.osti.gov', port=443): Read timed out. (read timeout=45)"
+    },
+    {
+      "name": "EPP2021.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8337005/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8337005/fullTextXML",
+      "bytes": 120180,
+      "sha256": "96ec9b85b5380f590750f9bb9257ceb3c8f83599c1b5707915040d9d52c168d5",
+      "status": "ok"
+    },
+    {
+      "name": "DeepEventMine2020_supp.pdf",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/7750964/bin/btaa540_supplementary_data.pdf",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://pmc.ncbi.nlm.nih.gov/articles/instance/7750964/bin/btaa540_supplementary_data.pdf"
+    },
+    {
+      "name": "DORAXGB2025.html",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2025/me/d4me00118d",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://pubs.rsc.org/en/content/articlehtml/2025/me/d4me00118d"
+    },
+    {
+      "name": "Heikamp2013_metadata.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:23799269%20AND%20SRC:MED&format=json&resultType=core",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:23799269%20AND%20SRC:MED&format=json&resultType=core",
+      "bytes": 4019,
+      "sha256": "a0b65b52a7a5da9a7cc2e2c5e0ce92ef8e926d2adafba3cb9b19157abdbb0daf",
+      "status": "ok"
+    },
+    {
+      "name": "Pertusi2017_metadata.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:29030274%20AND%20SRC:MED&format=json&resultType=core",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:29030274%20AND%20SRC:MED&format=json&resultType=core",
+      "bytes": 6836,
+      "sha256": "c83f65e41087bd89574885b3cf145ff3a993746942e5df3a21b8dfee6e21f597",
+      "status": "ok"
+    }
+  ]
+}

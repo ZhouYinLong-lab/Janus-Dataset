@@ -1,0 +1,609 @@
+## PDF page 1
+        Autonomous data extraction from peer reviewed literature for training machine
+                               learning models of oxidation potentials
+
+                    Siwoo Lee,1 Stefan Heinen,2 Danish Khan,1, 2 and O. Anatole von Lilienfeld1, 2, 3, 4, 5, 6, ∗
+                       1Department of Chemistry, University of Toronto, St. George campus, Toronto, ON, Canada
+                                2Vector Institute for Artificial Intelligence, Toronto, ON, M5S 1M1, Canada
+                           3Acceleration Consortium, University of Toronto. 80 St George St, Toronto, ON M5S 3H6
+                                         4Department of Materials Science and Engineering,
+                                       University of Toronto, St.  George campus, Toronto, ON, Canada
+                        5Department of Physics, University of Toronto, St. George campus, Toronto, ON, Canada
+                                6Machine Learning Group, Technische Universit¨at Berlin and Berlin
+                                         Institute for the Foundations of Learning and Data, Berlin, Germany
+                                                         (Dated: August 2, 2023)2023             We present an automated data-collection pipeline involving a convolutional neural network and
+                     a large language model to extract user-specified tabular data from peer-reviewed literature. The
+                         pipeline is applied to 74 reports published between 1957 and 2014 with experimentally-measured
+                        oxidation potentials  for 592 organic molecules (-0.75–3.58 V). After data curation (solvents,Aug                  reference electrodes, and missed data points), we trained multiple supervised machine learning
+1               models reaching prediction errors similar to experimental uncertainty (∼0.2 V). For experimental
+                     measurements of identical molecules reported in multiple studies, we identified the most likely value
+                      based on out-of-sample machine learning predictions. Using the trained machine learning models,
+                   we then estimated oxidation potentials of ∼132k small organic molecules from the QM9 data set,
+                      with predicted values spanning 0.21–3.46 V. Analysis of the QM9 predictions in terms of plausible
+                        descriptor-property trends suggests that aliphaticity increases the oxidation potential of an organic
+                      molecule on average from ∼1.5 V to ∼2 V, while an increase in number of heavy atoms lowers
+                                it systematically. The pipeline introduced offers significant reductions in human labor otherwise
+                        required for conventional manual data collection of experimental results, and exemplifies how to
+                         accelerate scientific research through automation.
+
+
+                                 I. INTRODUCTION                  However, recent advances in algorithmic designs and
+                                                            computing capabilities have seen the development of
+         The  accessibility and  utilization  of  literature data    convolutional neural network (CNN) models, such as[physics.chem-ph]   through systematic reviews and meta-analyses are of    TableNet10–12,  that  are  trained  to  locate  tables  in
+           significant importance across all scientific disciplines to   document pages displayed as images and are capable of
+          rigorously assess the wealth of information contained    reaching state-of-the-art performances on the ICDAR
+          in multiple  studies and compile them  in  large-scale    2013 table competition data set13. A secondary challenge
+         data  sets1–4.   However,  reproducibility  concerns  as    that follows table detection using CNN models  is the
+          well as the rapid growth in the number of  scientific    accurate extraction of text from images, a task known
+          publications5,6 poses significant limitations on efficiently    as  optical character recognition (OCR)14.   Google’s
+          reading, understanding, and extracting the enormous   Tesseract-OCR engine15,16 and various ML and deep
+        volume of ever growing information. The development    neural network (DNN) models have been demonstrated
+           of automated retrieval of pertinent information7 could    to successfully convert images of typed, handwritten,
+         address the challenge of training meaningful machine    or printed text  into machine-encoded text with low
+          learning (ML) models that  require  sufficiently  large    character-level   substitution   rates  and   word-level
+            scientific data  sets8,9.    In  particular,  tabular data     error-rates16,17.   Then,  a  third, and  closely-related
+          in  literature  sources  holds immense  importance  in    problem relevant to scientific research is the ability of
+            scientific research as they organize a  large body  of    these models to extract specific text.  This presents
+                                                             a  significant challenge due to the need  for semanticarXiv:2308.00389v1    information in an easily-readable fashion.  Thus, the
+            efficient extraction of tabular information would greatly    understanding,  especially  as documents may  display
+          streamline  data  collection from  a  large number  of    several tables containing different types of data with
+           studies. Yet, upon examining different reference sources,    irrelevant accompanying  information18.   The  recent
+             it  is evident that tables are presented in a variety of    development of large language models (LLMs) presents
+          layouts, visual appearances, and encoding formats (eg.    a  promising  solution  to  the  challenge  of  semantic
+       HTML, PDF, JPG), which poses a significant hurdle in    understanding  as  they  can  leverage  their  extensive
+         the automated detection of tables in the literature10.    training on  large volumes  of  text  to  recognize and
+                                                                         interpret  the meaning  of  specified  text19.   Indeed,
+                                                LLMs have already seen widespread usage for a variety
+                                                                            of  scientific purposes20.   For instance,  in chemistry,
+            ∗anatole.vonlilienfeld@utoronto.ca
+
+## PDF page 2
+                                                                                                     2
+
+
+LLMs have been utilized to generate code, learn complex
+                                                                          Literature PDFsmolecular distributions, aid in materials and drug design,
+and  to  extract  chemical  information from  scientific
+documents21–26.   Generative pre-trained transformers                               pdf2image
+(eg.  GPT-2, GPT-3.5, GPT-4) models developed by
+OpenAI present particularly exciting applications  for
+                                                                    Images
+research  in chemistry and other  scientific  disciplines
+for their human-like semantic understanding and their
+ability to generate human-like text when presented with                  CNN
+a prompt27–31.
+
+                                                                     Table locations
+  In this work, an automated data-collection pipeline is
+introduced that accurately locates tables and extracts
+text from literature sources using the CNN TableNet,                               pytesseract
+and the LLM GPT-3.5, respectively. We demonstrate its
+usefulness by building a chemically-diverse data set of        LLM               LLM
+                                                                       Text
+experimentally-measured oxidation potentials (measured
+in acetonitrile solvent vs standard calomel electrode,
+SCE) of organic molecules from peer-reviewed literature.
+                                                                                     Oxidation
+Oxidation  potentials  are  important  electrochemical      Molecular Names
+                                                                                             Potentials
+stability and  reactivity  descriptors;  modeling them
+with  efficient machine  learning and  high  predictive                                                                         Leruli, RDKit
+power  could  crucially  accelerate  the  computational
+design and discovery of superior functional materials,
+such  as  batteries,  supercapacitors,  electrolytes,  and      SMILES, XYZ
+electrocatalysts  for  applications  in  fuel   cells  and
+renewable  energy  conversion32–35.    Based  on  the
+experimental data  extracted  using our  pipeline, we                     Data Set:
+have trained multiple supervised ML models that reach                       {features, labels}
+experimental  uncertainty, and  that can be used  to
+identify less/more likely values among conflicting data    FIG. 1. A flowchart representation of the automated data
+entries.   The  generalizability  of the ML models  is     acquisition pipeline for extracting experimentally-measured
+used to predict and analyze the oxidation potential    oxidation potentials reported in literature. Pages displaying
+distribution in ∼132k organic molecules coming from     tables  in 74  reference  sources (PDFs)  are converted  to
+the QM9 data set36.  Previous ML studies of redox    images (JPGs) and inputted into a convolutional neural
+potentials of organic molecules were limited to small    network, TableNet, trained to locate tables in images and
+                                                          output images cropped around tables. Text contained in thedata  sets based on simulated values which  typically
+                                                           outputted images, extracted using pytesseract47 are then fedencode severe approximations making it difficult to draw
+                                                                to GPT-3.5 with a prompt to extract the names of molecules
+direct  conclusions  relevant  for experimental  decision
+                                                     and their oxidation potentials. Used Python packages for each
+making.37–46.                                                                step are shown beside the arrows.
+
+
+
+                  II. METHODOLOGY                                                              tables  with  English  text  compiled  in  the Marmot
+                                                      data set (80/20 train/test random split) with labelled
+        A.  From Literature to Data Set              coordinates  of the rectangular table regions  in each
+                                                         image49.   The model  learns  these coordinates such
+  The first component of the automated tabular data    that  it can output cropped images of the documents
+extraction pipeline (Figure 1)  after the  collection  of    containing just the detected tables.
+literature sources  is the detection and localization of
+tables (CNN step of Figure 1).  This is accomplished     The  generalization  capabilities  of  the CNN  were
+by  using  TableNet  with  a  DenseNet-121  encoder    then  assessed by  its  ability  to  locate  tables  in 74
+architecture (8,220,550 trainable parameters;  461,504    literature sources (published 1957-2014), saved as PDFs,
+non-trainable parameters) with dropout  (0.6)48  (see    that reported the experimentally-measured  oxidation
+Section J of Supplementary Information for the Python    potentials  of  organic  molecules  (see  Bibliography  of
+implementation used in this work and Paliwal et al.[12]    Supplementary Information  for the used  references).
+for further details about the architecture). This model    pdf2image50 was used to convert the PDF pages to
+was trained for 35 epochs on 495 scanned RGB images   JPGs (816 × 1056 pixels), which were inputted into
+(816 × 1056  pixels)  of document  pages  containing    the CNN. The text contained in the outputted cropped
+
+## PDF page 3
+                                                                                                     3
+
+images were extracted using pytesseract47, the Python     its excellent ability to capture non-linear relationships
+wrapper  for  Tesseract-OCR  (pytesseract  step  of    using  kernel functions and  its  efficiently handing  of
+Figure 1).  The blocks of text were each individually    high-dimensional data60,61.  It accomplishes this using
+forwarded into the GPT-3.5 API once to screen for data    kernel functions, which in this work are selected to be
+of oxidation potentials with the following prompt (LLM    Laplacian kernels of the form
+steps of Figure 1):
+
+Does  this  following  piece  of  text  contain  one  or                                                        K(Ai, Bj) = exp  −||Ai −Bj||1          (1)
+more tables of oxidation potentials of organic molecules?                                σ
+If  it does, give the code for a neatly-displayed Panda
+                                                    where  Ai, Bj  denote  the  representation  vectors  ofDataFrame explicitly listing only the molecules and their
+                                                         molecules i, j62,63.corresponding oxidation potentials.  Ensure to  list  all
+molecules. Also, if stated, report the reference electrode
+and the solvent the measurements occurred in.               Bayesian optimization implemented with hyperopt64
+                                                  was used  for hyperparameter-tuning both algorithm
+                                                             types,  with hyperparameters  selected  as  those  that   If GPT-3.5 was  able  to  successfully  output  the
+                                                         returned the  lowest mean absolute  error, MAE, onname of molecules, their oxidation potentials, and the
+                                                                four-fold  cross-validation on the  training  set (80/20reference electrode and solvent used in the experimental
+                                                              train/test random split).measurements, the master data set was compiled by
+including  only  neutrally-charged  samples  measured
+in  acetonitrile to account  for  typical electrochemical
+measurement  conditions  in  the  laboratory51.    For
+samples labelled by their full names, the Leruli API52      C.  Physics-Based Structural Representations
+was  used  to  convert  the names  to  their  canonical
+SMILES53, followed by the use of RDKit54 to produce      Four XGBR models were developed  in  this work
+XYZ  files from  the SMILES (Leruli,  RDKit  steps    with the  following input  features:  ACSF65; ACSF,
+of Figure 1).  The XYZ  files were inputted into the  XTB  values;  ACSF, MORDRED66;  ACSF, XTB
+extended  tight  binding  (XTB)  API55,56  to  produce    values, MORDRED. MORDRED  is a popular two-
+(implicit solvation) optimized geometries in acetonitrile.   and three-dimensional molecular descriptor-calculation
+XTB also produced 17 calculated values for each molecule,    software in cheminformatics and is used, in this work,
+including their HOMO-LUMO gaps and solvation free    to generate three-dimensional descriptors from MOL
+energies in  acetonitrile.  The oxidation potentials of     files produced from the XTB-geometry-optimized XYZ
+molecules measured  in  multiple  studies  were  taken    coordinates.  Three KRR models were also developed
+as the mean value.  Measurements referenced against    with input features of ACSF, SOAP67, and SLATM68.
+non-SCE electrodes were converted to be referenced
+against SCE as according to handbooks on the standard     The XYZ  files were used to produce three popular
+potentials of reference electrodes57,58. The data set was    physics-inspired    structural    representations69    of
+supplemented as necessary by human labor for samples    atomic and  molecular  environments:   atom-centered
+that the  pipeline missed or  incorrectly reported,  as   symmetry functions (ACSF), smooth overlap of atomic
+well as for cases in which the reference electrodes and    positions (SOAP)67,  and Spectrum  of London and
+solvents used in the experimental measurements could    Axilrod-Teller-Muto  potentials  (SLATM)68.    These
+not be determined from the text contained in the tables.    representations  were  used  to  predict  the  oxidation
+                                                              potentials of organic molecules using three KRR models.
+
+                                             ACSFs are local descriptors that express a molecule’s
+ B.  eXtreme Gradient Boosting and Kernel Ridge     total energy as a sum of atomic energies by constructing
+                    Regression                     many-body symmetry functions, composed of radial and
+                                                        angular parts,  for  all atoms within a specified cutoff
+                                                           radius as given by a cutoff function65.  This work uses  XGBoost  Regression  (eXtreme  Gradient  Boosting
+                                                               radial symmetry functions ofRegression: XGBR) was selected as a candidate ML
+algorithm  due  to  its  exceptional  performance  and
+versatility in handling various regression tasks due to
+                                                  G2i = X exp −η(Rij −Rs)2   · fc(Rij)     (2)gradient boosting and optimized tree-based ensemble                                                                                                       j
+learning algorithms59.
+                                                    where η defines the width of the Gaussian function and
+  Kernel ridge regression (KRR) was also tested as it   Rs  shifts the Gaussian functions by a certain radial
+is a popular algorithm for ML in quantum chemistry    distance65. This work uses angular symmetry functions
+due to its ease of hyperparameter tuning, in addition to    of
+
+## PDF page 4
+                                                                                                     4
+
+
+                                                           oxidation  potentials and extracting  their values was
+                                                                   verified via human labor. In the 74 reference sources, one
+                                all
+                                            human count returned a total of 182 tables, containing
+        G4i = 21−ζ X (1 + λ cos θijk)ζ                a variety of information such as oxidation potentials,
+                              j,k̸=i                                  spectroscopic data, product yields, and reaction kinetics.
+                       · exp −η(R2ij + R2ik + R2jk)               Of these, the CNN failed to locate 19 tables, a 10 %
+                                                              error which is comparable to that associated with some
+                 ·fc(Rij) · fc(Rik) · fc(Rjk)           (3)                                                        top-performing table detection models10(Figure 2) (see
+where ζ defines the angular resolution of the symmetry    Section I of Supplementary Information for an example
+functions and λ shifts the maxima of the cosine functions    output from the CNN).
+between 0 and π radians65. The ACSF representations
+are generated using the DScribe library70 with Rc =
+9.0  ˚A, 6 pairs of η, Rs parameters for the G2 radial
+functions, and 6 triplets of η, ζ, λ parameters for the G4
+angular functions.
+
+ SOAP descriptors represent local atomic environments
+where each is described by a single power spectrum of the
+form
+
+
+         r  8
+       p(r)a1a2n,n′,l = π  Xca1n,l,m(r)†ca2n,l,m(r)    (4)                        2l + 1
+                  m
+
+where a1, a2 index different atoms67,70.  DScribe was
+again used to generate SOAP representations in this
+work, with parameters selected as nmax = 6 (maximum
+number of radial basis functions), lmax = 6 (maximum    FIG. 2. Performance of CNN on training and testing (80/20
+degree of spherical harmonics), σ = 0.1, and spherical   random split) of the Marmot data set49 evaluated as accuracy
+Gaussian-type orbitals for the radial basis functions, gn.     of detecting tables (percent overlap of predicted table location
+                                                              area with actual area), vs. number of training epochs.
+ SLATM returns a global representation of the charge
+density of a given system by concatenating different     The extracted text from the table images outputted
+many-body  potential spectra composed  of one,  two,    from the CNN were then forwarded into GPT-3.5 to
+and three-body terms representing the atomic nuclear    screen for measurements of oxidation potentials.  One
+charges, London  potentials, and Axilrod-Teller-Muto   human count returned a total of 1715 measurements.
+van der Waals potentials, respectively68.  In this work,   GPT-3.5  failed  to  accurately  report  the  oxidation
+SLATM  representations  were  generated  using  the    potentials of 445 samples (26 % error) (see Section I of
+QML-code library62.                                  Supplementary Information for an example output from
+                                                     GPT-3.5).  However, 262 instances of these were due
+  The best-performing ML model on the test set was    to the molecular samples being labelled with bond-line
+then used to screen the oxidation potentials of ∼132k    structures, numbers, or by their substituent groups. 171
+molecules listed in the QM9 database36,71, which reports    samples were simply missed by GPT-3.5, and 12 samples
+the geometries of ∼134k stable small organic molecules   had incorrectly reported oxidation potentials. Therefore,
+with up to 9 heavy (non-hydrogen) atoms (C, N, O, F)    only considering samples that were not detected or were
+computed at the B3LYP/6-31G(2df,p) level of quantum    incorrectly reported, GPT-3.5 yields an error rate of
+chemistry72–74. The molecules in QM9 thus lie within the   13%. The data extraction performance may be improved
+domain of the extracted data set by chemical composition   by  including  optical  chemical  structure  recognition
+and is suitable for estimations of oxidation potentials by    tools to screen for molecular names and SMILES of
+the developed ML model based on interpolations.         compounds represented as bond-line structures75–77.
+
+                                                The compiled data set includes 592 unique molecules
+          III.  RESULTS AND DISCUSSION                                                      with a range of oxidation potentials of -0.75–3.58 V,
+                                                      with a mean value of 1.32 V (Figure 3).  See Section
+              A.  Extracting Data            A of Supplementary Information for the table listing
+                                                         the oxidation potentials of all molecules. On average
+  The performance of the automated data collection    the molecules have a molar mass of 184 g/mol (28–680
+pipeline  in  accurately  identifying  tables  containing    g/mol), 26 atoms (5–86 atoms), and 13 heavy atoms
+
+## PDF page 5
+                                                                                                     5
+
+
+(2–46 heavy atoms) (see Section B  of Supplementary    established as 0.2 V, which was deemed to appropriately
+Information for distribution plots of these parameters).    represent experimental uncertainties since the average of
+Out of these 592 molecules, for 155 molecules there are    the min-max range of oxidation potentials of molecules
+multiple entries in the literature;  their deviations are   measured in multiple studies is 0.19 V (Figure 4). By
+shown in Figure 4.                                           assessing these models by these metrics on the test set,
+                                                         the best performance on the out-of-sample test set was
+                                                        observed for the XGBR model trained on ACSF, XTB,
+                                  MORDRED (MAEtest = 0.15 V, R2test = 0.80), followed
+                                                  by ACSF, XTB; ACSF; ACSF, MORDRED (see Section
+                                     C of Supplementary Information for actual vs predicted
+                                                           oxidation potentials of the test set). Similarly, the KRR
+                                                  model  trained on  the SLATM  representation  yields
+                                                         the lowest test set error (MAEtest = 0.15 V; R2test =
+                                                             0.83) (Figure 5a), followed by SOAP, then ACSF (see
+                                                           Section C  of Supplementary Information for actual vs
+                                                           predicted oxidation potentials of the test set).  From
+                                                           these XGBR and KRR models, the KRR model trained
+                                                  on SLATM achieves the best performance on the test set
+                                                           as it achieved the greatest R2 value and the lowest MAE.
+
+
+                                                             Further, the performances of the XGBR and KRR
+                                                    models  were  assessed  using  learning  curves,  which
+FIG. 3.  Distribution of experimentally-measured oxidation    are key  to  evaluating  the  efficiency  of ML models
+potentials (vs.  standard calomel electrode in acetonitrile)    (Figure 6). They show the MAEs of the various models
+of 592 unique neutrally-charged molecules extracted from    at ten different subset sizes, N, of the training set, as
+literature. Solid vertical line indicates the mean. Exemplary    evaluated by four-fold cross-validation and plotted on
+molecules  at  the  extremes and  near  the mean  of  the                                                     a log-log scale.  The hyperparameters of these models
+distribution are depicted.
+                                                     were optimized  for the  largest training  set  size and
+                                                     were fixed for the training set size.  For instance, the
+                                   KRR model trained on SLATM representation reaches
+                                                         the target MAE  of 0.2 V the  fastest  after training
+           B. ML Model Performance              on ∼416 samples (70 % of the data set), with similar
+                                                       performances achieved  for XGBR models trained on
+                                             ACSF, XTB, MORDRED and ACSF, XTB (Figure 6).
+                                                         Compellingly, it is clear that all representations lead to
+                                                         systematic linear decays in the MAEs of the oxidation
+                                                                potentials, as is generally expected for learning curves78.
+                                                      This  indicates  that  these  physics-based  molecular
+                                                            representations and molecular descriptors are well-suited
+                                                           to machine learn fundamental chemical properties like
+                                                           oxidation potentials. Moreover, it demonstrates that the
+                                                      data collected from the literature through the automated
+                                                           process used in this work are of sufficient quality such
+                                                          that experimental uncertainty  in the ML-predictions
+                                                     can be reached with a relatively small data set. Further,
+                                                           these results suggest that the accuracy of these ML
+                                                    models can be systematically improved by increasing
+                                                             training data. Improvements on the automated pipeline
+                                                      used in this work and its application toward a larger
+                                                   volume of literature work may be a method to efficientlyFIG.  4.    Distribution  of min-max  ranges  of  oxidation
+                                                  expand this data set.potentials.  (vs.  standard calomel electrode in acetonitrile)
+for 155 molecules with multiple entries.  Solid vertical line
+indicates the mean.   Seven molecules with the  greatest    We  noticed  that  experimental  outcomes  for  155
+deviations are shown.                                      molecules were  independently  reported  in  otherwise
+                                                          unrelated  publications.    The  distribution  of  the
+  The performances of the XGBR and KRR models    corresponding min-max values is featured in Figure 4.
+were assessed by their MAE and their coefficients of    For some molecules, the deviation is considerable, and
+determination, R2. A target accuracy for the MAE was    could be due to  all sorts  of reasons including noise
+
+## PDF page 6
+                                                                                                     6
+
+
+
+
+
+                                (a)                                                                   (b)
+
+FIG. 5. Prediction errors of machine learning models of oxidation potentials for 119 out-of-sample molecules. Predictions were
+obtained by kernel ridge regression (KRR) using SLATM68 as representations after training on 473 examples.  Outliers are
+shown as insets. (a) Scatter plot of experimental vs. predicted. (b) Error distribution.
+
+
+from use of different experimental set-ups (e.g. use of    to  estimate such  values.   The  geometries  reported
+different reference electrodes) as well as human error.   by the QM9 database were optimized in acetonitrile
+For example, N,N-dimethylacetamide was measured to    using XTB which were then used to generate the ACSF
+have an oxidation potential of 1.32 V79, or of 2.12 V80.    representations and inputted with the XTB-calculated
+To estimate which measurement values for molecules    values into the XGBR model,  resulting in molecules
+with large deviations are more likely, the fifty molecules    in  the QM9  database  having  oxidation  potentials
+with the largest deviations were removed from training a    that follow a trimodal distribution, with two distinct
+KRR model on SLATM (80/20 train/test random split,    peaks, and an average of 1.63 V (0.21–3.46 V) (Figure 7).
+four-fold  cross-validation  for hyperparameter  tuning;
+MAEtest = 0.15 V; R2test = 0.85), which was subsequently     The  oxidation  potentials  of  the  molecules  are
+used to predict the oxidation potentials  of the  fifty                                                             correlated  with  their  corresponding  XTB-estimated
+“suspicious” molecules (see Section C of Supplementary                                                            values of their HOMO-LUMO energy gaps (Figure 8) and
+Information for the performance of the KRR model on                                                             solvation free energies calculated for single conformers
+the test set).  Whichever experimental value that was                                                               (see Section G of Supplementary Information for hexbin
+closest to the predicted value was deemed to be the more                                                             plot of oxidation potentials and solvation free energies
+likely value. In the case of N,N-dimethylacetamide, the                                                                  of QM9 molecules) in acetonitrile because these are two
+ML prediction amounts to 1.90 V, statistically suggesting                                                     fundamental properties of a molecule that determine its
+that the value of 2.12 V is closer to the truth than the                                                         propensity to accept or donate an electron, as well as its
+value of 1.32. This kind of scoring has been performed                                                                   stability in a particular solvent. There appears to be no
+for all the 50 molecules left out of training (see Section                                                        obvious correlation between oxidation potentials and the
+D of Supplementary Information).                                                   two energy values, which may suggest that more data
+                                                           points encompassing a greater diversity  of molecules
+                                                           are required for a clearer trend to emerge.  However,
+    C.  Estimated Oxidation Potentials of QM9        the samples in the scatter plots appear to be clustered
+    Molecules and Descriptor-Property Analyses         in  certain  distributions,  suggesting  the  presence  of
+                                                       boundaries in chemical compound space in which small
+                                                          organic molecules can exist with certain combinations of  The  XGBR   model   trained   on   the  ACSF
+                                                           oxidation potentials, HOMO-LUMO gaps, and solvationrepresentations and XTB-calculated values (MAEtest =
+                                                                   free energies.0.16 V, R2test = 0.78) was used to estimate the oxidation
+potentials of 132k organic molecules contained in the
+QM9 database. QM9 does not report calculated values      Previous work has shown that the distribution  of
+of oxidation potentials and as far as the author is aware,  HOMO-LUMO gap energies of molecules in QM9 follows
+no previous work has performed a screen of the database    a multimodal distribution with peaks that correspond to
+
+## PDF page 7
+                                                                                                     7
+
+
+
+
+
+                                                       FIG. 7.   Trimodal distribution of machine learning based
+                                                                  predictions  of  oxidation  potentials  (vs standard  calomel
+                                                                  electrode in acetonitrile) for ∼132k organic molecules in the
+                                       QM9 data base36,71.  Model used corresponds to XGBR/
+                                           ACSF and XTB-calculated values (green, starred in Figure 6).
+                                                                  Solid vertical line indicates the mean. Exemplary molecules
+                                                                at the extreme ends of the distribution and near the three
+                                                          peaks are shown as insets.
+
+
+
+
+
+FIG. 6.  Learning curves: Sample test errors for predicted
+oxidation potentials vs training set size N.  The shading
+indicates standard deviation at each number  of training
+molecules, N,  obtained by  four-fold  cross-validation  for
+feature-based XGBR (ACSF65; ACSF, MORDRED66; ACSF,
+XTB56; ACSF, XTB, MORDRED) and KRR (ACSF (KRR),
+SOAP67 (KRR), SLATM68 (KRR)), respectively.  Dashed
+line indicates a target MAE  of 0.2 V, corresponding to
+experimental uncertainty.
+
+
+sub-distributions based on simple structural features81.
+To  determine   if  the  peaks  in  the  distribution  of
+oxidation  potentials  in QM9 are  similarly composed    FIG.  8.   Hexbin  plot  of machine learning model based
+of sub-distributions, a frequency analysis of functional    estimated values of oxidation potentials and HOMO-LUMO
+groups and specific atoms, degree of unsaturation, and    gap energies of ∼132k molecules in the QM9 data set36,71.
+molecular types was performed using SMILES strings    Color bar indicates the density of samples in each bin.
+and substructure matching as implemented in RDKit54
+(see Section H  of Supplementary Information for  full
+frequency analyses of functional groups and atom types).    as  molecules  containing  halogens,  aromatics  rings,
+Intriguingly, upon visual inspection of the distributions,    amines,  amides,  and  carbonyl  groups  (see  Section
+aliphatic molecules are clustered near the peaks at ∼2.0,  H  of  Supplementary  Information  for  corresponding
+2.5 V (Figure 9a, 9b).                                       distribution plots).  In particular, molecules containing
+                                                           nitrogens  exhibit  a  unimodal  distribution  of  their
+  However,  many  molecules  with  other  structural    oxidation potentials with a peak at ∼1.5 V (Figure 9a).
+features  contribute  to  the  peak  at  ∼1.5  V,  such    Other  trends  of  note  include  near-linear  increases
+
+## PDF page 8
+                                                                                                     8
+
+
+in  oxidation  potentials  of  molecules  with  greater
+number of rings, carbons, hydroxyl groups, ethers, and
+hydrogens (see Section H of Supplementary Information
+for corresponding  violin  plots).   There  also appears       V. SUPPLEMENTARY INFORMATION
+to  be  near-linear  decreases  in  oxidation  potentials
+of  molecules  with  greater  numbers  of  aldehydes,     The supplementary information contains references
+ketones, carbon-oxygen double-bonds, larger degree of    of  the   literature  sources  from  which  data  was
+unsaturation, and number of heavy atoms, with the latter    extracted, and a table  listing the samples’ SMILES
+displaying a particularly prominent linear relationship   and experimentally-measured oxidation potentials (V,
+(Figure 9c).                                                     vs.  SCE). Generated xyz-coordinates of the extracted
+                                                         molecules and ∼132k molecules  in QM9,  optimized
+                                                               in  acetonitrile  solvent,  are provided.   Scatter  plots
+               IV. CONCLUSION                       of  actual  vs  predicted  oxidation  potentials  of  the
+                                              XGBoost  and KRR  models  on  various  molecular
+                                                            representations  are shown.   For the  fifty molecules  This work introduced an automated data-extraction
+                                                      with the largest measurement deviations across multiplepipeline  involving  a  convolutional  neural  network
+                                                                studies, estimations of their true oxidation potentialsfor  table  detection and a  large language model  for
+                                                 and the experimental values closest to these estimatesthe   selective  extraction   of   scientific  information.
+                                                           are listed.  It also shows the molecules with the mostThis  pipeline was  utilized  to  extract data from 74
+                                                               positive and most negative oxidation potentials in thepeer-reviewed   scientific  publications   listing   tables
+                                                          extracted data set, as well as for the molecules in theof  experimentally-measured  oxidation  potentials  of
+                                    QM9 data set based on their ML-estimated oxidationorganic molecules, resulting in a data set of 592 unique
+                                                                potentials.    Additionally,  frequency  analyses  of  theorganic molecules, their canonical SMILES, generated
+                                                             functional groups and atom types in QM9 moleculesXYZ-coordinates, and their oxidation potentials. ML
+                                                           are displayed. Sample outputs from the CNN and themodels that reach experimental uncertainty of ∼0.2 V
+                                     LLM are displayed. Moreover, Python code to constructwere trained on this data set, which were subsequently
+                                                         the TableNet convolutional neural network  for tableused  to  estimate  the  true  oxidation  potentials  of
+                                                           detection and hyperparameters of the KRR trained onmolecules  with  great  discrepancies  across  multiple
+                                        ACSF and XTB-calculated values are available.measurements and determine which measurements are
+more  reliable.   Oxidation potentials  of ∼132k small
+organic  molecules  in  the QM9  data  set  were  also
+estimated using the trained ML models and correlated
+with  simple  molecular  descriptors.    This  analysis
+suggests that the oxidation potentials of these molecules
+depend on the number of heavy atoms and chemical
+compositions,  in  particular  aliphaticity and nitrogen
+content.
+
+  These    results   suggest   that   the   automated
+data-extraction   pipelines  may   serve   accelerated
+discoveries  of novel molecules and materials through
+self-driving  labs82.   More  specifically,  rather  than
+generating  training  data  from  scratch,  analogous
+pipelines can be used to train ML models for initializing
+the experimental planning decisions necessary to launch
+iterative self-driving lab campaigns.  To this end,  it
+could be desirable to develop a deeply-connected neural
+network, or another algorithmic model that can achieve
+higher table-detection  accuracies,  to  limit data  loss.
+It might be worth investigating the incorporation of
+optical chemical structure recognition tools to improve a
+large language model’s ability to recognize as molecules
+the bond-line structure representations and drawings.
+Further, it may be valuable to develop a large language
+model that  is  specifically trained to understand the
+semantics and jargon  of various  scientific  disciplines
+to  further  improve  the  extraction  of  user-specified
+information.
+
+## PDF page 9
+                                                                                                     9
+
+
+
+
+
+                      (a)                                          (b)                                              (c)
+
+FIG. 9. Explanation of the distributions (a) Distributions of predicted oxidation potentials (vs. standard calomel electrode) of
+aliphatic and N-containing molecules in QM9 (b) violin plots of predicted oxidation potentials of non-aliphatic and aliphatic
+molecules in QM9 (c) violin plots of predicted oxidation potentials of molecules in QM9 classified by number of heavy atoms
+(excluding hydrogen).
+
+## PDF page 10
+                                                                                                    10
+
+
+        ACKNOWLEDGMENTS                2020 research and innovation programme under grant
+                                                     agreement  No.  957189.    This  research  is  part  of
+  O.A.v.L. has received funding from the European    the University of Toronto’s Acceleration Consortium,
+Research Council (ERC) under the European Union’s    which receives funding from the Canada First Research
+Horizon  2020  research  and  innovation  programme    Excellence  Fund  (CFREF).  O.A.v.L.  has  received
+(grant  agreement  No.  772834).    This  project  has    support as the Ed Clark Chair of Advanced Materials
+received funding from the European Union’s Horizon   and as a Canada CIFAR AI Chair.
+
+
+
+
+
+ [1] S. Akhter, T. Pauyo,  and M. Khan, Basic methods     [24] K. M. Jablonka, P. Schwaller, A. Ortega-Guerrero, and
+    handbook for clinical orthopaedic research: a practical        B. Smit,  (2023), 10.26434/chemrxiv-2023-fw8n4.
+    guide and case based research approach , 331 (2019).         [25] N. Fu, L. Wei, Y. Song, Q. Li, R. Xin, S. S. Omee,
+ [2] E. Ahn and H. Kang, Korean journal of anesthesiology        R. Dong, E. M. D. Siriwardane,  and J. Hu, Machine
+    71, 103 (2018).                                                Learning: Science and Technology 4, 015001 (2023).
+ [3] J. K. Owens, Nurse Author & Editor 31, 69 (2021).          [26] M. C. Swain and  J. M.  Cole, Journal  of chemical
+ [4] R. B. B¨uchter, A. Weise, and D. Pieper, BMC medical        information and modeling 56, 1894 (2016).
+    research methodology 20, 1 (2020).                            [27] OpenAI, “Introducing chatgpt,” .
+ [5] L. Bornmann, R. Haunschild, and R. Mutz, Humanities     [28] T. Eloundou, S. Manning, P. Mishkin,  and D. Rock,
+    and Social Sciences Communications 8, 1 (2021).              arXiv preprint arXiv:2303.10130  (2023).
+ [6] P. Larsen and M. Von Ins, Scientometrics 84, 575 (2010).     [29] R. OpenAI, arXiv  (2023).
+ [7] Z. Hong, L. Ward, K. Chard, B. Blaiszik, and I. Foster,     [30] A. Koubaa,  (2023).
+   JOM 73, 3383 (2021).                                           [31] Y. Shen, L. Heacock, J. Elias, K. D. Hentel, B. Reig,
+ [8] M. I. Jordan and T. M. Mitchell, Science 349, 255 (2015).       G. Shih, and L. Moy, “Chatgpt and other large language
+ [9] G. M. Foody, A. Mathur, C. Sanchez-Hernandez,  and        models are double-edged swords,”  (2023).
+    D. S. Boyd, Remote Sensing of Environment 104, 1     [32] F. Zhong, M. Yang, M. Ding,  and C. Jia, Frontiers in
+     (2006).                                                   Chemistry 8, 451 (2020).
+[10] K. A. Hashmi, M. Liwicki, D. Stricker, M. A. Afzal, M. A.     [33] C. de  la  Cruz,  A.  Molina,  N.  Patil,  E.  Ventosa,
+     Afzal, and M. Z. Afzal, IEEE Access 9, 87663 (2021).         R. Marcilla, and A. Mavrandonakis, Sustainable Energy
+[11] Z. Colter, M. Fayazi, Z. Benameur-El Youbi, S. Kamp,     & Fuels 4, 5513 (2020).
+     S. Yu, and R. Dreslinski, Array 15, 100220 (2022).          [34] J. Cao, J. Tian, J. Xu, and Y. Wang, Energy & Fuels
+[12] S. S. Paliwal, D. Vishwanath, R. Rahul, M. Sharma, and        34, 13384 (2020).
+    L. Vig, in 2019 International Conference on Document     [35] M. Li, Z. Rhodes,  J. R. Cabrera-Pardo,  and S. D.
+    Analysis and Recognition (ICDAR) (IEEE, 2019) pp.         Minteer, Sustainable Energy & Fuels 4, 4370 (2020).
+    128–133.                                                           [36] R. Ramakrishnan, P. O. Dral, M. Rupp,  and O. A.
+[13] M. G¨obel, T. Hassan, E. Oro,  and G. Orsi, in 2013       Von Lilienfeld, Scientific data 1, 1 (2014).
+    12th International Conference on Document Analysis and     [37] A. V. Marenich, J. Ho, M. L. Coote, C. J. Cramer, and
+    Recognition (IEEE, 2013) pp. 1449–1453.                    D. G. Truhlar, Physical Chemistry Chemical Physics 16,
+[14] N.  Islam,  Z.  Islam,   and N. Noor, arXiv  preprint        15068 (2014).
+    arXiv:1710.05703  (2017).                                       [38] M.-H. Baik and R. A. Friesner, The Journal of Physical
+[15] R. Smith, in Ninth international conference on document        Chemistry A 106, 7407 (2002).
+     analysis and recognition (ICDAR 2007), Vol. 2 (IEEE,     [39] J. E. Bachman, L. A. Curtiss,  and R. S. Assary, The
+    2007) pp. 629–633.                                           Journal of Physical Chemistry A 118, 8852 (2014).
+[16] R. W. Smith, in Document Recognition and Retrieval XX,     [40] E. Hruska, A. Gale,  and F. Liu, Journal of Chemical
+     Vol. 8658 (SPIE, 2013) p. 865802.                          Theory and Computation 18, 1096 (2022).
+[17] J. Memon, M. Sami, R. A. Khan, and M. Uddin, IEEE     [41] J. Zhang, H. Zhang, T. Wu, Q. Wang, and D. van der
+    Access 8, 142642 (2020).                                        Spoel, Journal of chemical theory and computation 13,
+[18] J. Liu, Y. Chabot, R. Troncy, V.-P. Huynh, T. Labb´e,        1034 (2017).
+    and P. Monnin, Journal of Web Semantics  , 100761     [42] C. J. Cramer, D. G. Truhlar, et al., Chemical Reviews
+     (2022).                                                     99, 2161 (1999).
+[19] W. X. Zhao, K. Zhou, J. Li, T. Tang, X. Wang, Y. Hou,     [43] Y. Zhang and X. Xu, Industrial & Engineering Chemistry
+    Y. Min, B. Zhang,  J. Zhang, Z. Dong,  et  al., arXiv        Research 60, 343 (2020).
+     preprint arXiv:2303.18223  (2023).                             [44] S. Ghule, S. R. Dash, S. Bagchi, K. Joshi, and K. Vanka,
+[20] L. Fan, L. Li, Z. Ma, S. Lee, H. Yu,  and L. Hemphill,      ACS omega 7, 11742 (2022).
+    arXiv preprint arXiv:2304.02020  (2023).                      [45] F. Wang and J. Cheng, The Journal of Chemical Physics
+[21] D. Flam-Shepherd, K. Zhu,  and A. Aspuru-Guzik,        157, 024103 (2022).
+    Nature Communications 13, 3293 (2022).                      [46] O. Allam, R. Kuramshin, Z. Stoichev, B. Cho, S. Lee,
+[22] F. Grisoni, Current Opinion in Structural Biology 79,       and S. Jang, Materials Today Energy 17, 100482 (2020).
+    102527 (2023).                                                    [47] “pytesseract — pypi.org,” https://pypi.org/project/
+[23] G. M. Hocky and A. D. White, Digital discovery 1, 79        pytesseract/.
+     (2022).
+
+## PDF page 11
+                                                                                                    11
+
+
+[48] G. Huang, Z. Liu, L. Van Der Maaten,  and K. Q.        115–123.
+    Weinberger, in Proceedings of the IEEE conference on     [65] J. Behler, The Journal of chemical physics 134, 074106
+    computer  vision and  pattern  recognition  (2017)  pp.         (2011).
+    4700–4708.                                                        [66] H. Moriwaki, Y.-S. Tian, N. Kawashita, and T. Takagi,
+[49] J. Fang, X. Tao, Z. Tang, R. Qiu,  and Y. Liu, in        Journal of cheminformatics 10, 1 (2018).
+    2012 10th IAPR International Workshop on Document     [67] A. P. Bart´ok, R. Kondor,  and G. Cs´anyi, Physical
+    Analysis Systems (IEEE, 2012) pp. 445–449.                 Review B 87, 184115 (2013).
+[50] “pdf2image — pypi.org,” https://pypi.org/project/     [68] B. Huang and O. A. von Lilienfeld, Nature chemistry 12,
+    pdf2image/.                                              945 (2020).
+[51] N. Elgrishi, K. J. Rountree, B. D. McCarthy, E. S.     [69] F. Musil, A. Grisafi, A. P. Bart´ok, C. Ortner, G. Cs´anyi,
+    Rountree, T. T. Eisenhart, and J. L. Dempsey, Journal       and M. Ceriotti, Chemical Reviews 121, 9759 (2021).
+     of chemical education 95, 197 (2018).                          [70] L. Himanen, M. O. J¨ager, E. V. Morooka, F. F. Canova,
+[52] D. Lemm, G. von Rudorff, and A. von Lilienfeld, “Leruli.        Y. S. Ranawat, D. Z. Gao, P. Rinke, and A. S. Foster,
+    com, online molecular property predictions in real time       Computer Physics Communications 247, 106949 (2020).
+    and for free,”  (2021).                                            [71] L. Ruddigkeit, R. Van Deursen, L. C. Blum, and J.-L.
+[53] D.  Weininger,  Journal  of  chemical  information and       Reymond, Journal of chemical information and modeling
+    computer sciences 28, 31 (1988).                              52, 2864 (2012).
+[54] G. Landrum et al., Greg Landrum 8, 31 (2013).              [72] a.  Petersson,  A.  Bennett,  T. G.  Tensfeldt, M. A.
+[55] C. Bannwarth, E. Caldeweyher, S. Ehlert, A. Hansen,        Al-Laham, W. A. Shirley, and J. Mantzaris, The Journal
+     P. Pracht, J. Seibert, S. Spicher, and S. Grimme, Wiley          of chemical physics 89, 2193 (1988).
+     Interdisciplinary  Reviews:   Computational  Molecular     [73] C. Lee, W. Yang, and R. G. Parr, Physical review B 37,
+    Science 11, e1493 (2021).                                   785 (1988).
+[56] S. Grimme, C. Bannwarth, and P. Shushkov, Journal of     [74] A. D. Becke, The Journal of Chemical Physics. doi:
+    chemical theory and computation 13, 1989 (2017).               https://doi. org/10.1063/1.464913  (1993).
+[57] K.  Izutsu,  Electrochemistry  in nonaqueous  solutions     [75] K. Rajan, A. Zielesny,  and C. Steinbeck, Journal of
+    (John Wiley & Sons, 2009).                                 Cheminformatics 12, 1 (2020).
+[58] G. Inzelt, A. Lewenstam,  and F. Scholz, Handbook of     [76] K. Rajan, A. Zielesny,  and C. Steinbeck, Journal of
+     reference electrodes, Vol. 541 (Springer, 2013).                 Cheminformatics 13, 1 (2021).
+[59] T. Chen and C. Guestrin, in Proceedings of the 22nd acm     [77] K. Rajan, H. O. Brinkhaus, M. Sorokina, A. Zielesny,
+    sigkdd international conference on knowledge discovery       and C. Steinbeck, Journal of Cheminformatics 13, 1
+    and data mining (2016) pp. 785–794.                            (2021).
+[60] R. Ramakrishnan and O. A. von Lilienfeld, Reviews in     [78] S.-I. Amari, Neural networks 6, 161 (1993).
+    computational chemistry 30, 225 (2017).                      [79] L. L. Miller, G. Nordblom,  and E. A. Mayeda, The
+[61] B. Huang, N. O. Symonds,  and O. A. von Lilienfeld,        Journal of Organic Chemistry 37, 916 (1972).
+    arXiv preprint arXiv:1807.04259  (2018).                      [80] N. Weinberg and H. Weinberg, Chemical Reviews 68, 449
+[62] A. S. Christensen, F. Faber, B. Huang, L. Bratholm,         (1968).
+    A. Tkatchenko, K. Muller, and O. von Lilienfeld, URL     [81] B. Mazouin, A. A. Sch¨opfer, and O. A. von Lilienfeld,
+     https://github. com/qmlcode/qml  (2017).                      Materials Advances 3, 8306 (2022).
+[63] “sklearn.kernel ridge.KernelRidge —  scikit-learn.org,”     [82] M. Abolhasani and E. Kumacheva, Nature Synthesis , 1
+    https://scikit-learn.org/stable/modules/                  (2023).
+    generated/sklearn.kernel_ridge.KernelRidge.html.
+[64] J. Bergstra, D. Yamins,  and D. Cox, in International
+    conference on machine  learning (PMLR,  2013)  pp.

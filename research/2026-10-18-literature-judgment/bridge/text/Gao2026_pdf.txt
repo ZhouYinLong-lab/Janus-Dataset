@@ -1,0 +1,638 @@
+## PDF page 1
+                                                                                   ARTICLE
+
+Open Access                                                                                          https://doi.org/10.48130/gcomm-0026-0010
+                                                                                                        Genomics Communications 2026, 3: e011
+
+Large language models accelerate the acquisition of mycotoxin-
+degrading enzyme information
+
+Lu Gao1#, Huilong Chen1#, Xiaofang Ding2, Shimeng Huang3, Qiugang Ma3, Luiz Gustavo Nussio4     , Kuikui Ni1,
+Fuyu Yang1* and Gang Xu1*
+1 College of Grassland Science and Technology, China Agricultural University, Beijing 100193, China
+2 Beijing Huasheng Rehabilitation Hospital, Beijing 100075, China
+3 College of Animal Science and Technology, China Agricultural University, Beijing 100193, China
+4 Department of Animal Sciences, Luiz de Queiroz College of Agriculture, University of Sao Paulo, Piracicaba 13418-900, Brazil
+# Authors contributed equally: Lu Gao, Huilong Chen
+* Correspondence: yfuyu@cau.edu.cn (Yang F); xugang@cau.edu.cn (Xu G)
+
+
+ Abstract
+  Microbial genome sequencing data are growing exponentially, yet comprehensive functional annotation is challenged by the dispersed nature of enzyme
+  characterization information across scientific literature. Using mycotoxin-degrading enzymes as a case study, we evaluated the performance of six
+  mainstream large language models, ChatGLM-3-Turbo, ChatGPT-4o, two versions of the Claude series (Claude2 and Claude Sonnet 4), DeepSeek-V3, and
+  Kimi Chat, in extracting structured information from 13 representative publications across 18 categories of enzyme-related data. The top-performing models
+  (Claude Sonnet 4, DeepSeek-V3, and ChatGPT-4o) achieved accuracy rates of 95%–99% with extraction times under 10 min, representing a potential
+ improvement over manual approaches. To preliminarily explore LLM capabilities beyond text analysis, we assessed Claude Sonnet 4's ability to interpret
+  genome-derived visual information, including phylogenetic trees, multiple sequence alignments, and domain architectures, comparing its outputs with
+  expert analysis. The model showed basic pattern recognition capabilities for these multimodal inputs, though comprehensive validation is still needed.
+  Based on these findings, we developed ptol, a workflow tool for literature retrieval, format conversion, and LLM input generation. This work establishes a
+ benchmark for LLM-assisted information extraction in the microbiology domain and may provide methodological reference for similar specialized
+  applications.
+
+
+
+  Citation: Gao L, Chen H, Ding X, Huang S, Ma Q, et al. 2026. Large language models accelerate the acquisition of mycotoxin-degrading enzyme information.
+  Genomics Communications 3: e011 https://doi.org/10.48130/gcomm-0026-0010
+
+Introduction                                                vocabularies like the Medical Subject Headings (MeSH) and the CAS
+                                                                             registry to expand topics and standardize terminology[12]; (3) metic-
+The rapid development of high-throughput sequencing technologies    ulously amalgamating search terms via Boolean logic, stemming
+has led to an exponential increase in microbial genomic data[1−3].    analysis, synonym  expansion, and  term  relevance  weighting,
+However, functional annotation of the vast number of genes identified   employing natural language processing techniques to construct
+from these genomes remains a major bottleneck, with a considerable    sophisticated and precise queries[12]; (4) conducting searches within
+proportion of genes  still labeled as 'hypothetical proteins' whose   chosen databases to gather an initial collection of potentially related
+biological functions are unknown, severely hindering the translation of     literature[13]; (5) manually screening the literature by researchers for
+genomic data into biological insights and practical applications[4,5].        duplication and thematic relevance, implementing predetermined
+  One of the factors affecting the efficiency of functional annota-    inclusion and exclusion criteria to curate a core collection of applica-
+tion is that while substantial valuable enzyme functional informa-    ble literature[14]. The traditional information extraction stage (6) is
+tion has been obtained through experimental studies, this informa-    typically a process involving two or more researchers repetitively
+tion is dispersed across vast amounts of scientific literature, making    reading through each article within the core literature set, manually
+systematic  utilization  challenging. When conducting  functional    identifying, and distilling the necessary data to form a standardized,
+annotation, researchers often need to manually search and review    structured dataset. This manual operation usually necessitates a
+relevant literature to obtain detailed information about specific    certain level of redundant work, such as independent extractions
+enzymes, such as enzymatic activity, substrate specificity, optimal    followed by cross-verification between researchers, to ensure the
+reaction conditions, and other key biochemical parameters[6,7]. This    accuracy and consistency of the extracted information[15,16]. This
+manual literature mining process is relatively time-consuming and   comprehensive manual process of  literature  retrieval and data
+susceptible to subjective factors, which may limit the effective trans-    extraction is laborious, protracted, and susceptible to the influence
+lation of existing knowledge into genomic annotation[8,9].               of subjective human factors, which can lead to variable quality and
+  The conventional pipeline for systematic literature review encom-    consistency in the outcomes.
+passes a series of pivotal steps: (1) defining research themes and     The  field  of  artificial  intelligence,  particularly through  large
+formulating  search  strategies,  followed by  selecting  pertinent   language models (LLMs), offers new possibilities in this regard.
+databases such as PubMed for biomedical literature, Web of Science    Trained on massive textual datasets, LLMs acquire a broad range of
+for multidisciplinary citations, Embase for pharmacology and life   knowledge, from simple facts to complex theories[17], enabling them
+sciences, and the Chemical Abstracts Service (CAS) for chemical liter-    to  rapidly and accurately  extract the information required by
+ature[10,11]; (2) pinpointing key search terms and utilizing controlled    researchers from large-scale literature collections[18]. In tasks such as
+
+
+© The Author(s)                                                                                                  www.maxapress.com/gcomm
+
+## PDF page 2
+                                                                          LLMs for mycotoxin-degrading enzyme discovery
+
+
+systematic reviews, which involve extensive literature screening and    the microbiology field and establish performance benchmarks for
+synthesis, LLMs demonstrate significant advantages in terms of time    related information extraction tasks.
+and cost efficiency[19,20]. More importantly, their algorithmic objec-
+tivity helps reduce biases arising from subjective judgments in tradi-
+tional manual reviews, thereby enhancing the transparency and  Materials and methods
+reproducibility of research[19,21]. Nevertheless, existing studies on
+LLM-assisted biological information extraction exhibit notable limi-
+                                                   Collection and selection of LLMs and literaturetations. Most efforts have not systematically evaluated the accuracy
+                                             We initially surveyed foundational large language models accessibleof LLMs  in extracting fine-grained functional information from
+                                                               through various platforms and APIs during the study period. Thethe literature, such as enzyme activity parameters and sequence
+identifiers[22,23], nor have they established performance benchmarks    selection was conducted according to three predefined criteria:  (i)
+tailored to specific application scenarios, such as enzyme function    direct model accessibility during the study period,  (ii) support for
+mining.                                                             processing long document texts, and (iii) availability of documented
+  Furthermore, in the field of genomics, in addition to textual litera-   model specifications and parameters. Based on these  criteria, we
+ture, there exists a substantial amount of structured and visual infor-    selected six foundational LLMs for formal comparison: ChatGLM-3-
+mation derived from genomic data, such as phylogenetic trees,    Turbo, ChatGPT-4o, Claude2, Claude Sonnet 4, DeepSeek-V3, and Kimi
+multiple sequence alignments, and functional domain architecture    Chat. Notably, we deliberately retained two versions of Anthropic's
+diagrams, that encodes evolutionary relationships and structural    Claude series (Claude2 and Claude Sonnet 4) to evaluate performance
+constraints, which are crucial for functional inference[24,25]. However,   changes within the same model family during technological iteration,
+whether LLMs can effectively analyze such multimodal information    providing  valuable  comparative  data   for  understanding  the
+and integrate it into functional annotation pipelines remains unex-    developmental  trajectory of large language models  in biological
+plored.                                                               information extraction tasks. Given the rapid updates and iterations of
+  Mycotoxin-degrading enzymes serve as an ideal case for examin-    LLMs, and considering that our research timeframe might involve
+ing the aforementioned issues. Mycotoxins are toxic secondary    different model versions, this cross-version comparison helps assess
+metabolites produced by fungi, which are frequently found in a    the impact of technological advancement on practical application
+wide range of foodstuffs and pose a major threat to human and    effectiveness.
+animal health[26]. Mycotoxins can be produced by a wide range of    We used keywords such as Mycotoxin, enzyme, and degrad* as
+microorganisms,  such  as  Aspergillus,   Penicillium,  Fusarium,    indices for the collection of literature related to mycotoxin-degrad-
+Alternaria, and Claviceps[15]. Research in the food industry has been    ing enzymes in PubMed, Web of Science, and CNKI databases, and
+focused on characterizing enzymes capable of degrading these   randomly downloaded 86 documents. Thirteen papers containing
+harmful compounds[27]. However, the vast and rapidly growing   more complete information on mycotoxin-degrading enzymes were
+body of literature on mycotoxin-degrading enzymes presents a                                                                  hand-selected as targets for testing through careful reading and
+challenge for researchers seeking to stay up-to-date with the latest                                                                       discrimination (Supplementary Table S1).
+findings. Currently, there is no complete database storing informa-                                                                  At the paper level, the 13 selected studies covered six major
+tion on mycotoxin-degrading enzymes. Therefore, we plan to collect                                                             mycotoxin groups, including deoxynivalenol (DON; three papers),
+published literature on this subject by manually extracting it from                                                                 zearalenone (ZEN; two papers), aflatoxins (including AFB1, AFB2,
+information on mycotoxin-degrading enzymes to construct the                                                             AFG1, AFG2, and AFM1; four papers), fumonisins (including FB1, FB2,
+database. Unfortunately, in practice, we found that it is very time-                                                                     FB3, and hydrolyzed FB1; two papers), ochratoxin A (OTA; three
+consuming and inefficient to manually find the target information                                                                        papers), and  patulin  (PAT; one  paper). Because some papers
+from the downloaded literature one by one. For example, for find-                                                                  reported enzymes acting on more than one mycotoxin, these
+ing the conditions under which an enzyme degrades all substrates,                                                                counts are not mutually exclusive. Therefore, the benchmark dataset
+it would require an author to repeatedly scrutinize the entire text                                                               spans multiple toxin classes rather than a single narrowly defined
+before finally identifying the target information, which is likely to be                                                                            subfield, which helps reduce potential bias arising from highly stan-
+scattered in the descriptions of different paragraphs in an article.                                                                  dardized phrasing in one specific mycotoxin category.
+  This study aims to evaluate the performance of large language
+models in literature information extraction within the microbiology
+domain. We systematically assessed six large language models,  Manual determination of target information for
+including  ChatGLM-3-Turbo,  ChatGPT-4o, two  versions  of  the   mycotoxin-degrading enzymes
+Claude series (Claude2 and Claude Sonnet 4), DeepSeek-V3, and   We  first  manually  identified 18  information  targets  related  to
+Kimi Chat, for their accuracy and efficiency in extracting biologically    mycotoxin-degrading enzymes in the literature. These include 'the
+relevant information from literature. The target information evalu-   name of the enzyme', 'the microbial source of the enzyme', 'the type of
+ated included experimental and functional attributes, as well as    enzyme', 'the substrate for enzyme recognition', 'the all products of
+sequence-related  information and  enzyme-associated  database    enzymatic degradation of toxins', 'the thermal stability of the enzyme',
+identifiers. Additionally, we conducted a preliminary exploration of    'the optimal temperature of the enzyme', 'the pH tolerance range of
+large language models' capability to analyze genome-derived visual    the enzyme', 'the optimal pH of the enzyme', 'the conditions for
+information, using Claude Sonnet 4 to analyze phylogenetic trees,   enzyme degradation of all substrates', 'the amount of toxin used', 'the
+multiple sequence alignments, and functional domain architecture    concentration of the enzyme', 'the reaction speed of degradation', 'the
+diagrams, and compared its outputs with expert manual analysis.    degradation reaction time', 'the degradation  ratio', 'the biological
+Based on the evaluation results, we developed an assistive work-   sequence information of the enzyme', 'the enzyme-related databases
+flow tool named 'ptol' that supports literature retrieval, text prepro-      id', and 'the DOI number'. The results for these 18 information targets
+cessing, and standardized input generation. We anticipate that this   were recorded promptly, and if any of the information was missing, it
+work may provide methodological reference for literature mining in   was set as empty in the table. To establish the reference answers for
+
+
+Page 2 of 11                                                              Gao et al. Genomics Communications 2026, 3: e011
+
+## PDF page 3
+LLMs for mycotoxin-degrading enzyme discovery
+
+benchmarking, the target information from each of the 13 studies was   Visualization and statistical analysis
+manually  extracted  independently by two  researchers  using  a  We used GraphPad Prism 8.0.2 software to visualize the machine
+predefined extraction form containing the 18 target items. Before    learning metrics of six LLMs for all information targets extracted from
+formal extraction, the two researchers jointly reviewed a small subset    the 13 studies. The Friedman test was used to assess significant
+of papers to harmonize the operational definitions of each target item    differences between the performance of the different models, and the
+and ensure a consistent understanding of the extraction criteria. After   Nemenyi post hoc test was further used for pairwise comparison.
+independent extraction, the two result sets were compared item by   Comparisons with p < 0.05 were considered statistically significant.
+item, and discrepancies were resolved through discussion. When
+consensus could not be reached, a third researcher was consulted for
+                                              Software implementation for pipelineadjudication. The final consensus dataset was used as the reference
+                                                           To accelerate the process of extracting target information fromstandard for evaluating LLM extraction accuracy.
+                                                                                      scientific literature using LLMs, we developed an auxiliary toolkit using
+                                                              Python 3.9.7. The dictionary in the nltk module (v3.7) was utilized to
+Testing of LLMs via fair questioning                     generate  all variants of keywords; four modules, PyPDF2 (v2.12.1),
+We strictly adhered to the controlled variable method to ensure that   pdfplumber   (v0.9.0),  fitz/PyMuPDF   (v1.21.1),  and  pdfminer.six
+differences in querying LLMs were solely attributed to variations in    (v20221105) were implemented to provide users with different options
+target information. For each question entered into the tested LLMs, we    for converting PDF files into text files. Finally, we programmed various
+uniformly used consistent syntax: "literature PDF" (or "literature text"    subroutines within the toolkit to facilitate user operations.
+for LLMs that do not support direct PDF input), please help me find
+"Question n" in the above text. For LLMs that natively support PDF
+                                             Multimodal image analysis using large languageinput, the original PDF files of the 13 studies were directly uploaded;
+for LLMs that do not support PDF input, the pdf_to_text module of our  models
+                                                           To evaluate whether LLMs can effectively analyze genomic-derivedptol tool was employed to convert PDF documents into plain text files
+                                                                     information from visual inputs, we constructed three types of visualbefore submission. The content of the 18 questions was replaced with
+                                                                       representations based on the sequence information of the 13 test'Question n' as the standard input for six LLMs (Supplementary Table
+                                                                enzymes:S2). The efficiency of LLMs was estimated by timing from clicking the
+                                                                                      (1) Phylogenetic tree: Sequences were aligned using the ClustalW"Send" button until the complete output of all responses by the LLM.
+                                                          program in MEGA 7.0.26 software, and a phylogenetic tree wasSimilarly, we replaced the content of 'Question n' with the grammatical
+                                                                  constructed using the neighbor-joining (NJ) method with 1,000criteria of the 18 information target items separated by commas to
+                                                                  bootstrap replicates.complete the test of extracting all target information at once according
+                                                                                      (2) Domain architecture diagram: Sequences were submitted toto the above method. Finally, we maintained timely records of each
+                                                                 the NCBI Conserved Domain Database (CDD) for domain prediction,LLM's answers and time spent on each question for each piece of
+                                                        and  the  results  were  visualized  using  the  Chiplot  websiteliterature.
+                                                                       (www.chiplot.online).
+                                                                                      (3) Multiple sequence alignment: Sequences were aligned using
+Evaluation of LLMs performance                         the ClustalW program in MEGA 7.0.26 software, and the alignment
+We used machine learning evaluation metrics such as accuracy,                                                                             results were visualized using Genedoc 2.6.002 software.
+precision, recall, F1-score, and Matthews Correlation Coefficient (MCC)                                                            The  three  figures  were  independently  analyzed  by  two
+to compute a precise assessment of each LLM's performance in                                                                      researchers who summarized the overall characteristics of the 13
+extracting the 18 information targets from the 13 studies. The formulae                                                         enzymes from a holistic perspective, including sequence conserva-
+for the specific metrics are given below:                                                                                tion, evolutionary relationships, domain architecture features, and
+                      TP+TN                            functional groupings, thereby establishing a reference answer set.                  Accuracy =                                         (1)
+                   TP+TN + FP+ FN                   The same images were then input to the LLM with the following
+                         TP                            prompt:
+                           Recall =                                     (2)
+                      TP+ FN                                 'Please comprehensively analyze the overall characteristics of
+                                                                  these 13 enzymes based on the provided multiple sequence align-                          TP
+                         Precision =                                   (3)    ment, phylogenetic tree, and domain architecture diagrams, includ-                       TP+ FP
+                                                                   ing sequence conserved regions, evolutionary clustering relation-
+                           2TP
+                    F1score =                                       (4)    ships, domain distribution patterns, and their possible functional
+                      2TP+ FP+ FN
+                                                                       groupings'.
+                  TP×TN −FP× FN
+      MCC =                                                                           (5)     The consistency between LLM outputs and the manually estab-
+             √(TP+ FN)(TP+ FP)(TN + FP)(TN + FN)              lished reference answers was calculated to assess the LLM's capabil-
+where, TP, FP, TN, and FN denote,  respectively, the number of     ity for multimodal genomic information analysis.
+information targets correctly found to be present in the text, the     Claude Sonnet 4 was selected for this analysis based on its supe-
+number of information targets incorrectly found to be present in the     rior performance in the preceding text extraction tasks. Among the
+text, the number of information targets correctly recognized to be     six LLMs evaluated, Claude Sonnet 4 achieved the highest accuracy
+absent from the  text, and the number  of  information  targets   and F1-score in extracting structured information from mycotoxin-
+incorrectly found to be absent from the text. Furthermore, we also   degrading enzyme literature, demonstrating strong proficiency in
+employed area under the curve (AUC) performance evaluation metrics,    handling domain-specific biological information. Therefore, it was
+which comprehensively analyze the ability and accuracy of LLMs in   chosen as the representative LLM for the multimodal image analysis
+recognizing target information in text.                           component of this study.
+
+
+Gao et al. Genomics Communications 2026, 3: e011                                                                      Page 3 of 11
+
+## PDF page 4
+                                                                          LLMs for mycotoxin-degrading enzyme discovery
+
+Results                                                           that separate questioning took more time than composite question-                                                                              ing, which was expected. However, the  separate questioning
+                                                             approach could greatly improve the accuracy of target information
+Benchmarking of six LLMs                                  extracted via LLMs, with the average accuracy rates under the sepa-
+To accurately assess the performance of LLMs in extracting target    rate questioning mode being: ChatGLM-3-Turbo (86.75%), ChatGPT-
+information from literature texts, we selected six well-known advanced   4o  (95.30%),  Claude2  (94.87%),  Claude  Sonnet  4  (98.72%),
+foundational LLMs (ChatGLM-3-Turbo, ChatGPT-4o, Claude2, Claude   DeepSeek-V3 (97.01%), and Kimi Chat (89.75%) (Fig. 1d, Supplemen-
+Sonnet 4, DeepSeek-V3, and Kimi Chat) for fair comparison, and then    tary Tables S19 and S20).
+tested their ability to extract targeted information from 13 literature      Next, based on the results of separate questioning, we evaluated
+texts containing relatively complete key information about mycotoxin-    the differences in the ability of the six LLMs to extract the targeted
+degrading enzymes, using manually determined correct information as    information (Fig. 2, Supplementary Table S21). The results showed
+                                                                       that Claude Sonnet 4, DeepSeek-V3, and ChatGPT-4o performedthe  criterion  for  quantitative and case-by-case  analysis  (Fig.  1a,
+                                                                   best in terms of accuracy. Particularly noteworthy was the perfor-Supplementary Tables S3–S15).
+                                                     mance comparison between the two versions of the Claude series:
+ We first compared the time spent on extracting key information
+                                                              Claude Sonnet 4 achieved the highest average accuracy of 98.72%,
+by manual methods and LLMs  (Fig. 1b, Supplementary Tables
+                                                                              significantly  outperforming  Claude2's  94.87%,  demonstrating
+S16–S18). The results showed that LLMs were extremely efficient in
+                                                                         substantial progress through model iteration. Even more impres-
+information extraction, while the average time spent on manual                                                                                    sively, Claude Sonnet 4 excelled in handling information that was
+information extraction was as high as 25.85 min. We then compared                                                                             rarely mentioned in the  literature. When given instructions to
+the effectiveness of extracting all information targets using LLMs in    extract  'all' relevant information,  it could sometimes identify and
+both composite questioning (18 target information items fused into    extract key information that was only briefly mentioned once or
+one question) and separate questioning (extraction of each target    twice in articles, showcasing its outstanding advantage in detailed
+item as one question) approaches (Fig. 1c, d). The results showed    information capture capability.
+
+                a
+
+
+
+
+
+              b                             c                          d
+
+
+
+
+
+  Fig. 1 Evaluation of LLM querying strategy and extraction performance. (a) Schematic of the standardized separate questioning approach, in which the
+  target information term is systematically replaced across otherwise identical queries. (b) Box plots comparing processing time (min) between manual
+  extraction and six LLMs under separate questioning modes. (c) Connected dot plot comparing processing time (min) for each LLM between separate and
+  composite questioning modes, with violin plots showing the overall distribution. (d) Connected dot plot comparing overall extraction accuracy (%) for
+  each LLM between separate and composite questioning modes, with violin plots showing the overall distribution. Statistical differences between models
+  were assessed using the Friedman test followed by the Nemenyi post hoc test (p < 0.05).
+
+
+Page 4 of 11                                                              Gao et al. Genomics Communications 2026, 3: e011
+
+## PDF page 5
+LLMs for mycotoxin-degrading enzyme discovery
+
+          a                                b                                  c
+
+
+
+
+
+         d                                   e                                              f
+
+
+
+
+
+         g
+
+
+
+
+
+  Fig. 2 Performance comparison of six large language models (ChatGLM-3-Turbo, ChatGPT-4o, Claude2, Claude Sonnet 4, DeepSeek-V3, and Kimi Chat)
+  across six evaluation metrics: (a) accuracy, (b) recall, (c) precision, (d) F1 score, (e) Matthews correlation coefficient (MCC), and (f) area under the ROC curve
+  (AUC). Each data point represents the mean score of a model on 18 targeted information categories for 1 of the 13 literature sources; the central line
+  within each violin plot indicates the median. Significant differences between models were assessed using the Friedman test followed by the Nemenyi
+  post hoc test; * indicates p < 0.05. (g) Heatmap showing the mean extraction accuracy (%) of each model across the 18 individual targeted information
+  categories, averaged over all 13 literature sources. Color intensity reflects accuracy level as indicated in the scale bar on the right.
+
+
+   Finally, we further evaluated the performance of the six LLMs on   Systematic review pipeline: integrating AI and
+18 target information extractions from an accuracy perspective, and  Python
+the results showed that all six models performed erratically on ques-                                                              Based on the above tests, we found that advanced LLMs such as
+tions corresponding to different target information (Fig. 2g, Supple-
+                                                                Claude Sonnet 4, DeepSeek-V3, and ChatGPT-4o can serve as auxiliary
+mentary Table S22). Overall, the six models performed well on
+                                                                            tools for manually extracting target key information. To improve the
+simple questions such as extracting enzyme name, microbial source,
+                                                                               efficiency of  scientific research, we developed a semi-automatedand enzyme type, while their accuracy dropped significantly below
+                                                                         pipeline integrating Python scripting with large language models to50% for questions with complex logical queries (involving logically
+calculated information such as toxin dosage, enzyme concentration,   enhance the efficiency of this process (Fig. 3).
+and degradation ratio). This suggested that the LLM had a better       In the retrieval phase, our system begins with natural language
+ability to extract target information existing in the direct text, but a    search terms provided by the user and utilizes Python to automati-
+poor ability to extract the target information through more complex    cally expand, standardize, and concatenate these terms, thereby
+logical thinking, such as inference.                                    constructing queries  tailored to  various databases.  This setup
+
+
+Gao et al. Genomics Communications 2026, 3: e011                                                                      Page 5 of 11
+
+## PDF page 6
+                                                                          LLMs for mycotoxin-degrading enzyme discovery
+
+
+
+
+
+  Fig. 3 Workflow for extracting information from scientific literature using large language models. The left panel illustrates the literature retrieval stage,
+  comprising search string construction (including keyword identification, professional vocabulary, synonym expansion, and Boolean logic), database
+   selection, and literature aggregation with duplicate and irrelevant paper removal. The center panel represents the screening and data organization stage,
+   in which retrieved literature is reviewed and structured into a dataset. The right panel illustrates the information extraction stage, in which documents are
+  converted into a format compatible with the target large language model (PDF or plain text), submitted via machine dialogue, and processed for
+  structured information extraction using ChatGPT, Claude, or Kimi Chat. Arrows indicate the sequential flow between stages.
+
+
+provides convenient query  links,  facilitating  relatively  efficient   Software implementation for pipeline
+searches. For the preliminary set of retrieved literature, the system   To help streamline the literature review process and reduce some
+employs computational methods such as text similarity assess-   manual   input,  we  developed  an   auxiliary  software   (ptol,
+ments to automatically identify and eliminate duplicate documents.    https://github.com/cauBioinformation/ptol). This tool is designed to
+If certain formats are not recognized by the language models,     assist in generating search queries for academic databases such as
+Python scripting can convert them into compatible text formats.      PubMed and Web of Science.  It operates based on user-defined
+   In the information extraction phase, we employ a user-guided    keywords, generating relevant keyword permutations and providing
+semi-automated strategy based on large language models (LLMs).    access to corresponding download links. This may help improve the
+For example, to identify specific enzymes mentioned within a docu-    efficiency of accessing relevant academic literature. The ptol source
+                                                            code is provided with documentation under an open-source license toment, users can inquire: 'Please list all the enzymes mentioned in
+                                                           promote community improvements and transparency. The softwarethis document'. For more complex tasks such as extracting reported
+                                                              can be integrated into local environments across Windows, Linux, andenzyme degradation rates, users need to guide the LLM through
+                                                     Mac OS platforms via the Python Package Index (PyPI) by executing
+appropriate prompting phrases such as: 'Please  list the enzyme
+                                                                                'pip install ptol' in a command-line interface.
+degradation rates reported in this text, along with the associated
+                                                            The ptol  is a Python Package that  is divided into four main
+experimental conditions (such as enzyme concentration, quantity of
+                                                               modules, namely  query_syntax,  remove_duplicates, download_
+toxins, reaction duration, etc.)'. If initial results are insufficient, users
+                                                                          pdfs, and pdf_to_text. The query_syntax module  is developed
+can further refine their query strategy. Based on the model's feed-
+                                                            based on the  literature keywords specified by the researcher,
+back, users need to iteratively perfect and specify their natural                                                                                          initially identifying their potential variations and then automatically
+language inquiries to accurately capture the required data dimen-                                                                 generating search URLs that correspond to the literature results in
+sions. This semi-automated approach provides certain efficiency                                                                 the PubMed database. This feature allows users to access compre-
+advantages over fully manual procedures, while still requiring active                                                                 hensive details related to the desired literature, including titles and
+user participation and professional judgment.                          publication data. Furthermore, the module constructs keyword-
+ We compare our proposed pipeline with existing theoretical   based search syntax for both PubMed and Web of Science, catering
+pipelines (Table 1). The results show that our theoretical pipeline has    to different user preferences and enhancing search flexibility.
+the most  steps.. For comparison among other  pipelines, the      Subsequently,  users need  to  consolidate  target documents
+pipelines proposed by van de Schoot et al.[14], Timmins & McCabe[28],    obtained from various bibliographic databases and sources, for
+and Bramer et  al.[11] have more steps. Therefore, our proposed    example, using MS Excel software to merge title and DOI number
+pipeline can serve as a recent alternative theoretical pipeline.              links. The remove_duplicates module is then used to attempt to
+
+
+Page 6 of 11                                                              Gao et al. Genomics Communications 2026, 3: e011
+
+## PDF page 7
+LLMs for mycotoxin-degrading enzyme discovery
+
+
+Table 1. Comparison of existing pipelines.
+
+ Pipeline               Ours   Ref. [28]   Ref. [29]   Ref. [11]   Ref. [30]   Ref. [14]   Ref. [27]   Ref. [31]   Ref. [32]   Ref. [33]   Ref. [34]   Ref. [35]   Ref. [36]
+
+ Determining the         √      √                       √       √                                       √
+ key words
+ Term validation         √      √                       √       √                                       √
+ Semantic enrichment     √      √               √       √       √                                       √
+ Applying boolean        √      √                       √                                               √
+ operators
+ Utilizing truncation       √      √                       √
+ and wildcards
+ Selecting appropriate     √      √               √       √       √
+ databases
+ Compiling databases     √                      √
+ Removing duplicate      √                                     √
+ literature
+ Excluding irrelevant      √                                     √               √
+ literature
+ Information extraction    √              √                       √                               √       √
+ Model evaluation        √                                             √       √       √               √       √       √
+ Information retrieval      √
+ techniques
+
+Note: √ indicates that the proposed pipeline has this property.
+
+
+eliminate redundancies within this collated dataset. Users need to    of visual representations were constructed based on the sequence
+download documents  in PDF format following the  guidelines    information of the 13 test enzymes: a phylogenetic tree (Fig. 4), a
+described in the pipeline and observing copyright norms, typically   domain  architecture diagram  (Fig.  5), and a  multiple sequence
+leveraging university library subscriptions or open-access reposito-    alignment  (Fig.  6).  Claude  Sonnet  4 was  then prompted  to
+ries. The download_pdfs module provides an option for users while    comprehensively analyze the overall characteristics of the 13 enzymes
+observing literature copyright, built on the principle of accessing    across all three figures simultaneously. In this analysis, Claude Sonnet 4
+free literature databases.                                         demonstrated the ability to identify major branching patterns in the
+   Finally, the accumulated PDF documents were directly uploaded    phylogenetic tree, including clustering of fungal laccase sequences
+to LLM interfaces that natively support PDF input (such as Claude    (Pleurotus and Trametes-derived sequences),  sister relationships of
+Sonnet 4, ChatGPT-4o, and DeepSeek-V3). For LLMs that do not    Alcaligenes faecalis sequences, and evolutionary associations of Devosia
+support direct PDF input, the pdf_to_text module was employed to   genus sequences. Regarding domain architecture interpretation, the
+batch convert PDF documents into plain text files prior to submis-                                                          model showed basic recognition capabilities for different functional
+sion. Researchers can then interact with these models using the                                                                 modules,  successfully  describing  multi-copper  oxidase  domain
+query strategy proposed in our manuscript and allow for personal-                                                                    combinations, PQQ_2_superfamily, and other key structural features.
+ized variations, ultimately extracting the target information from the
+                                                                              In multiple sequence alignment analysis, Claude Sonnet 4 was able to
+documents quickly.
+                                                                               identify  conserved  region  distribution  patterns  and  establish
+                                                                            correlations  with  phylogenetic  groupings.  Notably,  the  model
+Preliminary exploration of multimodal genomic      exhibited  a  tendency  for  cross-modal  information  integration,
+information analysis using Claude Sonnet 4           attempting to correlate three distinct types of biological data to form
+This study conducted a preliminary exploration of Claude Sonnet 4's    coherent   interpretative  frameworks.  This   analytical   capability
+capability to process genome-derived visual information. Three types    transcends  traditional  single  data-type  processing  approaches,
+
+
+
+
+
+  Fig. 4 Phylogenetic tree of the 13 mycotoxin-degrading enzyme candidates. The tree was constructed using the neighbor-joining (NJ) method based on
+  multiple sequence alignment generated by ClustalW in MEGA 7.0.26. Bootstrap values from 1,000 replicates are shown at each branch node. Scale bar
+  represents 0.10 substitutions per site.
+
+
+Gao et al. Genomics Communications 2026, 3: e011                                                                      Page 7 of 11
+
+## PDF page 8
+                                                                          LLMs for mycotoxin-degrading enzyme discovery
+
+
+
+
+
+  Fig. 5 Domain architecture diagrams of the 13 mycotoxin-degrading enzyme candidates. Domain predictions were obtained from the NCBI Conserved
+  Domain Database (CDD) and visualized using Chiplot. Each colored block represents a conserved domain, with domain types indicated in the legend on
+  the right. The x-axis represents amino acid position, and domain lengths are shown to scale.
+
+
+demonstrating AI's potential in comprehensive multi-evidence analysis    primary literature, making systematic utilization difficult and render-
+within bioinformatics.                                                ing manual extraction both time-consuming and susceptible to
+                                                                       subjective variability[15,16]. The ptol toolkit developed in this study
+                                                                              directly addresses this bottleneck by providing a structured work-
+Discussion                                                 flow  that  guides  users from keyword-based  database  search
+                                                              through duplicate removal, PDF acquisition, and standardized LLM
+This study systematically evaluated six mainstream LLMs on a fine-    input  generation. Comparison with  existing  systematic review
+grained  biological  information  extraction  task, using mycotoxin-    pipelines (Table 1) shows that our proposed pipeline covers the
+degrading enzyme literature as a domain-specific benchmark. Across   most properties among all evaluated frameworks and is the only
+234 independent extraction tests spanning 13 publications and 18   one to include information retrieval techniques as a dedicated
+target information  categories, the  results demonstrate that top-   component. Although mycotoxin-degrading enzymes serve as the
+performing models can achieve accuracy rates of 95%−99% with    proof-of-concept domain  here,  the  pipeline  is not  inherently
+processing times well under 10 min per article, compared to a manual    domain-specific and could be extended to other enzyme families or
+average of 25.85 min. This represents a substantial efficiency gain and    microbial systems where comprehensive structured databases are
+confirms that LLMs are capable of serving as effective auxiliary tools for    currently lacking.
+domain-specific  literature  mining.  While  previous  studies  have     The benchmarking results reveal clear and practically meaningful
+documented LLM  utility  in  biomedical  literature  screening and   performance differences among the six models. Claude Sonnet 4
+systematic review automation[19,20], fine-grained extraction of bioche-    achieved the highest accuracy at 98.72% under separate question-
+mical parameters, such as enzyme kinetic data, substrate specificity,    ing, followed by DeepSeek-V3 at 97.01% and ChatGPT-4o at 95.30%,
+and sequence identifiers, from specialized microbiology literature had    while Kimi Chat (89.75%) and ChatGLM-3-Turbo (86.75%) formed a
+not previously been systematically benchmarked. The present work    lower-performing  tier. The  within-family  comparison between
+fills this gap and establishes empirical performance references that can   Claude Sonnet 4 and Claude2 is particularly informative: the newer
+guide LLM adoption in similar annotation contexts.                  model outperformed its predecessor by 3.85% in separate question-
+  A key contribution of this work is the development and evalua-    ing mode, and by 10.26% in composite questioning mode. The
+tion of a semi-automated literature mining pipeline that combines    larger performance gap in composite questioning suggests that
+LLM-based extraction with Python-based automation for literature    architectural advances in newer model generations are especially
+retrieval, deduplication, and format conversion. A persistent chal-    beneficial for multi-task and contextually complex scenarios, consis-
+lenge in enzyme functional annotation is that valuable biochemical    tent with the broader trend of capability gains observed across
+characterization data remain dispersed across vast amounts of    recent LLM iterations[17]. A consistent task complexity stratification
+
+
+Page 8 of 11                                                              Gao et al. Genomics Communications 2026, 3: e011
+
+## PDF page 9
+LLMs for mycotoxin-degrading enzyme discovery
+
+
+
+
+
+  Fig. 6 Multiple sequence alignment of the 13 mycotoxin-degrading enzyme candidates. Sequences were aligned using ClustalW in MEGA 7.0.26 and
+  visualized using Genedoc. Conserved residues are highlighted with shading, with darker shading indicating higher conservation across sequences. Gaps
+  represent insertions or deletions relative to the consensus alignment.
+
+
+was observed across all models. Simple, directly stated information     is critical, separate questioning with a high-performing model is the
+categories, including enzyme name, microbial source, and enzyme   recommended approach.
+type, were extracted with 95%–100% accuracy across all models.     The preliminary multimodal  analysis using Claude Sonnet 4
+Moderately complex categories, such as degradation products, reac-   demonstrated that the model could identify major features of the 13
+tion conditions, and temperature and pH parameters, showed an   enzymes from phylogenetic trees, domain architecture diagrams,
+accuracy of 80%–95%, with emerging divergence between models.   and multiple sequence alignments in a manner broadly consistent
+Tasks requiring numerical calculation or cross-passage inference,    with expert manual analysis, including recognition of fungal laccase
+including enzyme concentration, degradation ratio, and reaction    clusters derived from Pleurotus and Trametes, sister relationships
+speed, dropped below 50% accuracy even for the best-performing   among Alcaligenes faecalis sequences, and multi-copper oxidase
+model. This finding is consistent with documented limitations of   domain combinations. These results suggest that multimodal LLMs
+current LLMs in numerical reasoning and multi-step logical infer-    hold potential as auxiliary tools for biological visual information
+ence, and indicates that human expert verification remains essential    interpretation beyond pure text extraction. However, several impor-
+for quantitative biochemical parameters regardless of which model    tant caveats apply. The present exploration was based on a single
+is selected.                                                               analysis instance, and the consistency observed between model
+  The choice between separate questioning and composite ques-   output and expert analysis does not exclude the possibility that the
+tioning warrants careful consideration  in  practical applications.   model  relied on pre-trained  biological knowledge rather than
+Composite questioning is, on average, 5–13 times faster than sepa-   genuine visual reasoning from the provided images. More rigorous
+rate questioning, but the associated accuracy cost varies substan-    controlled experiments, such as analysis of modified or deliberately
+tially across models. For Claude Sonnet 4, the two modes differed by    perturbed figures, are required before definitive conclusions about
+only 0.43 percentage points (98.72% vs 98.29%), making composite   LLM multimodal capabilities can be drawn.
+questioning a reasonable option when time efficiency is the primary     From  a  practical  perspective,  these  findings  provide  clear
+concern. For ChatGLM-3-Turbo, however, the accuracy difference   guidance for LLM applications in bioinformatics. For basic informa-
+reached 15.81 percentage points (86.75% vs 70.94%), substantially    tion extraction tasks, most modern LLMs can provide acceptable
+undermining the practical value of composite questioning for that    performance; for applications requiring high precision, high-perfor-
+model. These results indicate that the optimal questioning strategy   mance models like Claude Sonnet 4 should be selected with sepa-
+is model-dependent and cannot be determined without  prior    rate questioning strategies; for tasks involving numerical calcula-
+performance evaluation. For applications where extraction accuracy    tions and complex reasoning, current LLMs  still require human
+
+
+Gao et al. Genomics Communications 2026, 3: e011                                                                      Page 9 of 11
+
+## PDF page 10
+                                                                          LLMs for mycotoxin-degrading enzyme discovery
+
+verification and supplementation. Our semi-automated workflow   References
+improves efficiency while retaining necessary human professional
+judgment, and this human-AI collaboration model may represent     [1]   Stadler M, Del Giorgio PA. 2022. Terrestrial connectivity, upstream
+                                                                                   aquatic history and seasonality shape bacterial community assembly
+best practices for current-stage LLM applications.
+                                                                                   within a large boreal aquatic network. The ISME journal 16(4):937−947
+                                                                                           [2]   Oliverio AM, Bissett A, McGuire K, Saltonstall K, Turner BL, et al. 2020.
+                                                                       The role of phosphorus limitation in shaping soil bacterial communi-
+Conclusions                                                                         ties and their metabolic capabilities. mBio 11(5):e1718−e1720
+                                                                                           [3]  Xu D, Zhang X, Yuan X, Han H, Xue Y, et al. 2023. Hazardous risk of
+This  study benchmarked  six mainstream LLMs on  fine-grained                                                                                            antibiotic resistance genes: host occurrence, distribution, mobility and
+biochemical  information  extraction  from  mycotoxin-degrading            vertical transmission from different environments to corn silage. Envi-
+enzyme literature, demonstrating that LLM-assisted literature mining          ronmental Pollution) 338:122671
+can  effectively  complement genome  functional  annotation  by     [4]   Land M, Hauser L, Jun S, et al. 2015. Insights from 20 years of bacterial
+systematically mobilizing published experimental data beyond the        genome sequencing. Functional & integrative genomics 15(2):141−161
+reach of conventional sequence-based methods. Clear performance     [5]   Land M, Hauser L, Jun SR, Nookaew I, Leuze MR, et al. 2018. Filling gaps
+                                                                                             in bacterial amino acid biosynthesis pathways with high-throughput
+tiers and a  consistent  task complexity  stratification  effect were
+                                                                                        genetics. PLoS Genetics 14(1):e1007147
+identified, and the semi-automated ptol pipeline was developed                                                                                           [6]   The UniProt Consortium. 2021. UniProt: the universal protein knowl-
+accordingly to improve extraction efficiency while retaining necessary         edgebase in 2021. Nucleic Acids Research 49(D1):D480−D489
+human  oversight.  Preliminary multimodal  analysis  using Claude     [7]   Haft DH, DiCuccio M, Badretdin A, Brover V, Chetvernin V, et al. 2018.
+Sonnet 4 showed promise for interpreting genome-derived visual          RefSeq: an update on prokaryotic genome annotation and curation.
+information but  requires  further  validation.  This work  provides           Nucleic Acids Research 46(D1):D851−D860
+empirical  benchmarks and  practical  guidance  for  LLM-assisted     [8]   Hsieh AR, Tsai CY. 2024. Biomedical literature mining: graph kernel-
+                                                                         based learning for gene-gene interaction extraction. European Journal
+literature mining  as a means  of  enriching genomic  functional
+                                                                                           of Medical Research 29(1):404
+annotation in specialized biological domains.                                                                                           [9]   Cruse K, Baibakova V, Abdelsamie M, Hong K, Bartel CJ, et al. 2023. Text
+                                                                          mining the literature to inform experiments and rationalize impurity
+Author contributions                                             phase formation for BiFeO3. Chemistry of Materials 36(2):772−785
+                                                                                 [10]  Bramer WM, Giustini D, Kramer BMR. 2016. Comparing the coverage,
+The authors confirm their contributions to this study as follows: writing             recall, and precision of searches for 120 systematic reviews in Embase,
+− original draft, visualization: Gao L, Chen H; writing − review and         MEDLINE, and Google Scholar: a prospective study. Systematic Reviews
+editing: Gao L, Chen H, Xu G; supervision: Gao L, Ding X, Nussio L, Yang          5:39
+F; formal analysis: Gao L, Chen H, Ni K, Yang F; resources: Gao L, Yang F;     [11]  Bramer WM, Rethlefsen ML, Kleijnen  J, Franco OH. 2017. Optimal
+                                                                             database combinations for literature searches in systematic reviews: avalidation: Chen H, Ma Q; methodology, investigation: Chen H; project
+                                                                                  prospective exploratory study. Systematic Reviews 6(1):245
+administration: Huang S, Xu G; funding acquisition, conceptualization:
+                                                                                 [12]  Hausner E, Waffenschmidt S, Kaiser T, Simon M. 2012. Routine devel-
+Xu G. All authors reviewed the results and approved the final version of                                                                  opment of objectively derived search strategies. Systematic Reviews
+the manuscript.                                                                   1:19
+                                                                                 [13]  Marcos-Pablos  S,  García-Peñalvo  FJ.  2020.  Information  retrieval
+Data availability                                                  methodology for aiding scientific database search. Soft Computing
+                                                                              24(8):5551−5560
+Code is available as an open-source Python package 'ptol' on the PyPI     [14]  van de Schoot R, de Bruin J, Schram R, Zahedi P, de Boer J, et al. 2021.
+(https://pypi.org/project/ptol/) and Github (https://github.com/cau-        An open source machine learning framework for efficient and trans-
+Bioinformation/ptol). Example data required for software execution is          parent systematic reviews. Nature Machine Intelligence 3(2):125−133
+available  from  github  (https://github.com/cauBioinformation/ptol/     [15]  Mathes T, Klaßen P, Pieper D. 2017. Frequency of data extraction errors
+tree/main/test_data).                                                  and methods to increase data extraction quality: a methodological
+                                                                                      review. BMC Medical Research Methodology 17(1):152
+                                                                                 [16]  Robson RC, Pham B, Hwee J, Thomas SM, Rios P, et al. 2019. Few stud-
+Acknowledgments                                                                ies exist examining methods for selecting studies, abstracting data,
+                                                                    and appraising quality in a systematic review. Journal of  clinical
+This  research was funded by  the  National Key  Research and
+                                                                                epidemiology 106:121−135
+Development Programs of China (2023YFD1301004). We thank High-                                                                                 [17]  Brown TB, Brown TB, Mann B, Mann B, Ryder N, et al. 2020. Language
+performance Computing Platform of China Agricultural University for         models are few-shot learners. Advances in Neural Information Process-
+its computing services.                                                             ing Systems 33, NeurIPS 2020, Vancouver, Canada. US: Curran Associates,
+                                                                                                     Inc. pp. 1877−1901 https://proceedings.neurips.cc/paper_files/paper/
+Conflict of interest                                                     2020/file/1457c0d6bfcb4967418bfb8ac142f64a-Paper.pdf
+                                                                                 [18]  Singhal K, Azizi S, Tu T, Mahdavi SS, Wei J, et al. 2023. Large language
+The authors declare that they have no conflict of interest.                     models encode clinical knowledge. Nature 620(7972):172−180
+                                                                                 [19]  Cao C, Arora R, Cento P, et al. 2026. Automation of systematic reviews
+                                                                               with large language models. medRxiv
+Supplementary information accompanies this paper online                                                                                 [20]  Lieberum JL, Toews M, Metzendorf MI, Heilmeyer F, Siemens W, et al.
+at: https://doi.org/10.48130/gcomm-0026-0010.                               2025. Large language models for conducting systematic reviews: on
+                                                                               the rise, but not yet ready for use-a scoping review. Journal of Clinical
+Dates                                                                        Epidemiology 181:111746
+                                                                                 [21]  Jia YY, Pang LY, Bi MM, Yang XL, Song JP. 2025. Dependability of large
+Received 7 February 2026; Revised 6 May 2026; Accepted 8 May 2026;         language models in cardiovascular medicine: a scoping review. Jour-
+Published online 29 May 2026                                                      nal of Cardiothoracic and Vascular Anesthesia 39(12):3534−3540
+
+
+Page 10 of 11                                                             Gao et al. Genomics Communications 2026, 3: e011
+
+## PDF page 11
+LLMs for mycotoxin-degrading enzyme discovery
+
+
+[22]  Liberati A, Altman DG, Tetzlaff J, Mulrow C, Gøtzsche PC, et al. 2009.     [31]  Gorelik AJ, Gorelik MG, Ridout KK, Nimarko AF, Peisch V, et al. 2023.
+     The PRISMA statement for reporting systematic reviews and meta-          Evaluating efficiency and accuracy of deep-learning-based approaches
+      analyses of studies that evaluate healthcare interventions: explana-        on study selection for psychiatry systematic reviews. Nature Mental
+      tion and elaboration. BMJ 339:b2700                                          Health 1(9):623−632
+[23]  Liu L, Xie M, Wei D. 2022. Biological Detoxification of Mycotoxins:     [32]  Kuang YR, Zou MX, Niu HQ, Zheng BY, Zhang TL, et al. 2023. ChatGPT
+      Current Status and Future Advances. International Journal of Molecular          encounters multiple opportunities and challenges in neurosurgery.
+      Sciences 23(3):1064                                                                International Journal of Surgery 109(10):2886−2891
+                                                                                 [33]  Panayi A, Ward K, Benhadji-Schaff A, Ibanez-Lopez AS, Xia A, et al.[24]  Gabaldón T. 2008. Large-scale assignment of orthology: back to phylo-
+                                                                                 2023. Evaluation of a prototype machine learning tool to semi-auto-      genetics?. Genome biology 9(10):235
+                                                                    mate data extraction for systematic  literature reviews. Systematic[25]  Finn RD, Attwood TK, Babbitt PC, Bateman A, Bork P, et al. 2017. Inter-
+                                                                                      reviews 12(1):187
+      Pro in 2017-beyond protein family and domain annotations. Nucleic
+                                                                                 [34]  Tian S, Jin Q, Yeganova L, Lai PT, Zhu Q, et al. 2023. Opportunities and
+      Acids Research 45(D1):D190−D199
+                                                                                  challenges for ChatGPT and large language models in biomedicine
+[26]  Raimondi R, Tzoumas N, Salisbury T, Di Simplicio S, Romano MR. 2023.
+                                                                    and health. Briefings in Bioinformatics 25(1):bbad493
+     Comparative analysis of large language models in the Royal College of
+                                                                                 [35]  Basyal L, Sanghvi M. 2023. Text summarization using large language
+      Ophthalmologists fellowship exams. Eye 37(17):3530−3533                                                                              models: a comparative study of MPT-7b-instruct, Falcon-7b-instruct,
+[27]  Marshall IJ, Wallace BC. 2019. Toward systematic review automation: a                                                                    and OpenAI Chat-GPT models. arXiv 2310.10449
+       practical guide to using machine learning tools in research synthesis.     [36]  Kim HW, Shin DH, Kim J, Lee GH, Cho JW. 2024. Assessing the perfor-
+      Systematic Reviews 8(1):163                                        mance of ChatGPT's responses to questions related to epilepsy: a
+[28]  Timmins F, McCabe C. 2005. How to conduct an effective literature           cross-sectional study on natural language processing and medical
+      search. Nursing Standard 20(11):41−47                                        information retrieval. Seizure 114:1−8
+[29]  Jonnalagadda SR, Goyal  P, Huffman MD. 2015. Automating data
+      extraction  in systematic reviews: a systematic review. Systematic
+                                                                                      Copyright: © 2026 by the author(s). Published by      Reviews 4:78
+[30]  Bramer WM, De Jonge GB, Rethlefsen ML, Mast F, Kleijnen J. 2018. A              Maximum Academic Press, Fayetteville, GA. This article
+      systematic approach to searching: an efficient and complete method     is an open  access  article  distributed under  Creative Commons
+      to develop literature searches. Journal of the Medical Library Associa-    Attribution License (CC BY  4.0),  visit https://creativecommons.org/
+       tion 106(4):531−541                                                     licenses/by/4.0/.
+
+
+
+
+
+Gao et al. Genomics Communications 2026, 3: e011                                                                     Page 11 of 11

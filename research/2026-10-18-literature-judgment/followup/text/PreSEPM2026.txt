@@ -1,0 +1,300 @@
+A Novel Unsupervised Learning Model with Bayesian Hyperparameter Optimization for Predicting Substrates of Promiscuous Enzymes
+
+Promiscuous enzymes catalyze multiple biochemical reactions, but predicting their substrate profiles remains challenging because annotations are incomplete, reliable negative labels are scarce, and enzyme–substrate relationships are inherently multilabel. Here, we present PreSEPM (Predictive Substrate Explorer for Promiscuous Enzymes), a sequence-only, closed-set framework that combines pretrained protein representations, Gaussian mixture modeling, cluster–substrate alignment, and Bayesian optimization of decision thresholds. PreSEPM operates within a predefined substrate panel and does not require explicit substrate or structural descriptors. On a UniProt-derived triacylglycerol lipase data set, PreSEPM achieved an AUROC of 0.86, an AUPRC of 0.73, and a maximum F1 score of 0.71, outperforming the evaluated conventional machine learning baselines. On an independent high-throughput lipase screen, PreSEPM also outperformed a strong single-task logistic-regression baseline under enzyme-wise cross-validation, increasing Macro-AUPRC from 0.65 to 0.68 and F1 max from 0.63 to 0.69. Under the cross-data set setting, SMOTE-based augmentation increased AUPRC from 0.62 to 0.70. These results support PreSEPM as a useful sequence-based baseline for substrate profile completion and experimental prioritization within promiscuous enzyme families when annotations are sparse and structural or ligand-level information is unavailable.
+
+
+
+
+
+
+## Introduction
+
+1
+
+Enzymes are essential biomolecules that catalyze diverse biochemical reactions, and promiscuous enzymes, which are capable of acting on multiple substrates or catalyzing different reactions, have attracted growing interest due to their versatility. Their broad applicability in industrial biocatalysis, − pharmaceutical synthesis, − agriculture, − diagnostics, − and environmental remediation , makes them valuable targets for enzyme engineering and functional optimization. − However, accurately predicting enzyme–substrate interactions remains a major challenge, particularly for promiscuous enzymes. While traditional sequence-based approaches like BLAST have served as the foundation for function prediction, machine learning (ML) methods now offer superior capabilities in modeling complex, nonlinear relationships between sequences and substrate specificity. − These data-driven approaches excel in high-throughput scenarios , but struggle with promiscuous enzymes due to limited high-quality, annotated data. The scarcity of reliable training data, caused by the cost of experimental validation − and the biases in literature-curated data sets, leads to incomplete interaction coverage and unreliable negative samples. , Most current ML models rely on supervised frameworks that assume balanced, comprehensive labeling , yet often fail when applied to undercharacterized, multifunctional enzymes. Thus, there is a pressing need for predictive strategies that can handle data sparsity, uncertainty, and the inherent complexity of enzyme promiscuity.
+
+To overcome the challenges of predicting substrates for promiscuous enzymes, researchers have explored several strategies. One approach involves data augmentation through high-throughput screening, generating comprehensive enzyme–substrate data sets for machine learning analysis. ,, While this improves predictive accuracy, it is costly, labor-intensive, and often limited to specific enzyme classes. Deep-learning models have also shown promise in uncovering novel interactions. For example, the CLEAN model successfully identified the substrate promiscuity of the enzyme SsFlA. Recent substrate-aware deep-learning models have further attempted to model enzyme specificity by jointly considering enzyme representations and substrate or reaction information, such as cross-attention graph neural networks for enzyme specificity prediction. However, their effectiveness is hindered by the lack of high-quality negative samples, leading to overfitting and poor generalization. Alternatively, non-machine learning methods, such as feature compression techniques like SLICE, aim to guide experimental prioritization without relying on large labeled data sets. However, these approaches often struggle with scalability and flexibility in complex multilabel prediction tasks. Overall, despite progress across different methodologies, existing strategies face trade-offs among data requirements, predictive performance, and generalizability, particularly in the context of promiscuous enzyme discovery.
+
+Unsupervised learning provides a complementary framework to supervised approaches for predicting the substrates of promiscuous enzymes, as it can mitigate data-related limitations at the algorithmic level in settings with scarce or noisy labels. , By learning directly from enzyme amino acid sequences, unsupervised methods can infer potential catalytic activity across diverse substrates within a given enzyme family without requiring extensive labeled data, which is particularly attractive when structural or ligand-level information is incomplete or unavailable. Recent studies have shown that connecting chemical space with protein sequence space, or explicitly incorporating substrate/reaction information, can improve biocatalytic reaction and enzyme-specificity prediction. , However, sequence-based unsupervised models are not intended to replace structure- or ligand-aware approaches; rather, they offer a data-efficient alternative when high-resolution structural data or detailed substrate descriptors cannot be systematically obtained. Therefore, we propose PreSEPM, a predictive model that integrates unsupervised learning with a Bayesian hyperparameter optimization step to improve substrate prediction accuracy for promiscuous enzymes under data sparsity. PreSEPM processes enzyme amino acid sequences into high-dimensional feature vectors by using a pretrained protein language model. These enzyme embeddings are reduced by PCA and clustered by Gaussian mixture modeling (GMM), producing a posterior probability matrix over latent enzyme functional clusters. Because the framework does not use explicit substrate descriptors, substrate prediction is performed within a predefined substrate-label space. The latent clusters are matched one-to-one with substrate labels using the Hungarian algorithm, and the resulting posterior probabilities are thresholded to generate a binary enzyme–substrate interaction matrix. Bayesian optimization dynamically adjusts probability thresholds for cluster assignment, refining model accuracy within this sequence-only setting. In this study, PreSEPM operates purely on sequence-derived features and is intended as a data-efficient sequence-based baseline in settings where structural or ligand-level information is incomplete or unavailable rather than as a universally sufficient solution for all enzyme–substrate specificity problems. Thus, the current goal of PreSEPM is not open-ended substrate discovery across an arbitrary chemical space but closed-set substrate-profile prediction within predefined substrate panels for highly promiscuous enzyme families.
+
+In this work, we address the challenge of predicting substrates for promiscuous enzymes under conditions of sparse and unreliable annotations. We establish a sequence-based multilabel prediction framework PreSEPM that alleviates the impact of incomplete or noisy negative data, enabling better generalization in data-limited scenarios. To further enhance predictive reliability, we integrate a Bayesian hyperparameter optimization component that improves cluster assignment accuracy and model stability and adopt an optimized data partitioning strategy that ensures consistent and reproducible evaluation. Comprehensive benchmarking against conventional sequence-based and supervised approaches demonstrates that our framework achieves a higher predictive accuracy than these baselines in the studied triacylglycerol lipase system. Importantly, by reducing the dependence on extensive high-throughput experimentation, our approach offers a practical and scalable solution for prioritizing experimental validation, thereby lowering screening costs and accelerating the discovery of novel enzyme–substrate relationships. Looking ahead, the PreSEPM framework could be extended to integrate structural and ligand-level descriptors in a multimodal fashion, which is expected to further refine substrate specificity beyond what can be achieved with sequence-only representations.
+
+
+## Method
+
+2
+
+
+## Data Set
+
+2.1
+
+Promiscuous enzymes are characterized by particularly sparse data. Table quantifies substrate promiscuity across enzyme families using the average number of substrates per enzyme, calculated as the total number of recorded enzyme–substrate associations divided by the number of unique enzymes. , Based on this metric, lipases and dehalogenases display high levels of substrate promiscuity. However, current UniProt data sets capture only a limited portion of these interactions, with many likely missing due to the absence of experimental validation.
+
+1Comparison of Average Substrate Numbers per Enzyme from High-Throughput Assays and the UniProt DatabaseSource\Avg. substrates per enzymeLipaseDehalogenaseHigh-throughput assay21.815.5UniProt database5.44.9
+
+In this study, triacylglycerol lipase (EC 3.1.1.3) was selected as the target enzyme. A total of 3,640 associated protein sequences were retrieved from the UniProt database based on its EC number. From the annotated “Catalytic activity” fields, 102 distinct substrates were identified. This information was used to construct a binary enzyme–substrate matrix, which served as the foundation for subsequent analyses. To ensure data quality and reduce redundancy, sequences longer than 1,000 amino acids were excluded, and duplicate sequences were removed. The resulting data set was randomly divided into training and test sets at a 1:1 ratio for model development and evaluation. The split was performed at the enzyme level rather than at the individual enzyme–substrate-pair level. Thus, all substrate annotations associated with an enzyme assigned to the test set were excluded from model fitting. The training recall was calculated using the observed positive annotations of the training enzymes, whereas the test recall was calculated using the observed positive annotations of the held-out enzymes. No additional masking or secondary split was applied when calculating the training recall. Each of these 102 substrates is treated as a distinct categorical label in a fixed output space, reflecting the experimentally defined substrate panel rather than an open-ended chemical space.
+
+In total, three types of data were used in this study. The UniProt-derived triacylglycerol lipase data set was used for the main-text evaluation of model performance and prediction-volume sensitivity, as well as for supplementary analyses of feature representation, overfitting, random-split robustness, and missing-annotation recovery (Supplementary Figures S5–S8). This data set contains 3,640 enzyme sequences and 102 substrate labels. Because unannotated enzyme–substrate pairs in UniProt may simply be untested, this data set was treated as a positive-unlabeled annotation-completion setting rather than a fully supervised positive/negative data set.
+
+The literature-derived high-throughput lipase data set was used for Sections –, including cross-data set evaluation, SMOTE-based augmentation, and benchmarking against existing models. It contains 147 enzymes, 89 experimentally assayed substrates, and 3,092 positive enzyme–substrate interactions; assayed pairs with no detectable activity were treated as experimental negatives.
+
+The literature-supported examples in Section were not used as a quantitative benchmark but only as qualitative case studies and motif-level analyses.
+
+A 1:1 split was used to provide a relatively large held-out evaluation set for this sparse multilabel substrate panel; however, this split remains a random intrafamily split rather than a homology-aware benchmark.
+
+As shown in Table , to place the present benchmark in the context of existing enzyme-specificity studies, we compared its data set structure, label definition, input modalities, and generalization setting with representative family-wide and general enzyme–substrate prediction approaches. Goldman et al. provide the closest task formulation, as both studies consider the prediction of substrate-activity profiles within a fixed enzyme-family panel. By contrast, ESP and EZSpecificity formulate enzyme specificity as a general pairwise classification problem using explicit substrate representations and constructed negative samples, whereas CATNIP connects experimentally sampled chemical and sequence spaces through bidirectional ranking. These differences preclude direct comparison of performance values reported across the original publications but clarify the distinct prediction problem addressed by PreSEPM.
+
+2Comparison of Representative Enzyme–Substrate Prediction SettingsMethod/Data setScopeData set sizeInputLabelsTest settingMain task PreSEPM–UniProt One lipase family3,640 enzymes; 102 substratesEnzyme sequencePositiveunlabeledRandom enzyme split; shared substratesClosed-set profile completion PreSEPM–HT screen One lipase panel147 enzymes; 89 substrates; 13,083 pairsEnzyme sequenceExperimental positive/negativeEnzyme-wise 5-fold CVFixed-panel activity prediction Goldman et al. family-wide screens Six enzyme families42–218 enzymes; 15–165 substrates per familyEnzyme and/or substrate featuresExperimental positive/negativeEnzyme- or substrate-held-outFamily-wide specificity prediction ESP Multiple enzyme families12,156 enzymes; 1,379 substrates; 69,365 pairsSequence + molecular graphPositive + sampled negatives≤80% train–test sequence identityGeneral pair classification CATNIP α-KG/Fe(II) enzyme family163 enzymes; 119 substrates; 354 positive reactionsSequence + chemical descriptorsProductive reactionsEnzyme- or substrate-held-outBidirectional ranking EZSpecificity Multiple enzyme families8,124 enzymes; 34,417 substrates; 323,783 pairsSequence + substrate + 3D complexPositive + constructed negativesUnknown enzyme/substrate settingsGeneral specificity prediction
+
+
+## Data Representation
+
+2.2
+
+In our model, enzyme amino acid sequences are first preprocessed to generate numerical feature vectors with varying dimensions. To comprehensively capture the biochemical and structural information encoded in the sequences, four distinct embedding strategies were employed: ESM-2, ProteinBERT, POSSUM, and iFeature. These methods extract diverse aspects of sequence information, including evolutionary context, physicochemical properties, and domain-level characteristics. The comparative evaluation of these feature representations is provided in Supporting Information Figure S5, and ESM-2 was selected as the default representation for all subsequent analyses.
+
+
+## Model Architecture
+
+2.3
+
+Figure presents the architecture and workflow of PreSEPM, a predictive framework that integrates unsupervised learning with a Bayesian hyperparameter optimization step to predict substrates, particularly for promiscuous enzymes with incomplete annotations. In this study, substrate prediction is formulated as a multilabel classification task, aiming to identify known or potential substrates (from a predefined set) that a given enzyme can catalyze. Throughout this work, this predefined set is assumed to be closed: substrates outside the experimentally assayed panel are not considered during model training or evaluation, and the current formulation does not aim at zero-shot prediction for entirely unexplored substrates.
+
+1Overall architecture and training-inference workflow of PreSEPM.
+
+The pipeline begins with feature extraction from enzyme amino acid sequences using a pretrained protein language model, which captures rich contextual and evolutionary information. To reduce computational complexity and highlight key features, the resulting high-dimensional vectors are projected into a lower-dimensional space via principal component analysis (PCA). GMM is applied to the PCA-reduced enzyme sequence embeddings rather than to explicit enzyme–substrate pair descriptors. Each enzyme is assigned a posterior probability vector over latent functional clusters, which are subsequently aligned with substrate labels using the annotated enzyme–substrate matrix. As the core component of the unsupervised learning module, GMM enables the model to function without complete label information, thereby reducing the impact of missing annotations.
+
+To align clustering results with known biological functions, the Hungarian algorithm is employed to match predicted clusters with annotated substrate categories, improving both the accuracy and interpretability. In the default implementation, the cost is the number of false negatives (true positives missed by the cluster), directly reflecting the goal of minimizing missed substrate associations. A Bayesian optimization strategy is further introduced to tune the decision threshold used for converting posterior probabilities into binary enzyme–substrate predictions. In this implementation, the number of GMM components is fixed to the number of predefined substrate labels so that each latent cluster can be matched one-to-one with a substrate category through the Hungarian algorithm. This adaptive optimization process enhances the prediction accuracy by systematically exploring the parameter space.
+
+After training, the cluster–substrate correspondence obtained by the Hungarian algorithm and the optimized decision thresholds are fixed. For a new enzyme sequence, PreSEPM first generates its PCA-reduced enzyme embedding and then computes its GMM posterior probability vector. A positive enzyme–substrate prediction is assigned when the posterior probability of the substrate-matched cluster exceeds the optimized threshold. Therefore, pairwise enzyme–substrate predictions are generated indirectly through cluster-to-substrate mapping and thresholding rather than by directly encoding enzyme–substrate pairs.
+
+By combining unsupervised representation learning, probabilistic modeling, and adaptive hyperparameter tuning, PreSEPM provides a practical and stable sequence-based framework for substrate prediction under conditions of data incompleteness in the studied triacylglyceride lipase system. The relative contribution of each component was further examined in a systematic ablation study (Supporting Information Table S1).
+
+During training, enzyme sequences are converted into pretrained sequence embeddings, projected by PCA, and clustered using a Gaussian mixture model. PCA fitting, GMM fitting, Hungarian cluster–substrate matching, and Bayesian optimization of the substrate-specific decision thresholds are performed using the training data. The resulting PCA transformation, GMM parameters, cluster–substrate correspondence, and threshold vector are then fixed. During inference, a query enzyme is transformed using the fitted PCA–GMM pipeline to generate posterior scores over the predefined substrate panel. For each substrate, a positive prediction is assigned when the corresponding posterior score exceeds its optimized substrate-specific threshold. The predefined prediction-to-positive ratio controls the overall prediction volume used during threshold calibration, rather than selecting a global top-K subset from a single ranked score list.
+
+
+## Implementation
+
+2.4
+
+The PreSEPM model was implemented in Python, utilizing a range of established scientific and machine learning libraries. Dimensionality reduction was performed using PCA from the scikit-learn library, while unsupervised clustering was conducted using its GMM implementation. The Hungarian algorithm, used for optimal alignment between cluster assignments and known labels, was implemented via the SciPy library. Bayesian optimization for probabilistic threshold tuning was conducted using the skopt package. During model development, PCA fitting, GMM fitting, Hungarian cluster–substrate matching, and Bayesian optimization of the decision threshold were performed using the training data only. The held-out test set was not used for model selection or threshold tuning and was evaluated only after the model parameters and operating point had been fixed. Additional data processing and numerical operations were supported by NumPy and pandas. The mathematical mechanism of each part of the model is listed in the Supporting Information.
+
+The 1,280-dimensional ESM-2 embeddings were reduced by PCA before model fitting. The PCA dimensionality is a user-configurable parameter. PCA dimensions ranging from 80 to 200 produced stable predictive performance in our evaluations; therefore, 100 components were used as the default setting to balance computational efficiency and predictive stability. On the UniProt-derived training data set, the retained 100 components explained 98.7% of the total variance. The PCA dimension can be manually specified through the pca_dim argument in the released implementation.
+
+Model performance was primarily evaluated using recall, which is particularly important for identifying true enzyme–substrate associations in the presence of incomplete data. To provide a comprehensive assessment, additional metrics were also considered under specific evaluation scenarios, including precision, F1 score, area under the receiver operating characteristic curve (AUROC), area under the precision-recall curve (AUPRC), overall accuracy, and prediction accuracy. This multimetric evaluation framework enables a thorough analysis of the model’s robustness and effectiveness across varying data distributions and application contexts.
+
+
+## Results and Discussion
+
+3
+
+
+## Performance of the Model on the UniProt Data
+Set
+
+3.1
+
+Among the evaluated sequence representation methods, including ESM-2, ProteinBERT, POSSUM, and iFeature, ESM-2 achieved the best predictive performance and was therefore selected as the default representation for subsequent analyses. A prediction-to-positive ratio of 2 was predefined as the operating point for recall-based evaluation. Detailed comparisons of the feature representations and the operating-point sensitivity analysis are provided in Supporting Information Figures S5 and S6, respectively. Using these predefined settings, we evaluated PreSEPM on the UniProt-derived triacylglycerol lipase data set to assess its ability to predict substrate profiles within a single enzyme family.
+
+The prediction-to-positive ratio is independent of the 1:1 enzyme-level train–test split: the former controls the overall prediction volume, whereas the latter determines the allocation of enzyme samples between the training and test sets.
+
+Table presents a comparative analysis between PreSEPM and several conventional machine learning models, including support vector machine (SVM), k-nearest neighbors (KNN), and multilayer perceptron (MLP), all implemented with optimized hyperparameters and ESM-2-based feature representations. PreSEPM outperforms all baseline models across all evaluation metrics, achieving an AUROC of 0.86, an AUPRC of 0.73, and a maximum F1 score of 0.71. These results demonstrate notable improvements in predictive accuracy, precision–recall trade-off, and classification robustness.
+
+3Performance Comparison of PreSEPM and Baseline Models Using Optimized Parameters and Feature ExtractionModelAUROCAUPRCF1 maxSVM0.760.510.42KNN0.800.580.59MLP0.820.560.52PreSEPM0.860.730.71
+
+In particular, PreSEPM surpasses the MLP model by 4 percentage points in AUROC and more than 19 percentage points in AUPRC, underscoring the effectiveness of its unsupervised learning architecture and Bayesian hyperparameter optimization strategy in handling complex, multilabel classification tasks under data-limited conditions.
+
+To assess whether pretrained sequence embeddings alone encode substrate-related signals in this domain, we visualized the raw ESM-2 embeddings of enzymes acting on the three substrates with the largest number of annotations (1,2,3-tripropanoylglycerol, a1-acyl-sn-glycero-3-phosphate, and 2-(9Z-octadecenoyl)-glycerol) using a two-dimensional PCA projection. In this space, enzymes acting on the same substrate tend to cluster together, whereas different substrates occupy distinct regions (Supplementary Figure S3a), indicating that the sequence-only representations are not substrate-agnostic noise. When the same enzymes are passed through PreSEPM, the resulting posterior probability vectors form compact and well-separated clusters in the probability space (Supporting Information Figure S3b), suggesting that the model sharpens, rather than invents, substrate-specific manifolds encoded in the sequence features.
+
+To assess the impact of the number of predicted enzyme–substrate pairs on model performance, we analyzed recall as a function of the ratio between the total predictions and known positive interactions. At each prediction-to-positive ratio, the substrate-specific decision thresholds were independently reoptimized using the training data. Consequently, the binary prediction matrices obtained at different ratios were not nested, and the recall values could show local nonmonotonic fluctuations. The held-out test labels were used only to evaluate the fixed-ratio-specific predictions.
+
+Figure presents scatter plots of recall on the training set (a) and the testing set (b). In the training set, recall increases rapidly with the prediction ratio and reaches approximately 97% when the ratio exceeds 2.5, indicating the model’s strong capacity to fit the training data. However, this improvement does not fully generalize to the test set. As shown in Figure b, the recall curve plateaus near a prediction ratio of 2, beyond which further increases yield marginal gains. This suggests that excessive predictions may introduce noise or false positives, limiting their utility for generalization.
+
+2Training and test recall across prediction-to-positive ratios on the UniProt-derived triacylglycerol lipase data set. Each point represents the matrix-level recall obtained at one prediction-to-positive ratio after the substrate-specific decision thresholds were independently optimized using the training data. Consequently, prediction matrices obtained at different ratios were not nested, and the corresponding recall values were not required to increase monotonically. Panel (a) shows training recall, and panel (b) shows recall for the held-out test enzymes. The red curves represent polynomial fits summarizing the overall trends. The points do not represent independent random train–test splits.
+
+These curves were used as a post hoc sensitivity analysis to examine how recall changes with the prediction volume. They were not used to select the final operating point based on the held-out test performance.
+
+Additional analyses across 50 random train–test partitions and under simulated annotation deletion are provided in Supplementary Figures S7 and S8, respectively. These analyses characterize the model’s sensitivity to random partitioning and increasing annotation loss within the UniProt benchmark.
+
+
+## Cross-Data Set Validation Using a Literature-Derived
+High-Throughput Lipase Data Set
+
+3.2
+
+After evaluating the model’s predictive performance on the UniProt-based triacylglycerol lipase data set, we further validated its generalizability using an independent data set derived from high-throughput experiments reported in the literature. This experimental data set contains 147 enzymes and 89 substrates, yielding 3,092 experimentally validated enzyme–substrate interactions. All remaining enzyme–substrate combinations, which have been experimentally assessed but exhibited no measurable activity, are treated as negative samples. This literature-derived experimental data set differs substantially from the curated UniProt benchmark in sampling protocol, assay conditions, substrate composition, and label-noise characteristics and thus constitutes a markedly shifted distribution.
+
+As shown in Figure a, the model demonstrated strong performance on the UniProt data set but performed less effectively on the literature-based data set. Specifically, the AUPRC decreased from 0.73 to 0.62, indicating a reduction in the model’s classification capability when applied to data with different underlying distributions and experimental characteristics. Figure b presents the recall of both training and validation sets as a function of the number of predicted positive pairs. When the number of predicted positive pairs was increased to approximately 3,092the total number of experimentally confirmed positive interactions in the datasetrecall plateaued at about 60% in both the training and validation sets. This result indicates that the model failed to recover a substantial fraction of the positive interactions in this distributionally shifted dataset. Notably, the recall curves for the training and validation sets were nearly identical, an uncommon phenomenon in typical machine learning models. In most cases, a significantly higher recall on the training set combined with a lower recall on the validation set would be indicative of overfitting. However, the uniformly low recall observed in both sets here points to a different issue: underfitting. This suggests that the model failed to adequately capture meaningful enzyme–substrate patterns within the experimental data set.
+
+3Cross-data set evaluation of PreSEPM. (a) Precision–recall curves on the UniProt-derived data set and the literature-derived high-throughput lipase data set. (b) Training and validation recall as a function of the total number of enzyme–substrate entries called positive in the high-throughput data set. Each point represents the matrix-level recall obtained at one independently optimized prediction-volume setting. At each prediction number, the substrate-specific thresholds were optimized using the training subset and then applied to the training and held-out validation subsets. The points do not represent individual enzymes, individual substrates, or independent random splits.
+
+Further analysis revealed the likely cause of this performance gap. The core of the model’s unsupervised learning framework relies on GMM, which assumes that the data follows a mixture of Gaussian distributions. As such, the effectiveness of the GMM, and by extension, the clustering and probability assignment, relies heavily on how well the data conforms to this assumption. In the UniProt data set (Supplementary Figure S1a), the data distribution more closely approximates a multivariate Gaussian form, enabling more accurate modeling. In contrast, the experimental data set (Supplementary Figure S1b) deviates significantly from a normal distribution, making it more challenging for the GMM to fit the data appropriately. This deviation likely contributed to the degraded model performance on the literature-derived data set. We therefore regard this cross-data set gap not as evidence of robust generalization but as an important limitation of the current work and a concrete target for future extensions that explicitly model and correct for distribution shifts between curated benchmarks and heterogeneous experimental screens.
+
+
+## Improving Model Generalization through SMOTE-Based
+Data Augmentation
+
+3.3
+
+To mitigate the performance degradation observed on the literature-derived experimental data set, we implemented a data augmentation strategy based on the Synthetic Minority Oversampling Technique (SMOTE). This approach aimed to improve the representational balance of the training data and enhance the model’s generalization capability. Such an oversampling strategy has been widely adopted in recent computational biology and bioinformatics studies to address data imbalance and improve model robustness. − Enzyme feature vectors derived from ESM-2 embeddings served as the input representation. SMOTE was applied to underrepresented substrate classes by interpolating between existing minority-class samples in the high-dimensional feature space, thereby generating synthetic enzyme instances (Figure S2).
+
+This augmentation process contributed to a more balanced and continuous distribution of enzyme–substrate associations, addressing class imbalance commonly encountered during training. Moreover, it promoted a more Gaussian-like feature distribution, an important factor given that the model’s unsupervised learning component, the GMM, assumes the data originates from a mixture of Gaussian distributions. By smoothing and densifying the feature space, SMOTE improved the compatibility between the data and the GMM’s assumptions, resulting in more effective clustering and probability estimation.
+
+As illustrated in Figure , the proposed augmentation strategy leads to a noticeable increase in AUPRC and recall on the literature-derived data set, yielding stable performance on this high-throughput benchmark under limited and imbalanced training data, although the metrics remain lower than those on the UniProt data set due to the substantial distribution shift.
+
+4Improvement of model performance on the experimental data set via SMOTE-based data augmentation.
+
+
+## Benchmarking PreSEPM against Existing Models
+for Promiscuous Enzyme Prediction
+
+3.4
+
+After model development, the predictive performance of PreSEPM was systematically evaluated against five representative enzyme–substrate prediction frameworks, CLEAN, FusionESP, DeepGOSE, PFresGO, and BLASTp, using the literature-derived high-throughput lipase data set introduced in Section . This data set comprises 147 enzymes and 89 substrates with 3,092 experimentally validated enzyme–substrate interactions and was curated to assess model generalization under heterogeneous, experimentally measured conditions. All models were evaluated under the same closed-set substrate ranking protocol where applicable. Because CLEAN was originally developed for EC number prediction rather than direct substrate panel prediction, we used it here as an adapted EC-label baseline. Substrate labels with corresponding EC annotations were mapped to their four-level EC numbers, whereas lipid substrates without unique official EC assignments were assigned temporary substrate-specific EC-like labels solely for the closed-set ranking within this benchmark. These pseudolabels were used only to allow CLEAN to output ranked scores for every substrate category and are not intended to represent official EC annotations. Therefore, the CLEAN comparison should be interpreted as an adapted EC-label baseline for substrate ranking, rather than as a native substrate-prediction function of CLEAN.
+
+These baseline models represent the current state-of-the-art in enzyme annotation and function prediction. CLEAN and DeepGOSE are large-scale deep-learning architectures that leverage contrastive and GO-guided embedding learning, respectively, to achieve outstanding accuracy on well-characterized, single-function enzymes. PFresGO integrates functional residual networks to refine sequence-function relationships, while BLASTp remains a strong homology-based baseline with high precision in sequence-similarity-dominated regions. FusionESP is a recent multimodal architecture that jointly encodes enzyme sequences and substrate structures to learn interaction-aware representations and has been proposed as a modern state-of-the-art approach for enzyme–substrate and protein–ligand prediction. Collectively, these models have demonstrated excellent performance in conventional enzyme classification and EC number annotation tasks, confirming their reliability and strength in predicting specific well-annotated functions. However, their architectures are inherently supervised and depend heavily on the completeness and balance of labeled data, conditions rarely satisfied in promiscuity prediction, where enzyme–substrate relationships are sparse, heterogeneous, and often multilabel in nature. In addition, recent benchmark suites, such as CARE, have provided standardized resources for enzyme classification and retrieval tasks. However, these benchmarks mainly focus on enzyme function classification or retrieval, whereas the present study evaluates closed-set substrate profile prediction within a highly promiscuous enzyme family.
+
+Figure summarizes the comparative results. In Figure a, recall is plotted as a function of coverage, which is divided into two distinct regimes to represent different biological contexts: the specific region (low coverage), corresponding to narrowly specific enzymes, and the promiscuity region (high coverage), corresponding to broadly active enzymes capable of acting on multiple substrates. In the specific region, supervised deep-learning models, particularly CLEAN and DeepGOSE, achieved higher recall for top-ranked predictions, consistent with their optimization toward densely labeled data sets and single-function enzymes. The multimodal FusionESP model, which jointly encodes enzyme sequences and substrate structures, traced a recall–coverage curve close to BLASTp and clearly below the stronger sequence-based deep-learning baselines in this specific region, indicating that the additional substrate-structure channel does not confer a consistent advantage under these conditions and on this data set. By contrast, as coverage expanded into the promiscuity region, PreSEPM progressively outperformed all baselines, attaining the highest recall when recovering multisubstrate associations. This crossover behavior suggests that PreSEPM’s unsupervised-probabilistic framework, which does not rely on exhaustive negative sampling, is better suited to capture the intrinsic diversity of enzyme promiscuity and the probabilistic nature of catalytic overlap among substrates.
+
+5Benchmarking PreSEPM against representative baseline models on the literature-derived high-throughput lipase data set. (a) Recall–coverage analysis. Prediction coverage is defined as c = k/M, where M = 89 is the number of candidate substrates in the predefined substrate panel and k is the number of top-ranked substrate predictions retained for each enzyme. Recall at each coverage level is calculated over experimentally positive enzyme–substrate associations. The low-coverage or “specific” region reflects performance when only a few top-ranked substrates are considered, whereas the high-coverage or “promiscuity” region reflects recovery of broader multisubstrate profiles. (b) Top-k precision comparison, where precision is calculated using the top k predicted substrates for each enzyme.
+
+Figure b further compares the top-k precision across models. CLEAN exhibited slightly higher precision at k = 1 and 5, highlighting its advantage in pinpointing the most dominant substrate classes. FusionESP displayed intermediate precision at all k, typically between BLASTp and PFresGO, again failing to surpass the stronger sequence-based methods despite having access to detailed substrate structures. Yet, as k increased, PreSEPM’s precision decayed more slowly, surpassing all other methods for k ≥ 15 and approaching the theoretical upper bound defined by experimental coverage. This behavior indicates that PreSEPM produces a more balanced and comprehensive substrate spectrum, particularly valuable for exploring undercharacterized catalytic activities and latent substrate preferences that may be missed by strongly supervised frameworks.
+
+To further address whether PreSEPM is necessary compared to simple substrate-specific models, we added a Goldman-style enzyme-wise benchmark on the high-throughput lipase screen with experimentally measured negative pairs. As shown in Supporting Information Table S3, PreSEPM outperformed the strong single-task logistic regression baseline, improving Macro-AUPRC from 0.65 to 0.68 and F1 max from 0.63 to 0.69.
+
+In summary, while large deep-learning models such as CLEAN and DeepGOSE excel in the high-precision prediction of specific enzyme functions, PreSEPM demonstrates improved performance in the evaluated benchmark in the promiscuous regime, where annotation sparsity and substrate diversity challenge traditional architectures. These complementary performance profiles underscore the distinct strengths of each modeling paradigm: supervised models provide sharp precision in well-defined domains, whereas PreSEPM offers broader discovery potential and enhanced generalization for data-limited, multisubstrate enzyme systems. Consequently, PreSEPM serves as a useful exploratory tool for identifying promiscuous enzyme–substrate relationships and guiding functional screening in biocatalysis and enzyme engineering.
+
+
+## Literature-Supported Case Studies of Selected
+Substrate Predictions
+
+3.5
+
+To provide qualitative biochemical support for selected PreSEPM predictions, we examined two literature-supported examples and conducted literature-based validation for enzymes whose model-predicted promiscuous substrates were subsequently supported by independent experimental or computational evidence. Two representative cases, arylacetamide deacetylase J4U4Z0 and yeast triacylglycerol lipase P38139, were selected to illustrate how PreSEPM identifies additional catalytically reasonable substrates beyond the scope of current annotations (Figure ).
+
+6Literature-supported examples of selected PreSEPM-predicted promiscuous substrates.
+
+PreSEPM predicted two additional triacylglycerol-related substrates, 1,2,3-tri-(9Z-octadecenoyl)-glycerol and di­(9Z)-octadecenoyl-glycerol for arylacetamide deacetylase J4U4Z0, in addition to its annotated substrate triacylglycerol. These predicted molecules share a common glycerol backbone but differ in their acyl-chain composition, consistent with the catalytic plasticity of microsomal arylacetamide deacetylases. Importantly, both compounds were later experimentally validated as authentic hydrolysis substrates of human AADAC in Kurat’s work, thereby confirming the model’s ability to uncover physiologically relevant substrate extensions absent from existing enzyme databases. For lipase P38139, PreSEPM identified 1-(9Z-octadecenoyl)-sn-glycero-3-phospho-l-serine (prediction score = 0.68) as a potential substrate in addition to its canonical triacylglycerol substrate. Subsequent large-scale lipidomics modeling in Baxter’s work reported comparable phosphatidylserine hydrolysis activity among related yeast lipases, providing computational evidence consistent with the model’s prediction. This convergence between probabilistic inference and independent lipid-metabolism modeling underscores PreSEPM’s generalization capacity across mechanistically related enzyme families.
+
+In addition to these literature-supported case studies, we asked whether the sets of enzymes newly annotated by PreSEPM exhibit coherent and substrate-consistent active-site features. To this end, we selected two representative lipid substrates from the triacylglycerol lipase panel, 1-hexadecanoyl-sn-glycero-3-phosphocholine and 1,3-di-(9Z-octadecenoyl)-glycerol, collected enzymes that PreSEPM newly predicts to act on either substrate, performed multiple sequence alignment (MAFFT, L-INS-i), and visualized the local motifs around the catalytic serine using WebLogo. As shown in Figure , both groups of enzymes share the canonical G-X-S-A-G motif of serine hydrolases, indicating that the predicted positives are not random sequences but form a coherent mechanistic family. Importantly, the X position displays substrate-specific residue preferences: enzymes predicted for substrate A are enriched for a negatively charged Glu (G-E-S-A-G), whereas those predicted for substrate B prefer a small hydrophobic Ala (G-A-S-A-G). This charge versus hydrophobic swap at the entrance of the catalytic motif is chemically consistent with the different headgroups and polarity of the two lipid substrates, providing mechanistic support for the substrate assignments inferred by PreSEPM.
+
+7Substrate-specific active-site motifs for two representative lipid substrates.
+
+Collectively, these cases demonstrate that PreSEPM can effectively capture experimentally or computationally supported extensions of substrate scope, reflecting its strength in modeling enzyme promiscuity beyond the limits of the curated annotations. By integrating predictive confidence with biochemical interpretability, PreSEPM provides a practical framework for hypothesis generation and experimental prioritization in enzyme–substrate discovery.
+
+
+## Conclusions
+
+4
+
+In this study, we introduced PreSEPM, a closed-set, sequence-based predictive framework that combines unsupervised learning with a Bayesian hyperparameter optimization step to address substrate-profile prediction for promiscuous enzymes under incomplete annotation. The model is designed for predefined substrate panels, particularly in settings where enzyme–substrate annotations are sparse, negative labels are unreliable, and structural or ligand-level information is incomplete or unavailable. Evaluations on the UniProt-derived and literature-derived lipase data sets show that PreSEPM achieves improved performance over the evaluated sequence-based and supervised baselines in the studied substrate panels, while maintaining stable performance under random intrafamily splits and moderate missing-annotation simulations.
+
+The main findings of this work are as follows: (1) pretrained protein language model representations, especially ESM-2 embeddings, provide informative sequence features for downstream substrate-profile prediction; (2) prediction-volume sensitivity analysis shows that excessive positive calls can enlarge the training–test recall gap, supporting the use of a conservative predefined operating point in recall-based analyses; (3) the model shows stable performance across random intrafamily partitions and moderate missing-annotation simulations, although these results should not be interpreted as evidence of remote-homology, cross-family, or open-substrate-space generalization; (4) SMOTE-based data augmentation improves performance on the distributionally shifted high-throughput lipase data set by making the feature distribution more compatible with the GMM-based probabilistic clustering framework; (5) PreSEPM shows improved recall and broader coverage in the evaluated promiscuity regime compared with the tested baselines; and (6) selected literature-supported examples and motif-level analyses provide qualitative support for the biochemical plausibility of representative PreSEPM predictions.
+
+Together, these results position PreSEPM as a useful exploratory baseline for closed-set substrate-profile prediction and annotation prioritization within the studied promiscuous-enzyme settings. Rather than serving as a universal substrate-prediction framework, PreSEPM provides a sequence-only foundation that may be extended in future work by incorporating structural information, ligand descriptors, molecular fingerprints, or substrate graph representations. By prioritizing candidate enzyme–substrate associations for follow-up testing, PreSEPM may help improve screening efficiency in enzyme engineering, synthetic biology, and bioinformatics-driven enzyme discovery.
+
+
+## Supplementary Material
+
+
+
+Enzyme promiscuous activity: How to define it and its evolutionary aspects
+
+Perspectives and industrial potential of PGA selectivity and promiscuity
+
+Hydrolases: catalytically promiscuous enzymes for non-conventional reactions in organic synthesis
+
+Lipase promiscuity and its biochemical applications
+
+Mechanisms of promiscuity among drug metabolizing enzymes and drug transporters
+
+The challenges of dealing with promiscuous drug-metabolizing enzymes, receptors and transporters
+
+What makes an enzyme promiscuous?
+
+Insights into promiscuous chitosanases: The known and the unknown
+
+Not a mistake but a feature: Promiscuous activity of enzymes meeting mycotoxins
+
+Structural and functional studies reveal the molecular basis of substrate promiscuity of a glycosyltransferase originating from a major agricultural pest
+
+Protein promiscuity in drug discovery, drug-repurposing and antibiotic resistance
+
+Enzyme promiscuity, metabolite damage, and metabolite damage control systems of the tricarboxylic acid cycle
+
+Promiscuous enzymes generating d-amino acids in mammals: Why they may still surprise us?
+
+Enzyme promiscuity: mechanism and applications
+
+Enzyme promiscuity: evolutionary and mechanistic aspects
+
+Evolution of β-lactamases and enzyme promiscuity
+
+Promiscuity Guided Evolution of Decarboxylative Aldolases for Synthesis of Tertiary γ-Hydroxy Amino Acids
+
+Navigating the landscape of enzyme design: from molecular simulations to machine learning
+
+Machine learning-assisted enzyme engineering
+
+Classification of enzymes using machine learning based approaches: A review
+
+High-throughput screening, next generation sequencing and machine learning: advanced methods in enzyme engineering
+
+Deep learning enables high-quality and high-throughput prediction of enzyme commission numbers
+
+Embracing enzyme promiscuity with activity-based compressed biosensing
+
+Exploration of bioinformatic domain based on data mining, reaction and enzyme promiscuity predictions
+
+How enzyme promiscuity and horizontal gene transfer contribute to metabolic innovation
+
+Recent progress in 2-haloacid dehalogenases
+
+EP-Pred: a machine learning tool for bioprospecting promiscuous ester hydrolases
+
+Automatic single-and multi-label enzymatic function prediction by machine learning
+
+Determinants and prediction of esterase substrate promiscuity patterns
+
+High-throughput prediction of enzyme promiscuity based on substrate–product pairs
+
+Enzyme function prediction using contrastive learning
+
+Enzyme specificity prediction using cross-attention graph neural networks
+
+A general model to predict small molecule substrates of enzymes based on machine and deep learning
+
+Discovery of toxin-degrading enzymes with positive unlabeled deep learning
+
+Connecting chemical and protein sequence space to predict biocatalytic reactions
+
+Machine learning modeling of family wide enzyme-substrate specificity screens
+
+Evolutionary-scale prediction of atomic-level protein structure with a language model
+
+ProteinBERT: a universal deep-learning model of protein sequence and function
+
+POSSUM: a bioinformatics toolkit for generating numerical sequence feature descriptors based on PSSM profiles
+
+iFeature: a python package and web server for features extraction and selection from protein and peptide sequences
+
+Avoiding inferior clusterings with misspecified Gaussian mixture models
+
+CarSite-II: an integrated classification algorithm for identifying carbonylated sites based on K-means similarity-based undersampling and synthetic minority oversampling techniques
+
+Synthetic minority over-sampling technique-enhanced machine learning models for predicting recurrence of postoperative chronic subdural hematoma
+
+Improving enzyme optimum temperature prediction with resampling strategies and ensemble learning
+
+FusionESP: Improved Enzyme–Substrate Pair Prediction by Fusing Protein and Chemical Knowledge
+
+Protein function prediction as approximate semantic entailment
+
+PFresGO: an attention mechanism-based deep-learning approach for protein annotation by integrating gene ontology inter-relationships
+
+Care: A benchmark suite for the classification and retrieval of enzymes
+
+Obese yeast: triglyceride lipolysis is functionally conserved from mammals to yeast
+
+Synergistic computational and experimental proteomics approaches for more accurate detection of active serine hydrolases in yeast

@@ -1,0 +1,965 @@
+## PDF page 1
+          Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+          Flexible, Model-Agnostic Method for Materials Data Extraction from Text Using
+                             General Purpose Language Models
+
+                               Maciej P. Polak,∗Shrey Modi, Anna Latosinska, Jinming Zhang,
+                        Ching-Wen Wang, Shaonan Wang, Ayan Deep Hazra, and Dane Morgan†
+                                         Department of Materials Science and Engineering,
+                                   University of Wisconsin-Madison, Madison, Wisconsin 53706-1595, USA
+
+                        Accurate and comprehensive material databases extracted from research papers are crucial for ma-
+                            terials science and engineering, but their development requires significant human effort. With large
+                      language models (LLMs) transforming the way humans interact with text, LLMs provide an oppor-
+                        tunity to revolutionize data extraction. In this study, we demonstrate a simple and efficient method
+                           for extracting materials data from full-text research papers leveraging the capabilities of LLMs com-
+                      bined with human supervision. This approach is particularly suitable for mid-sized databases and
+                         requires minimal to no coding or prior knowledge about the extracted property. It offers high recall2024              and nearly perfect precision in the resulting database. The method is easily adaptable to new and
+                        superior language models, ensuring continued utility. We show this by evaluating and comparing its
+                      performance on GPT-3 and GPT-3.5/4 (which underlie ChatGPT), as well as free alternatives such asJun           BART and DeBERTaV3. We provide a detailed analysis of the method’s performance in extracting
+                        sentences containing bulk modulus data, achieving up to 90% precision at 96% recall, depending on
+                       the amount of human effort involved. We further demonstrate the method’s broader effectiveness12                    by developing a database of critical cooling rates for metallic glasses over twice the size of previous
+                  human curated databases.
+
+
+                                 I. INTRODUCTION                 Automation is clearly desirable, particularly when ex-
+                                                                       tracting very large databases. However, more automa-
+           Obtaining reliable and comprehensive materials data is    tion tends to require more complexity in the software,
+          crucial for many research and industrial applications.  If    sophistication in training schemes, and knowledge about
+         necessary information is not accessible through curated    the extracted property.  In addition,  if a high level of
+         databases researchers typically must manually extract    completeness is required from a database, the recall of
+         the data from research papers, a process that can be    these approaches may not be sufficient. In such fully au-
+         time-consuming and labor-intensive.  Natural language   tomated approaches a large amount of focus has been
+          processing (NLP) with general Language Models (LMs),    placed on the complex task of named entity recogni-
+        and in particular, powerful large LMs (LLMs) trained    tion (NER) [8–12], so that the property, material, values
+        on massive bodies of data, offer a new and potentially   and units can be extracted accurately. However, auto-[cond-mat.mtrl-sci]
+         transformative technology for increasing the efficiency of    matic identification of an improper recognition is  still
+          extracting data from papers. These methods are partic-    very challenging, which can reduce the precision of such
+          ularly valuable when the data is embedded in the text of    approaches. Tools for automatic materials and chemistry
+         the documents, rather than being presented in a struc-    data extraction, like OSCAR4 [13] or ChemDataExtrac-
+         tured or tabular format, making it harder to find and    tor [14, 15], have been developed and used to success-
+          extract. While currently LLMs often fall short in practi-     fully extract large databases. A recent example includes
+           cal applications, struggling with comprehending and rea-    a database of over 22 thousand entries for relatively com-
+         soning over complex, interconnected knowledge domains,    plex thermoelectric properties [16], at an average preci-
+         they offer significant potential for innovation in materials    sion of 82.5% and a recall of 39.23%, or over 100 thousand
+          science and are likely to play a crucial role in materials   band gap values [17], with an average precision of 84%
+         data extraction [1].                                  and a recall of 64%. More complex information such as
+                                                                       synthesis recipes [18–23] have also been extracted with         The rapid pace of development in NLP and frequent
+                                                           automated NLP-based methods. Although not complete          release of improved LLMs suggests they can be best uti-
+                                                           due to the relatively low recall, databases of that size are           lized by methods which are easily adapted to new LLMs.
+                                                                         useful for training machine learning models [24–30], and         In this paper we present such a flexible method for mate-
+                                                           would be very time consuming or impossible to extractarXiv:2302.04914v3    rials data extraction and demonstrate that it can achieve
+                                                               with virtually any other method than full automation.          excellent precision and recall.
+                                                            Other recent examples of databases created in a simi-          So far, the majority of materials data extraction ap-
+                                                                               lar way include photovoltaic properties and device mate-         proaches focus on fully automatic data extraction [2–7].
+                                                                                     rial data for dye-sensitized solar cells [31], yield strength
+                                                         and grain size [32], and refractive index [33, 34]. Other
+                                                                   notable databases gathered with NLP-based approaches
+          ∗mppolak@wisc.edu                                          include more complex information than just data values,
+             † ddmorgan@wisc.edu                                      such as synthesis procedures [19, 27]. Recently, another
+
+## PDF page 2
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+                                          man time, which generally has the form
+
+                                                                                                  t = A + B · N.                  (1)
+
+                                                    Here A  is up-front fixed time to develop the method
+                                                                  for a specific case and B is a marginal time cost whose
+                                                           contribution scales with some measure of data quantity
+                                 N (N represents some function of the number of pa-
+                                                               pers, sentences, and data to extract).  The other axis
+                                                                               is database quality, generally represented by some com-
+                                                          bination of precision (what fraction of the found data
+                                                           are right) and recall (what fraction of the available data
+                                                  was found) of the database. A schematic plot represent-
+                                                           ing required human time as a function of the size of the
+                                                       database for different methods, and the quality of their
+FIG. 1. Qualitative behavior of different types of approaches                                                                    results, is presented in Fig. 1, where a logarithmic scale
+to data extraction, presented as human time required as a
+                                                  was used to emphasize the behavior for small-moderate
+function of the size of the dataset. The broad range of the
+                                                              sized databases, where the method is the most advanta-green (fully automatic), and orange (this work) represents the
+potential variation in the initial fixed time requirement, which    geous. While the classification of a dataset’s size depends
+may slightly influence the quality of the result. The dashed    significantly on the context and scientific field, in this pa-
+line suggests which method is the best choice for a given size    per we base this classification, as detailed in the following
+of dataset.                                               paragraph, on an evaluation of the typical quantities of
+                                                             relevant materials data found in existing literature.
+                                              One limiting case, which we will call ”small data”, is
+                                                     one where only a small amount of data, up to around 100method for structured information extraction, making
+                                                               points, is available in the literature (for example, proper-use of the GPT-3 capabilities was presented [35]. In that
+                                                                      ties that are very new, very hard to measure, or studiedwork, the focus is placed on the complicated NER tasks
+                                                  by only a small community), and where completenessand relation extraction, at which GPT-3 excels. In that
+                                                 and accuracy are highly valued. For example, as of thisapproach, more complex sentences can be successfully
+                                                           writing ”small data” might refer to superconductors withparsed into structured information. A ”human in the
+loop” approach was used to fine-tune the model, a tech-    Tc > 200K [40]. It is typical to gather data for proper-
+                                                                      ties in the very small data limit fully manually, usuallynique that seems to be emerging as a method of choice
+                                                  by experts in the field. Full manual curation is practicalto obtain higher performing models. Impressive perfor-
+                                                   due to the limited number of papers and data and as-mance was achieved in this work for structured informa-
+                                                             sures that the data is comprehensive and accurate. Thistion extraction, although at a price of a relatively large
+                                                                    fully manual approach is represented in Fig. 1 as the blueset of relatively complex training examples.
+                                                                        line, which is preferred (dashed) for very small amounts
+  In addition, the emergence of highly specialized LLMs
+                                                                  of available data. Even though it is technically slower
+underscores the rapid advancement in the field. In Ref.
+                                                     than other methods, even in the very small data range,
+[36] an instruction-based process specifically designed for
+                                                                               it is still the method of choice due to the highest possible
+materials science enhanced the accuracy and relevance of
+                                                             quality of the results.
+data extraction. Such specialized fine-tuning shows sig-
+                                                The opposite limiting case, which we will call ”large
+nificant advantages in dealing with niche materials sci-
+                                                          data”, is when there is a lot of data in the literature,
+ence tasks.
+                                                 more than a couple thousand datapoints, the database
+  Recently,  fully  automated  agent-based LLM  ap-     is expected to be large, and modest precision and recall
+proaches to analyze scientific text have been proposed    are acceptable. For example, such a database might be
+as well, which are capable of answering science questions    pursued for use for building machine learning regression
+with information from research papers [37], and gener-   and classification models on widely studied properties.
+ating customizable datasets [38]. Other fully automated    For this large data case fully automated NLP-based ap-
+LLM-based methods, including those that leverage com-    proaches may be the most appropriate solution (see green
+plex prompt engineering workflows within LLMs have    curve in Fig. 1 for large number of entries).  However,
+been proposed to curate large materials datasets of a    such an automated approach can result in an incomplete
+higher quality than conventional automated NLP meth-    database that may not be sufficient for certain research
+ods when used with state-of-the-art LLMs [39].             or industrial applications, e.g., where extremes of per-
+  Depending on the nature of the data and the end goal    formance of just a few materials might be the primary
+for which the database is needed, there are different re-     interest. In addition, conventional, fully automated NLP
+quirements for the resultant database and different op-    approaches often require extensive retraining and build-
+timal approaches for the data extraction. It is useful to    ing of parsers specific for different properties, as well as a
+organize methods along two broad axes. One axis is hu-    significant amount of coding. These methods thus often
+
+## PDF page 3
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+require a significant initial investment of human time.       ble to a fully human curated database, but at 100 times
+  Datasets in the middle between ”small” and ”large”    or less human effort.
+are considered in this paper as mid-size, i.e. containing     There are three major advantages of this method com-
+between around a hundred and a couple thousand data-    pared to other possible approaches of data extraction
+points.                                                with NLP. First, the method is very easy to apply, requir-
+  The logic of the best approaches for these extremes    ing almost no coding, NLP or LLM expertise and very
+is simple. Large data (e.g., >  104 data points) can be    limited time from the user. For example, the case where
+most efficiently extracted by spending human time on au-    the LLM is provided by transformers zero-shot classifi-
+tomating the extraction (leading to large A and small B    cation pipeline [42] requires just 3 lines of code that are
+in Eq. 1), and reduced precision and recall is often of lim-    provided on the huggingface website. As another exam-
+ited consequence since so much data is available. Small     ple, in the case where the LLM GPT-3/3.5/4 is used, the
+data sets (e.g, < 10 data points) can be most efficiently   API request is also just a few lines and provided to the
+extracted by spending human time on directly extract-    user explicitly by the developers. Second, the method in-
+ing the data (leading to small A and large B in equation    terfaces with the LLM through a standard classification
+Eq. 1), and high precision and recall is typically more im-    task available in any modern LLM, making it possible to
+portant for smaller databases. However, the optimal ap-    easily use the method with many present and likely any
+proach for the middle ground between these scales, which    future LLMs. Thus the method can easily take advantage
+represents many databases in materials, is not obvious.      of the rapid improvements occuring in LLMs. Third, the
+                                                method requires almost no knowledge about the prop- We propose the use of a method that is most suited
+                                                             erty for which the data is to be extracted, with just theto creating these mid-size databases. With the recent
+                                                        property name required for the basic application of thesignificant advances in performance and availability of
+                                                    method.LLMs, there is opportunity for significant improvements
+by employing them as a part of a language processing      In this paper we demonstrate the method by develop-
+workflow for the purpose of materials data extraction.    ing databases with multiple LLMs. The simplicity and
+This method uses a combination of LLMs methods, with     flexibility of the method is illustrated by repeating the
+some degree of human supervision and input, which al-    development of a benchmark bulk modulus sentence clas-
+lows one to relatively quickly extract data of high quality     sification database with multiple OpenAI GPT models, in-
+while at the same time requiring minimal coding expe-    cluding the recently released GPT-3.5 davinci, GPT-3.5
+rience and upfront fixed human time cost. The method   (turbo) and GPT-4 [43, 44], as well as the bart- and
+leads to modest A and B in Eq. 1, making it better than    DeBERTaV3-based language models [45–48] hosted on hug-
+human extraction or full automation in the medium-data    gingface, currently the most downloaded models for text
+scale range. Two variants of the method are represented     classification.   It is important to demonstrate the ap-
+in Fig. 1 by the red and orange curves. They provide data     plicability and efficiency of the method on both simple,
+of relatively high quality, approaching that of a fully man-     free, and accessible LLMs that can be easily used on a
+ually created database, and scale well for medium sized    personal computer, and on LLMs which require signifi-
+databases. The proposed methods allow a database of    cantly more computation and may be out of reach of some
+up to the order of 1000 data points to be gathered in a   most people’s resources for now. Even though there exist
+few hours.                                                        fully free and open LLMs, such as OPT[49], BLOOM[50] or
+  The general idea of breaking up the papers into sen-    LLaMA[51], their use is computationally expensive and not
+                                                           convenient, which contradicts the spirit of ease and ac-tences and classifying those sentences as relevant or not,
+                                                                     cessibility of the presented method. Therefore, we optedperhaps with a model fine-tuned with human supervision
+                                                                  for The OpenAI’s models whose API allows one to effi-is a commonly utilized language processing practice, in-
+                                                                ciently use the LLM on outside servers, although is notcluding in materials science [41] . This general idea is also
+                                                                       free. GPT-3/3.5/4 are also currently the most popularthe core of the method presented here. However, we use
+                                              LLMs, so its a choice that will likely be relevant for manya LLM to classify each sentence as relevant or not, parse
+                                                                users.each relevant category sentence with a LLM into a struc-
+tured set of target data, and then perform human review    We demonstrate and benchmark the method on raw
+of the extracted structured data for validation and fixing.    texts  of actual research papers,  simulating how the
+The LLM classification is done either fully automatically   method will likely be used by science and engineering
+(in a zero-shot fashion) or with some small human ef-    communities. We first assess the precision and recall of
+fort to fine-tune the LLM with example sentences. The    the method on a small set of papers and the property
+LLM classification step typically removes about 99% of    bulk modulus in order to demonstrate the excellent ac-
+the irrelevant data and leaves only about 1% to be fur-    curacy of the classification that can be obtained with this
+ther analyzed, dramatically reducing human labor. The    method. We then use the method to extract a modest
+final human review is very efficient as only highly struc-    sized but high quality database of critical cooling rates
+tured data is presented, and most are already correct or     for metallic glasses.
+nearly correct. This method results in an almost perfect     The paper is organized as follows: Section II describes
+precision and recall for the resultant database, compara-    the approach in detail; Section III shows the results of
+
+## PDF page 4
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+benchmarks and statistical analysis of the obtained clas-    entire paper is unrelated, or some of the paragraphs con-
+sification results for a bulk modulus sentences database;    tents are, it will simply be analyzed by the LLM and
+Section IV discusses the developed database of critical   deemed irrelevant.  This step takes very  little human
+cooling rates for metallic glasses, the possible utility of    time, and the amount required does not depend on the
+the method for purposes other than simple data extrac-     size of the database or the extracted property. The ex-
+tion, and future possibilities in light of the rapid evolu-    act method for removal of html/xml syntax and splitting
+tion of NLP methods and new LLMs.  Section VI de-    into sentences can vary.  It can be done by text pro-
+scribes in detail the benchmark bulk modulus sentence    cessing through regular expressions (an example can be
+classification database used for assessment as well as the    found in the codes, Sec. VIII B), or ready-made special-
+critical cooling rate of metallic glasses database.            ized python libraries and their functions (such as lxml,
+                                                  nltk.tokenize.sent tokenize [53, 54]), depending on
+                                                         the user preference.
+     II.  DESCRIPTION OF THE APPROACH             It is important to note here that further simple text
+                                                           processing of the cleaned up text to keep only plausi-
+  This section describes the steps involved in the method    ble sentences, e.g. using regular expressions to keep sen-
+for data extraction from research papers. These steps are    tences with easily identified essential information, can,
+schematically presented in Fig. 2. Each step is first sum-   and probably should be performed at this point.  Al-
+marized (in bold), and then expanded to include details    though such an additional processing step does not influ-
+and observations we had during the work. Note that the    ence the method or the final outcome and quality of the
+first step is focused on gathering and basic processing of    produced database, such processing can significantly re-
+the papers and does not use any LLMs.  Furthermore,    duce the amount of data to be categorized by the LLMs.
+this step (or one very similar) is present in any data ex-    This simple processing will certainly reduce the compute
+traction method and is not specific to our method. Since    time needed for the LLM and can reduce costs  if the
+this step is largely a universal preprocessing that does  LLM is not free. How this text processing is performed
+not have any direct connection to the method we label it    depends on the task and the amount of knowledge about
+the zeroth step, thereby allowing the first step to denote    the data or property to be extracted.  For example,  if
+a step directly connected to data extraction.            we know the data is numeric we can keep just sentences
+                                                          containing a number. In the case of bulk modulus (see
+                                                       Dataset 1 in Sec. VI)), keeping only sentences contain-
+               STEP 0:                           ing a number cuts the amount of data to be processed in
+                                                                half and does not lower recall (i.e., keeps all relevant sen-
+                                                               tences). If some amount of knowledge about the quantity
+Obtaining and postprocessing the raw html/xml
+                                                           to be extracted is available it can be used to further select
+paper texts into human-readable format.
+                                                         the most promising sentences. For example, if we know  Input:  This step starts with gathering the papers
+                                                         the expected units of the data we can further process
+for analysis (e.g.  from ScienceDirect API [52]) in an
+                                                         the remaining sentences to keep only those that contain
+xml/html format. This usually involves searching for pa-
+                                                       such units.  In the case of bulk modulus (see Dataset
+pers through a query to the publisher’s search engine,
+                                                     1 in Sec. VI)) keeping only sentences containing units
+and simply downloading every paper that comes up as a
+                                                                  of pressure (pascals and bars with possible metric pre-
+result. If at this stage any relevant papers are missed, the
+                                                                        fixes, N/m2), lowers the amount of possible candidates
+data will not be extracted, so it is safer to use a broad
+                                                           to less than 20% of the initial set, still without any loss
+search query or combine results of multiple queries. In-
+                                                                  of recall. Such refinements can be continued to further
+cluding additional data does not increase the amount of
+                                                    narrow down the search, but each subsequent step relies
+human time, only involves more processing for the NLP
+                                                  on a deeper knowledge of the property in question and
+model. This step takes very little human time, does not
+                                                              increases the risk of reducing recall.  In the work pre-
+depend on the size of the database and is already mostly
+                                                         sented here we assume the most demanding situation for
+automated through the publisher, since only the query is
+                                                         the method, in which no prior knowledge of the property
+required to obtain a list of matching documents.
+                                                                               is assumed. Therefore we only narrow down the search  Simple text processing:  After the papers are
+                                                           to sentences containing numerical values.
+downloaded the metadata and html/xml syntax is re-
+moved. We keep all the paragraphs and the title and
+remove the rest of the content.  Then, we remove the
+html/xml markup syntax and tags.  At this point all                  STEP 1:
+that is left is pure text.  This cleaned up text is then
+split into separate sentences, according to regular rules     Zero-Shot binary classification of sentences to
+for how sentences are terminated.  At the end of this   produce unstructured data, i.e. set of sentences
+step we are left with the raw data that may be fed to   containing values for a given property. The classi-
+the LLM and analyzed.  There is no need for any hu-    fication puts sentences in two categories: positive,
+man evaluation of the data at this point. Whether an   which are sentences containing the data (numeri-
+
+## PDF page 5
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+
+
+
+FIG. 2. A diagram of the steps necessary for NLP/LLM data extraction in the proposed method. The process starts with
+gathering and preparing the documents to be analyzed, a process not involving any NLP (Step 0), then a LLM is used to
+classify sentences by whether a sentence does or does not contain data for a given property (value and units) in a zero-shot
+fashion (Step 1). The pre-classified sentences are then (optionally) validated and used for fine-tuning the LLM and reclassifying
+the sentences with higher quality (Step 2). Finally the data is structured by a LLM/human assisted process, where the name
+of the material/system, the numerical value of the given property, its unit, and in some cases an additional detail, such as the
+temperature at which the value are obtained (Step 3). A detailed description of all steps can be found in Sec. II
+                                                                                                  .
+
+
+cal value for a given property with its correspond-    but it is also the simplest, most straightforward to apply
+ing unit), and negative, which are sentences not   and assess its performance, and ensures higher flexibility
+containing the data.                              and transferability to other properties, so the other more
+Depending on the LLM used, the zero-shot may require    complex methods have not been explored.
+as little as just the name of the desired property as the       Fig. 3 shows the zero-shot result  statistics for the
+label of the class (name of the property), or require a    different models,  including GPT-3.5 (whose technical
+full prompt phrase (e.g., GPT-3/3.5/4). Since the most   names are text-davinci-002 and text-davinci-003)
+recent and powerful LLMs make use of a prompt (e.g.,   and other GPT models including 3.5 (turbo) and 4, which
+GPT-3/3.5/4), we focus on that case here. The prompt    underlie ChatGPT. The Chat models do not output prob-
+(a single set of words, typically a phrase that makes gram-     abilities so full precision recall curves cannot be plotted,
+matical sense) given to the model plays an important    only a single point, which for all Chat models has 100%
+role. The impact of prompts has already been widely     recall. The p1 and p2 stand for two different prompts.
+observed in NLP-based text to image generation tools    p1: Does the following sentence contain the value of bulk
+(e.g., DALL-E2 [55], MidJourney [56], Stable Diffusion    modulus?.
+[57]) and a similar situation occurs in the present appli-    p2: A sentence containing bulk modulus data must have
+cation. Depending on the completeness and phrasing of     its numerical value and the units of pressure. Does the
+the prompt, the results for classification may be dramati-    following sentence contain bulk modulus data?
+cally different. In our experience, however, prompts that   Only the first token of the model’s response was evaluated
+do not contain false and misleading information almost   and in all cases it was either a ”yes” or a ”no” (case-
+always result high recall, and it is mainly the precision     insensitive), as expected, allowing for an unambiguous
+that is affected. In addition, more complex prompts do     classification. As an example consider the two following
+not necessarily guarantee a better result and may not    sentences:
+be necessary.  It is worth mentioning that with modern    1. After full lithiation, the phase transformed to Li13Sn5,
+LLMs, other approaches such as one/few-shot (providing    which has the bulk modulus of 33.32 GPa and the Pois-
+a prompt together with one or a few example outputs)    son’s ratio of 0.205.
+or even more complex ways of extracting data, involv-    2. The structure of polycrystalline copper is cubic with
+ing multiple subsequent prompts, have been shown to be     lattice parameters a = b = c = 3.6128 (1) ˚A at 0.0 GPa.
+very effective [43].  In this work, however, not only is   We would get a ”yes” response for the first, and a ”no”
+the zero-shot efficient enough for the classification task,    response for the second.
+
+## PDF page 6
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+Even though p2 contains more seemingly valuable infor-    the analyzed papers (the exceeding majority of which
+mation, it did not necessarily perform better. We exper-    are negative). Fig. 4 shows how the classification model
+imented with various different prompts, and straightfor-    improves when fine-tuned on datasets of increasing size.
+ward prompts similar to p1 performed most consistently  A detailed analysis of that figure is present in Sec. III,
+and predictably for most models.  Therefore a simple    where a conclusion is made that after around 100 positive
+prompt: Does the following sentence contain the value of    sentences for the quicker learning models such as GPT-3
+[name of property]?  is our strong recommendation. The   davinci/GPT-3.5 or bart, we start to observe diminish-
+one exception is GPT-4, where a more detailed prompt    ing returns with this human labeled dataset size increase
+resulted in a significantly better result. This is due to an   and it may not be worth spending more human time on
+improved accuracy of prompt interpretation and follow-    obtaining more examples. Therefore, we recommend to
+ing the prompt instructions in GPT-4.                    perform the manual verification of the zero-shot classifi-
+   It  is  worth  noting  that  some  models,  such  as    cation until 100 positive sentences (and a corresponding
+GPT-3/3.5 davinci and GPT-3.5/4 (chat) at the time    100 negative - made easy due to the 50% precision) are
+of writing this article are not free to use.  Therefore,    obtained, a number easy to remember and satisfactory
+the flexibility to use different LLMs within the method     for an efficient fine-tuning dataset.
+is very valuable, as some free models, while not neces-
+                                                        This steps usually takes no more than 30 minutes forsarily capable of accurately performing the more com-
+                                                       approximately 100 sentences - each sentence has to beplex tasks such as automated data structurization, and
+                                                                     classified only in a binary fashion which is a very simplealthough overall generally less capable than GPT-based
+                                                          task and takes just a few seconds per sentence. The clas-models, perform well enough in the simple task of clas-
+                                                                    sification is as simple and straightforward as assigningsification to produce satisfying results. However, in the
+                                                     1 for positive and 0 to each sentence in a spreadsheet.case of OpenAI GPT-3, both model usage and fine-tuning
+                                              The fine-tuning itself, for the small locally hosted mod-is done on outside servers, so in a situation where com-
+                                                                       els (bart and DeBERTaV3), takes around 30 minutes onputational resources are not available to run locally, it
+                                                  an older workstation CPU (Intel(R) Xeon(R) CPU E5-may enable one to use the best models at a low cost.
+                                                           2670), 20 minutes on a modern laptop CPU (Intel(R)
+                                               Core(TM) i9-9880H), and can be reduced to just a few
+                                                      minutes if GPUs are used. The OpenAI models are fine-
+           STEP 2 (optional):
+                                                     tuned on external OpenAI servers in less than 30 minutes
+                                                 and do not require any local resources. After this step is
+Human assisted verification of the zero-shot clas-    performed and the sentences are once again reclassified
+sification of sentences. The highest scoring un-    using the now fine-tuned model the precision and recall
+structured data (most likely to be a true positive),    are greatly improved, as can be seen in Fig. 4.
+pre-classified in Step 1, is manually classified into
+positive and negative sentences to provide a new      This Step 2 is optional and is generally done to im-
+training set of sentence for fine-tuning the clas-    prove the quality data collected from Step 1. Improving
+sification process. The new training set is then    precision of data at this stage will reduce the human time
+used to fine-tune the model and classify the sen-    needed in data structurization in Step 3 (see Sec. II) to
+tences again to obtain higher precision and recall.    review the data. However, for small datasets the human
+This optional step is just a chance for the human user to    time in Step 3 is very modest, and this Step 2 may not be
+provide confirmation or correction to particularly impor-    worth the extra effort. Thus whether it is performed or
+tant zero-shot classification data from Step 1 and then    not typically depends on the size of the dataset. For small
+use those checks to fine-tune the LLM. Similar steps are    datasets, and if a recall of around 90% is satisfactory this
+often taken in other data extraction approaches, and ma-    step can be entirely omitted. As seen in Fig. 3 d), the
+chine learning in general [35, 41, 58].  Specifically, as    precision at 90% recall after Step 1 is over 50% for the
+the highest scoring sentences are being manually veri-    best models, which means that for every true positive
+fied, a new training sets consisting of true positive and    sentence, there is only one false positive - a reasonable
+true negative examples is built.  Since the precision of   number to be removed by hand during data structuriza-
+results of Step 1 is typically around 50% at 90% recall    tion (Step 3). For small datasets, up to a few hundred
+(see Fig. 3 (d)), the created sets are typically close to    values, verifying around 100 positive sentences to perform
+equal in size. The human labeled sets consist of positive    additional fine-tuning to improve the precision may turn
+cases, which represent true positives from Step 1, and    out to be more labor intensive that proceeding straight to
+negative cases, consisting of false positives from Step 1.    data structurization, and improving the precision man-
+The latter are the most valuable counter-examples for    ually by simply ignoring false positives.  It is crucial to
+the negative training set, as these are the sentences the    understand that the recall obtained at this step (or that
+easiest for the model to confuse for positives.  If after    has been obtained after Step 1,  if this optional step is
+reaching the desired amount of verified positive sentences    skipped) will be the recall of the final database, while
+the corresponding set of negative sentences is smaller,    the precision will be improved to near perfect in the next
+it may be complemented with random sentences from    step (Step 3).
+
+## PDF page 7
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+               STEP 3:                            users may employ simple computer codes, e.g. based on
+                                                            regular expressions, which would preselect possible can-
+                                                           didates for values and units, reducing the time signifi-Data structurization (template filling).  In this
+                                                                 cantly. In the longer term, it is likely the NLP tools willstep, extraction of the structured data  is per-
+                                                          help automate this data structurization step. Some mod-formed. Here, by structured data we mean the
+                                                                            els, like GPT4, offer structured format output, such asfull information necessary to provide a datapoint:
+                                                                 json, which may be used to assist the final data extrac-the name of the material/system, the numerical
+                                                             tion step. However, they do not do this very effectivelyvalue of the given property, its unit, and in some
+                                                           at present without either human supervision or a ma-cases an additional detail, such as the temper-
+                                                                  jor effort to tune them.  For example, GPT-3/3.5/4 isature at which the value was obtained. At the
+                                                        capable of parsing unstructured data in a zero-shot fash-same time as the data is extracted the precision
+                                                                  ion, with no need for retraining. In the case of our bulkof the result is improved to perfect (or near per-
+                                                  modulus sentences dataset we found that in over 60% offect, depending on the expertise and accuracy of
+                                                             cases GPT-3/3.5/4 is capable of correctly providing thethe human supervising this step), by simply ig-
+                                                                entire data entry for a given property (name of the ma-noring the false positive sentences left over from
+                                                             terial/system, value, unit), and an incomplete datapointprevious steps. The result of this step is a final,
+                                                    (wrong material/system, but correct value and unit) incurated structured database.
+                                                          over 95% of cases. The only drawback that prohibits a
+  The user will typically perform this step by first rank-
+                                                                          full automation of this step with a LLM is the inability
+ing the sentences by their probability of being relevant
+                                                           to automatically and unambiguously distinguish between
+(classification scores in the case of small LMs, bart and
+                                                             correct and incorrect extracted datapoints. Even though
+DeBERTaV3, or log probabilites in the case of GPT-3),
+                                                         the model does not tend to make up (hallucinate) data, it
+which is the output from Step 1 (or Step 2 if performed),
+                                                     sometimes provides an incomplete or inaccurate extrac-
+and start reviewing the list at the top, working down un-
+                                                             tion (e.g. ”alloy” instead of ”AlCu alloy” for the mate-
+til they decide to stop. As the user works through the
+                                                                            rial, or ”100” instead of ”greater than / > 100” for the
+results in that fashion, they traverse down the precision
+                                                               value, etc.). However, human assistance in determining
+recall curve (PRC) (see.  Figs. 3 (a) and 4 (a)). While
+                                                     whether the data has been structurized properly, and in
+the recall is impossible to assess without knowing the
+                                                           case it was not, fixing it by hand, can easily remedy that
+ground truth, the user is fully aware of the precision of
+                                                       problem. Since almost all values and units are extracted
+the data they have already analyzed, therefore using the
+                                                                  correctly, and only less than half of the material names
+PRC they can estimate the recall and decide to stop when
+                                                             require fixing, using a LLM approach greatly reduces the
+a desired recall is reached (with the assumption that the
+                                            human time and effort required for data structurization.
+PRC are similar to those shown in Figs. 3 (a) and 4 (a)).
+                                                     Using an LLM we found that the average human time
+For best models, reaching recall of around 90% (close to
+                                                           required to extract each good datapoint was reduced to
+that of a fully manual data curation) without performing
+                                                     under 10 seconds, keeping the same, almost perfect preci-
+the optional Step 2 happens for a precision close to 60%,
+                                                                  sion. Thus, and NLP-assisted data structurization, while
+while for a fine-tuned model (with Step 2), for a preci-
+                                                                                  still a tedious process, enables one create databases of up
+sion over 80%. It is entirely up to the user to decide the
+                                                           to around 1000 entries (more or less, depending on the
+quality they require from their database, and the quality
+                                                             users predisposition to and efficiency at repetitive tasks),
+of the results will be proportional to the amount of time
+                                                               in one workday. This timing includes the whole process,
+spent in this step. Recall of 90% seems to be a reason-
+                                                        beginning (Step 0) to end (structurized database after
+able value to stop the process, as the precision sharply
+                                                      Step 3), although almost all the human time is spent in
+drops for higher values, which diminishes returns for the
+                                                      Step 3.
+human time involved. However, this behavior may vary
+depending on the case, which will be discussed further in     While the value, units and the optional additional de-
+the Sec. III.                                                          tails most often occur within the positive sentence, the
+  In general, human assisted data structurization, even   name of the material is often missing from that sentence
+when only the sentences containing the relevant data are    (sentences are often similar to e.g. We determined the
+given, may be a tedious and time consuming task. How-    bulk modulus to be 123 GPa.). In those cases the system
+ever, at this point it is the only method that can guar-     is described most often in the preceding sentence, and if
+antee an almost perfect precision. For an inexperienced    not, then in the title of the paper.  In a vast majority
+user, extracting one datapoint from a given sentence and    of cases (96% in our bulk modulus dataset) the full data
+its surrounding context fully by hand may take as long    information is available to be extracted from a sentence,
+as 30 seconds, depending on the complexity of the prop-    that preceding it, and the title, so we do not search for it
+erty being analyzed and how it is typically expressed in    in other places. In the rare case when the full datapoint
+research papers. Considering this, only relatively mod-    cannot be extracted, we record an incomplete datapoint.
+est sized databases are reasonable to create.  However,   We also note that even in NLP models finely tuned for
+with experience, this time quickly reduces as the user    structurized data extractions, the further apart the rel-
+gets used to the process. In addition, more experienced    evant data are from each other, the more difficult it is
+
+## PDF page 8
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+for the model to accurately extract the relevant data, so    that the datasets analyzed here are heavily imbalanced,
+those datapoints would very likely be incomplete with    with negative results outnumbering positives by more
+other NLP-based approaches as well.                     than 2 orders of magnitude.  This places the naive no
+                                                                            skill in Fig. 3 (a) line, representing an entirely random
+                                                      model, close to zero (as opposed to at 0.5 for a fully
+                      III.  RESULTS                      balanced set), lowering the entire PRC compared to a
+                                                        balance set.  Fig. 3 (c) shows the ROC, which  is in-
+                                                                 sensitive to dataset imbalance, and shows much higher
+  This section provides a comprehensive analy-
+                                         AUCs (panel (b)) than those of PRCs. The conclusions
+sis of various language models’ performance in
+                                                    from ROCs are similar to those from PRCs; GPT-3.5/4
+classifying relevant sentences. The analysis high-
+                                                       performs best, with bart scoring lowest, while still per-
+lights the superior performance of the GPT fam-
+                                                       forming reasonably well. A non-LM approach based on
+ily of models in a zero-shot approach and demon-
+                                                            regular expressions was also evaluated for comparison. In
+strates the effectiveness of fine-tuning, while also
+                                                         the case of bulk modulus sentences, a simple regular ex-
+discussing the results in the context of the acces-
+                                                            pression (regex) capturing sentences containing any num-
+sibility of different models. It also addresses the
+                                                        ber ([0-9]), the case-insensitive phrase ”bulk modulus,”
+challenges posed by highly imbalanced datasets
+                                                 and units of pressure ([MG]*Pa|kbar) resulted in an 82%
+and discusses strategies for reducing human ef-
+                                                              precision and 72% recall (F1=0.76). While this result is
+fort in data processing.
+                                                     comparable to the maximum F1 of zero-shot results of
+  Fig. 3 summarizes the result from Step 1 in Sec. II for
+                                                           smaller LMs, LLMs such as GPT-4, as well as fine-tuned
+a bulk modulus analysis. The papers, sentences, ground
+                                                        models, perform noticeably better.  In addition, regex-
+truth category statistics, and other information is pro-                                                      based approaches do not directly offer a precision-recall
+vided in Sec. VI. The ground truth for Step 1 was de-                                                             curve, which would allow adjusting the balance to maxi-
+termined by human labeling.  The following precision                                                     mize recall without significantly sacrificing precision (see
+recall curves (PRCs) and receiver operating character-                                                             Sec. II). Even though chat models such as GPT-4 do not
+istic curves (ROCs) are constructed in the usual way,                                                                     offer the precision-recall curve either, in our test they
+which is by plotting the relevant metrics while varying                                                     performed at 100% recall, so this fact was irrelevant.
+the cutoff used for the lowest value of probability ac-
+                                                                         It  is informative to consider the implication of thecepted as a positive classification for sentence relevance.
+                                         ROCs and PRCs for the efficiency of the human effortPanel (a) shows a PRC for the models tested in this pa-
+                                                               in our method. The step that requires most of the hu-per. The two different curves for each of the GPT-3.5
+                                          man time for a modest size database or larger (e.g., adavinci and GPT-3.5/4 (chat) models correspond to
+                                                      few hundred entries or more) is Step 3, where the usertwo different prompts used in classification (see Sec. II).
+                                                 must read and structure output from each sentence cate-All of the tested models perform similarly, with bart
+                                                           gorized as positive in Step 1 (or Step 2 if used). In Sec. IIstruggling slightly more than others in achieving higher
+                                              we suggested that the user limit their review of sentencesrecall. The ChatGPT models result in only a single point,
+                                                               in Step 3 unless a desired recall (implied by precisionas the probability is not output from these models. All
+                                                      through the PRC) is achieved.Chat models result in 100% recall, with GPT-3.5 (chat)
+performing similarly to base GPT-3 models, which was ex-      In some applications one might wish to target a high
+pected since they are a part of the same family of models     recall irrelevant of the human time required in step 3.
+and based on similar architecture. The next generation   To give a sense of how that might impact the method,
+GPT-4 performs better, in particular with a more infor-    Fig. 3 (d) and 4 (b) show the precision for 90% recall
+mative prompt (p2, see Sec. II). This is a result of an    after Step 1 and after the optional Step 2, respectively.
+improved instruction-following capabilities of the GPT-4    Consistent with our above discussions, the best models
+and a higher capability to apply knowledge provided in    can achieve this recall with more than 50% precision us-
+the prompt when producing results, which suggests that    ing even just the zero-shot approach (Step 1). For less
+further prompt engineering may provide an even more    robust models, a 50% precision requires tuning (Step 2).
+improved performance in zero-shot classification in this,    For the worst models and using just zero-shot learning,
+and likely in future, LLMs.  However, this better per-    the precision is about 17%, meaning the user would be
+formance of GPT-4, although impressive, ultimately may    extracting useful data from only about 1 in every 6 sen-
+still be eclipsed by the even better performance of the    tences reviewed. This would likely still be practical, but
+fine-tuned GPT-3 davinci model (discussed later), and    could become very tedious for a database of even a few
+its significantly lower cost. A more quantitative mea-    hundred final entries. However, the important implica-
+sure of models’ performance is presented in panel (b),    tion is that  if one uses the best models (GPT-3.5/4),
+where the area under the precision recall curve (AUC-    even a quite high recall requirement, e.g., 90%, can be
+PRC) alongside a maximum F1 score are presented. The    achieved using very efficient sentence review, with almost
+GPT-3.5 models, in particular using the first prompt (p1)    every (more than 90%) sentence presented to the user
+show the highest scores, while bart and DeBERTaV3 rank    containing relevant data.
+lowest in PRC-AUC. It is important to notice, however,      Fig 4 demonstrates how the performance of each of
+
+## PDF page 9
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+
+
+
+FIG. 3. Performance of different models after Step 1 (zero-shot binary classification of relevant sentences based on whether they
+contain bulk modulus data). (a) precision recall curves, (b) area under precision recall curve (PRC-AUC) (bars), maximum F1
+score (circles), and area under receiver operating characteristic curves (ROC-AUC) (squares, right y-axis), (c) receiver operating
+characteristic curves with an inset the upper left corner, (d) precision at 90% recall and recall at 50% precision (right y-axis).
+The no skill line represent a baseline model where the classification is random. Chat models do not output probabilities,
+therefore only one point of the curves in (a) and (c) is available for each GPT-3.5 (chat) and GPT-4 models and is labeled with
+dark blue and dark red × respectively. Note that all Chat models have 100% recall. Labels in panels (b) and (d) have been
+shortened, but represent the same models as those in the legend of (a) and (c). p1 and p2 in the davinci models represent two
+different prompts (see Sec. II).
+
+
+the models  is improved  if the optional fine-tuning in    training set (with an assumed equal number of negative
+Step 2  is performed, as a function of the size of the    sentences). The shape of the learning curves differs for
+training set.  Panel (a) shows PRCs before fine-tuning    different models, with GPT-3 davinci model perform-
+(zero-shot) and compares them to PRCs after fine tun-    ing best (i.e. achieves higher performance metric values
+ing on 100 and 200 positive sentences. While all models     for smaller training sets) and learning the quickest (i.e.
+eventually show improvement, fine-tuning is clearly the    converges closer to best observed performance metric val-
+most beneficial for the GPT-3 davinci (note that cur-    ues for smaller training sets), bart following second, and
+rently only the older generation GPT-3 davinci is avail-   DeBERTaV3 third, across all metrics. One may notice that
+able for fine-tuning). Similarly, various metrics describ-    performance of the fine-tuned models trained with very
+ing the quality of the model are presented in Fig. 4 (b),    small training sets perform worse than zero-shot (Fig. 3).
+where learning curves as a function of the size of the   When the model is fine tuned on a very specific and not
+fine-tuning training set are shown. The the x-axis rep-    very diverse set of information, the model’s weights are
+resents the number of positive sentences included in the    updated with information inadequate to constrain it re-
+
+## PDF page 10
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+
+
+
+FIG. 4. Comparison of performance of different methods after fine-tuning (Step 2, Sec. II, binary classification of relevant
+sentences based on whether they contain bulk modulus data). Panel (a) shows precision recall curves, dotted lines correspond
+to the zero-shot (0-shot) result (davinci are averaged into one as described in the text), dashed and solid line correspond to
+fine-tuning on 100 and 200 positive sentence examples, respectively, (b) learning curves, i.e. performance metrics as a function
+of training set size, top to bottom: area under precision recall curve (PRC-AUC), maximum F1 score, area under receiver
+operating characteristic curves (ROC-AUC), recall at 50% precision, and precision at 90% recall. The horizontal thin dashed
+lines in corresponding colors represent zero-shot results. (c) receiver operating characteristic curves for the same data as in (a).
+
+
+sulting in less accurate performance. For davinci, slope    does not take more than 30 minutes. It is worth noting
+starts to decrease rapidly (curve starts to saturate) for    that although we expect this number to be transferable
+as few as 60-80 positive sentences in the training set,    to other properties it has not been verified thoroughly
+for bart that occurs at around 100 positive sentences,   on other properties. Whether to perform the optional
+and for DeBERTaV3 closer to 160. Even though not all    Step 2 (fine-tuning) will ultimately depend on the size of
+of the curves are fully saturated for the above mentioned    the database. As mentioned before, for larger databases,
+dataset sizes, constructing larger fine-tuning training sets    this improvement will be beneficial and save overall hu-
+is likely to waste more human time than it is going to gain   man time needed to curate the database by making Step
+in Step 3. Our recommendation, if the optional step 2    3 more efficient, while for small databases, up to a cou-
+is performed, is to initially use a training set of around    ple hundred datapoints, the time spent on the fine-tuning
+100 positive sentences and the GPT-3 davinci model or    in Step 2 might be more than is saved during the data
+the smaller and free bart. This size of 100 positive sen-    structurization in Step 3.
+tences is very manageable to obtain with human-assisted
+verification of classification after Step 1, and typically
+
+## PDF page 11
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+               IV.  DISCUSSION                   from the input set of documents. Therefore, if the user
+                                                                desires a database limited to, for example, a given family
+                                                                  of systems, the limitation would have to be enforced in  The paragraph discusses the practical applica-
+                                                 some additional way. This constraint could be done bytion of the presented approach to curate an ex-
+                                                              limiting the input set of documents through a more stricttensive and accurate database of critical cooling
+                                                           search query, but even that does not guarantee that onlyrates for metallic glasses by analyzing a large vol-
+                                                         the desired values will be extracted, as many papers men-ume of scientific literature.  Comparison to ex-
+                                                             tion a wide range of results, even if technically focusedisting, manually curated database and other au-
+                                                  on a particular topic. Limiting the final database can betomated methods is provided.  Utility for com-
+                                                                 easily done manually in Step 3 (Sec. II), but dependingplex data-oriented tasks  like machine learning
+                                                  on the property and the size of the desired subset, limit-and the method’s potential to handle unrestricted
+                                                           ing the data at that stage may take a lot of human timesearches effectively is then discussed.
+                                                 and be inefficient.  In principle, more restrictions than
+  To provide an example use-case for the method, we
+                                                                just the property can be imposed on the NLP level, but
+applied  it to curate a high quality and highly accu-
+                                                       such abstract concepts as families of materials are very
+rate database of critical cooling rates for metallic glasses
+                                                            challenging even for the best LLMs and greatly reduce
+(Sec. VI B). 668 papers responded to the query ”bulk
+                                                         the quality of the zero-shot results (Sec. II) and would
+metallic glass”+”critical cooling rate”, which  is more
+                                                             require significantly more training in (Sec. II). This prob-
+than what a human researcher would be analyze man-
+                                                   lem is highly dependent on the property in question. For
+ually in a reasonable timeframe. The proposed method
+                                                       example, an unrestricted search for critical cooling rates
+resulted in 443 datapoints consisting of the value of mate-
+                                                          while limiting the search in Step 0 to papers responding
+rials, their critical cooling rate, and the unit in which they
+                                                           to a query ”bulk metallic glasses”+”critical cooling rate”
+were expressed in the paper. These results, include all
+                                                  was quite effective for our goals of obtaining all ranges
+mentions of critical cooling rates, with different degrees
+                                                                  of critical cooling rates for metallic glasses. But if one
+of specificity, e.g., accurate values for specific composi-
+                                                       wanted, say, an overpotential for water splitting, restric-
+tions (the ideal result), value ranges for specific materi-
+                                                              tions on many factors, e.g., temperature or pH, might be
+als, and value ranges for broad families of materials. The
+                                                                 essential to obtaining useful result and difficult to screen
+obtained database covers the range of expected values
+                                                  on in the initial Step 0.very well, with values ranging from 10−3 K/s for known
+bulk metallic glass formers, to 1011 K/s for particularly    A particular example of where unrestricted searches
+bad glass formers. The well known Pd-based bulk metal-    can be problematic occurs when searching for properties
+lic glasses (Pd43Cu2Ni10P20 and Pd43.2Ni8.8Cu28P20)    which are relevant in many fields when one is interested
+are identified as those with the lowest values of critical    in only a particular field, and/or which have many pos-
+cooling rates, while simpler alloys such as AgCu, PdNi     sible associated restrictions which are needed to make
+or NiBe and pure metals such as Co are identified as    the data useful. A specific example of this problem oc-
+those with the highest critical cooling rates, which fur-    curred for us when we explored constructing a database
+ther validates the results. The obtained data, cleaned     for ”area specific resistance” (ASR) for anode materials
+up for direct use in data oriented tasks (such as machine    of proton conducting cells. In step zero we searched for
+learning) i.e postprocessed to only include unique val-    ”area specific resistance”+”proton conducting fuel cells
+ues for uniquely specified systems yielded 211 entries.    (and similar terms)” The method proved very successful
+Within these, 129 are unique systems (multiple values    at identifying sentences containing ASR and structuring
+are reported for some systems and we kept these to allow    the data, as it was asked to do. However, the method
+the user to manage them as they wish). The database    captured ASR in a wide variety of contexts, including
+is larger than the size of a recently published manually    single phase and composite materials, porous and non-
+curated database of critical cooling rates [59], which is    porous materials, electrodes and electrolytes, steels, in-
+the most state-of-the-art and complete such database of    terconnects, coatings, varying temperatures, and ASR in
+which we are aware, and consists of only 77 unique com-    both fuel cell and electrolysis operation modes. To ob-
+pound datapoints. To provide comparison to other ex-    tain a simple and immediately useful dataset we were
+isting methods, we used ChemDataExtractor2 (CDE2)    interested in single phase dense anodes operating in fuel
+[15], a state-of-the-art named entity recognition (NER)     cell mode with temperature information. Imposing such
+based data extraction tool. With CDE we obtain a re-    limitations was dramatically harder than the basic data
+call of 37% and precision of 52%, which are comparable    extraction. Although one might have different goals than
+to those reported for thermoelectric properties (31% and    the ones just mentioned, it is very unlikely that one is
+78%, respectively) obtained in Ref. [16].                     interested in gathering information for all of the above
+  Searching for a given property does not typically add    data in a single database.  Restricting the set of input
+any restrictions on the search other than the property   documents was able to help to a certain degree to move
+itself, i.e., the search is unrestricted. In the case of the    the balance of the obtained results in the desired direc-
+method proposed here, unrestricted search will identify    tion, but did not solve the issue entirely. From such a
+and help extract all datapoints for the target property    wide variety of contexts, identifying only those we were
+
+## PDF page 12
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+interested in required a relatively deep knowledge from                    VI.  DATASETS
+the person performing the data extraction and required
+significantly more human time to extract than in case of      Below, the details about the datasets are provided. As
+datasets where the property is more uniquely identified.    a result of this paper a high quality database of critical
+In fact, we stopped developing this database due to these    cooling rates for bulk metallic glasses has been curated,
+many challenges, although for someone willing to commit    as well as a benchmark-only dataset - the bulk modulus
+4-5 days of human time in step 3 the desired database is    dataset, which was used to assess the model. Information
+certainly practical to develop.                         on accessing the datasets can be found in Sec. VIII B. It
+ On the other hand, the lack of restrictions in the model     is important to note that we only used papers for which
+may have other benefits, as  it expands the possibili-    a full text is available in a text (xml) format. The cut-
+ties of the kinds of information that can be extracted.    off date for availability of full texts of papers varies from
+For example, the method can be used to extract many    journal to journal, but is usually around the mid 2000s.
+kinds of information, not just property values.  Step 1    Fortunately, however, despite not having access to older
+with models like GPT-3 davinci/GPT-3.5 or GPT-3.5/4    papers, a significant amount of valuable or relevant older
+(chat) broadly describe the type of text we are looking    data is likely gathered as well, as that data is often re-
+for, and Step 2 fine-tunes to better classify the relevant    peated and referred to in more recent papers, which is
+sentences. While we utilized this classification search to    then subsequently extracted with our method.
+find sentences containing numerical data for a given prop-
+erty within text paragraphs of research papers, data may
+be present in other places such as tables or figures. The             A.  Bulk modulus sentences
+classification approach can be easily used to search for
+non-textual data such as tables or figures containing the                                                The bulk modulus is a benchmark dataset of sentences.
+relevant information, by classifying their captions.  In                                              From over 10000 paper results of a search query ”bulk
+case of a positive table classification,  it would be fol-                                                         modulus”+”crystalline”, a subset of 100 papers from the
+lowed by manual or algorithmical extraction from the al-                                                                            first 6000 full-text papers available through ScienceDi-
+ready structurized table. Furthermore, classification can                                                               rect API was randomly selected. In the written text of
+be used for more abstract concepts, such as suitability                                                           these 100 papers, there are 18408 sentences in total, out
+of a given material for a certain application, personal                                                                  of which 237 sentences mention the value of bulk mod-
+opinions of authors about promising directions of future                                                                ulus. This sentence dataset is used as a benchmark for
+research, or any other concept that can be characterized                                                         the classification so a human ground truth is extracted.
+as a group of example texts for the model to train on,                                              To avoid excessive time spent establishing the human la-
+and classify in a binary fashion.                                                         beled ground truth this database uses only a very small
+   It is also important to remember that the method we                                                               fraction of the total available papers. Thus the bulk mod-
+present here is not restricted to the LLMs explored in                                                           ulus sentences database is not nearly complete, and the
+this paper, and is in fact designed to be quickly adapted                                                        human-assisted extraction of a final database is not per-
+to new and improved LMs.                                                        formed.
+                                                        For the zero-shot case (only step 1 and not step 2) the
+                                                     approach effectively has no training data and can just
+               V. SUMMARY                    be assessed on the test data described above. However,
+                                              when step 2 included the fine-tuning requires additional
+ We have shown a simple and efficient method for ma-    data (effectively a training data set). For this fine-tuning
+terials data extraction from research papers. The simple    process an additional 339 positive and 484 negative sen-
+concept of binary text classification using a LLM is in-    tences have been extracted from papers not included in
+volved as a key step in the method, which allows for a    the 100 papers in the test set. These additional sentences
+high flexibility in the language model used as virtually all    are use to investigate how fine-tuning improves the model
+modern language models are very capable at text classi-   and plot learning curves (see Fig. 4).
+fication. We determined GPT-3/3.5/4 models to be the
+best performers, but evaluated other, less expensive and
+more accessible alternatives such as bart or DeBERTaV3.     B.  Critical cooling rates for bulk metallic glasses
+By including a highly-optimized human-assisted step in
+the process, we minimized the amount of coding and      This dataset consists of data gathered from 668 pa-
+prior knowledge about the extracted property necessary    pers based on a result of a search query ”bulk metallic
+to achieve a high recall and nearly perfect precision. A    glass”+”critical cooling rate” from Elsevier’s ScienceDi-
+modest sized database of up to around 1000 entries can be    rect API. These papers consisted of 107386 sentences, out
+extracted in around one workday with this method. The    of which 347 were identified as positive (containing values
+method is assessed vs. ground truth on a bulk modulus    of critical cooling rates), after applying the workflow de-
+database and then applied to construct curated database    scribed in Sec. II, including the optional Step 2 in order to
+of critical cooling rate of metallic glasses.                  provide best quality data. From these 347 sentences, 443
+
+## PDF page 13
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+critical cooling rate data points (consisting of the ma-    gle token to facilitate a yes/no answer and preserve re-
+terial name, critical cooling rate value and units) were    sources by cutting off further completion. A 0613 (June
+extracted and are collected as a final database presented.    13th 2023) snapshots of OpenAI chat models, GPT-3.5
+Additionally, that data was manually postprocessed to   (turbo) and GPT-4, were used, with an empty system
+include only unique datapoints (removing duplicate re-    message. For each sentence classification a separate chat
+sults, i.e. the same values reported in multiple papers),   was initiated.
+remove those which included ranges or limits or values,
+or where the material’s composition was not explicitly
+given, and unify the formatting of the materials compo-         A.  Definition of statistical quantities
+sitions, which resulted in 211 unique datapoints. The
+total human time required for gathering this dataset did   True positive (TP)  - a sentence containing numerical
+not exceed 5 hours.                                     data for a given property.
+                                                   True negative (TN) - a sentence not containing numeri-
+                                                                 cal data for a given property.
+        ACKNOWLEDGMENTS                  False  positive (FP)  - a sentence not containing the
+                                                        numerical data for a given property but is identified as
+  The research in this work was primarily supported    one that does.
+by the National Science Foundation Cyberinfrastructure    False negative (FN)  - a sentence containing numerical
+for Sustained Scientific Innovation (CSSI) Award No.    data for a given property but is identified as one that
+1931298.  Additional support for engaging undergradu-    does not.
+ates in research was provided by the National Science
+Foundation Training-based Workforce Development for       Precision:
+Advanced Cyberinfrastructure (CyberTraining) Award
+                                                            TP
+No.  2017072. We thank Shishmitha Adusumilli, Har-                  Precision =                         (2)
+mon Bhasin, and Shanchao Liang for their participation                      TP + FP
+in this project.
+                                                           Recall (True Positive Rate):
+
+                                                           TP
+             VII. CONTRIBUTIONS                                  Recall =                           (3)
+                                                         TP + FN
+
+  M. P. P. conceived the study, performed the modeling,    False Positive Rate (FPR):
+tests and prepared/analyzed the results, S. M., J. Z., J.
+W., S. W. and A. D. H. performed tests and assessed                     FP
+                                             FPR =                            (4)
+methods as a part of the Informatics Skunkworks pro-                   FP + TN
+gram for undergraduate researchers, A. L. post-processed
+                                              F1 score:and extracted data, D. M. guided and supervised the re-
+search. Writing of the manuscript was done by M. P. P.                        2TP
+and D. M.. All authors read, revised and approved the           FPR =                                (5)                                                           2TP + FP + FN
+final manuscript.
+
+
+                                                                B.  Data Availability
+                 VIII. METHODS
+
+                                                The  databases  curated  as  a  result  of  this  pa-
+  As with any machine learning model, there are hy-                                                              per,   all  datasets  used  in  the  assessment  of  the
+perparameters that may be optimized. Our experience                                                    method,  as  well  as  the  codes  and  software  used
+showed that there  is very  little to be gained by per-                                                               in   this  paper   are   available  on   figshare   [60]:
+forming the costly optimization, and throughout the pa-                                                          https://doi.org/10.6084/m9.figshare.21861948.    The
+per we used default recommended values for all mod-                                                        codes  are  included  for  full  transparency,  but  were
+els. In OpenAI GPT-3 davinci we used the default val-    developed for internal use only, so they contain very
+ues for fine-tuning, and when using both the pretrained                                                            limited error handling, and the authors do not guarantee
+text-davinci-002/003 and fine-tuned davinci we set    that they will work universally on every system.  All
+the frequency and presence penalties as well as temper-                                                       parameters used for the model fine-tuning and zero-shot
+ature to 0. The fine-tuning of bart and DeBERTaV3 was     classification can be found in the codes.
+performed with default recommended values too, which
+is a learning rate of 2e −5, batch size of 16, 5 epochs,
+and 0.01 weight decay.   Full and detailed input  files                C.  Competing Interest
+can be found in [60]. Python codes were executed with
+Python ver. 3.10.6. For zero-shot classification with Ope-                                                The authors declare no competing interest.
+nAI models, the model’s response was limited to a sin-
+
+## PDF page 14
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+
+
+
+ [1] S. Miret and N. M. A. Krishnan, Are llms ready for real-     [16] O. Sierepeklis and J. Cole, A thermoelectric materials
+    world materials discovery?,  (2024), arXiv:2402.05200.          database auto-generated from the scientific literature us-
+ [2] E. A.  Olivetti,  J. M. Cole,  E. Kim, O. Kononova,         ing chemdataextractor, Sci Data 9, 648 (2022).
+    G. Ceder, T. Y.-J. Han, and A. M. Hiszpanski, Data-     [17] Q. Dong and J. Cole, Auto-generated database of semi-
+    driven materials research enabled by natural language        conductor band gaps using chemdataextractor, Sci Data
+    processing and information extraction, Applied Physics         9, 193 (2022).
+    Reviews 7, 041317 (2020).                                       [18] O. Kononova, H. Huo, T. He, Z. Rong, T. Botari, W. Sun,
+ [3] O. Kononova, T. He, H. Huo, A. Trewartha, E. A.        V. Tshitoyan, and G. Ceder, Text-mined dataset of inor-
+     Olivetti, and G. Ceder, Opportunities and challenges of         ganic materials synthesis recipes, Scientific Data 6, 203
+     text mining in materials research, iScience 24, 102155         (2019).
+     (2021).                                                            [19] Z. Wang, O. Kononova, K. Cruse,  et  al., Dataset of
+ [4] M. Krallinger, O. Rabal, A. Louren¸co,  J. Oyarzabal,         solution-based inorganic materials synthesis procedures
+    and A. Valencia, Information retrieval and text mining         extracted from the scientific literature, Sci Data 9, 231
+     technologies for chemistry, Chemical Reviews 117, 7673         (2022).
+     (2017).                                                            [20] Z. Wang, O. Kononova, K. Cruse, T. He, H. Huo, Y. Fei,
+ [5] K. Choudhary and M. L. Kelley, Chemnlp: A natural        Y. Zeng, Y. Sun, Z. Cai, W. Sun, and G. Ceder, Dataset
+    language processing based library for materials chemistry          of solution-based inorganic materials synthesis proce-
+     text data, The Journal of Physical Chemistry C 127,        dures extracted from the scientific literature, Scientific
+    17545 (2023), https://doi.org/10.1021/acs.jpcc.3c03106.        Data 9, 231 (2022).
+ [6] V. Tshitoyan, J. Dagdelen, L. Weston, A. Dunn, Z. Rong,     [21] E. Kim, K. Huang, A. Saunders, A. McCallum, G. Ceder,
+    O. Kononova, K. A. Persson, G. Ceder, and A. Jain,       and E. Olivetti, Materials synthesis insights from scien-
+    Unsupervised word embeddings capture latent knowledge            tific literature via text extraction and machine learning,
+    from materials science literature, Nature 571, 95 (2019).        Chemistry of Materials 29, 9436 (2017).
+ [7] O. Isayev, Text mining facilitates materials discovery, Na-     [22] Z. Jensen, E. Kim, S. Kwon, T. Z. H. Gani, Y. Rom´an-
+    ture 571, 42 (2019).                                          Leshkov, M. Moliner, A. Corma, and E. Olivetti, A ma-
+ [8] A. Trewartha, N. Walker, H. Huo, S. Lee, K. Cruse,         chine learning approach to zeolite synthesis enabled by
+     J. Dagdelen, A. Dunn, K. A. Persson, G. Ceder, and        automatic literature data extraction, ACS Central Sci-
+    A. Jain, Quantifying the advantage of domain-specific        ence 5, 892 (2019).
+     pre-training on named entity recognition tasks in mate-     [23] E. Kim, Z. Jensen, A. van Grootel, K. Huang, M. Staib,
+     rials science, Patterns 3, 100488 (2022).                           S. Mysore,  H.-S. Chang, E. Strubell, A. McCallum,
+ [9] L. Weston, V. Tshitoyan, J. Dagdelen, O. Kononova,         S. Jegelka, and E. Olivetti, Inorganic materials synthesis
+    A. Trewartha, K. A. Persson, G. Ceder, and A. Jain,        planning with literature-trained neural networks, Journal
+   Named entity recognition and normalization applied to          of Chemical Information and Modeling 60, 1194 (2020).
+     large-scale information extraction from the materials sci-     [24] D. Morgan and R. Jacobs, Opportunities and challenges
+    ence literature, Journal of Chemical Information and          for machine learning in materials science, Annual Review
+    Modeling 59, 3692 (2019).                                          of Materials Research 50, 71 (2020).
+[10] X. Zhao, J. Greenberg, Y. An, and X. T. Hu, Fine-tuning     [25] J. E. Saal, A. O. Oliynyk, and B. Meredig, Machine learn-
+    bert model for materials named entity recognition, 2021         ing in materials discovery: Confirmed predictions and
+   IEEE International Conference on Big Data (Big Data),          their underlying approaches, Annual Review of Materi-
+        , 3717 (2021).                                                         als Research 50, 49 (2020).
+[11] T. Isazawa and J. M. Cole, Single model for organic     [26] C. Court and J. Cole, Magnetic and superconducting
+    and  inorganic chemical named  entity  recognition  in        phase diagrams and transition temperatures predicted
+    chemdataextractor, Journal of Chemical Information and         using text mining and machine learning, npj Comput
+    Modeling 62, 1207 (2022).                                Mater 6, 18 (2020).
+[12] T. Gupta, M. Zaki, N. M. A. Krishnan, and Mausam,     [27] H. Huo, C. J. Bartel, T. He, A. Trewartha, A. Dunn,
+    Matscibert: A materials domain language model for text        B. Ouyang, A. Jain, and G. Ceder, Machine-learning ra-
+    mining and information extraction, npj Computational         tionalization and prediction of solid-state synthesis con-
+    Materials 8, 102 (2022).                                             ditions, Chemistry of Materials 34, 7323 (2022).
+[13] D. M. Jessop, S. E. Adams, E. L. Willighagen, L. Hawizy,     [28] J. Zhao and  J. M. Cole, Reconstructing chromatic-
+    and P. Murray-Rust, OSCAR4: a flexible architecture for         dispersion relations and predicting refractive indices us-
+    chemical text-mining, Journal of Cheminformatics 3, 41         ing text mining and machine learning, Journal of Chem-
+     (2011).                                                                    ical Information and Modeling 62, 2670 (2022).
+[14] M. C. Swain and J. M. Cole, Chemdataextractor: A     [29] C.  Karpovich,   Z.   Jensen,   V.  Venugopal,  and
+     toolkit for automated extraction of chemical information        E.   Olivetti,   Inorganic   synthesis   reaction   condi-
+    from the scientific literature, Journal of Chemical Infor-         tion  prediction  with  generative  machine  learning
+    mation and Modeling 56, 1894 (2016).                       10.48550/ARXIV.2112.09612 (2021).
+[15] J. Mavraˇci´c, C. J. Court, T. Isazawa, S. R. Elliott, and     [30] A. B. Georgescu, P. Ren, A. R. Toland, S. Zhang, K. D.
+     J. M. Cole, Chemdataextractor 2.0: Autopopulated on-          Miller, D. W. Apley, E. A. Olivetti, N. Wagner, and
+     tologies for materials science, Journal of Chemical Infor-          J. M. Rondinelli, Database, features, and machine learn-
+    mation and Modeling 61, 4280 (2021).                          ing model to identify thermally driven metal–insulator
+                                                                        transition compounds, Chemistry of Materials 33, 5591
+
+## PDF page 15
+Digital Discovery, 2024, 3, 1221-1235                                    https://doi.org/10.1039/D4DD00016A
+
+
+     (2021).                                                            [45] M. Lewis, Y. Liu, N. Goyal, M. Ghazvininejad, A. Mo-
+[31] E. Beard and J. Cole, Perovskite- and dye-sensitized       hamed, O. Levy, V. Stoyanov, and L. Zettlemoyer, Bart:
+     solar-cell device databases auto-generated using chem-        Denoising sequence-to-sequence pre-training  for natu-
+    dataextractor, Sci Data 9, 329 (2022).                              ral language generation, translation, and comprehension
+[32] P. Kumar,  S. Kabra, and  J.  Cole, Auto-generating        10.48550/ARXIV.1910.13461 (2019).
+    databases of yield strength and grain size using chem-     [46] W. Yin, J. Hay, and D. Roth, Benchmarking zero-shot
+    dataextractor, Sci Data 9, 292 (2022).                           text classification: Datasets, evaluation and entailment
+[33] J. Zhao and  J. M. Cole, Reconstructing chromatic-        approach 10.48550/ARXIV.1909.00161 (2019).
+     dispersion relations and predicting refractive indices us-     [47] P.  He,  J.  Gao,  and W.  Chen,  Debertav3:   Im-
+    ing text mining and machine learning, Journal of Chem-        proving   deberta   using   electra-style   pre-training
+     ical Information and Modeling 62, 2670 (2022).                with    gradient-disentangled   embedding    sharing
+[34] J. Zhao and J. Cole, A database of refractive indices and        10.48550/ARXIV.2111.09543 (2021).
+     dielectric constants auto-generated using chemdataex-     [48] A. Conneau,  G. Lample,  R.  Rinott,  A.  Williams,
+     tractor, Sci Data 9, 192 (2022).                                   S.  R.  Bowman,  H.  Schwenk,  and  V.  Stoyanov,
+[35] A. Dunn,  J.  Dagdelen,  N.  Walker,  S.  Lee,  A.  S.         Xnli:  Evaluating cross-lingual sentence representations
+    Rosen, G. Ceder, K.  Persson, and A.  Jain,  Struc-        10.48550/ARXIV.1809.05053 (2018).
+    tured  information  extraction  from  complex  scien-     [49] S. Zhang, S. Roller, N. Goyal, M. Artetxe, M. Chen,
+      tific  text  with  fine-tuned  large  language  models         S. Chen, C. Dewan, M. Diab, X. Li, X. V. Lin, T. Mi-
+    10.48550/ARXIV.2212.05238 (2022).                            haylov, M. Ott,  S.  Shleifer, K.  Shuster, D. Simig,
+[36] Y. Song, S. Miret, H. Zhang, and B. Liu, HoneyBee:         P. S. Koura, A. Sridhar, T. Wang, and L. Zettlemoyer,
+    Progressive instruction finetuning of large language mod-        Opt:  Open pre-trained transformer language models
+     els for materials science, in Findings of the Association        10.48550/ARXIV.2205.01068 (2022).
+     for Computational Linguistics: EMNLP 2023, edited by     [50] B.  Workshop,   :,  T.  L.  Scao,  A.  Fan,  C.  Akiki,
+    H. Bouamor, J. Pino, and K. Bali (Association for Com-        E. Pavlick,  S.  Ili´c, D. Hesslow, R. Castagn´e, A. S.
+    putational Linguistics, Singapore, 2023) pp. 5724–5739.          Luccioni, F. Yvon, and M.  Gall´e et  al., Bloom: A
+[37] J. L´ala, O. O’Donoghue, A. Shtedritski, S. Cox, S. G. Ro-        176b-parameter open-access multilingual language model
+     driques, and A. D. White, Paperqa: Retrieval-augmented        10.48550/ARXIV.2211.05100 (2022).
+    generative agent for scientific research (2023).                 [51] H. Touvron, T. Lavril, G. Izacard, X. Martinet, M.-A.
+[38] M. Ansari and S. M. Moosavi, Agent-based learning        Lachaux, T. Lacroix, B. Rozi`ere, N. Goyal, E. Ham-
+     of materials datasets from scientific literature (2023),         bro, F. Azhar, A. Rodriguez, A. Joulin, E. Grave, and
+    arXiv:2312.11690.                                       G. Lample, Llama: Open and efficient foundation lan-
+[39] M. P. Polak and D. Morgan, Extracting accurate mate-        guage models (2023), arXiv:2302.13971.
+     rials data from research papers with conversational lan-     [52] Elsevier developer portal, https://dev.elsevier.com,
+    guage models and prompt engineering, Nature Commu-         [Online; accessed 08-Feb-2023].
+     nications 15, 1569 (2024).                                       [53] S. Bird, E. Klein, and E. Loper, Natural Language Pro-
+[40] P. J. Ray, Master’s thesis:  Structural investigation of         cessing with Python:  Analyzing Text with the Natural
+    La(2-x)Sr(x)CuO(4+y) - Following staging as a function        Language Toolkit (O’Reilly, 2009).
+     of temperature. Fig. 2.4.,  (2016).                              [54] S. Behnel, M. Faassen, and I. Bicking, lxml: Xml and
+[41] A. M. Hiszpanski, B. Gallagher, K. Chellappan, P. Li,        html with python (2005).
+     S. Liu, H. Kim, J. Han, B. Kailkhura, D. J. Buttler, and     [55] A. Ramesh,  P.  Dhariwal,  A.  Nichol,  C. Chu, and
+    T. Y.-J. Han, Nanomaterial synthesis insights from ma-       M. Chen, Hierarchical text-conditional image generation
+    chine learning of scientific articles by extracting, struc-        with clip latents 10.48550/ARXIV.2204.06125 (2022).
+     turing, and visualizing knowledge, Journal of Chemical     [56] Midjourney, https://www.midjourney.com, [Online; ac-
+    Information and Modeling 60, 2876 (2020).                     cessed 08-Feb-2023].
+[42] T. Wolf, L. Debut, V. Sanh, J. Chaumond, C. Delangue,     [57] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and
+    A. Moi, P. Cistac, T. Rault, R. Louf, M. Funtowicz,        B. Ommer, High-resolution image synthesis with  la-
+     J. Davison, S. Shleifer, P. von Platen, C. Ma, Y. Jer-         tent diffusion models, in 2022 IEEE/CVF Conference
+     nite, J. Plu, C. Xu, T. L. Scao, S. Gugger, M. Drame,       on Computer Vision and Pattern Recognition (CVPR)
+    Q. Lhoest, and A. M. Rush, Transformers: State-of-the-        (2022) pp. 10674–10685.
+     art natural language processing, in Proceedings of the     [58] E. Mosqueira-Rey, E. Hernandez-Pereira, D. Alonso-
+    2020 Conference on Empirical Methods in Natural Lan-         Rios,   J.  Bobes-Bascaran,  and  A.  Fernandez-Leal,
+    guage Processing: System Demonstrations (Association        Human-in-the-loop machine learning: a state of the art,
+     for Computational Linguistics, Online, 2020) pp. 38–45.           Artificial Intelligence Review 56, 3005 (2023).
+[43] T. Brown, et. al, Language models are few-shot learners,     [59] B. T. Afflerbach, C. Francis, L. E. Schultz, J. Speth-
+    Advances in Neural Information Processing Systems, 33,         son, V. Meschke, E. Strand, L. Ward, J. H. Perepezko,
+    1877 (2020).                                            D. Thoma, P. M. Voyles, I. Szlufarska, and D. Morgan,
+[44] L. Ouyang,  J. Wu,  X.  Jiang,  D. Almeida,  C.  L.       Machine learning prediction of the critical cooling rate
+    Wainwright,  P.  Mishkin,  C.  Zhang,   S.  Agarwal,          for metallic glasses from expanded datasets and elemen-
+    K. Slama, A. Ray,  J. Schulman,  J. Hilton, F. Kel-          tal features, Chemistry of Materials 34, 2945 (2022).
+     ton,  L.  Miller, M. Simens, A.  Askell,  P. Welinder,     [60] M. P. Polak, S. Modi, A. Latosinska, J. Zhang, J. Wang,
+     P. Christiano,  J. Leike, and R. Lowe, Training lan-         S. Wang, A. D. Hazra, and D. Morgan, Data for ’Flex-
+    guage models to follow instructions with human feedback           ible, Model-agnostic Method for Data Extraction from
+    10.48550/ARXIV.2203.02155 (2022).                         Text Using General Purpose Natural Language Process-
+                                                                            ing’ 10.6084/m9.figshare.21861948 (2023).

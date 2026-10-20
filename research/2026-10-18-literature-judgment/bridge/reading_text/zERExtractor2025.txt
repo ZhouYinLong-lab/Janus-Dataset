@@ -1,0 +1,787 @@
+## PDF page 1
+                zERExtractor:An Automated Platform for
+             Enzyme-Catalyzed Reaction Data Extraction from
+                                  Scientific Literature
+
+                      Rui Zhou1,2†, Haohui Ma3†, Tianle Xin4, Lixin Zou5,
+                  Qiuyue Hu1,2, Hongxi Cheng5, Mingzhi Lin5,3,  Jingjing Guo6,
+                        Sheng Wang3, Guoqing Zhang4,7*, Yanjie Wei1*,2025
+                                      Liangzhen Zheng5,3*
+Jul               1Shenzhen Institutes of Advanced Technology, Chinese Academy of
+30                 2University of ChineseSciences,AcademyShenzhen,of Sciences,518000, Beijing,China.  100049, China.
+                       3Shanghai Zelixir Biotech Co.,Ltd., Shanghai, 201203, China.
+                  4Bio-Med Big Data Center, Shanghai Institute of Nutrition and Health,
+                     University of Chinese Academy of Sciences, Chinese Academy of Science,
+                                         Shanghai, 200031, China.
+                      5Shenzhen Zelixir Biotech Co., Ltd., Shenzhen, 518107, China.
+                     6Centre in Artificial Intelligence Driven Drug Discovery, Faculty of
+                    Applied Sciences, Macao Polytechnic University, Macao SAR, China.[q-bio.BM]
+                     7National Genomics Data Center, Shanghai Institute of Nutrition and
+                    Health, University of Chinese Academy of Sciences, Chinese Academy of
+                                         Science, Shanghai, 200031, China.
+
+
+                         *Corresponding author(s). E-mail(s): gqzhang@sinh.ac.cn;
+                                       yj.wei@siat.ac.cn; zhenglz@zelixir.com;
+                             †These authors contributed equally to this work.
+
+
+
+                                                  Abstract
+
+                     The rapid expansion of enzyme kinetics literature has outpaced the curation
+                             capabilities of major biochemical databases, creating a substantial barrier to
+                           AI-driven modeling and knowledge discovery. We present zERExtractor, an auto-arXiv:2508.09995v1
+                       mated and extensible platform for comprehensive extraction of enzyme-catalyzed
+                           reaction and activity data from scientific literature. zERExtractor features a
+
+
+                                                       1
+
+## PDF page 2
+      unified, modular architecture that supports plug-and-play integration of state-
+      of-the-art models—including large language models (LLMs)—as interchangeable
+     components, enabling continuous system evolution alongside advances in AI. Our
+      pipeline synergistically combines domain-adapted deep learning, advanced OCR,
+     semantic entity recognition, and prompt-driven LLM modules, together with
+    human expert corrections, to extract kinetic parameters (e.g., kcat, Km), enzyme
+      sequences, substrate SMILES, experimental conditions, and molecular diagrams
+     from heterogeneous document formats. In this framework, active learning that
+      tightly integrates AI-assisted annotation, expert validation, and iterative model
+     refinement—allowing the system to adapt rapidly to new data sources. We also
+      curate and release a large, expert-annotated benchmark dataset comprising over
+      1,000 fully annotated tables and 5,000 biological fields from 270 peer-reviewed
+      P450-related enzymology publications, establishing a valuable and extensible
+      resource for the enzyme informatics community. Benchmarking demonstrates
+      that zERExtractor consistently outperforms existing baselines in table recogni-
+      tion (Acc 89.9%), molecular image interpretation (up to 99.1%), and relation
+      extraction (role assignment accuracy 94.2%). By bridging the longstanding data
+     gap in enzyme kinetics with a flexible, plugin-ready framework and high-fidelity
+      extraction, zERExtractor lays the groundwork for future AI-powered enzyme
+     modeling and biochemical knowledge discovery.
+
+     Keywords: Enzyme kinetics, Automated information extraction, Multimodal data
+       integration
+
+
+
+Introduction                   and PubChem[10] offer extensive infor-
+                                     mation  on  protein  sequences,  func-
+Experimentally measured enzyme kinetic   tional variants, and small molecule sub-
+data are essential for uncovering the cat-   strates. These resources collectively pro-
+alytic origin of enzymatic function and                                          vide rich contextual data for modeling
+evolution, while also serving as the foun-   enzyme–substrate interactions and kinetic
+dation for training predictive AI models                                           behaviors. Nevertheless, they encompass
+of enzymatic rate constants and speci-                                         only a limited portion  of the  kinetic
+ficity constants—a field that has witnessed   parameters described across the scien-
+remarkable advances in recent years[1–                                                         tific literature, resulting in a substantial
+3]. The quality and quantity of available                                     volume of sequence–function–condition
+enzyme kinetic data critically influence                                             relationships remaining uncurated and
+the progress of research on predictive                                           underexplored[11]. Meanwhile, the scien-
+modeling of enzyme kinetic parameters[4].                                                          tific output in enzyme kinetics as well as
+   In addition to well-curated databases                                       enzymatic reactions has been growing at
+such  as BRENDA[5,  6] and SABIO-                                    an unprecedented pace, with thousands
+RK  [7], large-scale biological reposito-                                               of new publications appearing each year
+ries  including  deep  mutational  scan-                                   and the cumulative body of literature
+ning (DMS) datasets  [8], UniProt  [9],                                now numbering in the hundreds of thou-
+                                          sands. As illustrated in Figure 1,only a
+                                          small fraction of enzyme kinetics data
+                                         reported in the literature is curated in
+
+
+                                     2
+
+## PDF page 3
+major biochemical databases, leaving the   conditions—from the vast body of bio-
+majority uncurated or unexplored. This   chemical literature, aiming to accelerate
+rapid expansion far exceeds the capac-   data acquisition for downstream modeling
+ity of existing databases to systematically   and design[18–20].
+curate kinetic data, highlighting a criti-      In  contrast,  our  work  introduces
+cal gap between the wealth of information   zERExtractor, a  unified and  scalable
+embedded in publications and the accessi-   framework designed to overcome these bot-
+ble, structured data available for compu-   tlenecks. By integrating domain-adapted
+tational modeling and machine learning   deep learning with LLMs in a human-in-
+applications.                              the-loop pipeline, zERExtractor enables
+                                         accurate extraction and structuring of
+                                        enzyme-catalyzed reaction data across
+                                            diverse document formats. Unlike pre-
+     Enzyme                                vious  systems,  it  captures  not  only
+       kinetics
+                                                                                                  jiang2025enzyme                structured kinetic parameters (e.g., kcat,
+    Literature-reported but                       Km), but also enzyme sequences, rela-
+   uncurated relationships                               tive activities, yields, substrate/product
+                                  SMILES, experimental metadata, and
+      Key data gap                               molecular structure diagrams. We further
+         for AI models
+                                            construct and release a large-scale, expert-                              enzyme kinetics
+        Unexplored              About 22,400 results (2024-2025)      annotated benchmark dataset covering
+    potential relationships         About 36,100 results (2000-2023)      270 P450-related open-accessed publica-
+Figure 1. Multilayered Data Landscape and Cura-   tions, supporting both training and evalu-
+tion Bottleneck in Enzyme Kinetics Research.A   ation. Quantitative evaluations show that
+schematic           view  of  the                      enzyme                                      kinetics                                         data
+landscape  highlights                      the                           “iceberg                                          effect”:                                            only   zERExtractor consistently outperforms
+the curated tip  is included in public databases   existing baselines in table recognition,
+(e.g.,    BRENDA,             SABIO-RK,                            UniProt,                               PubChem,   molecular image interpretation, and reac-Metabolic                     while most                                   literature-reported            Atlas[12]),
+data remain uncurated and inaccessible to AI mod-   tion extraction. Together, these advances
+els.   The         yellow                region                      at the                             iceberg tip                                         represents
+data     that         meet               the curation                           standards                                      required                                        by   bridge a longstanding gap between liter-
+public biochemical databases.At the base lies a vast   ature and structured biochemical knowl-
+unexplored space of enzyme–substrate–condition
+combinations. The right side shows the gap between   edge, laying a robust foundation for AI-
+reported studies and database coverage.            driven enzyme function modeling and
+                                             design.
+                                             In summary, our main contributions
+   Recent advancements in Artificial Gen-   are as follows:
+eral Intelligence (AGI), particularly in  A  unified multimodal  extraction
+LLMs, have shown remarkable capabilities   system: We propose zERExtractor, an
+in mining scientific literature, including   automated and scalable platform that inte-
+named entity recognition, relation extrac-   grates domain-adapted deep learning and
+tion, summarization, information integra-  LLMs to extract enzyme-catalyzed reac-
+tion, and even scientific planning [13–17].   tion data—including kinetic parameters,
+In the context of enzyme engineering,  enzyme sequences, substrate SMILES,
+recent efforts have emerged that lever-   experimental conditions, and molecular
+age AI-assisted approaches to extract   diagrams—from unstructured  scientific
+enzymology-related data—such as kinetic    literature.
+parameters, substrates, and experimental
+
+
+                                     3
+
+## PDF page 4
+   Adaptive  model  improvement   responsible for accurately locating table
+through expert-guided active learn-   regions  in complex document  layouts,
+ing:We  implement  a  feedback-driven   while the LLMs enable robust schema
+pipeline that combines AI-assisted anno-   alignment and semantic interpretation of
+tation with manual validation and active   extracted table content, even in the pres-
+sample  selection,  enabling  continuous   ence of multi-line headers, merged cells,
+model refinement, improved robustness,  and domain-specific terminology. Simi-
+and adaptive performance across new data    lar to prior formulations that leverage
+sources.                                  optimization-based contact prediction in
+  A high-quality expert-annotated   structured biological contexts [23], our
+benchmark  dataset:We  curate and   pipeline combines learning and constraint-
+release a large-scale dataset of over 1,000   based alignment to improve structural
+fully annotated tables and approximately    fidelity.
+5,000  biological  fields from 270  peer-      For molecular structure recognition,
+reviewed enzymology publications, provid-  we introduce UniMolRec, a unified recog-
+ing a valuable resource for model train-   nition framework that we developed specif-
+ing, evaluation, and benchmarking in the    ically  for  this study. UniMolRec  inte-
+enzyme informatics community.            grates multiple deep learning models in
+                                    an ensemble fashion to robustly convert
+                                        molecular structure images into canon-
+Method                                    ical SMILES representations, ensuring
+                                          high performance and adaptability across
+A pipeline specialized in           diverse image styles and noise conditions.
+enzyme-catalyzed reaction       A key feature of our system is the incor-
+                                           poration of an interactive annotation andinformation extraction
+                                             validation module, which enables human
+We developed a comprehensive and mod-   experts to review and refine automati-
+ular pipeline for the extraction of enzyme-   cally extracted data[24]. The validated
+catalyzed  reaction  information, which   and corrected annotations are systemati-
+seamlessly integrates both advanced deep    cally reintegrated into the model training
+learning techniques and LLMs. As illus-   loop, thereby allowing the underlying algo-
+trated  in  Figure  2,  the  workflow  is   rithms to continuously improve in both
+designed to address the unique challenges   accuracy and robustness. This human-in-
+posed by biochemical literature, where   the-loop framework ensures that the sys-
+critical data are dispersed across tables,  tem can adapt to new document formats
+molecular diagrams, and unstructured   and data patterns, and that high-quality,
+text.                                       semantically accurate structured data are
+   The pipeline begins with the ingestion   maintained over time.
+and parsing of raw PDF documents, which     The  pipeline  further  incorporates
+are segmented into figures, tables, and   LLM-based modules for entity and rela-
+textual content. For the table recognition   tionship  extraction,  which  accurately
+module, we employ a hybrid approach that   assign roles such as substrate, product,
+combines state-of-the-art object detec-   enzyme, and cofactor, and facilitate cross-
+tion algorithms (such as PP-YOLOv2 and   modal semantic integration. A human-in-
+SLANet)   [21, 22] with prompt-driven   the-loop annotation workflow, augmented
+LLMs. The object detection models are
+
+
+                                     4
+
+## PDF page 5
+Document Preprocessing                       Automated Information Extraction                      Manual Curation and Validation
+
+                                                              Paper processing platform
+
+                                                                     IE model                                                                manual correction
+                                                                                          Enzyme properties
+                                                       LLMs
+                                                                                       Synergistic Integration           Reaction information
+                                           Structured data                                                        ID
+                                                                                                SMILES
+                                                                                           Enzyme......sequence
+
+                                               RE model                                            Integrated
+                                                                                                                            structured dataset
+
+                                                                                          Structured data
+                                        Reaction data
+
+        Figure 2. A pipeline specialized in enzyme-catalyzed reaction information extraction.
+
+
+by an active learning module, allows for   an ensemble  architecture, UniMolRec
+continuous refinement of extraction mod-   achieves robust and accurate translation
+els and ensures high data reliability[24].     of molecular images into canonical chemi-
+  By  synergistically combining deep   cal representations.
+learning and LLM capabilities, this hybrid      While single-model approaches often
+pipeline significantly improves the  effi-   suffer from limited generalizability across
+ciency,  accuracy,  and  generalizability   diverse molecular image styles and noise
+of enzyme-catalyzed  reaction informa-   conditions, we hypothesize that an ensem-
+tion extraction. The resulting structured   ble strategy allows us to combine com-
+datasets serve as a robust resource for   plementary strengths of multiple models,
+downstream  applications  in computa-   leading to more robust and accurate
+tional enzymology and AI-driven biochem-   recognition[29].
+ical analysis[1–4, 25].                    As illustrated in Figure 3, although
+                                many  state-of-the-art  models[30,  31]
+                                          achieve  high performance on  specific
+Automated Extraction of                                            datasets, their generalization capability
+Reaction Schematics                                           across diverse molecular image distribu-
+Molecular structure recognition involves   tions remains limited.
+translating single-molecule images into       Effective extraction of small molecules
+their corresponding chemical structures,   from PDFs requires careful consideration
+serving  as  a  crucial  step  in  digitiz-   of model generalizability across varied doc-
+ing  chemical  information  from  scien-  ument layouts and image qualities. Our
+tific literature[26–28]. Recent approaches   proposed framework, UniMolRec, demon-
+have leveraged convolutional neural net-   strates strong performance and robust
+works and transformer-based architectures   adaptability under these challenging con-
+to  directly map  molecular  depictions    ditions.
+to SMILES or other chemical represen-
+tations, enabling automated and  scal-
+able interpretation of structural diagrams
+across diverse document sources[27, 28].                                Structured Extraction of
+  We developed UniMolRec, a unified
+                               Tabular Data
+recognition framework designed for molec-
+ular structure interpretation. By integrat-  We collected 270 open-source scientific
+ing multiple specialized models through    articles  related  to  cytochrome  P450
+
+
+                                     5
+
+## PDF page 6
+                             A                                                               B
+
+
+
+
+
+                              C                                                         D
+Figure 3. Multi-metric performance heatmaps comparing different molecular recognition models across
+multiple benchmark datasets. Panel A shows the InChIKey Accuracy, indicating the correctness of the
+predicted molecule’s standardized chemical identifier. Panel B shows the Perfect Match ratio, reflecting the
+percentage of predictions that exactly match the ground truth structure. Panel C reflects the proportion of
+chemically valid molecules generated by each model. Panel D displays the Tanimoto Similarity, measuring
+structural similarity based on molecular fingerprints.
+
+
+enzymes[32–34], with a focus on extract-   the subsequent tabular data extraction
+ing enzymatic reaction data. These arti-   pipeline.
+cles, spanning from 2000 to 2024, primar-     To  extract tabular data from the
+ily belong to the fields of biochemistry,   curated PDFs, we employed PP-Structure,
+structural biology, and synthetic biology.  a structure-aware OCR system developed
+To ensure relevance to our study, we fil-   within the PaddleOCR framework[22].
+tered the documents based on keyword   This model was fine-tuned on domain-
+matching, retaining only those containing    specific  samples  to  better accommo-
+at least one experimental table. Particu-   date the characteristics of enzyme kinet-
+lar attention was given to tables reporting    ics tables, including multi-line headers,
+enzyme kinetic parameters such as kcat   merged cells, and nested parameter group-
+and Km, as well as reaction-related infor-   ings. The extraction process leveraged
+mation including substrate SMILES and   both textual and visual layout cues—such
+enzyme sequences. These curated doc-   as cell bounding boxes and spatial rela-
+uments served as the raw material for   tionships—to reconstruct table structures
+                                             accurately. The extracted tables were
+                                       then converted  into structured JSON
+
+
+                                     6
+
+## PDF page 7
+                                                                              table title 0.94
+
+                                                                                  table 0.98
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                   {
+                                                                                                                                                                                                                                             proteins:CYP73A5,                                                                                        text 0.98                                                                                      Proteins   CYP73A5             Proteins   CYP73A5
+                                                                                                           Km                                                                                                                                                                        68.83±14.37            Km:68.83±14.37,                                                                                      Km                                                                                                                                        68.83±14.37
+                                                                                                                                                                                                                                                                                         kcat:                                                                                                                                                                                                                                                         0.018±0.002,                                                                                                                                                                               kcat                                                                                                                                                                        0.018±0.002                                                                                                                                            kcat                                                                                                                                        0.018±0.002                                                                                                                                                                                                                                                     kcat/Km:
+                                                                                                                           kcat/Km       0.26              kcat/Km       0.26                             ...       0.26
+                                                                                                                     h       1.49± 0.39             h       1.49± 0.39                   }
+
+                                                                               paragraph title 0.88                                    text 0.99               OCR                     SemanticRecognitionEntity                  ExtractionRelation                    informationStructured
+
+                                              Document processing
+
+
+
+                                                                                                            Zero-shot
+                                                                                                                                         Standardized output interface                      informationStructured                                     LLMs             DocumentPrompt-basedprocessing                                                                                                     Few-shot
+                                                                                               adapter/LoRA fine-tuning
+
+
+
+
+Figure 4. Multi-Module Workflow for Structured Extraction of Enzyme Kinetic Parameters.(Top) Tradi-
+tional pipeline based on deep learning and OCR. Raw PDFs are first processed to identify table regions,
+followed by OCR to extract layout-aware cell content. Semantic entity recognition and relation extraction
+modules are applied to identify key biological fields such as enzyme name, Km, kcat, and pH, and align them
+into a structured schema. The final output is converted into JSON format with value-unit pairs. (Bottom)
+LLM-based document understanding pipeline. Prompt-based document parsing is combined with zero-shot
+or few-shot tuning (e.g., via LoRA) to directly extract structured biochemical entries from unstructured
+text or semi-structured tables. This pathway simplifies pipeline complexity while enhancing generalization
+across diverse document formats.
+
+
+files, where each row corresponds to a   integration of LLMs for document under-
+biological reaction  entry. The schema   standing and semantic parsing[35]. This
+captures domain-specific fields such as   design enables  flexible substitution or
+Enzyme name, Substrate, Enzyme ID   augmentation of key components (e.g.,
+(e.g., UniProt, GenBank, or PDB), Prod-   relation extraction or schema alignment)
+uct, pH, Km,  kcat, Mutations, Source   with prompt-driven LLM modules, pro-
+Organism, and Relative Activity. Each   viding a scalable framework adaptable to
+quantitative field was extracted as a value-   heterogeneous document types and future
+unit pair (e.g., µM, s−1,%). Importantly,  model advances.
+the system includes a fuzzy header match-     To assess the reliability of the auto-
+ing strategy, where table columns are   matic extraction, we manually reviewed
+aligned to target schema fields based on   approximately 20% of the extracted tables
+string similarity when exact matches are   (54 tables in  total), which were inde-
+absent. This enables robust extraction   pendently checked by two graduate-level
+from heterogeneous table formats with   annotators with expertise in enzymology.
+noisy or domain-specific headers.           After cleaning and validation, we retained
+  An overview  of the  entire  extrac-  175 high-quality tables, resulting in a total
+tion workflow—including PDF process-   of 612 structured reaction entries suitable
+ing, OCR, entity recognition, relation    for downstream modeling and analysis.
+alignment, and structured output format-
+ting—is illustrated in Figure 4. In addition
+to the conventional deep learning-based
+components, our pipeline is designed in
+a modular fashion that allows seamless
+
+
+
+                                     7
+
+## PDF page 8
+Enhancing Fidelity of Data       coordinated modules: (A) a document
+Extraction through Manual      viewing and table annotation panel, allow-
+Curation                                ing users to inspect and align PDF tables
+                                              in context; (B) a chemical structure and
+Through table recognition, molecular reac-   reaction relationship interface, supporting
+tion extraction, and semantic interpre-   molecule recognition and cross-reaction
+tation powered by LLMs, the system   linkage; and (C) a unified structured out-
+generates preliminary structured data   put module, which aggregates biological
+from scientific documents. This initial out-   fields (e.g., enzyme name, SMILES, kcat)
+put is subsequently reviewed and refined   into a consistent format for model train-
+through manual curation. The curated   ing. This system was instrumental in
+data are then fed back into the AI mod-   building the manually annotated dataset
+els and algorithms to support continuous   used for model refinement and supports
+training and iterative optimization. As the   future human-in-the-loop corrections dur-
+annotation process advances, the active   ing model deployment.
+learning module and AI-assisted label-     To  improve  the  adaptability and
+ing system dynamically adapt to new   robustness of the extraction pipeline, we
+data, progressively streamlining the pro-  implemented a feedback-driven model
+cessing pipeline and improving annotation   reconstruction mechanism based on a man-
+accuracy[24].                                 ually curated dataset. Although the initial
+   Figure 5 illustrates our literature anno-   pipeline achieved promising  results,  it
+tation system. The task management   struggled with highly heterogeneous table
+interface provides a clear overview  of   formats and ambiguous biological field
+the real-time progress for each annota-   expressions commonly found in enzymol-
+tion task. Annotators can inspect and   ogy literature. To address this limitation,
+refine the data extracted by our mod-  we conducted large-scale manual annota-
+els, with convenient options to modify,   tion on the full set of 270 curated PDFs,
+delete, or reprocess individual  entries.   resulting in over 1,000 fully labeled tables
+Both pre- and post-annotation data are   and approximately 5,000 domain-specific
+systematically retained to support model    fields, such as kcat, Km, substrate names,
+improvement and performance evaluation.  and mutation records. The annotation was
+These records enable continuous refine-   carried out by a team of ten researchers
+ment of model accuracy and ensure that   with biological backgrounds, following a
+the deployed system consistently uses the   unified schema-aligned labeling guideline.
+most semantically accurate and struc-     The annotated dataset was used to
+turally reliable models.                      fine-tune both components of the extrac-
+                                            tion system.  Specifically, we retrained
+Model reconstruction based on   the SLANet model to improve structural
+                                    and semantic field alignment across noisya manually annotated dataset
+                                           or nested table layouts. Additionally, a
+To support large-scale annotation, inspec-  LLM was fine-tuned to better handle
+tion, and schema-constrained integration   reaction-level inference and ambiguous
+of enzymatic reaction data, we devel-   entity resolution. This human-in-the-loop
+oped a modular annotation and extraction   strategy enables our system to evolve over
+system. Figure 5  illustrates the  inter-
+face of this system, which includes three
+
+
+                                     8
+
+## PDF page 9
+                         A                                          B
+
+
+
+
+
+                                               C
+
+Figure 5. Interactive platform for multimodal extraction and standardization of enzyme-catalyzed reaction
+data.(A) PDF document view with automatic table extraction and region detection. Table content is parsed
+and aligned with the visual layout. (B) Molecular entity and relationship extraction interface. Reactants,
+products, and intermediate molecules are parsed and linked across chemical reaction records. (C) Structured
+data integration view. Tabular results from enzymatic parameters and molecular relations are merged into
+a unified schema with fields such as enzyme name, substrate SMILES, mutations, Km, kcat, and relative
+activity.
+
+
+time by continually integrating correc-   dataset comprising both publicly avail-
+tions from expert supervision, forming a   able sources and our manually annotated
+modular and self-improving framework.    images. Specifically, our dataset construc-
+                                             tion involves two parts:
+                                     Publicly Available Datasets: Follow-
+                                            ing established benchmark protocols used
+Results                          by other state-of-the-art models, we col-
+                                             lected two publicly available datasets:
+Data preparation                                             (a) Synthetic Data: approximately 1 mil-
+Data Preparation for Molecular    lion molecular images automatically ren-
+Graph Recognition                  dered using theIndigo toolkit[38] from
+                                         molecules randomly sampled from Pub-
+The ”image-to-SMILES” model used in  Chem  database[39];  and  (b)  Patent
+this platform was trained on publicly avail-   Data: around 680,000 molecular images
+able datasets, consistent with methodolo-   extracted from patents published by the
+gies established in previous studies[30, 31,   United States Patent and Trademark
+36, 37].                                       Office (USPTO) , accompanied by molec-
+   To train our molecular reaction recog-   ular structure labels.
+nition models, we prepared a diverse
+
+
+                                     9
+
+## PDF page 10
+Manually Annotated Dataset: To   9,138 testing images, generated by align-
+complement publicly available datasets   ing the XML and PDF representations of
+and enhance model performance on realis-   scientific articles. This large-scale dataset
+ tic and complex scenarios, we created an   provides high-quality supervision for learn-
+ in-house annotated dataset. This dataset   ing general table structures. In the second
+ includes 1,355 manually labeled molecu-   stage, we fine-tuned the pretrained model
+ lar reaction images, derived directly from   using a domain-specific dataset automat-
+ scientific  literature PDFs  in enzymol-   ically annotated by our system, which
+ogy and chemistry. Each image in this   includes tables extracted from biochemi-
+ dataset was carefully labeled with the   cal reaction documents. This progressive
+ corresponding SMILES representation by   training strategy allows the model to
+ experts proficient in chemical structure   capture both general structural patterns
+ identification.                        and domain-specific layout characteris-
+                                                      tics, thereby enhancing its adaptability
+                                    and performance in specialized scientificTabular Data Extraction and
+                                             contexts.Annotation
+
+ For the development and evaluation of
+                              Table Extraction Accuracy
+ our table extraction module, we curated
+ a comprehensive dataset from 270 public-  To evaluate the performance of our table
+ accessible  scientific  articles  published   extraction  pipeline, we constructed a
+between 2000 and 2024. These articles   manually annotated benchmark dataset
+were  filtered using targeted keywords   comprising 270 full-text articles, contain-
+ relevant  to enzyme  kinetics, such  as   ing a total of 100 enzyme-related tables.
+“P450” and “enzyme kinetic parameter”.  The evaluation metric used was accu-
+After rigorous screening, we manually   racy (Acc), which measures the structural
+ annotated over 800 tables, focusing on   and semantic consistency between the
+ those containing enzyme-catalyzed reac-   predicted table and the ground truth anno-
+ tion data, kinetic parameters and rela-   tation. As shown in Table 3, our approach
+ tive enzyme activities. Each table was   achieves an accuracy of 89.9%, outper-
+ reviewed through a dual-phase process,   forming previous state-of-the-art methods
+ including both initial annotation and sub-   such as SLANet (86.0%), TableMaster
+ sequent cross-checking by independent   (77.90%), and LGPMA (65.74%). Com-
+ annotators. During the review phase, we   pared to the strongest baseline (SLANet),
+ also evaluated the confidence level for each   our model achieves a gain of 3.9%, demon-
+ annotation, and ambiguous cases were   strating its superior ability to recover bio-
+ flagged for further inspection (as illus-   logically relevant tabular structures. The
+ trated in Figure 5).The key fields are listed   improvement is attributed to the integra-
+ in Table 1.                                  tion of domain-specific schema alignment
+   To train our table extraction model,  and post-OCR normalization strategies.
+we adopted SLANet [22] as the back-
+bone architecture and performed a two-   Molecular Graph Recognition
+ stage training process. In the first stage,
+                           and Relation
+SLANet was pretrained on the PubTabNet
+ dataset [40], which contains 500,777 train-  We  first evaluated the performance of
+ ing images, 9,115 validation images, and   our molecular graph recognition module,
+
+
+                                     10
+
+## PDF page 11
+          Table 1. Schema for Structured Extraction of Enzyme-Catalyzed Reaction Data
+
+ Field Name        Description                        Data Type
+
+Enzyme name       Name of the enzyme(s)                         string
+
+Substrate            Chemical substrate used in the reaction       string
+
+Enzyme ID           UniProt, GenBank, or PDB ID                string
+
+Product            Main product or reaction outcome             string
+
+pH              pH value of the reaction                          float
+
+Km                    Michaelis constant (value and unit)           object
+kcat                   Catalytic constant (value and unit)           object
+
+Mutations            Mutation information (list or ”None”)           list of string / string
+
+Source Organism      Species of enzyme origin                       string
+
+Relative Activity      Value and unit; includes yield/conversion %   object
+
+
+
+
+
+Table 2. Benchmark Comparison of Molecular Image Recognition Models on Synthetic and Realistic Datasets
+
+              Synthetic                            Realistic
+Model
+            Indigo  ChemDraw CLEF   Staker   ACS  USPTO  JPO   UOB
+
+MolVec      95.4       87.9       82.8      0.8      47.4      88.4      67.8      80.6
+OSRA       95.0       87.3       84.6      0.0      55.3      87.4      55.3      78.5
+Img2Mol     58.9       46.4       18.3      17.0      23.0      26.3      16.4      68.7
+DECIMER   69.6       86.1       62.7      40.8      46.5      41.1      55.2      88.2
+MolScribe    96.0       94.4       89.7      87.8      69.4      93.6      47.0      96.0
+Ours        98.9       98.1       95.7      88.7      75.8      94.2      68.8      99.1
+
+
+Table 3. Performance Comparison on PubTabNet    five  representative  baselines,  includ-
+with State-of-the-Art Methods                   ing  MolVec  (https://molvec.ncats.io),
+                                     OSRA[43], Img2Mol[26], DECIMER[31],Method     Acc(%)      Gain
+                                     and MolScribe[30], on both synthetic and
+TableMaster[41]77.90*              -               realistic datasets. As shown in Table 1,
+LGPMA[42]    65.74*              -            our model consistently outperforms all
+                                          other methods across  all datasets. OnSLANet[22]    86.0                 -
+                                         the synthetic datasets generated from
+Ours          89.9         3.9%
+                                         Indigo and ChemDraw templates, our
+ *Source: adapted from Ref. [22]               method achieves accuracies of 98.9% and
+                                         98.1%, respectively, surpassing MolScribe,
+                                         the second-best performer, by 2.9% and
+which aims to convert chemical structure   3.7%. The performance gap becomes even
+images into standardized molecular rep-  more significant on realistic datasets (e.g.,
+resentations for subsequent reaction anal-  CLEF, USPTO, and UOB), where model
+ysis. The task was benchmarked against   robustness to noise, font variance, and
+
+
+                                    11
+
+## PDF page 12
+layout distortion is crucial. Our model   based on SLANet[22], improving its ability
+achieves 95.7% on CLEF and 99.1% on   to handle irregular layouts, nested head-
+UOB, representing absolute improvements    ers, and domain-specific column variations.
+of 6.0% and 3.1% over the best base-   Second, we fine-tuned the LLM[35] respon-
+line, respectively. This demonstrates the    sible for reaction-level parsing, focusing on
+effectiveness of our model not only in    role assignment (e.g., substrate/product)
+clean settings but also under real-world   and molecular relationship inference. Post-
+conditions.                                 training evaluation showed measurable
+   In  addition  to  chemical  image-to-   improvements. The  table  field  extrac-
+SMILES recognition, we also evaluated   tion accuracy improved by 3.9%, while
+the relation extraction component, which   molecular relation recognition improved
+associates recognized molecular graphs   by 3.0%, as shown in Table 2. These
+with their roles in enzyme-catalyzed reac-   results demonstrate the effectiveness of
+tions  (e.g.,  substrate,  product,  cofac-   human-in-the-loop feedback for enhanc-
+tor). The module benefits from visual-   ing domain-specific extraction accuracy
+semantic alignment and rule-guided decod-  and confirm the self-evolving nature of
+ing, achieving a role assignment accuracy   our framework[24]. Prior work has demon-
+of 94.2% on the manually annotated   strated that thoughtful dataset curation
+reaction benchmark[23].                 can  significantly enhance downstream
+   These results collectively validate the   prediction performance [44], reinforcing
+capability of our system in accurate molec-   the importance of our expert-annotated
+ular graph recognition and relation map-   dataset in improving extraction accuracy.
+ping, laying a robust foundation for down-
+stream structured extraction of enzymatic
+reactions.                    Conclusion
+
+Model Refinement through      zERExtractor  represents a  significant
+                                     advancement in automating the extrac-
+Human-Annotated Data
+                                            tion of enzyme-catalyzed reaction data
+To  evaluate  the  potential  for   self-  from scientific literature. By integrating
+improvement  in our extraction frame-   domain-adapted deep learning with LLMs
+work, we conducted a round of model   in a modular pipeline, it achieves superior
+refinement using a manually annotated   performance in table recognition (89.9%
+dataset. The dataset was constructed   accuracy), molecular image interpretation
+from 270 enzymology-related PDFs, yield-  (up to 99.1%), and enzymetic reaction
+ing over 1,000 labeled tables and 5,000   extraction. The system’s adaptive learning
+annotated biological fields including kcat,  mechanism, facilitated by expert-guided
+Km, relative activities, enzyme names,   validation and active learning, enables
+sequences, substrates, products, muta-   continuous improvement across diverse
+tions as well as other conditions. Anno-   data sources. Additionally, the release
+tation was performed by a team of ten   of a large-scale, expert-annotated P450
+domain experts following a standardized   enzymes benchmark dataset provides a
+schema-aligned guideline. We used this   valuable resource for the enzyme informat-
+dataset to fine-tune two critical compo-   ics community. Collectively, these innova-
+nents of our system. First, we retrained   tions bridge the data gap in enzyme kinet-
+the table structure recognition module    ics and lay a robust foundation for future
+
+
+                                    12
+
+## PDF page 13
+deep learning-powered enzyme modeling       using machine and deep learning.
+and biochemical knowledge discovery.          Nature communications  14, 4139
+                                                 (2023).
+Acknowledgment                                                         [5] Chang, A. et al. Brenda, the elixir
+                                                 core data resource in 2021: new devel-This work was  partly  supported by
+                                         opments and updates. Nucleic acidsthe National Key Research and Devel-
+                                                 research 49, D498–D508 (2021).opment  Program   of  China  under
+Grant  No.  2023YFA0915500  (S.W.,
+                                                         [6] Schomburg,  I. et  al.  The brenda
+G.Z. and  L.Z.) and 2024YFA0919702
+                                       enzyme information system–from a
+(Y.W.),  National  Science  Foundation
+                                             database to an expert system. Jour-
+of  China  under  grant  no.  62272449
+                                               nal of biotechnology 261, 194–206
+(Y.W.)  and  12426303  (Y.W.),  the
+                                                 (2017).
+Shenzhen Basic Research Fund under
+grant  no  KQTD20200820113106007,                                                         [7] Wittig, U., Rey, M., Weidemann,
+ZDSYS20220422103800001. We would                                                A., Kania, R. & M¨uller, W. Sabio-
+also like to thank the funding support                                                     rk: an updated resource for man-
+by the Key Laboratory of Quantitative                                                 ually curated biochemical reaction
+Synthetic Biology, Chinese Academy of                                                     kinetics. Nucleic acids research 46,
+Sciences under grant no. CKL075. This                                      D656–D660 (2018).
+research is also supported by the Science
+and Technology Development Fund of     [8] Fowler, D. M. & Fields, S.  Deep
+Macau (0004/2025/RIA1 to J.G.).             mutational scanning: a new style of
+                                                protein science. Nature methods 11,
+References                            801–807 (2014).
+
+                                                         [9] Uniprot: the universal protein knowl-  [1] Li, F. et al. Deep learning-based k cat
+                                             edgebase in 2023 (2023).     prediction enables improved enzyme-
+     constrained model  reconstruction.
+                                                  [10] Kim, S. et al.  Pubchem in 2021:
+    Nature Catalysis 5, 662–672 (2022).
+                                      new data content and improved web
+  [2] Wang, Z. et al. Robust enzyme dis-        interfaces. Nucleic acids research 49,
+     covery and engineering with deep      D1388–D1395 (2021).
+     learning using catapro. Nature com-
+                                                  [11] Pleiss, J.  Modeling enzyme kinet-
+    munications 16, 2736 (2025).
+                                                            ics: Current challenges and future
+                                                perspectives for biocatalysis.  Bio-  [3] Yu, H., Deng, H., He, J., Keasling,
+     J. D. & Luo, X.   Unikp: a uni-       chemistry 63, 2533–2541 (2024).
+     fied framework for the prediction of
+                                                  [12] Pornputtapong, N., Nookaew, I. &
+    enzyme kinetic parameters. Nature
+                                                 Nielsen,  J.   Human  metabolic
+    communications 14, 8211 (2023).
+                                                      atlas: an online resource for human
+                                             metabolism. Database 2015, bav068  [4] Kroll, A., Rousset, Y., Hu, X.-P.,
+     Liebrand, N. A. & Lercher, M. J.       (2015).
+    Turnover number  predictions  for
+     kinetically uncharacterized enzymes
+
+
+                                    13
+
+## PDF page 14
+[13] Hu, M. et al.  Evaluation of large    [22] Li, C.  et  al.   Pp-structurev2: A
+    language models for discovery of gene        stronger document analysis system.
+     set function. Nature methods 22, 82–      arXiv  preprint  arXiv:2210.05391
+    91 (2025).                                  (2022).
+
+[14] Jin, Q., Leaman, R. & Lu, Z. Pubmed    [23] Fan, V. et al. Openchemie: An infor-
+    and beyond: biomedical literature       mation extraction toolkit for chem-
+    search in the age of artificial intelli-        istry literature. Journal of Chemical
+     gence. EBioMedicine 100 (2024).         Information and Modeling 64, 5521–
+                                           5534 (2024).
+[15] Dagdelen, J. et al. Structured infor-
+    mation extraction from scientific text    [24] Monarch, R. M. Human-in-the-Loop
+    with large language models. Nature      Machine Learning: Active learning
+    Communications 15, 1418 (2024).        and annotation for human-centered
+                                      AI (Simon and Schuster, 2021).
+[16] Polak, M. P. & Morgan, D. Extract-
+     ing accurate materials data from    [25] Luo, Q. et al. Benchmarking reverse
+     research papers with conversational       docking through alphafold2 human
+    language models and prompt engi-       proteome. Protein Science 33, e5167
+     neering. Nature Communications 15,       (2024).
+    1569 (2024).
+                                                  [26] Clevert, D.-A., Le, T., Winter, R.
+[17] Boiko, D. A., MacKnight, R., Kline,    & Montanari, F. Img2mol–accurate
+    B. & Gomes, G. Autonomous chem-       smiles recognition from molecular
+     ical research with  large language        graphical depictions. Chemical sci-
+    models. Nature 624, 570–578 (2023).       ence 12, 14174–14181 (2021).
+
+[18] Smith, N., Yuan, X., Melissinos, C. &    [27] Khokhlov, I., Krasnov, L., Fedorov,
+    Moghe, G. Funcfetch: an llm-assisted      M. V. & Sosnin, S.  Image2smiles:
+    workflow enables mining thousands of       Transformer-based molecular  opti-
+    enzyme–substrate interactions from        cal recognition engine.  Chemistry-
+    published manuscripts. Bioinformat-      Methods 2, e202100069 (2022).
+     ics 41, btae756 (2025).
+                                                  [28] Hirohara, M., Saito, Y., Koda, Y.,
+[19] Lai, P.-T. et al. Enzchemred, a rich        Sato, K. & Sakakibara, Y.  Con-
+    enzyme chemistry relation extraction        volutional neural network based on
+     dataset.   Scientific Data 11, 982        smiles representation of compounds
+    (2024).                                        for detecting chemical motif. BMC
+                                                bioinformatics 19, 526 (2018).
+[20] Jiang, J. et al. Enzyme co-scientist:
+    Harnessing large language models for    [29] Ju, C., Bibaut, A. & van der Laan, M.
+    enzyme kinetic data extraction from      The relative performance of ensem-
+     literature. bioRxiv 2025–03 (2025).         ble methods with deep convolutional
+                                              neural networks for image classifica-
+[21] Redmon, J. & Farhadi, A. Yolo9000:         tion. Journal of applied statistics 45,
+     better, faster, stronger (2017).            2800–2818 (2018).
+
+
+
+                                    14
+
+## PDF page 15
+[30] Qian, Y. et al.  Molscribe: robust    [38] Pavlov, D. et  al.   Indigo: univer-
+    molecular structure recognition with         sal cheminformatics api. Journal of
+    image-to-graph generation.   Jour-       cheminformatics 3, P4 (2011).
+    nal  of Chemical Information and
+    Modeling 63, 1925–1934 (2023).         [39] Kim, S. et al. Pubchem substance
+                                       and compound databases.  Nucleic
+[31] Rajan, K., Brinkhaus, H. O., Agea,       acids  research  44, D1202–D1213
+   M. I., Zielesny, A. & Steinbeck, C.       (2016).
+    Decimer. ai: an open platform for
+    automated optical chemical struc-   [40] Zhong,  X.,  Tang,  J. &  Yepes,
+     ture identification, segmentation and       A. J. Committee, P. (ed.) Publaynet:
+     recognition in scientific publications.       Largest dataset ever for document
+    Nature communications  14, 5045        layout analysis. (ed.Committee, P.) ,
+    (2023).                                      Vol. 2019, 1015–1022 (IEEE, 2019).
+
+[32] Bernhardt, R.  Cytochromes p450    [41] Ye, J. et al. Pingan-vcgroup’s solu-
+     as versatile biocatalysts. Journal of        tion for icdar 2021 competition on
+    biotechnology 124, 128–145 (2006).          scientific literature parsing task b:
+                                                table recognition to html.  arXiv
+[33] Gillam,  E.  M.      Engineering        preprint arXiv:2105.01848 (2021).
+    cytochrome p450 enzymes. Chemical
+    research in toxicology 21, 220–231   [42] Qiao, L. et al. Committee, P. (ed.)
+    (2008).                              Lgpma: Complicated table structure
+                                                   recognition with local and global pyra-
+[34] Shaik,  S.  et  al.   P450 enzymes:      mid mask alignment. (ed.Committee,
+    Their structure, reactivity, and selec-        P.) Proceedings of the International
+     tivity modeled by qm/mm calcula-      Conference on Document Analysis
+     tions. Chemical reviews 110, 949–      and Recognition (ICDAR), 99–114
+    1017 (2010).                                (Springer, 2021).
+
+[35] Huang, J. et al. A critical assessment    [43] Smolov, V., Zentsev, F. & Rybalkin,
+     of using chatgpt for extracting struc-      M. Imago: Open-source toolkit for 2d
+    tured data from clinical notes. NPJ        chemical structure image recognition.
+     digital medicine 7, 106 (2024).             (2011).
+
+[36] Staker, J., Marshall, K., Abel, R. &    [44] Meng, J. et al.  Boosting the pre-
+   McQuaw, C. M.  Molecular struc-        dictive performance with aqueous
+     ture extraction from documents using         solubility dataset curation. Scientific
+    deep learning.   Journal of chem-      Data 9, 71 (2022).
+     ical information and modeling 59,
+    1017–1029 (2019).
+
+[37] Yoo, S., Kwon, O. & Lee, H. Image-
+    to-graph transformers for chemical
+     structure recognition (2022).  Pub-
+     lished in Nature Communications,
+     Vol. 13, Issue 1, pp. 1234–1240.
+
+
+                                    15

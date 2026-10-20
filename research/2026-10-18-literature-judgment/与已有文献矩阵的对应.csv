@@ -1,0 +1,51 @@
+﻿review_id,title,old_matrix_ids,relation,source_url
+L01,Target prediction utilising negative bioactivity data covering large chemical space,J011,already_in_matrix_same_url_or_doi,https://doi.org/10.1186/s13321-015-0098-y
+L02,How to Achieve Better Results Using PASS-Based Virtual Screening: Case Study for Kinase Inhibitors,J031,already_in_matrix_same_url_or_doi,https://doi.org/10.3389/fchem.2018.00133
+L03,InertDB as a generative AI-expanded resource of biologically inactive small molecules from PubChem,J006,already_in_matrix_same_url_or_doi,https://doi.org/10.1186/s13321-025-00999-1
+L04,Inactive-enriched machine-learning models exploiting patent data improve structure-based virtual screening for PDL1 dimerizers,J032,already_in_matrix_same_url_or_doi,https://doi.org/10.1016/j.jare.2024.01.024
+L05,Extremely Randomized Machine Learning Methods for Compound Activity Prediction,J059,already_in_matrix_same_url_or_doi,https://doi.org/10.3390/molecules201119679
+L06,Negative chemical data boosts language models in reaction outcome prediction,J061,already_in_matrix_same_url_or_doi,https://doi.org/10.1126/sciadv.adt5578
+L07,A general model to predict small molecule substrates of enzymes based on machine and deep learning,J019,already_in_matrix_same_url_or_doi,https://doi.org/10.1038/s41467-023-38347-2
+L08,Self-supervised domain adaptation of protein language model based solely on positive enzyme-reaction pairs,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1016/j.csbj.2025.11.045
+L09,Information Leakage in Enzyme Substrate Prediction,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.64898/2026.02.26.708291
+L10,Robots and Minimal Physics-Informed Features: A Hybrid Framework for Enzyme Catalysis,J035,already_in_matrix_same_url_or_doi,https://doi.org/10.1002/advs.77474
+L11,Enzyme Engineering Database EnzEngDB: a platform for sharing and interpreting sequence-function relationships across protein engineering campaigns,J074,already_in_matrix_same_url_or_doi,https://doi.org/10.1093/nar/gkaf1142
+L12,BioNOT: A searchable database of biomedical negated sentences,J022,already_in_matrix_same_url_or_doi,https://doi.org/10.1186/1471-2105-12-420
+L13,Negatome 2.0: a database of non-interacting proteins derived by literature mining manual annotation and protein structure analysis,J070,already_in_matrix_same_url_or_doi,https://doi.org/10.1093/nar/gkt1079
+L14,NegBio: a high-performance tool for negation and uncertainty detection in radiology reports,,not_matched_by_url_or_doi_not_global_novelty,https://pmc.ncbi.nlm.nih.gov/articles/PMC5961822/
+L15,NegBERT: A Transfer Learning Approach for Negation Detection and Scope Resolution,,not_matched_by_url_or_doi_not_global_novelty,https://aclanthology.org/2020.lrec-1.704/
+L16,NADE: A Benchmark for Robust Adverse Drug Events Extraction in Face of Negations,,not_matched_by_url_or_doi_not_global_novelty,https://aclanthology.org/2021.wnut-1.26/
+L17,Increasing adverse drug events extraction robustness on social media: Case study on negation and speculation,,not_matched_by_url_or_doi_not_global_novelty,https://pmc.ncbi.nlm.nih.gov/articles/PMC9791307/
+L18,OpenChemIE: An Information Extraction Toolkit For Chemistry Literature,,not_matched_by_url_or_doi_not_global_novelty,https://arxiv.org/abs/2404.01462
+L19,BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature,,not_matched_by_url_or_doi_not_global_novelty,https://arxiv.org/html/2604.21508v1
+L20,Text-mined dataset of solid-state syntheses with impurity phases using Large Language Model,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1038/s41597-025-06222-y
+L21,Text Mining the Literature to Inform Experiments and Rationalize Impurity Phase Formation for BiFeO3,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1021/acs.chemmater.3c02203
+L22,Autonomous data extraction from peer reviewed literature for training machine learning models of oxidation potentials,,not_matched_by_url_or_doi_not_global_novelty,https://arxiv.org/abs/2308.00389
+L23,Harnessing GPT-3.5 for text parsing in solid-state synthesis case study of ternary chalcogenides,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1039/D3DD00202K
+L24,Finding the dark matter: Large language model-based enzyme kinetic data extractor and its validation,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1002/pro.70251
+L25,Enzyme Co-Scientist: Harnessing Large Language Models for Enzyme Kinetic Data Extraction from Literature,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1101/2025.03.03.641178
+L26,zERExtractor: An Automated Platform for Enzyme-Catalyzed Reaction Data Extraction from Scientific Literature,,not_matched_by_url_or_doi_not_global_novelty,https://arxiv.org/abs/2508.09995
+L27,EnzChemRED a rich enzyme chemistry relation extraction dataset,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1038/s41597-024-03835-7
+L28,FuncFetch an LLM-assisted workflow enables mining thousands of enzyme-substrate interactions from published manuscripts,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1093/bioinformatics/btae756
+L29,Real Measured Negatives as a Substrate for Calibrated Target-Specific Bioactivity Prediction,,not_matched_by_url_or_doi_not_global_novelty,https://nullary.ai/research
+L30,Toward Assay-Aware Bioactivity Modelers: Getting a Grip on Biological Context,J075,already_in_matrix_same_url_or_doi,https://doi.org/10.1021/acs.jcim.5c00603
+L31,Enzyme specificity prediction using cross-attention graph neural networks,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1038/s41586-025-09697-2
+L32,VIPER A General Model for Prediction of Enzyme Substrates,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1101/2024.06.21.599972
+L33,Machine learning modeling of family wide enzyme-substrate specificity screens,J018,already_in_matrix_same_url_or_doi,https://doi.org/10.1371/journal.pcbi.1009853
+L34,Adding Stochastic Negative Examples into Machine Learning Improves Molecular Bioactivity Prediction,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1021/acs.jcim.0c00565
+L35,Efficient decoy selection to improve virtual screening using machine learning models,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1186/s13321-025-01107-z
+L36,The influence of negative training set size on machine learning-based virtual screening,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1186/1758-2946-6-32
+L37,The influence of the negative-positive ratio and screening database size on the performance of machine learning-based virtual screening,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1371/journal.pone.0175410
+L38,The influence of the inactives subset generation on the performance of machine learning methods,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1186/1758-2946-5-17
+L39,Predicting novel substrates for enzymes with minimal experimental effort with active learning,J034,already_in_matrix_same_url_or_doi,https://doi.org/10.1016/j.ymben.2017.09.016
+L40,Improving accessibility and distinction between negative results in biomedical relation extraction,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.5808/GI.2020.18.2.e20
+L41,BioContext: an integrated text mining system for large-scale extraction and contextualization of biomolecular events,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1093/bioinformatics/bts332
+L42,DeepEventMine: end-to-end neural nested event extraction from biomedical texts,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1093/bioinformatics/btaa540
+L43,Discourse-Wide Extraction of Assay Frames from the Biological Literature,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.26615/978-954-452-044-1_003
+L44,Automated assembly of molecular mechanisms at scale from text mining and curated databases,,not_matched_by_url_or_doi_not_global_novelty,https://pmc.ncbi.nlm.nih.gov/articles/PMC10167483/
+L45,Vapur: A Search Engine to Find Related Protein - Compound Pairs in COVID-19 Literature,,not_matched_by_url_or_doi_not_global_novelty,https://aclanthology.org/2020.nlpcovid19-2.21/
+L46,"Flexible, model-agnostic method for materials data extraction from text using general purpose language models",,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1039/D4DD00016A
+L47,A Novel Unsupervised Learning Model with Bayesian Hyperparameter Optimization for Predicting Substrates of Promiscuous Enzymes,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1021/acsomega.5c11697
+L48,Comparison of Confirmed Inactive and Randomly Selected Compounds as Negative Training Examples in Support Vector Machine-Based Virtual Screening,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.1021/ci4002712
+L49,Enzyme promiscuity prediction using hierarchy-informed multi-label classification,J041,already_in_matrix_same_url_or_doi,https://doi.org/10.1093/bioinformatics/btab054
+L50,Garbage in garbage out: how reliable training data improved a virtual screening approach against SARS-CoV-2 MPro,,not_matched_by_url_or_doi_not_global_novelty,https://doi.org/10.3389/fphar.2023.1193282

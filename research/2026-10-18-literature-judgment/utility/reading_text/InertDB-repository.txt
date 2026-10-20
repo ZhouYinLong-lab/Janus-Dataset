@@ -1,0 +1,226 @@
+GitHub - seungchan-an/InertDB: InertDB, a resource of biologically inactive small molecules · GitHub
+Skip to content
+Navigation Menu
+Sign in
+Appearance settings
+Search
+/
+Sign in
+Sign up
+Appearance settings
+You signed in with another tab or window.
+Reload
+to refresh your session.
+You signed out in another tab or window.
+Reload
+to refresh your session.
+You switched accounts on another tab or window.
+Reload
+to refresh your session.
+Dismiss alert
+Repository navigation
+InertDB
+Public
+Notifications
+You must be signed in to change notification settings
+Fork
+1
+(
+1
+)
+Star
+5
+(
+5
+)
+You must be signed in to star a repository
+About
+InertDB, a resource of biologically inactive small molecules
+Topics
+chemical-data-science
+chemical-database
+chemical-language-models
+cheminformatics
+computational-chemistry
+drug-discovery
+negative-database
+pubchem-database
+synthetic-data-generation
+Resources
+Readme
+License
+Activity
+Stars
+5
+stars
+Watchers
+1
+watching
+Forks
+1
+fork
+Report repository
+main
+Branches
+Tags
+Go to file
+Code
+Open more actions menu
+Latest commit
+History
+47 Commits
+47 Commits
+Folders and files
+Name
+Name
+Last commit message
+Last commit date
+.ipynb_checkpoints
+.ipynb_checkpoints
+data
+data
+model
+model
+GA.png
+GA.png
+LICENSE
+LICENSE
+README.md
+README.md
+inertdb_generator.py
+inertdb_generator.py
+requirements.txt
+requirements.txt
+View all files
+Repository files navigation
+InertDB
+A Comprehensive Database of Biologically Inactive Compounds
+Overview
+InertDB
+is a curated chemical database designed to address the lack of biologically inactive compounds in predictive modeling for AI-based drug discovery. This limitation often leads to biased datasets dominated by active compounds, reducing the diversity and robustness of machine learning models.
+InertDB bridges this gap by providing:
+Curated Inactive Compounds (CICs)
+: 3,205 inactive compounds rigorously curated from
+PubChem BioAssays
+.
+Potential Generated Inactive Compounds (pGICs)
+: 645,909 unique generated compounds with their generating frequencies. The subsets pGIC1, pGIC3, pGIC10, pGIC30, and pGIC100 were defined by generating frequency thresholds.
+Generated Inactive Compounds (GICs)
+: 64,368 potential inactive compounds corresponding to the pGIC10 subset (
+gen_freq > 10
+), generated using a deep generative AI model trained on the CICs.
+By offering a comprehensive resource for biologically inactive small molecules and expanding the chemical space with GICs, Inert DB aims to enhance the robustness and accuracy of predictive AI models in toxicology and pharmacology.
+Key Features
+Diverse Assays:
+CICs
+are extracted from over 260 million PubChem bioassay results, leveraging an NLP-based assay diversity metric.
+AI-Generated Inactives:
+GICs
+supplement chemical space using RNN-based deep generative AI (
+inertdb_generator.py
+). GICs correspond to the pGIC10 subset (64,368 compounds), defined as compounds with a generating frequency of >10.
+Low PAINS Content: Minimizes frequent false positives in high-throughput screening.
+Drug-Like Properties: CICs exhibit physicochemical properties comparable to approved drugs.
+Validated Performance: Predictive modeling benchmarks (
+LIT-PCBA
+and
+MUV
+) show significant improvements.
+Repository Structure
+InertDB/
+├── data/                 # Pre-processed datasets of CICs and GICs
+│   ├── inertdb_cic_v2024.03.smi   # 3,205 curated inactive compounds
+│   ├── inertdb_gic_v2026.08.smi   # 64,368 GICs (pGIC10)
+│   └── inertdb_pgics_v2026.08.tsv # 645,909 pGICs with generating frequencies
+│
+├── inertdb_generator.py  # Script for generating additional GICs
+└── README.md             # Project documentation (this file)
+Usage
+1. Download Pre-Processed InertDB Datasets
+Download the CICs and GICs datasets:
+wget https://raw.githubusercontent.com/seungchan-an/InertDB/main/data/inertdb_cic_v2024.03.smi
+wget https://raw.githubusercontent.com/seungchan-an/InertDB/main/data/inertdb_gic_v2026.08.smi
+The GIC dataset contains 64,368 compounds corresponding to the pGIC10 subset (
+gen_freq > 10
+). The pGIC TSV file contains 645,909 unique generated compounds together with their generating frequencies.
+2. Generate Additional Candidate Compounds
+Use the provided script to generate additional candidates using the pre-trained generative AI model.
+1. Requirements
+Ensure the following Python packages are installed, or install the dependencies from
+requirements.txt
+:
+tensorflow
+numpy
+rdkit
+conda create -n inertdb python=3.10
+conda activate inertdb
+pip install -r requirements.txt
+2. Run the Script
+Generate additional GICs by specifying the number of iterations:
+python inertdb_generator.py -n NUM_GENERATIONS -o OUTPUT_FILE
+NUM_GENERATIONS
+: Number of iterations to generate (each iteration produces 1,000 SMILES).
+OUTPUT_FILE
+: Name of the file to save the generated GICs (default:
+gic.txt
+).
+Example:
+python inertdb_generator.py -n 5 -o my_gics.txt
+This generates up to 5,000 SMILES strings and saves the valid, unique SMILES to
+my_gics.txt
+.
+Citation
+If you use
+InertDB
+in your research, please considering citing the following publication:
+@article{An2025,
+  author    = {Seungchan An and Yeonjin Lee and Junpyo Gong and Seokyoung Hwang and In Guk Park and Jayhyun Cho and Min Ju Lee and Minkyu Kim and Yun Pyo Kang and Minsoo Noh},
+  title     = {InertDB as a generative AI-expanded resource of biologically inactive small molecules from PubChem},
+  journal   = {Journal of Cheminformatics},
+  year      = {2025},
+  volume    = {17},
+  pages     = {49},
+  doi       = {10.1186/s13321-025-00999-1},
+  url       = {https://doi.org/10.1186/s13321-025-00999-1}
+}
+License
+This InertDB is licensed under a
+Creative Commons Attribution-NonCommercial 4.0 International License
+.
+This curated dataset is freely available for academic and non-commercial research purposes. For commercial use, a license agreement is required. Please contact [ann081993 at snu dot ac dot kr] for or refer to the
+LICENSE
+for details.
+About
+InertDB, a resource of biologically inactive small molecules
+Topics
+chemical-data-science
+chemical-database
+chemical-language-models
+cheminformatics
+computational-chemistry
+drug-discovery
+negative-database
+pubchem-database
+synthetic-data-generation
+Resources
+Readme
+License
+Activity
+Stars
+5
+stars
+Watchers
+1
+watching
+Forks
+1
+fork
+Report repository
+Releases
+Packages
+Used by
+Contributors
+Languages
+Footer
+© 2026 GitHub, Inc.
+You can’t perform that action at this time.

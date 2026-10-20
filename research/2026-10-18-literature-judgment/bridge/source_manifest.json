@@ -1,0 +1,276 @@
+{
+  "retrieved_utc": "2026-10-18T00:47:30.195738+00:00",
+  "sources": [
+    {
+      "name": "Toniato2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12164950/fullTextXML",
+      "download_state": "cached",
+      "bytes": 103149,
+      "sha256": "05d0c9fda3e56e29d5271993a0f2da8d87f6f15c3c621a5281000e002c0eca98",
+      "status": "ok"
+    },
+    {
+      "name": "Lee2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12717135/fullTextXML",
+      "download_state": "cached",
+      "bytes": 104456,
+      "sha256": "d4d587e409d27b2ad84255d0b044af63eabc64fb29e580788b698b0ec4364766",
+      "status": "ok"
+    },
+    {
+      "name": "Lee2025.pdf",
+      "url": "https://escholarship.org/content/qt7b20j2q5/qt7b20j2q5_noSplash_2e721e9639669307da60c086970fc895.pdf",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://escholarship.org/content/qt7b20j2q5/qt7b20j2q5_noSplash_2e721e9639669307da60c086970fc895.pdf"
+    },
+    {
+      "name": "Gao2026.html",
+      "url": "https://www.maxapress.com/article/doi/10.48130/gcomm-0026-0010",
+      "download_state": "cached",
+      "bytes": 350089,
+      "sha256": "006b340700e5e2ed4e096845d3ac08b33a8ee21590868d8d46c0dcfee2d3cc53",
+      "status": "ok"
+    },
+    {
+      "name": "Gao2026.pdf",
+      "url": "https://maxapress.com/data/article/gcomm/preview/pdf/gcomm-0026-0010.pdf",
+      "download_state": "cached",
+      "bytes": 7482950,
+      "sha256": "85b564d015795eb137269d3e8177e1597a438e22972eca315759b83b305ae58f",
+      "pages": 11,
+      "status": "ok"
+    },
+    {
+      "name": "OpenChemIE2024.pdf",
+      "url": "https://arxiv.org/pdf/2404.01462",
+      "download_state": "cached",
+      "bytes": 5817185,
+      "sha256": "e3592b7b683af7d909fd788bb4f5b8adfea46a1399db7c02c68eb26ae1f4a51f",
+      "pages": 34,
+      "status": "ok"
+    },
+    {
+      "name": "Oxidation2023.pdf",
+      "url": "https://arxiv.org/pdf/2308.00389",
+      "download_state": "cached",
+      "bytes": 4040994,
+      "sha256": "7f79f63a526b21df8e6e47d3fa6cc95c0550676bcd79dd57a470999a3059c804",
+      "pages": 11,
+      "status": "ok"
+    },
+    {
+      "name": "BioMiner2026.html",
+      "url": "https://arxiv.org/html/2604.21508v1",
+      "download_state": "cached",
+      "bytes": 272805,
+      "sha256": "f8557d18f0cceeafd244ed5fb398549e21e986959b3fcbee7ba28a49b92a0943",
+      "status": "ok"
+    },
+    {
+      "name": "BioMiner2026.pdf",
+      "url": "https://arxiv.org/pdf/2604.21508v1",
+      "download_state": "cached",
+      "bytes": 11588565,
+      "sha256": "5ee4bd1c4f2bb50f7238b379f47b74eb33acdb43dd9d00c53b6ca0d0dec64310",
+      "pages": 20,
+      "status": "ok"
+    },
+    {
+      "name": "ESP2023.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10185530/fullTextXML",
+      "download_state": "cached",
+      "bytes": 145762,
+      "sha256": "0317e6b6db1b4e36b3c0b02903844a91213f2003420fe44688ade527cba5d0a6",
+      "status": "ok"
+    },
+    {
+      "name": "InertDB2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11983867/fullTextXML",
+      "download_state": "cached",
+      "bytes": 123899,
+      "sha256": "daca11a2aa7b68c5a3e7331706936c660a71054194bd5957e7182d76717a859e",
+      "status": "ok"
+    },
+    {
+      "name": "Robots2026.html",
+      "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.77474",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.77474"
+    },
+    {
+      "name": "Leakage2026.html",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.02.26.708291v1.full",
+      "download_state": "cached",
+      "bytes": 190125,
+      "sha256": "64d10e66ecc4b8b65b46d9704d6131322ad713a8b91edc9d71de0c9332b1fa3a",
+      "status": "ok"
+    },
+    {
+      "name": "Leakage2026.pdf",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.02.26.708291v1.full.pdf",
+      "download_state": "cached",
+      "bytes": 1335939,
+      "sha256": "77d2201abf8d724d391f5a15a525715c430fdd6545fd9911ab913674b9e3f8ae",
+      "pages": 13,
+      "status": "ok"
+    },
+    {
+      "name": "Cruse2024.pdf",
+      "url": "https://ceder.berkeley.edu/publications/2023_Kevin_BiFeO3.pdf",
+      "download_state": "cached",
+      "bytes": 3677766,
+      "sha256": "ad2900e16be53fa149a5972cc048125dde439a7764ad5e0244c01e6340ac4fb0",
+      "pages": 14,
+      "status": "ok"
+    },
+    {
+      "name": "Nullary_research.html",
+      "url": "https://nullary.ai/research",
+      "download_state": "cached",
+      "bytes": 78167,
+      "sha256": "8daf40e1cca5e8f16128daf0682f18be87fd07c989cb53aa95c23b3040cb7338",
+      "status": "ok"
+    },
+    {
+      "name": "Okuno2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12712682/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12712682/fullTextXML",
+      "bytes": 142172,
+      "sha256": "b4fdadc1db77bb95b094e0999c9d29809c2af20ca98ac5194601c3c9ec4552da",
+      "status": "ok"
+    },
+    {
+      "name": "BioNOT2011.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3225379/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3225379/fullTextXML",
+      "bytes": 66030,
+      "sha256": "843dd89b442c37e8405dd51a69715a7846a2b8393e58fdab5a19fd38c8f64a95",
+      "status": "ok"
+    },
+    {
+      "name": "NegBERT2020.pdf",
+      "url": "https://aclanthology.org/2020.lrec-1.704.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://aclanthology.org/2020.lrec-1.704.pdf",
+      "bytes": 2494328,
+      "sha256": "0436403216218933696e42f38bdcd48d822c84c5e1eb3f59247bcd854829c5be",
+      "pages": 10,
+      "status": "ok"
+    },
+    {
+      "name": "NADE2021.pdf",
+      "url": "https://aclanthology.org/2021.wnut-1.26.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://aclanthology.org/2021.wnut-1.26.pdf",
+      "bytes": 305692,
+      "sha256": "01d833312a9557d2ec6697d6a5263e4c94b5e8321d7fbd21f266ec136feef8b4",
+      "pages": 8,
+      "status": "ok"
+    },
+    {
+      "name": "Scaboro2022.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9791307/fullTextXML",
+      "status": "error",
+      "error": "500 Server Error:  for url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9791307/fullTextXML"
+    },
+    {
+      "name": "Thway2024.html",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2024/dd/d3dd00202k",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://pubs.rsc.org/en/content/articlehtml/2024/dd/d3dd00202k"
+    },
+    {
+      "name": "Thway2024.pdf",
+      "url": "https://pubs.rsc.org/en/content/articlepdf/2024/dd/d3dd00202k",
+      "status": "error",
+      "error": "403 Client Error: Forbidden for url: https://pubs.rsc.org/en/content/articlepdf/2024/dd/d3dd00202k"
+    },
+    {
+      "name": "EnzyExtract2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12355964/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12355964/fullTextXML",
+      "bytes": 118021,
+      "sha256": "85235655c92ed9c4df3c3a4e456c72b49d18c5a9efdd46b77ce5a8dd83b1ddce",
+      "status": "ok"
+    },
+    {
+      "name": "EnzymeCoScientist2025.pdf",
+      "url": "https://www.biorxiv.org/content/10.1101/2025.03.03.641178v1.full.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.biorxiv.org/content/10.1101/2025.03.03.641178v1.full.pdf",
+      "bytes": 1033464,
+      "sha256": "aeb4791c104f80391ce55d47fc60b84b84e065adae1fefc492231b848874883f",
+      "pages": 15,
+      "status": "ok"
+    },
+    {
+      "name": "zERExtractor2025.pdf",
+      "url": "https://arxiv.org/pdf/2508.09995",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/pdf/2508.09995",
+      "bytes": 32257317,
+      "sha256": "432d86ba30fdb4ef762321da437753d703f2e38904b00a79c2e72c438d5f08d1",
+      "pages": 15,
+      "status": "ok"
+    },
+    {
+      "name": "EnzChemRED2024.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11384730/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11384730/fullTextXML",
+      "bytes": 191388,
+      "sha256": "c33c29365fb3ef82b1964499a2bd38cb681d6448ba4072a940015656fbef2c9d",
+      "status": "ok"
+    },
+    {
+      "name": "FuncFetch2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11734755/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11734755/fullTextXML",
+      "bytes": 95199,
+      "sha256": "893a89fdfd0e6609348e0406f5a53a6d0bc962204b6dcd4a59b02c0d47fb8ea8",
+      "status": "ok"
+    },
+    {
+      "name": "Robots2026.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13564181/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13564181/fullTextXML",
+      "bytes": 135760,
+      "sha256": "ae3eeeb89157a3c65a6e7fdc89bfaf49462d0489089a6d95e88587f5ae4c6c46",
+      "status": "ok"
+    },
+    {
+      "name": "EZSpecificity2025.pdf",
+      "url": "https://zhaogroup.chbe.illinois.edu/publications/HZ472.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://zhaogroup.chbe.illinois.edu/publications/HZ472.pdf",
+      "bytes": 6160003,
+      "sha256": "804029de3d7eb1d8279ad8dbb1579cca4cf1921b35dd7a527dfc7c276294d4b7",
+      "pages": 17,
+      "status": "ok"
+    },
+    {
+      "name": "VIPER2024.pdf",
+      "url": "https://www.biorxiv.org/content/10.1101/2024.06.21.599972v1.full.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.biorxiv.org/content/10.1101/2024.06.21.599972v1.full.pdf",
+      "bytes": 1560939,
+      "sha256": "4bddeac42e03f759d3a8028e303070acbf71f22b6645318d2ec1cafc950d1f9a",
+      "pages": 18,
+      "status": "ok"
+    },
+    {
+      "name": "Goldman2022.html",
+      "url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009853",
+      "download_state": "downloaded",
+      "resolved_url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009853",
+      "bytes": 261086,
+      "sha256": "33cafb62bd7e28ef14c2f24d4f4b68c068bacea3408a3b455291fe071306b1d1",
+      "status": "ok"
+    }
+  ]
+}

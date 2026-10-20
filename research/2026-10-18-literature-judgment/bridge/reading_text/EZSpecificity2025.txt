@@ -1,0 +1,840 @@
+## PDF page 1
+Article
+Enzyme specificity prediction using
+cross-attention graph neural networks
+
+
+
+https://doi.org/10.1038/s41586-025-09697-2   Haiyang Cui1,2,3,6,7, Yufeng Su3,4,7, Tanner J. Dean3,5,7, Tianhao Yu1,2,3, Zhengyi Zhang1,2,
+                                                Jian Peng4, Diwakar Shukla1,3,5 ✉ & Huimin Zhao1,3,4,5 ✉Received: 2 November 2024
+Accepted: 1 October 2025
+                                  Enzymes are the molecular machines of life, and a key property that governs theirPublished online: 8 October 2025
+                                        function is substrate specificity—the ability of an enzyme to recognize and selectively
+   Check for updates                                          act on particular substrates. This specificity originates from the three-dimensional
+                                        (3D) structure of the enzyme active site and complicated transition state of the
+                                                 reaction1,2. Many enzymes can promiscuously catalyse reactions or act on substrates
+                                   beyond those for which they were originally evolved1,3–5. However, millions of known
+                                  enzymes still lack reliable substrate specificity information, impeding their practical
+                                          applications and comprehensive understanding of the biocatalytic diversity in nature.
+                                    Here we developed a cross-attention-empowered SE(3)-equivariant graph neural
+                                     network architecture named EZSpecificity for predicting enzyme substrate specificity,
+                                    which was trained on a comprehensive, tailor-made database of enzyme–substrate
+                                          interactions at sequence and structural levels. EZSpecificity outperformed the
+                                           existing machine learning models for enzyme substrate specificity prediction, as
+                                    demonstrated by both an unknown substrate and enzyme database and seven
+                                        proof-of-concept protein families. Experimental validation with eight halogenases
+                                  and 78 substrates showed that EZSpecificity achieved a 91.7% accuracy in identifying
+                                        the single potential reactive substrate, significantly higher than that of the state-of-the-
+                                             art model enzyme substrate prediction (58.3%). EZSpecificity represents a general
+                                   machine learning model for the accurate prediction of substrate specificity for
+                                  enzymes related to fundamental and applied research in biology and medicine.
+
+
+Over the past few years, several machine learning tools have been devel-   broader applicability, an important challenge remains as to how to
+oped to predict enzyme substrate specificity, but they met with limited   fully integrate and leverage information from sequences, structures
+success and mainly concentrated on developing computational tools  and interactions simultaneously to enhance predictive performance.
+specific to particular protein families6–12. Popular enzyme function    To address the above-mentioned limitations, we developed a gen-
+prediction tools such as contrastive learning–enabled enzyme anno-   eral deep learning model named EZSpecificity for enzyme specific-
+tation (CLEAN)13, ProteInfer14 and DeepECTransformer15 struggle to   ity prediction, which is empowered by structural information and a
+distinguish enzyme reactivity and substrate specificity within the same   cross-attention-assisted GNN. We first built a high-quality curated
+Enzyme Commission (EC) numbers, which is a central challenge for   enzyme–substrate interaction dataset (ESIBank) encompassing a wide
+biocatalysis. Enzyme substrate prediction (ESP) used graph neural net-   range of natural and non-natural substrates, substitutions and sub-
+works (GNNs) to encode various metabolites for numerous proteins8.   strate–enzyme complex information at the sequence, structure and
+However, ESP faced challenges in covering all native and non-native   interaction levels. We then designed an SE(3)-equivariant GNN-based
+enzyme–substrate pairs in a genome-scale metabolic model because   encoder to capture the micro-environment of each atom in the catalytic
+of the limited number of collected substrates (about 1.3k). Fingerprint-   active site, followed by a cross-attention process aimed at empowering
+and sequence-based embeddings have since achieved more promising   interactions between the substrates and the enzymes. To validate the
+results8,13,16,17, although compound–protein interaction (CPI) meth-   versatility and accuracy of EZSpecificity, we extensively performed in
+ods still struggle to accurately capture substrate–enzyme recogni-   silico experiments for various unknown enzyme and substrate combi-
+tion7. This reflects the importance of catalytic residue identity, spatial   nations, as shown for six typical protein families. Last, we challenged
+arrangement and long-range coupling in determining specificity18–20.   EZSpecificity to annotate substrate landscape for an in-house collected
+Although the frameworks such as ESP, CPI and ALDELE (all-purpose   halogenase database (386 enzymes and 449 substrates), followed by
+deep-learning-based multiple toolkit)21 highlight the potential for   experimental validation.
+
+1Department of Chemical and Biomolecular Engineering, University of Illinois Urbana-Champaign, Urbana-Champaign, IL, USA. 2Carl R. Woese Institute for Genomic Biology, University of
+Illinois Urbana-Champaign, Urbana-Champaign, IL, USA. 3NSF Molecule Maker Lab Institute, University of Illinois Urbana-Champaign, Urbana-Champaign, IL, USA. 4Department of Computer
+Science, University of Illinois Urbana-Champaign, Urbana-Champaign, IL, USA. 5Center for Biophysics and Quantitative Biology, University of Illinois Urbana-Champaign, Urbana-Champaign,
+IL, USA. 6Present address: State Key Laboratory of Microbial Technology, Ministry of Education Key Laboratory of NSLSCS, Jiangsu Basic Research Center for Synthetic Biology, College of
+Life Science, Nanjing Normal University, Nanjing, People’s Republic of China. 7These authors contributed equally: Haiyang Cui, Yufeng Su, Tanner J. Dean. ✉e-mail: diwakar@illinois.edu;
+zhao5@illinois.edu
+
+                                                                                             Nature  |  Vol 647  |  20 November 2025  |  639
+
+## PDF page 2
+Article
+
+
+                                                                                                              Double cross-attention
+                                                                         Amino                                                                                               acid residues                                        ESM-2   Protein                                                                                              representation    MKFVKRRIIA ...                       ...                                                                sequence
+                                                                                    latent                                                                 V    MLVTILMLSV                                ...                                                                space                                                                                                                            2.04.00                                                                                                                                               PC3                                                                                                                                                        Weighted                                                                              (N,1,024)                                                                                                                         –2.0    MSLFALQPSA                                  ...                                 sequence                                                                                                                              3D                                                                                                                                                                                                   catalytic                                                                                                                                                                           core
+                                                                                                                            –2.0
+                                                                                                                                               embedding                                                                                                                        02.0 4.0     –2.00 2.0PC24.0                                                                                                           (N, D)           K                                                                                PC1      Protein sequences                                                                                                                                                                                  MKFVKRRIIA                                                                             Single                                                Pretrained by masked LM                                                                    *        *
+                                         Evolutionary transformer encoding                       Q                                                      (N, D)  PDBank
+
+                                                                                                                                                       Weighted
+                                                                    2D substrates                                                          sequence
+                                                                                                                                               embedding
+           OH                                              Q   AlphaFold
+                                                                                                          (N, D)
+        Substrates                                                                                                                         *       *
+                                                             K                                                      (N, D)
+                                                                              Internal MPNN      Microenvironment   AlphaFill                                                                                         representation
+                                                                 V
+
+                                                                                                           (N, D)
+                                                                                                                   Flexible integration (optional)
+
+                                                                     3D complex*
+                                                                                                                                         (N, D)
+     Protein structures      Docking by Vina-GPU2.0                                               Any ﬁngerprint at all                                                                         Interaction MPNN                                                                                                                                                   level                                                                                                           (N, D)     atom/residue/overall                                                                                                                  Enzyme                                                                                                                                                              speciﬁcity                                                                                                     (Morgen, Grover, et                                                                                                                                                                                        al.)                                           Catalytic site environment encoding                                                                                                                      deep                                                                                                                                                       neural                                                                                                                                             network
+
+Fig. 1 | The machine learning architecture of EZSpecificity. ESM-2 and active    interaction between the amino acids of enzymes and the atoms of substrates.
+site environment encoding method empowered by SE(3)-equivariant GNN were   The attention function was composed of several trainable linear layers. Weighted
+applied to extract the sequence and structural embedding of the enzyme–       3D-catalytic core embedding and weighted sequence embedding were used as
+substrate complex. Message passing neural networks (MPNN) were used for      input for training the multi-layer perceptron model. Any fingerprint at the atom,
+obtaining the embedding of the internal substrate and the embedding of        residue and overall levels can be flexibly integrated into the embedding process.
+enzyme–substrate interaction. The cross-attention layer contained the         Schematic was created using BioRender (https://biorender.com).
+independent heads, which were a learnable attention function to capture the
+
+
+                                                                the blended representation of the enzyme–substrate pair. The cross-
+The architecture of EZSpecificity                            attention layers can emphasize the amino acids and atoms crucial
+Existing machine learning models for enzyme specificity prediction   for enzyme–substrate specificity, unlike previous approaches that
+mainly concentrated on extracting features from one-dimensional   assigned equal weight to each. Our approach can minimize unneces-
+protein sequences and two-dimensional molecular graphs, ignoring   sary noise and enhance the focus of the model, thereby improving its
+the three-dimensional (3D) nature of the substrate binding process   generalizability. Overall, the cross-attention layer empowered the
+(Supplementary Table 1). Moreover, these models reduced the sub-   interactions between the amino acids of the enzyme and the atoms
+strate and enzyme to two separate embeddings before the concatena-   of the substrate, potentially capturing significant specificity-driving
+tion steps, which probably limited their ability to capture complex   information. Finally, a multi-layer perceptron is used to predict the
+interactions between the enzyme and substrate22. To address these   specificity based on the representation of the enzyme–substrate pair.
+challenges, we developed a deep learning model named EZSpecific-   Subsequently, EZSpecificity was trained using the ESIBank dataset, as
+ity that integrates sequence data, 3D enzyme–substrate complex   described in the next section. The main input data included enzyme
+structures and active site environment to predict enzyme–substrate   sequences, enzyme–substrate complexes from docking and sub-
+specificity. The architecture of EZSpecificity is shown in Fig. 1. The   strate SMILES. The model generates a prediction score that defines
+full-length amino acid representations produced by ESM-2, one of the   the enzyme specificity.
+most powerful self-supervised sequence representation encoders,
+were integrated into EZSpecificity at the sequence level. Considering
+that the substrate binding pocket is crucial for determining enzyme  Enzyme–substrate interaction database
+function, especially specificity, we represented the binding pocket  A high-quality training dataset plays an important part in enhancing
+as a graph G = (V, E), where each node V is an atom from either sub-   the performance of machine learning models. To train the EZSpecific-
+strate or enzyme. These nodes are connected by edges in E to their   ity model, we sought to develop a comprehensive enzyme–substrate
+k-nearest atom neighbour in the structure. To maintain the invariant   interaction database (ESIBank) by integrating the sequence-based
+of the encoding process to E(3) transformations, drawing inspiration   databases (for example, BRENDA and UniProt) with structural informa-
+from E(n)-equivariant graph neural networks23, the binding pocket   tion generated by AlphaFold, AlphaFill and AutoDock/Vina-GPU (Fig. 2a
+is modelled using an SE(3)-equivariant GNN. Furthermore, we kept  and Supplementary Figs. 1 and 2). After obtaining diverse enzyme
+the gate open for flexibly integrating other fingerprints at the atom,  sequences from BRENDA and UniProt, we also collected enzyme–
+residue or overall level into the framework. The above design allowed   substrate data for six representative enzyme families, including ester-
+the model to incorporate essential features, thereby enhancing the   ases24, glycotransferases25, nitrilases26, phosphatases27, thiolases6
+generalizability of EZSpecificity. Importantly, EZSpecificity is designed  and domain of unknown function proteins (DUFs)28. Knowledge
+to predict enzyme substrate specificity, but, at present, it does not sup-   bases such as UniProt use expert curation progress and rule-based
+port reliable prediction of chemo-, regio- or stereoselectivity because   prediction systems to gather data from various sources29, whereas
+of the limitations in molecular representation and the resolution of   their update often lags years behind the rate at which new experimen-
+the encoding strategy.                                                       tal data are released. To capture crucial enzymatic reactions shown
+  To capture the complex enzyme–substrate interaction in the active   in images but not yet indexed by public databases, we developed
+site environment, two cross-attention layers were used to generate   a semi-automatic data extraction process consisting of four steps:
+
+640  |  Nature  |  Vol 647  |  20 November 2025
+
+## PDF page 3
+a
+
+                     Identiﬁcation                                     Extraction                                                       Translation                                          Connection
+
+
+                                                          O                                                                                                                                                      N[C@@H(Cc1c[nH]c2ccccc12)C(=O)O
+                                O                                                              OH          Substrate                    Substrate          Product
+                                    OH
+                                         NH2                                              NH2                                                                                         +
+                           NH
+                         X     Halogenase(RebH) O                                                             NH                                                                                                                                      X(Cl, Br, I, F)
+
+                          X                                                                          Enzyme                                      OH                                    X   Halogenase
+                                           NH2
+                                                                        (RebH)                             NH                                                                                                                                                 >RebH                   X =                                 Cl, Br,                                                              I, F                                                                                                                                                            Halogenase                                                                                                                                                   MSGKIDKILIVGGGTAG
+                                                                                                                                                         sequence     WMAASYLGKALQGTA
+                                                           O             Product                                                                                                                                                        DITLLQAPD ...
+                       Enzymatic
+                            reaction                      X                 OH
+                                                                                                                             Optical structure recognition
+                                                                          NH2                                                                                   N[C@@H(Cc1c[nH]c2cc(X)ccc12)C(=O)O
+                                                       N
+                                                       H
+                          Literature
+                                           X = Cl, Br, I, F                                 SMILES ... 2ccccc ...   SMILES ... 2cc(X)ccc ...
+
+
+                      Step 1                                 Step 2                                        Step 3                                           Step 4
+
+
+
+
+
+                                                        Semi-automatic
+                                                          data extraction                                          MKFVKRRIIA ...
+                                                                                                   MLVTILMLSV ...
+                                                                                            MSLFALQPSA ...
+
+                                                                                                                                    Protein sequences
+                Literature                                                   family                                           Extracted silent data
+                                                                                                                               Speciﬁc                                                                                                                                          Diverse enzymes
+
+
+
+                                                                                                      Align with
+                                                                                                                                    Protein structures
+                                                                               PDBank             BRENDA                                                                                                                                                                                                                                                                                                                                                                                            PC3                                                                                                                                                                                                                                                                                                                                                                                                                                                                              4.02.00                                                                                                                                                                                 Enrich                                                                                               AlphaFold
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    –2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    4.0            –2.00 2.0PC24.0 AlphaFill                                                                speciﬁc
+                  UniProt                       collectionData                                                                                                                                                                                               –2.0PC10  2.0
+                                                                                                                                                                                             family
+                                                                                           OH
+                                ...                                            Online data                                                                      Docking                          ESIBank
+                                                                                   Data clean process                   Substrates                                             (Enzyme–substrate
+                 Individual dataset                                                                                                                                                                          interaction database)
+
+
+b
+    400,000
+                                                                                    Section 1                                                         Section 2
+                                                                                                                                      323,783                      Oc1ccccc1               OH
+                                                           RDKit    300,000                                                                               287,525                                  Substrate
+                                                             SMILES         3D substrate
+
+
+                                                                                                                                                                   Distance
+                                                                                                                                                                          scoring
+    200,000                                                                                                                                                                   P                                             AutoDock-GPU Number                                                                      AlphaFill               P
+
+                                                                             Cofactor
+
+
+    100,000
+
+                                                   PDBank
+                                                                                                       Active structure                                             34,417                             36,258                                                                                                                                              Afﬁnity scoring
+                                                                                                                                                                                    Reasonable                                                    8,124                                  AlphaFold                                                                                                                              binding pose
+          0                                                                                                                          Various binding
+              Substrate Enzymepositivenegativepointssum                       ApoInputenzymepreparation                                    posesDocking and sorting
+                        points points Data
+                Data  Data
+
+Fig. 2 | Construction of the comprehensive enzyme–substrate interaction      scientific publications into machine-readable SMILES format. The halogenation
+(ESIBank) database. a, The process of constructing the ESIBank database.       reaction is chosen as the example for applying semi-automatic data extraction.
+The middle panel described the whole process of obtaining various natural and   AutoDock-GPU docking process includes two sections: (1) input preparation
+non-natural substrates and wild-type and variant enzymes from published online   and (2) docking and sorting process. PDBank, AlphaFold and AlphaFill are the
+servers and literature. The semi-automatic data extraction and AutoDock-GPU    sources for obtaining the 3D structures of proteins. Various binding poses
+docking process were presented in the top and bottom panels, respectively.     obtained from AutoDock-GPU were filtered by a distance and affinity scoring
+Semi-automatic data extraction includes four steps: identification, extraction,   system to select the most catalytic enzyme–substrate pose. b, Overview of the
+translation and connection. OSRA (Optical Structure Recognition Application)    collected ESIBank dataset. Schematic in a,b was created using BioRender
+converts the chemical structure information of chemical compounds from        (https://biorender.com).
+
+identification, extraction, translation and connection (Fig. 2a, top).     Next, to prepare the functional 3D structure for docking, we used
+As proof of concept, a halogenase–substrate (HaloS) dataset contain-   cofactors sourced from BRENDA as indicators to identify cofactor-
+ing around 3,300 enzyme–substrate pairs was established using this   involved structures from the AlphaFill database. Moreover, for all reac-
+process for later model validation (Supplementary Text 1).             tions with annotated catalytic residues in BRENDA, these catalytic
+
+                                                                                              Nature  |  Vol 647  |  20 November 2025  |  641
+
+## PDF page 4
+Article
+
+a                                         b
+                                                EZSpeciﬁcity
+                                     ESP          1.0                                                                                w/o graph,                                                                                                              cross-attention                                                                                                     and structure            0.6779                                            EZSpeciﬁcity-w/oGCS          EZSpeciﬁcity
+                                       0.8927            0.8822          0.9
+                                                                                     EZSpeciﬁcity                                                                                      w/o                                                                                                                structure and cross-attention                                                                                                                                                 0.6968           generalmodel                                                                         0.8297
+   of                                                                                           0.8003          0.7976             0.7810                                                                          analysis          0.8                                                                                                                                             0.7198        scorespeciﬁcity                                                                                          EZSpeciﬁcity w/o cross-attention                          0.7021                                                                                                                                                                0.6779          0.7                 0.6572                            0.6524                            0.6551                            0.6523                                                                                                                                                                                                                                                         Ablation                           EZSpeciﬁcity w/o structure                          0.7036
+        AUROCenzyme 0.6
+                                                                                                                    EZSpeciﬁcity                                   0.7198
+
+          0.5
+          Random     substrate     enzyme     substrate                                                                  0.66       0.68  AUROC0.70score   0.72       0.74
+              Unknown     Unknown      and                                   enzyme
+                            Unknown
+c                  EC -.-.-.-                  d                 EC -.-.-.-                   e
+                                                                                                                                               1.0
+                                                                                                                 AUROC
+                                                                                                                       AUPR
+   EC x.-.-.-                                   Speciﬁc family    EC x.-.-.-                                    Speciﬁc family          score                                                                                                                                               0.8         0.7772                       0.7537
+                                                                                                                                                                                                                                                                                                                                                                                                              0.6519            0.6521                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         resolution                               0.6659
+                AUROC 0.6  0.7  0.8  0.9                              AUPR 0.3 0.4 0.5 0.6 0.7 0.8
+                                                                                                                                                                                                                                                                                                                                                                                                   Average  0.6                                                                              0.5044
+
+  EC x.x.-.-                           EC x.x.x.x       EC x.x.-.-                           EC x.x.x.x              0.4
+                                                                                                                                            EZSpeciﬁcity            ESP
+    ESP            EC x.x.x.-                              ESP         EC x.x.x.-     EZSpeciﬁcity                                                        EZSpeciﬁcity                                                      EZSpeciﬁcity-w/oGCS
+
+Fig. 3 | Evaluation of EZSpecificity on ESIBank dataset. a, The AUROC        Owing to the absence of EC number annotations in data from specific enzyme
+performance of EZSpecificity and the general enzyme specificity model ESP,       families, they are grouped into one category. e, Average resolution score on all
+evaluating on four dataset splits (random, unknown substrate, unknown         four dataset splits. EZSpecificity-w/oGCS and ESP were also investigated for
+enzyme and unknown enzyme and substrate). b, Ablation experiments of       comparison. EZSpecificity without graph, cross-attention and structural
+EZSpecificity on the unknown enzyme and substrate dataset by evaluating the    embeddings is abbreviated as EZSpecificity-w/oGCS. AUPR and AUROC are
+AUROC score. c,d, The prediction resolution of EZSpecificity towards four      more suited when the focus is on identifying positive instances in an imbalanced
+digits of EC number by evaluating AUROC (c) and AUPR (d). The resolution was     dataset, whereas MCC provides a balanced view across all classes. For tasks
+defined as the AUROC or AUPR score of models in the scenarios that were        such as enzyme specificity prediction, in which the identification of positive
+distinguished based on the number of shared EC number digits between the       hits is often a primary goal, AUPR and AUROC can be more informative and
+actual enzyme–substrate pair and its corresponding negative samples.            relevant.
+
+
+residues were used to define the active site for the docking box, and   specificity on full ESIBank (Fig. 3). EZSpecificity was first compared
+the substrate structure was prepared from Simplified Molecular   with ESP, the state-of-the-art general machine learning model for pre-
+Input Line Entry System (SMILES) using RDKit, followed by the dock-   dicting enzyme substrate specificity. Four-fold cross-validation was
+ing process using AutoDock-GPU (Fig. 2a, bottom). AutoDock-GPU,  performed on the ESIBank dataset, calculating the mean performance
+as a hardware-accelerated version of AutoDock, enabled exploring   across all folds. Apart from the conventional setting of random splits,
+the molecular space as necessary, while safely avoiding redundant  we assessed our model under three more conditions: (1) unknown sub-
+computations30,31. We applied distance scoring for those pairs with   strate; (2) unknown enzyme; and (3) unknown enzyme and substrate.
+known active sites and affinity scoring to determine the most favourable   For example, the unknown substrate scenario includes exclusive sub-
+binding pose over 100 runs, with each run allowing up to 2,500,000   strates not found in the other folds. These conditions were designed to
+score evaluations—totalling a potential maximum of 250 million pose  mimic various real-world scenarios. Notably, EZSpecificity consistently
+evaluations per pair. In summary, ESIBank covered a wide range of   outperformed ESP across all four scenarios (Fig. 3a and Supplementary
+natural and non-natural substrates (34,417), wild-type and variant    Fig. 3). As the difficulty increased with the use of unknown substrates
+enzymes (8,124) from published online servers and literature. The   and/or enzymes, the improvement of EZSpecificity or EZSpecificity-
+ESIBank database contains 25 times more substrates than the dataset  w/oGCS over ESP appeared to slightly diminish. However, it showed
+available in ESP, which consists of 1,379 unique substrates8. In total,   particularly impressive performance in the most challenging scenario,
+323,783 enzyme–substrate pairs were compiled to generate ESIBank  unknown enzyme and substrate (AUROC (EZSpecificity) = 0.7198 and
+(Fig. 2b and Supplementary Texts 2 and 3), representing the first broad  AUROC (ESP) = 0.6523, where AUROC is the area under the receiver
+enzyme–substrate complex database at the structural level to date.    operating characteristic curve), indicating the improved reliability for
+                                                                       practical applications. Moreover, an 8.72% improvement in the area
+                                                         under the precision versus recall curve (AUPR) score was observed
+In silico evaluation of EZSpecificity                        (Supplementary Fig. 4).
+To validate EZSpecificity, we designed multiple benchmarking experi-       It is important to acknowledge that, due to the limited accessibil-
+ments to evaluate its overall effectiveness in predicting enzyme   ity of the ESP, the final ESP model was used directly for validation in
+
+642  |  Nature  |  Vol 647  |  20 November 2025
+
+## PDF page 5
+this study. EZSpecificity-w/oGCS and ESP share almost the same archi-   datasets (random, unknown substrate and unknown enzyme) with up
+tecture but were trained on different datasets: ESIBank (about 323k data   to 0.6835 averaged AUPR value (Fig. 4b and Supplementary Table 4).
+points, 34k substrates and 8k enzymes) for EZSpecificity-w/oGCS, and   Moreover, we explored two fine-tuning strategies to determine the
+ESP-database (about 18k data points, 1.3k substrates and 12k enzymes)   optimal approach for applying EZSpecificity to targeted enzyme
+for ESP. As shown in Fig. 3a, the AUROC value of EZSpecificity-w/oGCS   families. The first action was to update the weights of the EZSpeci-
+(0.8822) on the random dataset was significantly higher than that of   ficity model for several iterations, using data from the target enzyme
+ESP (0.6572). A similar trend was observed for the AUPR score, with   family, which we referred to as the EZSpecificity-fine-tune model.
+EZSpecificity-w/oGCS achieving 0.5762 compared with 0.2057 for ESP.  As expected, the EZSpecificity model was further improved after
+These results strongly indicate that the comprehensive and high-quality   fine-tuning actions and AUPR (EZSpecificity) on unknown substrate
+training dataset of ESIBank contributed significantly to the observed   split increased about 7% compared with without fine-tuning (Fig. 4b
+improvement in model performance. Moreover, the enhanced archi-  and Supplementary Table 5). These observations agree well with the
+tecture, integrating both structural and interaction data, along with   previous studies35–38, in which the fine-tuning process ensured that
+the expanded and comprehensive ESIBank, has a lot of potential for   the model understands and uses focused knowledge appropriately
+boosting performance on previous and/or newly released datasets.    through reinforcing vocabulary. Similar results were observed for
+  Moreover, ablation analysis was investigated to dissect the perfor-   the AUROC evaluation (Supplementary Fig. 13).
+mance of each component in EZSpecificity. As shown in Fig. 3b, the    The second action was to train a new specific model from scratch
+ablation experiment showed loss of active structure decreased the   with the same architecture as EZSpecificity, using only data from the
+AUROC score from 0.7198 to 0.7036, demonstrating the benefits of   target enzyme family (positive samples ranging from 85 to 5,424),
+explicitly modelling atomic interactions between the binding pocket  which was referred to as the EZSpecificity-individual model. The
+of the enzymes and substrates. Similarly, loss of cross-attention layers   EZSpecificity-individual model surpassed the CPI-individual model in
+decreased the AUROC score from 0.7198 to 0.7021, indicating that  AUPR examination across all three dataset splits, showing an enhance-
+cross-attention layers have important roles in improving the model  ment of 4.2–8.3% (Fig. 4c and Supplementary Table 6). The 27.4–54.5%
+performance. Although these numerical changes may seem small, in  improvement can be achieved when compared with ESP. These results
+the context of computational modelling, particularly in deep learning,   indicate that EZSpecificity can effectively manage a limited number of
+even marginal improvements are challenging to achieve and can reflect   data points, probably benefiting from the integration of 3D structural
+meaningful enhancements in predictive accuracy. Beyond the ablation   context, which simplifies the task of predicting enzyme specificity.
+experiment, we observed that structural features, along with graph and   Similar observations were also obtained for AUROC values within both
+cross-attention mechanisms, played a crucial part in enhancing the   fine-tuning strategies (Supplementary Fig. 14 and Supplementary
+performance of EZSpecificity, especially on the halogenase dataset, a   Tables 5 and 6).
+high-quality curated dataset that is described in the following section.     Furthermore, we challenged EZSpecificity on understudied enzymes
+In contrast to previous methods that used average pooling across all  and substrates (Fig. 4d and Supplementary Fig. 15). As shown in Fig. 4d,
+amino acids1,18,32, the cross-attention layers enhanced the ability of   EZSpecificity surpassed CPI and ESP across all selected enzyme families.
+the model to focus on the atoms and/or amino acids that determined   Fine-tuning does not invariably lead to improvements. Specifically, for
+enzyme substrate specificity, thereby reducing the bias introduced by   thiolases and glycotransferases, its performance slightly decreased
+indirect atoms and/or amino acids. The ablation analysis, which evalu-   after fine-tuning (for example, AUPR (EZSpecificity, Thiolases) = 0.8247,
+ated the AUPR score, showed similar results (Supplementary Fig. 4).   AUPR (EZSpecificity-fine-tune, Thiolases) = 0.8230). Furthermore, the
+  CPI was crucial to the discovery of new drugs by screening candi-   effectiveness of different fine-tuning actions varies, as shown by the
+date compounds33, holding the potential for predicting enzyme sub-  performance on two enzyme families, DUFs and thiolases, in which
+strate specificity. After careful architecture comparison, we found   starting from EZSpecificity was better than starting from scratch.
+the architecture of CPI is equivalent to EZSpecificity without graph,  A smaller model (for example, EZSpecificity-individual) trained on a
+cross-attention and structural embeddings (EZSpecificity-w/oGCS).   limited dataset might outperform a larger model (EZSpecificity)
+To achieve a fair comparison, CPI (also called EZSpecificity-w/oGCS)   because it is less prone to overfitting and can generalize better to new
+was retrained on the ESIBank and EZSpecificity, with full architecture   data, particularly when the task is straightforward or the data are of high
+outperforming EZSpecificity-w/oGCS in all examinations (Fig. 3a).   quality. Conversely, for other enzymes, EZSpecificity-individual showed
+Moreover, EZSpecificity demonstrated superior performance across   better results than both EZSpecificity and EZSpecificity-fine-tune.
+all levels of resolution of EC number (Fig. 3c–e, Supplementary Table 3  These findings demonstrated that the effectiveness of strategies for
+and Supplementary Figs. 5–12), confirming the robustness and resolu-   using EZSpecificity in downstream tasks differs in practical applica-
+tion of EZSpecificity at different depths in predicting enzyme substrate   tions. Although it may be crucial to perform initial tests on individual
+specificity. Furthermore, EZSpecificity slightly outperformed ESP   evaluation subsets to identify the most effective approach for using
+under EC.x.x.x.x, highlighting its ability to distinguish among homolo-   EZSpecificity, directly applying EZSpecificity remains the recom-
+gous enzymes and/or enzyme variants. The fine-tuning process with  mended option when computer resources are limited.
+specific protein families could further enhance performance, as dem-
+onstrated later in Fig. 4d. The degree of improvement by EZSpecificity
+over ESP varied across different levels of the EC number, which may  Experimental validation of halogenases
+be attributed to the imbalance in dataset representation at varying   Next, we sought to validate the prediction accuracy of EZSpecificity
+depths of the EC hierarchy.                                         using halogenases, an understudied enzyme family with limited infor-
+                                                          mation on their substrate specificities. Halogenases were chosen for
+                                                                proof-of-concept because of their increased use in biocatalytic C–H
+Generalizability across enzyme families                     functionalization and their excellent catalyst-controlled specificity
+As models scale, efficiently and effectively adapting large models for  and selectivity39. Generally, small molecules with halogen atom(s)
+specific downstream tasks emerges as a compelling research chal-  produced by halogenases have promising bioactivity and physico-
+lenge34. To explore the transferability of EZSpecificity to enzyme   chemical properties, thereby offering broad application in pharma-
+families of particular interest to researchers, we examined its per-   ceutical and agrochemical fields40. By applying the semi-automatic
+formance on six enzyme families mentioned above (Fig. 4a). EZSpeci-   data extraction method (Supplementary Text 1), 386 sequences were
+ficity performed well on all these enzyme families for three types of   identified covering all four types of halogenases (haloperoxidases,
+
+                                                                                             Nature  |  Vol 647  |  20 November 2025  |  643
+
+## PDF page 6
+Article
+a
+    DUFs                                                                                  Esterases
+  O  O         O                  O           O  O          O                               O
+           +                                             +                                                                                                                              +     R2 OH                                                                                         R2    +   H O HR      OH                      S-CoA              R   S-CoA                                                     OH       R1  O                                                                                                              H3C  OH
+
+
+
+     Glycotransferases                                                               Phosphatases
+            OH                                  OH
+                OH  UDP-Glc      UDP                  OH                          O                    O       O
+                                                                    O                                                            O                                                                                                                                   +  O                                                                                                                               P OH HO     O                           HO     O                                                                 H  +                                                   OH OH     H                                                                                P                                                                                HN                                                                                                      HN                                              HO                                                                                                            O                                                                  O                                                                     O                                                                                            HO                                                                    O                                             O  O           OH
+     OH O             UDP-Glc       UDP       OH O          OH
+
+
+      Nitrilases                                                                                 Thiolases
+                                                                                                  O  O
+                                                            O             O
+                                                                                      +   R2     S-CoA                      R1     O    R C N   +   2 H2O                 R COO   +    NH4                R1   S-CoA
+                                                                                                                                         R2
+
+b                        c                                d
+      0.9                                                              EZSpeciﬁcity-individual
+                     Without                             ﬁne-tune            1.0              EZSpeciﬁcity-w/oGCS-individual             DUFs  0.4079 0.3556 0.1522 0.4266* 0.2005 0.1573                  dataset    0.8                     With ﬁne-tune
+                                                   ESP                                                                                                                                                       families
+                                                                                                              Esterases  0.5615 0.5755 0.2456 0.5852 0.6073* 0.5478   on                                                   0.8       0.7849    score 0.8                                                                        score                                                                                                                                                0.7225                                                                                                                                                                                        0.6                                   0.7308                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              substrate                                                                                                                                                                       0.6538                                                                                                        Glycotransferases  0.5193 0.5396 0.3176 0.5127 0.5865* 0.5394        score and   AUPR 0.7      0.6835                                                 AUPR speciﬁc 0.6                                              0.5711                 0.5648                                                                                                                                                                                                               0.5231                                                        six                                                      0.6253                                                                                                 Phosphatases  0.2918 0.3004 0.2040 0.3167 0.3316* 0.3006      AUPR       0.4                                      on
+      0.6                                                                                                                                                                                                                                                                                                                                                                                                                                       enzyme                                                                   0.5730 0.5764                               Average     Average                                               0.5534                                                                                                                                                                                                                       0.2910                      Thiolases  0.8247* 0.8203 0.7171 0.8230 0.7154 0.6763                                                                                                                                                                                        0.2                                                                                                                                    trained 0.4                        0.2378                         0.2406
+                                                   0.2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              unknown
+      Randomsubstrate enzyme                   Random     substrate     enzyme                                   EZSpeciﬁcity       ESP               Unknown                                          Unknown       Unknown                                     Unknown
+              Dataset scenario                                  Dataset scenario                                                                                                                                        EZSpeciﬁcity-w/oGCSEZSpeciﬁcity-ﬁne-tuneEZSpeciﬁcity-individualEZSpeciﬁcity-w/oGCS-individual
+
+Fig. 4 | In silico evaluation of EZSpecificity using six representative enzyme   performance of EZSpecificity on specific protein families under the unknown
+families. a, The enzymatic functions of six enzyme families. The structure of     enzyme and substrate data split setting. Nitrilases were excluded from this
+a representative enzyme from each family is shown. b, The averaged AUPR       evaluation because of the extremely low number of data points, which rendered
+performance of EZSpecificity with and without fine-tuning on six enzyme       the results highly unreliable. For instance, no positive pairs may have occurred
+families. c, The average AUPR performance of the EZSpecificity-individual      during the four-fold validation.
+model across six enzyme families for three types of dataset splits. d, The AUPR
+
+
+α-ketoglutarate-dependent halogenases, flavin-dependent haloge-   structures from AlphaFold (for example, Th-Hal and AetA; Supplemen-
+nases and SAM-dependent halogenases; Fig. 5a–c and Supplementary   tary Fig. 22). Using a high-throughput screening platform configured
+Figs. 16–21). Notably, EZSpecificity without any fine-tuning achieved   with 96-well plates and a liquid chromatography–mass spectrometry
+0.7720–0.9447 AUROC and 0.5430–0.8506 AUPR values, varying from   detection method, a total of 624 experimental halogenation data
+easy to hard dataset scenarios (Fig. 5d–f). As observed in six proof-of-   points were collected. Then, EZSpecificity, trained on the in-house
+concept enzyme families (Fig. 4b), the fine-tuning process further  halogenase HaloS dataset (about 3,300 data points in literature
+enhanced the prediction performance (Fig. 5d–f), and EZSpecificity-   extracted by the semi-automatic data extraction approach; for details,
+fine-tune achieved 0.8008–0.9600 AUROC and 0.5698–0.8823 AUPR   see Supplementary Text 1), was directly applied to predict patterns
+values. Specifically, the AUPR of EZSpecificity-individual increased   of halogenase–substrate interactions. EZSpecificity, EZSpecificity-
+from 27.87% to 35.26% compared with EZSpecificity-w/oGCS-individual,  w/oGCS and ESP each generated a list ranking eight enzymes for each
+as the task difficulty increased from random to unknown enzyme and   substrate. The accuracy of these recommendations would serve as
+substrate scenarios. These results strongly suggest that the integration   the basis for comparison. As confirmed by experimental results, 55
+of structural features, graph and cross-attention mechanisms contrib-   of them did not have any enzymes that could act on them (Supple-
+utes to the improved performance of EZSpecificity.                 mentary Figs. 22–26, 28–48 and Supplementary Table 8). For the 12
+  Among all halogenases, eight flavin-dependent halogenases, known  new substrates not previously seen in the database (Supplementary
+for their distinct regioselectivity within the four major halogenase   Fig. 49), the EZSpecificity-fine-tune model, which was fine-tuned using
+families, were selected for experimental validation along with 78 sub-   the HaloS dataset, achieved a prediction accuracy of 91.7% for its top 1
+strates. The average molecular similarity between the 78 substrates  recommendation (Fig. 5e). This significantly surpassed the baseline
+and 449 collected substrates from the literature is only about 9%  methods, including EZSpecificity-w/oGCS (41.7%) and ESP (58.3%),
+(Supplementary Fig. 18), highlighting the significant diversity among  by a considerable margin. Interestingly, in our practical tests (Fig. 5e),
+these substrates. These enzymes were selected based on the following   the accuracy of the EZSpecificity-individual model (66.7%) was lower
+criteria: (1) they have been reported to exhibit broad substrate scope;   than that of the EZSpecificity-fine-tune model. Moreover, we intro-
+(2) they can be well-expressed as soluble proteins in Escherichia coli;  duced the EZSpecificity-ensemble model, which is an ensemble of the
+(3) they are carrier protein-independent halogenases; and (4) they have   EZSpecificity-individual and EZSpecificity-fine-tune models, achiev-
+either experimentally determined structures or reliable predicted   ing an accuracy of 75.0%. Notably, the prediction accuracy of various
+
+644  |  Nature  |  Vol 647  |  20 November 2025
+
+## PDF page 7
+a
+ Haloperoxidases                                                               Flavin-dependent halogenases
+
+                 Cl                                        Cl                                                              Cl                       O   OH                         O   OH
+       O       OH                O       O
+
+                                                                                 NH2                         Cl               NH2
+                                                                                                        PyrH
+                                                                 N                               N
+                                                                 H                               H
+
+ KG-dependent halogenases                                              SAM-dependent halogenases
+
+         OH  O                         OH  O                                          X–              L-Met     X           N
+                                                                                             O   N        NH2                                                      Cl                                                    PCP               OH                                                   S                                 SyrB2
+                                                            SAM                                                                                                        N   N             NH2                                 NH2                                                                                            HO    OH
+b
+                                                                           O
+              NH2                         OH O
+                   HO              HO
+
+                                                                N                        HO       O   O                            N                                   HO      O                                                                                                            O      O                            H         N                                                          OH
+         H                                                                                                                                                                    Cl
+                                                                                                                                                           2-Chloro-5,5-dimethyl
+       Tryptamine         5-Hydroxyindole              Baicalein             8-Hydroxyquinoline       3-Methylanisole           Umbelliferone
+                                                                                                                                                     -1,3-cyclohexanedione
+
+
+                                       Hc                                                    d          H                                     O                                       O    OH                                                                                                            EZSpeciﬁcity-individual   0.9809*    0.9374*    0.9444*    0.8670*            1.0         O           O    OH
+                                                          + FAD2– + 2H2O                      + O2 + FADH2 + 2Cl–         Cl
+      HO   O                      HO  Cl O                                                 EZSpeciﬁcity-ﬁne-tune    0.9600    0.9066    0.9086    0.8008
+                                                                                                                                                                                        0.8                                                                                                              EZSpeciﬁcity    0.9447    0.8828    0.8948    0.7720           score
+
+                                                                                            EZSpeciﬁcity-w/oGCS-individual    0.8235    0.7370    0.7291    0.5704                                                                         Flavin-dep.                                                                                                                                                                                                                                                                                                                                                                 AUROC    0.6
+                                                             KG-dep.                        EZSpeciﬁcity-w/oGCS    0.7968    0.7132    0.7194    0.5467
+
+                                                                  Haloperoxidase                            ESP    0.4844    0.4669    0.4810    0.4459
+                                                                                                                                                                                        0.4
+                                                          SAM-dep.                                      Random    substrate   enzyme    enzyme
+                                                                                                                           Unknown     and                                                                                                                 Unknown                                                                                                                                                                         substrate
+                                                                                                                            Unknown
+e                                                                                    f
+        100       91.7                                                                                        EZSpeciﬁcity-individual   0.9331*    0.7616*    0.8605*    0.6429            1.0
+  to                                                                                 85.1    83.0                                         EZSpeciﬁcity-ﬁne-tune    0.8823    0.7349    0.7962    0.5698                                                                    80.6                                                                                             78.7    78.7                                                                        77.877.8         80                                                                               75.0                               75.0          75.075.075.0       (%)                                                                                                         70.2                                             EZSpeciﬁcity    0.8506    0.7051    0.7750    0.5430           score    0.8          relative                                                                                   66.7                        66.7
+           truth                                            62.562.5                                                     EZSpeciﬁcity-w/oGCS-individual    0.5805    0.4562    0.4877    0.3642                                                                                                                                                                                                                                                                                          AUPR    0.6      model    60                   58.3                                                                      EZSpeciﬁcity-w/oGCS    0.5450    0.4492    0.4813    0.3427
+  of             ground
+       the                      41.7                                                   EZSpeciﬁcity-individualEZSpeciﬁcity-ﬁne-tune                    ESP    0.2092    0.1986    0.1922    0.2124            0.4
+         40                                                         EZSpeciﬁcity-ensemble          Accuracy                                                             EZSpeciﬁcity-w/oGCS                                                      ESP                                        Random    substrate   enzyme   substrate
+         20                                                                                                     and               Top 1       Top 2       Top 3       Top 4                                                                    Unknown                                                                                                                 Unknown                                                                                                                                  enzyme
+                                                                                                                            Unknown
+
+Fig. 5 | In silico and in vitro experimental validation of EZSpecificity on        arbitrary high dimensionality as a two-dimensional tree (http://tmap.gdb.
+the in-house HaloS dataset collected by a semi-automatic data extraction      tools). d,f, Comparison between EZSpecificity and state-of-the-art machine
+approach. a, The halogenation function of four types of halogenases.           learning models for predicting enzyme substrate specificity on halogenases
+The typical structure of each halogenase is shown. X stands for halogen           for AUROC (d) and AUPR (f) scores. The highest value was labelled with an
+atom (Cl−, I− and F−). b, The structure of representative collected substrates        asterisk in white or red colour. e, The prediction accuracy of EZSpecificity
+in HaloS dataset. c, TMAPs of halogenation reaction in HaloS dataset, colour-     and the state-of-the-art machine learning models for predicting eight enzyme
+coded on four types of halogenases. TMAP is a data visualization method,         substrate specificity relative to the ground truth.
+which is capable of representing datasets of up to millions of data points and
+
+
+EZSpecificity models relative to ground truth was maintained when the
+scope was broadened to include the top 2–5 recommended enzymes,  Representative applications
+in which it ranged between 62.5% and 85.2% (Fig. 5e, Supplementary   Because of its ability to predict a score for a target enzyme–substrate
+Fig. 27 and Supplementary Table 8).                                       pair, EZSpecificity can be used to (1) rank all the potential substrates
+
+                                                                                             Nature  |  Vol 647  |  20 November 2025  |  645
+
+## PDF page 8
+Article
+
+for a target enzyme based on substrate specificity; and (2) rank all the   EZSpecificity thus represents a broadly applicable tool for biocataly-
+enzyme(s) for a target substrate based on substrate specificity. As a    sis47,48, synthetic biology49, enzyme engineering50,51 and drug discov-
+case study, 34 metabolites and 860 enzymes present in E. coli were    ery52,53, with future integration of dynamic binding information poised
+selected for investigation. After generating 29,240 = 34 × 860 dock-   to further enhance predictive power.
+ing structures, we challenged EZSpecificity to identify the enzyme(s)
+that act on each target metabolite. As shown in Extended Data Fig. 1a
+and Supplementary Text 4, among the 34 metabolites, EZSpecificity  Online content
+successfully matched 10 metabolites (29.4%) with their corresponding  Any methods, additional references, Nature Portfolio reporting summa-
+enzymes within the top 5% of ranked enzymes compared with using    ries, source data, extended data, supplementary information, acknowl-
+docking scores, which achieved 20.4%. When expanding the ranking   edgements, peer review information; details of author contributions
+threshold to the top 20%, the cumulative success rate increased to 50%  and competing interests; and statements of data and code availability
+(17 metabolites). As shown in Extended Data Fig. 1b, a two-dimensional   are available at https://doi.org/10.1038/s41586-025-09697-2.
+kernel density estimation plot was generated to examine the relation-
+ship between the percentile rank of the top predicted enzymes and      1.   Khersonsky, O. & Tawfik, D. S. Enzyme promiscuity: a mechanistic and evolutionary
+their sequence similarity to enzymes in the training set. Analysis of         perspective. Annu. Rev. Biochem. 79, 471–505 (2010).
+the percentile rank of top enzyme prediction showed a peak density     2.   Meinnel, T. Comment on “Binding affinity determines substrate specificity and enables
+                                                                                                discovery of substrates for N-Myristoyltransferases”. ACS Catal. 12, 8195–8201 (2022).
+at approximately 10%, indicating that EZSpecificity demonstrates the    3.    Hult, K. & Berglund, P. Enzyme promiscuity: mechanism and applications. Trends Biotechnol.
+highest confidence in selecting the correct reactive enzyme when it         25, 231–238 (2007).
+is ranked in the top 10% of candidates. Also, a notable density peak    4.   Bornscheuer, U. T. & Kazlauskas, R. J. Catalytic promiscuity in biocatalysis: using old
+                                                                               enzymes to form new bonds and follow new pathways. Angew. Chem. Int. Ed. 43,
+is observed in the bottom-left region, suggesting that EZSpecificity       6032–6040 (2004).
+performs well on similar sequences while the model maintains reason-     5.    Buller, R. et al. From nature to industry: harnessing enzymes for biocatalysis. Science 382,
+able predictive accuracy even for enzymes with low sequence similarity        eadh8615 (2023).
+                                                                                                      6.   Robinson, S. L., Smith, M. D., Richman, J. E., Aukema, K. G. & Wackett, L. P. Machine
+to those encountered during training, demonstrating its capacity for         learning-based prediction of activity and substrate specificity for OleA enzymes in the
+generalization to new sequences.                                                          thiolase superfamily. Synth. Biol. 5, ysaa004 (2020).
+  Furthermore, EZSpecificity holds the potential for the study of bio­     7.   Yaseen, A., Amin, I., Akhter, N., Ben-Hur, A. & Minhas, F. Insights into performance
+                                                                                                   evaluation of compound–protein interaction prediction methods. Bioinformatics 38,
+synthetic gene clusters (BGCs) by linking BGC genes to their corre-           ii75–ii81 (2022).
+sponding biosynthetic intermediates. This ability was validated using    8.    Kroll, A., Ranjan, S., Engqvist, M. K. M. & Lercher, M. J. A general model to predict small
+two representative BGCs: the clavulanic acid biosynthetic pathway41–43        molecule substrates of enzymes based on machine and deep learning. Nat. Commun. 14,                                                                                         2787 (2023).
+and the albonoursin biosynthetic pathway44,45 (Extended Data Fig. 2).     9.   Pethe, M. A., Rubenstein, A. B. & Khare, S. D. Data-driven supervised learning of a viral
+EZSpecificity achieved up to 66.7% accuracy in identifying the correct        protease specificity landscape from deep sequencing and molecular simulations.
+target enzyme among the top three ranked candidates for each step in         Proc. Natl Acad. Sci. USA. 116, 168–176 (2019).                                                                                                        10.  Ran, X., Jiang, Y., Shao, Q. & Yang, Z. J. EnzyKR: a chirality-aware deep learning model for
+the biosynthetic pathway (Supplementary Tables 10, 11, 14 and 15 and         predicting the outcomes of the hydrolase-catalyzed kinetic resolution. Chem. Sci. 14,
+Supplementary Text 5). Identifying gene-intermediate pairs within        12073–12082 (2023).
+BGCs remains the main challenge46, as intermediates often differ by      11.   Durairaj, J. et al. Integrating structure-based machine learning and co-evolution to                                                                                                        investigate specificity in plant sesquiterpene synthases. PLoS Comput. Biol. 17, e1008197
+subtle chemical modifications. The performance of EZSpecificity could          (2021).
+be further improved through training on additional BGC-relevant data,     12.  Goldman, S., Das, R., Yang, K. K. & Coley, C. W. Machine learning modeling of family wide
+although these datasets remain poorly organized at present. Moreover,        enzyme-substrate specificity screens. PLoS Comput. Biol. 18, e1009853 (2022).                                                                                                             13.  Yu, T. et al. Enzyme function prediction using contrastive learning. Science 379, 1358–1363
+Supplementary Tables 12 and 13, Supplementary Fig. 51 and Supple-         (2023).
+mentary Text 6 further proved the practical utility of EZSpecificity by     14.  Sanderson, T., Bileschi, M. L., Belanger, D. & Colwell, L. J. ProteInfer, deep neural networks
+examining the specific enzyme families.                                                    for protein functional inference. eLife 12, e80942 (2023).                                                                                                               15.  Kim, G. B. et al. Functional annotation of enzyme-encoding genes using deep learning
+  Taken together, these case studies demonstrate the utility of EZSpeci-         with transformer layers. Nat. Commun. 14, 7370 (2023).
+ficity for highly efficient functional characterization of metabolomes     16.  Chuang, K. V. & Keiser, M. J. Comment on “Predicting reaction performance in C–N
+and natural product libraries. Notably, EZSpecificity focuses on sub-         cross-coupling using machine learning”. Science 362, eaat8603 (2018).                                                                                                                            17.  Wang, Y., Wang, J., Cao, Z. & Barati Farimani, A. Molecular contrastive learning of
+strate specificity prediction. Although enzyme stereoselectivity can         representations via graph neural networks. Nat. Mach. Intell. 4, 279–287 (2022).
+be processed during the encoding process, EZSpecificity may not be     18.  Ghanem, E. & Raushel, F. M. Enzymes: the active site. in Encyclopedia of Life Sciences
+                                                                                                (eds Ghanem, E. & Raushel, F. M.) https://doi.org/10.1002/9780470015902.a0000714.
+able to distinguish its subtle differences. This limitation arises because       pub2 (2012).
+our current GNN encoding method treats different stereoselectivity     19.   Vizovišek, M. et al. Protease specificity: towards in vivo imaging applications and
+at the same atom equally.                                                            biomarker discovery. Trends Biochem. Sci 43, 829–844 (2018).
+                                                                                             20.  Gogos, A. et al. Assignment of enzyme substrate specificity by principal component
+                                                                                                        analysis of aligned protein sequences: an experimental test using DNA glycosylase
+                                                                                      homologs. Proteins 40, 98–105 (2000).
+Conclusions                                                                                        21.  Wang, X., Quinn, D., Moody, T. S. & Huang, M. ALDELE: all-purpose deep learning toolkits
+                                                                                                              for predicting the biocatalytic activities of enzymes. J. Chem. Inf. Model. 64, 3123–3139
+In conclusion, we developed a general deep learning model, EZSpeci-         (2024).
+ficity, for predicting enzyme substrate specificity, which can be used    22.  Durairaj, J., de Ridder, D. & van Dijk, A. D. J. Beyond sequence: structure-based machine
+across diverse protein families and native and non-native substrates.         learning. Comput. Struct. Biotec. 21, 630–643 (2023).
+                                                                                              23.  Satorras, V. G., Hoogeboom, E. & Welling, M. E(n) equivariant graph neural networks.
+This model introduces two innovations—an encoder for 3D bind-          In Proc. 38th International Conference on Machine Learning. Vol. 139, 9323–9332
+ing complexes based on the ESIBank dataset and cross-attention        (PMLR, 2021).
+layers, both of which are often overlooked in previous CPI studies—    24.  Martínez-Martínez, M. et al. Determinants and prediction of esterase substrate promiscuity
+                                                                                                        patterns. ACS Chem. Biol. 13, 225–234 (2018).
+addressing the limitations of existing approaches that often over­    25.  Yang, M. et al. Functional and informatics analysis enables glycosyltransferase activity
+look the 3D binding process and atomic enzyme–substrate interac-         prediction. Nat. Chem. Biol. 14, 1109–1117 (2018).
+tions. The ESIBank complexes also provide a valuable community    26.  Mou, Z. et al. Machine learning-based prediction of enzyme substrate scope: application
+                                                                                                   to bacterial nitrilases. Proteins 89, 336–347 (2021).
+resource for studies of enzyme function and reactivity, although per-     27.  Huang, H. et al. Panoramic view of a superfamily of phosphatases through substrate
+formance may be affected for pairs lacking active site annotations.          profiling. Proc. Natl Acad. Sci. USA. 112, E1974–E1983 (2015).
+Apart from this, EZSpecificity demonstrated strong performance, up    28.  Bastard, K., Smith, A., Vergne-Vaxelaire, C. et al. Revealing the hidden functional diversity
+                                                                                                    of an enzyme family. Nat. Chem. Biol. 10, 42–49 (2014).
+to 48.1% higher AUROC than ESP in silico 91.7% accuracy compared    29.  The UniProt Consortium. UniProt: a worldwide hub of protein knowledge. Nucleic Acids
+with 58.3% for ESP in vitro across eight halogenases and 78 substrates.         Res. 47, D506–D515 (2018).
+
+646  |  Nature  |  Vol 647  |  20 November 2025
+
+## PDF page 9
+30.  Solis-Vasquez, L. et al. Benchmarking the performance of irregular computations in         44.  Lautru, S., Gondry, M., Genet, R. & Pernodet, J.-L. The albonoursin gene cluster of
+    AutoDock-GPU molecular docking. Parallel Comput. 109, 102861 (2022).                           S. noursei: biosynthesis of diketopiperazine metabolites independent of nonribosomal
+31.  Santos-Martins, D. et al. Accelerating AutoDock4 with GPUs and gradient-based local            peptide synthetases. Chem. Biol. 9, 1355–1364 (2002).
+     search. J. Chem. Theory Comput. 17, 1060–1073 (2021).                                      45.  Andreas, M. P. & Giessen, T. W. Cyclodipeptide oxidase is an enzyme filament. Nat. Commun.
+32.  Hedstrom, L. in Encyclopedia of Life Sciences (Wiley, 2001).                                         15, 3574 (2024).
+33.  Du, B.-X. et al. Compound–protein interaction prediction by deep learning: databases,       46.  Gao, J. et al. Biosynthesis of catharanthine in engineered Pichia pastoris. Nat. Synth. 2,
+     descriptors and models. Drug Discov. Today 27, 1350–1366 (2022).                            231–242 (2023).
+34.  Ding, N. et al. Parameter-efficient fine-tuning of large-scale pre-trained language models.     47.  Zhang, X. et al. Enzymatic synthesis of organoselenium compounds via C–Se bond
+     Nat. Mach. Intell. 5, 220–235 (2023).                                                         formation mediated by sulfur carrier proteins. Nat. Synth. 3, 477–487 (2024).
+35.  Huo, H. & Iwaihara, M. Utilizing BERT pretrained models with various fine-tune methods       48.  Wu, L., Wang, X., Li, A., Cui, H. & Li, X. Discovery of a polyethylene biodegradable laccase
+      for subjectivity detection. In Proc. Web and Big Data 4th International Joint Conference,          from Acinetobacter dijkshoorniae. AIChE J. 71, e70005 (2025).
+    APWeb-WAIM 2020, part II 4 (eds Wang, X. et al.), Vol. 12318, 270–284 (Springer, 2020).       49.  Zhao, H. Synthetic biology continues to grow. ACS Synth. Biol. 13, 1–2 (2024).
+36.  Motmaen, A. Exploring the Utility of Fine-Tuned Transformer Embeddings in Machine         50.  Wang, X. et al. Corner engineering: tailoring enzymes for enhanced resistance and
+     Learning Guided Directed Evolution (ETH Zurich, 2020).                                           thermostability in deep eutectic solvents. Angew. Chem. Int. Ed. 63, e202315125 (2024).
+37.  Yu, T. et al. Machine learning-enabled retrobiosynthesis of molecules. Nat. Catal. 6,            51.   Li, A. et al. Discovery and mechanism-guided engineering of BHET hydrolases for
+     137–151 (2023).                                                                     improved PET recycling and upcycling. Nat. Commun. 14, 4169 (2023).
+38.  Yu, T., Boob, A. G., Singh, N., Su, Y. & Zhao, H. In vitro continuous protein evolution            52.  Catacutan, D. B., Alexander, J., Arnold, A. & Stokes, J. M. Machine learning in preclinical
+    empowered by machine learning and automation. Cell Syst. 14, 633–644 (2023).               drug discovery. Nat. Chem. Biol. 20, 960–973 (2024).
+39.  Latham, J., Brandenburger, E., Shepherd, S. A., Menon, B. R. K. & Micklefield, J.               53.  Xu, S. et al. MscI restriction enzyme cooperating recombinase-aided isothermal
+    Development of halogenase enzymes for use in synthesis. Chem. Rev. 118, 232–269               amplification for the ultrasensitive and rapid detection of low-abundance EGFR
+     (2018).                                                                                 mutations on microfluidic chip. Biosens. Bioelectron. 247, 115925 (2024).
+40.  Crowe, C. et al. Halogenases: a palette of emerging opportunities for synthetic biology–
+     synthetic chemistry and C–H functionalisation. Chem. Soc. Rev. 50, 9443–9481 (2021).       Publisher’s note Springer Nature remains neutral with regard to jurisdictional claims in
+41.  Arulanantham, H. et al. ORF17 from the clavulanic acid biosynthesis gene cluster         published maps and institutional affiliations.
+     catalyzes the ATP-dependent formation of N-glycyl-clavaminic acid. J. Biol. Chem. 281,
+    279–287 (2006).                                                                      Springer Nature or its licensor (e.g. a society or other partner) holds exclusive rights to this
+42.  Valegård, K. et al. Structural and mechanistic studies of the orf12 gene product from the       article under a publishing agreement with the author(s) or other rightsholder(s); author self-
+     clavulanic acid biosynthesis pathway. 69, 1567–1579 (2013).                                 archiving of the accepted manuscript version of this article is solely governed by the terms of
+43.  López-Agudelo, V. A., Gómez-Ríos, D. & Ramirez-Malule, H. Clavulanic acid production by    such publishing agreement and applicable law.
+     Streptomyces clavuligerus: insights from systems biology, strain engineering, and
+    downstream processing. Antibiotics 10, 84–109 (2021).                     © The Author(s), under exclusive licence to Springer Nature Limited 2025
+
+
+
+
+
+                                                                                             Nature  |  Vol 647  |  20 November 2025  |  647
+
+## PDF page 10
+Article
+Methods                                                        radius of 20 Å from the centre of the active site was applied for enzymes
+                                                                  with known active site coordinates. During docking, the number of runs
+ESIBank database preparation                               was set to 100 per enzyme–substrate pair, in which each run consisted
+To build the ESIBank, we first collected existing native and/or non-   of a maximum of 2,500,000 score evaluations for a unique binding
+native substrates from BRENDA54 in SMILES. However, in BRENDA, the   position for a total maximum of 250 million pose evaluations. After
+specific enzyme sequences corresponding to substrates are mostly   docking, the highest scoring pose was produced as output as a structure
+not directly listed. Instead, only the EC number and the organism    file, and final pose predictions were used to generate structure files of
+associated with the enzymes are provided. Therefore, we randomly   the enzymes with substrate bound for input into the model. Of course,
+selected an enzyme from the listed category, comprising EC number   other efficient docking software or complex generation tools, such as
+and organism name, to match the substrate obtained from UniProt29,   Co-Dock61 and AF362 could also be explored further.
+resulting in approximately 180,000 positive enzyme–substrate pairs.
+To generate negative samples, for each positive pair, we created five  Use of a pretrained protein language model to represent enzymes
+negative enzymes and five negative substrates, totalling 10 negative  We used ESM-2 (refs. 8,13,63), a pretrained transformer protein lan-
+enzyme–substrate pairs per positive pair. These negative pairs vary  guage model, to embed the protein amino acid sequences in ESIBank.
+in difference with the actual enzyme and substrate to help the model  ESM-2 is one of the most powerful self-supervised protein language
+cover all resolutions of enzyme–substrate specificity prediction. The   models, having 15 billion parameters, which was trained to reconstruct
+digit number in EC numbers was used to define the levels of differ-   the portions of proteins that are randomly masked during training
+ence between positive and negative data. These levels ranged from   over protein sequences in the Uniref database. We used the output
+no common digits in the EC number to all four digits being identical,  from the penultimate layer of the neural network as the amino acid
+encompassing five levels. As a result, using EC numbers as a guide, we  embedding for enzymes. The embedding generated by ESM-2 is a
+randomly generated approximately 1,100,000 negative substrate–   1,280-dimensional vector representation for each amino acid. A linear
+enzyme pairs across these five different levels, corresponding to   layer with 128-dimensional embedding was used for each amino acid
+the different digits of the EC number. Some abnormal or low-quality   sequence, which was reprojected from the original 1,280-dimensional
+data points were removed, including substrates containing more than   vector in ESM-2. We referred to it as the amino acid representation
+280 atoms, enzymes containing more than 1,000 amino acids and   of the enzyme and the average of these as the representation of the
+enzymes lacking information about active sites in UniProt. Moreover,  enzyme.
+additional data from six representative enzyme families, including
+esterases24, glycotransferases25, nitrilases26, phosphatases27, thiolases6  Capturing catalytic pocket environment by SE(3)-equivariant
+and domain of unknown function proteins (DUFs)28, were included to  GNNs
+enrich ESIBank. Moreover, about 3,300 enzyme–substrate pairs from  Each atom of the substrate was encoded into a vector representa-
+halogenases were extracted using a semi-automatic data extraction   tion to represent its surrounding micro-environment using an SE(3)-
+process consisting of four steps: identification, extraction, translation   equivariant GNN23. We represented the binding pocket as graphs
+and connection. The detailed process is provided in Supplementary   G = (V, E), where each node V is an atom from either substrate or
+Text 1. In total, we collected 323,783 high-quality enzyme–substrate  enzyme. These nodes are connected by edges in E to their k-nearest
+pairs (Supplementary Tables 1 and 7).                         atom neighbour in the structure. In practice, we set k as 32. The fea-
+                                                                    tures of enzyme atoms include chemical elements, amino acid types
+Construction of 3D enzyme–substrate complexes              and an indication of whether the atoms belong to the backbone. In
+To make the ESIBank more informative, we generated the prediction   the case of substrate atoms, their types are represented as multi-hot
+of 3D enzyme–substrate complexes of each enzyme–substrate pair.   vectors, which include information about chemical element types and
+Previous methods often used a brute force approach to dock substrates   aromatic properties. The edge features eij include distance embed-
+directly to enzymes, resulting in inaccuracies due to the inability of the   dings and bond types. For distance embeddings, we use radial basis
+current docking software to precisely identify the enzyme-binding   functions positioned at 32 centres within the range of 0–10 Å. Bond
+sites55. Instead, we sourced active site information from the UniProt   types are represented by a four-dimensional one-hot vector, indicat-
+database and constrained the binding box to a 20 Å cube centred   ing whether they are single, double, triple or virtual bonds, along with
+around the active site amino acids because of the size of the dataset.   a two-dimensional one-hot vector to specify whether they connect
+Moreover, inaccuracies stemming from the absence of cofactors in  atoms between substrates and enzymes.
+enzyme structures were addressed in our pipeline by integrating the    To make the encoding process equivariant with respect to E(3) trans-
+cofactors into the enzyme structures using AlphaFill56. This ensures   formations, inspired by E(n)-equivariant graph neural networks23, we
+that the catalytic enzyme–substrate pose can be generated in a local   modelled the catalytic site environment with an SE(3)-equivariant GNN:
+environment similar to that of the native binding pocket.
+  Specifically, substrate structures were generated from SMILES                       h t = φθ ( h0, eij )
+strings using Open Babel57 and RDKit58. The 3D structures of reactive
+enzymes, along with any required cofactors, were obtained from the     At the lth layer, the atom hidden embedding hl is updated as follows:
+AlphaFill database56. All apo enzyme models were sourced from the FTP
+archive of the AlphaFold Protein Structure Database59, following the                                             l +1        l                                  l     l        l 
+                                                                                                                                                                                                        ,                                                                                                    eij , hi , h j                                                   ∑                                                                  hi  = hi + φh                                                                                                                                                                                                  , hi                                                                     φe (                                                                                                            )procedures outlined in the AlphaFill documentation. After the prepa-                                                                                 N(i )                                                                                                                     j ∈                                                                                                                                              
+ration of all input enzyme and substrate files, docking was performed
+on all enzyme–substrate pairs in the ESIBank using AutoDock-GPU31,60.  where φh and φe are two-layer perceptrons to model message aggrega-
+First, all enzyme structure files were converted to map files for input   tion and message passing separately. The initial hidden embedding h0
+into AutoDock-GPU and the substrate files were converted to pdbqt    is obtained by two distinct linear layers, each used to reproject the fea-
+inputs. Next, a list of all enzymes in the dataset with known active sites   tures of enzyme atoms and substrate atoms independently. We referred
+was generated. For all enzymes with known active sites, the centre of   to the final atom hidden embedding ht as the micro-environment
+mass of the active site was used as the centre of the box. For all enzymes  embedding, the final atom hidden embedding for substrate atoms as
+without a known active site, the centre of the enzyme was used as the   substrate atom embedding, and the average of substrate atom embed-
+box centre. To leverage available active site information, a box cutoff   ding as the substrate embedding.
+
+## PDF page 11
+                                                               feedforward layers. Unless specified otherwise, the dimensions of the
+Modelling the interactions between substrates and enzymes      hidden embeddings were all set to 128.
+using cross- attention layers
+Existing ML models usually use a multi-layer perceptron64 over the  Chemicals and strains
+concatenation of substrate embedding and enzyme embedding to   All chemicals were of analytical grade or higher quality and purchased
+model the enzyme–substrate interactions7,8. However, this design can-  from Sigma-Aldrich and Fisher Scientific and used as received unless
+not directly model the atomic interaction, which plays an important   stated otherwise. Genes encoding various halogenases, including
+part in determining enzyme specificity. To overcome this limitation,  PrnA (UniProt ID: P95480), PyrH (UniProt ID: A4D0H5), AetA (Uni-
+inspired by Transformer65, we used a cross-attention layer to generate   Prot ID: A0A861B8S3), BorH (UniProt ID: M9QSI0), ThaL (UniProt ID:
+enzyme-aware substrate atom embedding:                          A1E280), BrvH (UniProt ID: B4WBL8), PltM (UniProt ID: Q4KCZ3) and
+                                                            Th-HaL (UniProt ID: Q4KCZ3), were synthesized by Twist Bioscience and
+                                                     QKT                   cloned into the pET28a(+)-vector by NcoI and XhoI restriction sites with
+                                     V              Attention( Q , K , V ) = softmax                                                                                                                                                                                     a C-terminal His6-tag. Chemically competent E. coli BL21-Gold (DE3)                                                     d k                                                           
+                                                                                cells (New England BioLabs) were used as hosts for protein expression.
+
+        Cross-attention( E , S) = φO(Concat(head1 , …, headh ))         Expression and purification of experimentally validated
+                                                           halogenases
+where headi = Attention( φqi ( E ), φ ki ( S), φVi ( S)) , E is the enzyme amino   All experimentally validated halogenases (PrnA, PyrH, AetA, BorH,
+acid embedding, S is the substrate atom embedding, dk is the dimension   ThaL, BrvH and PltM) were expressed as described elsewhere13.
+of the embedding K and φ is the linear layer. As shown in the equations,   After enzyme expression induced by adding 0.5 mM isopropyl β-D-
+the cross-attention layer contained h independent heads. Each of these   1-thiogalactopyranoside (IPTG) and continuing the incubation at 30 °C
+heads is a learnable attention function to capture the interaction   for 18 h, the cells were collected by centrifugation at 4 °C and 3,600 × g for
+between the amino acids of enzymes and the atoms of substrates. This   15 min. The resulting cell pellets were resuspended in 20 ml of buffer A,
+function is composed of several trainable linear layers. It first generates   which contained 50 mM sodium phosphate (pH 8.0) and 10 mM imida-
+an attention matrix according to the embeddings of amino acids and   zole. Sonication was performed for 10 min, alternating between 10 s on
+atoms, and then performs a weighted summation of atom embeddings.  and 5 s off at 50% amplitude, to disrupt the cells. Cellular debris was then
+Similarly, we used another cross-attention layer to generate substrate-  removed by centrifugation at 14,000 × g for 1 h. Protein purification
+aware enzyme amino acids embedding:                         was carried out using a Protino Ni-IDA 2000 packed column as per the
+                                                                      instructions of the manufacturer using buffer A and buffer B (50 mM
+        Cross-attention( S , E ) = φO(Concat(head1 , …, headh ))         sodium phosphate, 330 mM imidazole, pH 8.0). To remove imidazole,
+                                                               a PD-10 desalting column (GE Healthcare). The purified enzymes were
+where headi = Attention( φqi ( S), φ ki ( E ), φVi ( E )).                        stored in small aliquots in sodium phosphate buffer (50 mM sodium
+ We referred to the average embeddings of enzyme-aware substrate   phosphate, pH 8.0, 5% (v/v) glycerol) at −80 °C, ensuring that each
+atom embedding as enzyme-aware substrate embedding and the aver-   aliquot was used only once post-thawing. The purity of the proteins
+age embeddings of substrate-aware enzyme amino acids embedding  was confirmed by SDS-PAGE (sodium dodecyl sulfate–polyacrylamide
+as substrate-aware enzyme embedding.                                gel electrophoresis), showing greater than 90% purity, and the protein
+                                                                   concentration was quantified using the Pierce BCA protein assay. To rule
+Multilayer perceptron as the base predictor                      out the possibility of non-regiospecific or non-enzymatic halogenation
+Enzyme and substrate are separately encoded by ESM-2 and SE(3)-   caused by H2O2 or HOBr leakage, we supplemented the reaction with
+equivariant GNN23. We denote enzyme embedding as henzyme and sub-   superoxide dismutase (3 U) and catalase (3 U) as controls for com-
+strate embedding as hsubstrate. Through cross-attention layers, we directly   parison. These enzymes specifically eliminate reactive oxygen spe-
+modelled the interactions between the amino acids of the enzyme and   cies, ensuring that any halogenation observed is due to the enzymatic
+the atoms of the substrate, enriching their embeddings with each   activity, rather than uncontrolled chemical reactions driven by leaked
+other’s context. This process resulted in the creation of substrate-aware   oxidizing agents. As shown in Supplementary Figs. 29, 33, 35, 37 and
+enzyme embedding henzyme and enzyme-aware substrate embedding   38, identical halogenation results were observed in both the presence
+hsubstrate. These features were used as input to a multi-layer perception  and absence of superoxide dismutase and catalase, confirming that
+to predict the enzyme specificity:                                  the halogenation was catalysed enzymatically, rather than being the
+                                                                         result of non-enzymatic reactions.
+        y = MLP              Concat                         (               (                   hsubstrate , henzyme,hsubstrate , henzyme ))
+                                                         High-throughput enzymatic assays and product identification
+                                                           with high-resolution mass spectrometry
+Training process of EZSpecificity                            The enzymatic reactions were conducted in a 96-well plate with shak-
+We formulated the task of predicting enzyme specificity as a binary   ing at 900 rpm. Reactions (100 μl) consisting of 1 mM target substrate,
+classification problem, with the training objective being the classifica-  10 μM FAD, 1 mM NADP+, 10 mM sodium phosphite, 10 μM purified
+tion of pairs of substrates and enzymes into two categories. Our model  enzymes (PrnA, PyrH, AetA, BorH, ThaL, BrvH, Th-Hal and PltM), 5 μM
+was trained using a cross-entropy loss function, and we employed the   SsuE and PtdH were incubated for 24 h and 30 °C with and without NaBr
+AdamW optimizer with default parameters66. The learning rate was set   in a buffer consisting of 50 mM sodium phosphate (pH 8.0). Aliquots
+at 0.0003. To enhance training stability, we implemented a learning rate   (100 μl) were taken out and mixed with 50 μl ice-cold 2% formic acid to
+schedule. In the initial few epochs, we linearly increased the learning   terminate the reaction by precipitating the proteins. Precipitates were
+rate from 0.000006 to 0.0003 for warm-up purposes. If the model’s  removed by centrifugation (15,000 × g for 5 min at 4 °C) before 5 μl
+performance did not improve for 10 consecutive epochs, we reduced   aliquots were subjected to liquid chromatography–mass spectrometry
+the learning rate to half of its previous value. Training was concluded   (LC-MS). All LC-MS analyses were carried out on a Thermo Scientific
+once the learning rate dropped below 0.000006. We set the batch size   LC-MS, using a Hypersil GOLD VANQUISH PFP UHPLC column (1.9 μm,
+to 32 for training. The SE(3) neural network comprised three GNN lay-   2.1 mm × 100 mm) at a flow rate of 0.4 ml min−1 with the following elu-
+ers and the base predictor, multi-layer perceptron, consisted of three   tion system: solvent A (H2O supplemented with 0.1% formic acid) and
+
+## PDF page 12
+Article
+B (acetonitrile supplemented with 0.1% formic acid) and a specific linear    60.  Ding, J. et al. Vina-GPU 2.0: further accelerating AutoDock Vina and its derivatives with
+                                                                                              graphics processing units. J. Chem. Inf. Model. 63, 1982–1998 (2023).
+gradient for various substrates. ThermoFisher Scientific Q Exactive    61.  Pang, M. et al. CoDock-Ligand: combined template-based docking and CNN-based
+was equipped with an ESI source and Orbitrap mass analyser. Calibra-         scoring in ligand binding prediction. BMC Bioinformatics 24, 444 (2023).
+tion was performed with Pierce LTQ Velos ESI Positive Ion Calibration    62.  Abramson, J. et al. Accurate structure prediction of biomolecular interactions with
+                                                                                          AlphaFold 3. Nature 630, 493–500 (2024).
+Solution (ThermoFisher). Xcalibur from ThermoFisher Scientific was    63.  Lin, Z. et al. Evolutionary-scale prediction of atomic-level protein structure with a
+used to control, acquire and interrogate data from the LC-MS system        language model. Science 379, 1123–1130 (2023).
+and related instruments. The full MS-Selected Ion Monitoring (SIM)    64.  Bebis, G. & Georgiopoulos, M. Feed-forward neural networks. IEEE Potentials 13, 27–31
+                                                                                                           (1994).
+was operated with the following parameters: 70,000 (resolution),    65.  Vaswani, A. et al. Attention is all you need. In Proc. 31st International Conference on
+50–750 m/z (scan range), T = 3 × 106 (AGC target), 200 ms (maximum         Neural Information Processing Systems 6000–6010 (Curran Associates, 2017).
+injection time) and positive (polarity). Data analysis was then con-    66.  Loshchilov, I. & Hutter, F. Decoupled weight decay regularization. In Seventh International
+                                                                                        Conference on Learning Representations 4061–4079 (ICLR, 2019).
+ducted using the Freestyle application within Xcalibur software. Prod-    67.  Su, Y. et al. EZSpecificity code. Zenodo https://doi.org/10.5281/zenodo.17129895
+uct identification was based on retention time comparison and the         (2025).
+detection of an increased molecular weight marked by bromine.
+                                                                           Acknowledgements We thank S. E. Denmark, M. D. Burke, M. C. White, C. Huang, H. Ren and
+Reporting summary                                                                                   Y. Yuan for their constructive discussion. We also thank A. Patel, C. Molnar and D. Hendrixson
+Further information on research design is available in the Nature Port-    for helping with halogenase data collection and protein purification. We thank X. Li, S. Xu,                                                                                                X. Wang, A. Li, Y. Sheng, Q. Deng and H. Zhang for help with figure preparation. This work was
+folio Reporting Summary linked to this article.                              supported by the Molecule Maker Lab Institute: An AI Research Institute program supported by
+                                                                                          the US National Science Foundation under grant no. 2019897 and 2505932 (H.Z.). Any opinions,
+                                                                                                findings and conclusions or recommendations expressed in this material are those of the
+Data availability                                                                authorsthe Nationaland doInstitutesnot necessarilyof Healthreflect(MIRA thoseawardofno.theR35GM142745).NSF. T.J.D. also acknowledges funding from
+The ESIBank dataset can be found at https://drive.google.com/drive/
+folders/1-lfpKPhmf_P837UBfgUt_7R00_f45DtA?usp=drive_link.          Author contributions H.C., Y.S. and H.Z. conceived of the presented idea. H.C., Y.S., T.Y. and                                                                                                                       T.J.D. designed the ESIBank database collection process. H.C. planned the in vitro experiments,
+                                                                            and H.C. and Z.Z. carried out in vitro experiments and data analysis. Y.S. developed and
+                                                                                implemented the computational framework. H.C. and Y.S. designed the in silico experiments
+Code availability                                                      and data analysis. H.C. and T.J.D. contributed to the docking process. H.C. contributed to
+                                                                                                    specific families and halogenase data collection and preparation. T.Y. contributed to the 3D
+The source code of EZSpecificity is available at Zenodo67.                    structure prediction and code revision. H.C. wrote the paper with inputs from all authors. All
+                                                                                          authors discussed the results and contributed to the final paper. H.Z., D.S. and J.P. provided
+54.  Jeske, L., Placzek, S., Schomburg, I., Chang, A. & Schomburg, D. BRENDA in 2019:        supervision and resources for this study.
+    a European ELIXIR core data resource. Nucleic Acids Res. 47, D542–D549 (2018).
+55.  Zhang, Y., Cai, H., Shi, C. & Tang, J. E3Bind: An end-to-end equivariant network for        Competing interests The authors declare no competing interests.
+     protein-ligand docking. In Eleventh International Conference on Learning Representations
+    14426–14426 (ICLR, 2023).                                                             Additional information
+56.  Hekkelman, M. L., de Vries, I., Joosten, R. P. & Perrakis, A. AlphaFill: enriching AlphaFold     Supplementary information The online version contains supplementary material available at
+    models with ligands and cofactors. Nat. Methods 20, 205–213 (2023).                       https://doi.org/10.1038/s41586-025-09697-2.
+57.  O’Boyle, N. M. et al. Open Babel: an open chemical toolbox. J. Cheminfor. 3, 1–14 (2011).     Correspondence and requests for materials should be addressed to Diwakar Shukla or
+58.  Landrum, G. RDKit: A Software Suite for Cheminformatics, Computational Chemistry, and    Huimin Zhao.
+     Predictive Modeling. https://www.rdkit.org/RDKit_Overview.pdf (RDKit, 2013).              Peer review information Nature thanks the anonymous reviewers for their contribution to the
+59.  Tunyasuvunakool, K. et al. Highly accurate protein structure prediction for the human       peer review of this work.
+    proteome. Nature 596, 590–596 (2021).                                                 Reprints and permissions information is available at http://www.nature.com/reprints.
+
+## PDF page 13
+Extended Data Fig. 1 | EZSpecificity examination in the metabolite-enzyme    similarity compared to any enzyme in our training set for EZSpecificity in the
+pair prediction task. (a) The performance of EZSpecificity vs. Docking Score    metabolite-enzyme pair prediction task. Kernel density estimation analysis
+in identifying the reactive enzyme(s) for 34 target metabolites. AutoDock Vina    can answer a fundamental data smoothing problem where inferences about the
+was used as a representative physical model for docking scores. Only one        population are made based on a finite data sample. 1D kernel density estimation
+reactive enzyme with the best-ranked score was considered for calculation.        for each axis was also plotted at the top and right of the figure. The data was
+EZSpecificity predicts 29% of the known positive enzyme within the top 5% of     obtained from 34 metabolites within E. coli used for the calculation. Density is
+predictions compared to 20% from physical score alone. (b) 2D kernel density     indicated by color intensity, where darker regions correspond to greater density.
+estimation plot of the percentile rank of top predicted enzymes vs. the sequence
+
+## PDF page 14
+Article
+
+
+
+
+
+Extended Data Fig. 2 | Enzyme retrieval by EZSpecificity within two representative BGCs. (a) Diagram of the clavulanic acid BGC, comprising eight reaction steps.
+(b) Diagram of the albonoursin BGC, comprising two reaction steps. Two substrates were investigated in the first reaction step in each BGC.
+
+## PDF page 15
+
+
+## PDF page 16
+
+
+## PDF page 17

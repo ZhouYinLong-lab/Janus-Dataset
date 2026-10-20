@@ -1,0 +1,44 @@
+{
+  "second_round_entries": 17,
+  "source_files": 17,
+  "retained_fulltext_files": 15,
+  "abstract_metadata_only": [
+    "L39",
+    "L48"
+  ],
+  "read_depth_counts": {
+    "预印本关键结果与消融及Table1原页视读并核正式摘要": 1,
+    "正文方法与主要结果及评价流程核查未逐图数字化": 1,
+    "正文方法与结果及结论核查": 1,
+    "正文方法与主要结果及比例选择段核查": 1,
+    "正文测试模式与结果及讨论核查": 1,
+    "正式摘要及检索可见方法结果段未取得完整正文": 1,
+    "全文方法结果与限制核查图例未逐张渲染": 1,
+    "四阶段方法评估标准与主要结果核查": 1,
+    "正文方法表2至6及错误分析核查未核补充阴性成绩": 1,
+    "正文方法评价与结果及Table4原页视读": 1,
+    "定向核查整合方法与重叠和错误分析": 1,
+    "方法4与结果5及表5至6定向核查": 1,
+    "更新预印本方法与成本框架及摘要未完整核结果": 1,
+    "数据方法与主结果及对照任务定义核查": 1,
+    "仅正式摘要与题录未取得正文": 1,
+    "旧矩阵J041复核正文方法结果与Table1": 1,
+    "数据整理与两轮筛选及讨论限制定向核查": 1
+  },
+  "failed_downloads": [
+    "Pertusi2017.xml",
+    "Caceres_thesis.pdf",
+    "RELATE2025.pdf",
+    "Pertusi2017.pdf",
+    "DeepEventMine2020_supp.pdf",
+    "DORAXGB2025.html"
+  ],
+  "page_images_actually_viewed": [
+    "Caceres2020_p34.png",
+    "AssayFrames2017_p7.png"
+  ],
+  "all_referenced_sources_exist": true,
+  "all_successful_download_hashes_match": true,
+  "model_experiments_run": false,
+  "scientific_results_independently_reproduced": false
+}

@@ -1,0 +1,912 @@
+## PDF page 1
+                                                                                                                           This article is licensed under CC-BY 4.0
+
+              pubs.acs.org/cm                                                                                                                                         Article
+
+      Text Mining the Literature to Inform Experiments and Rationalize
+      Impurity Phase Formation for BiFeO3
+         Kevin Cruse, Viktoriia Baibakova, Maged Abdelsamie, Kootak Hong, Christopher J. Bartel,
+         Amalie Trewartha, Anubhav Jain, Carolin M. Sutter-Fella, and Gerbrand Ceder*
+
+
+                      Cite This: https://doi.org/10.1021/acs.chemmater.3c02203             Read Online
+
+
+
+                                                                                                                                                                                            sı  Supporting Information      ACCESS                Metrics & More                       Article Recommendations    *
+        articles.     ABSTRACT: We used data-driven methods to understand the
+            formation of impurity phases in BiFeO3 thin-film synthesis through
+             the sol−gel technique. Using a high-quality dataset of 331 synthesis        published       procedures and outcomes extracted manually from 177 scientific
+                articles, we trained decision tree models that reinforce important(UTC).    share        experimental heuristics for the avoidance of phase impurities but
+             ultimately show limited predictive capability. We find that several16:25:36          important synthesis features, identified by our model, are often not
+at          reported in the literature. To test our ability to correctly impute          legitimately
+2024to        missing synthesis parameters, we attempted to reproduce nine
+             syntheses from the literature with varying degrees of “missingness”.16,how        We demonstrate how a text-mined dataset can be made useful by
+  on
+            informing new controlled experiments and forming a better understanding for impurity phase formation in this complex oxideJanuary          system.onoptions
+   for
+             1. BACKGROUND AND INTRODUCTION                    throughput synthesis,10−13 where a synthesis machine learns
+                                                                            optimal synthesis conditions for a specific target material or23.93.185.46         At  its  core, the design process  for  synthesizing inorganic                                                                             property by taking patterns from historical syntheses and their              materials, like many design processes, encompasses iterationsvia                                                                                       results into account. Existing studies show the promise of              of experiment planning, execution, and characterization of the
+             outcome.1,2 The choice of synthesis conditions is critical for     autonomous synthesis in accelerating the drive toward efficient
+                                                                                   materials discovery, though there are still pitfalls such as a need              realizing new materials but is often made by analogy to similar
+                                                                                        for condition initialization and informing experiments based onDownloaded           materials and with limited quantitative motivation. This choice                                                                                           historical data.14 These autonomous setups can be directed by                 is further complicated by the expansiveness of the condition
+                                                                                           historical datasets of existing syntheses, such as through a
+             space, especially when prefiring steps (e.g., mixing, stirring, and
+                                                                             review of reported syntheses in the scientific literature, where a                                https://pubs.acs.org/sharingguidelines        chelation) are considered. A thorough understanding of how                                                                            wealth of historical syntheses and their detailed conditions
+             the choice of conditions may influence a synthesis would allow   See                                                                    have already been reported.
+           one to realize which precursors and reagents could be used at
+                                                                                          State-of-the-art  natural language processing (NLP)  tools
+           which conditions in order to achieve the appropriate evolution
+                                                              make the process of text mining from the literature achievable              of phases toward a desired target.3 Recent studies have shown
+                                                               on a large scale, without the need for a coalition of human
+         how computed thermochemical reaction energies can be used
+                                                                                 annotators, and such methods have recently been applied to             to understand synthesis pathways;4−7 however, these studies                                                                              the materials science literature.15−22,22−33 Most of the efforts in
+             focus primarily on precursor choice and temperature as the
+                                                                                            this subfield have been in the extraction of relevant material
+            fundamental conditions of interest, whereas many additional
+                                                                                                entities, such as chemical formulas, material properties, and             conditions are known to be relevant to inorganic synthesis.8,9
+                                                                               processing conditions; meanwhile, efforts on large-scale text
+           As the number of these conditions grows, the dimensionality of
+                                                                       mining of synthesis pathways remain limited, largely since most
+               this problem increases, and  it becomes harder to model the
+               effects of these conditions on synthesis pathway determination.
+              Data-driven methods  in  synthesis  prediction  have  the      Received:  August 29, 2023
+            advantage of capturing the effects of features in very high      Revised:   December 8, 2023
+            dimensional spaces, a task that  is  difficult  for humans. A      Accepted:  December 8, 2023
+               significant  bottleneck  in  this  effort  is  the  acquisition  of
+               sufficient data. The rapid gathering of relevant synthesis data
+            can be accomplished  directly through autonomous,  high-
+
+                                            © XXXX The Authors. Published by
+                                                                  American Chemical Society                                                         https://doi.org/10.1021/acs.chemmater.3c02203
+                                                               A                                                    Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 2
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+
+
+
+
+Figure 1. Visual summary of text mining to aide material synthesis. Left: schematic depiction of design choices for sol−gel-derived BiFeO3 thin
+films, including choices of solution precursors and reagents as well as heating and timing conditions; the final result is desired to be phase-pure, as
+would be indicated by phase identification in X-ray diffraction. Right: opportunities presented by text mining such synthesis procedures, including
+the development of predictive models (decision tree at the bottom left) or convenient visualizations of reported synthesis conditions (pairwise
+distribution visualization at the bottom right).
+
+studies in text mining synthesis tend to assume pure target      gel-derived BiFeO3  thin-film  synthesis,  including  iron-rich
+formation, without the consideration of incomplete reactions     Bi2Fe4O9 46  as  well  as  bismuth-rich  Bi25FeO39 47  and
+or reactions that form persistent impurity phases. Exploratory      Bi25FeO40.48 Synthesis choices that avoid the formation of
+synthesis, on the other hand, rarely yields phase-pure targets.      these phases largely rely on heuristics. For instance, a handful
+Instead, precursors or intermediate phases may persist to the      of studies highlight the effect of annealing temperature on the
+end of the reaction, or the target may form and then partially       final phase composition in this sol−gel setting,47,49,50 generally
+decompose, leaving behind impurity phases. These impurities      indicating that BiFeO3 has a rather narrow stability window
+often have deleterious effects on the material performance but      that avoids impurity phase formation between 500 and 650 °C;
+can also give insights into underlying reaction mechanisms.       this narrow  stability  is  consistent  with  the  results from
+Unfortunately, descriptions of “failed” experiments (e.g., those      computational work.51,52 Additionally, it has been shown that
+that do not achieve a pure target) are rare in the published      a Bi/Fe > 1 ratio is helpful to avoid bismuth loss, but bismuth
+literature. There is also the problem of incomplete descriptions      in excess higher than 10% may lead more frequently to Bi-rich
+of procedures, which hinder meaningful modeling of the effects      secondary phases.53 Although methods for synthesizing phase-
+of the synthesis conditions and make faithful reproducibility      pure BiFeO3 are known,54,55 understanding of the fundamental
+studies difficult. Nonetheless, experimental articles mentioning     mechanisms  governing  the  interplay  between  synthesis
+impurity phase formation do exist, and with enough collected,      conditions and impurity formation remains limited.
+one may be able to impute such missing parameters and,       With the goal of machine learning the effects of synthesis
+ultimately, construct a meaningful model of impurity phase      conditions on the formation of competing impurity phases, we
+formation as a function of relevant synthesis conditions. We      manually compiled a dataset of 331 synthesis procedures and
+approach such a task in this work using BiFeO3 (BFO) as a     outcomes from 177 articles describing the sol−gel synthesis
+case study.                                                and resulting phase content of BiFeO3 thin films. This aim is
+ BFO is a promising multiferroic material with applications in       illustrated in Figure 1. Using these data, we trained decision
+spintronics as well as photovoltaic and memory devices.34−36       tree classifiers and find that these confirm known heuristics for
+BFO in bulk has been synthesized as early as the 1960s.37,38 It      impurity phase formation. The models indicate that two of the
+is commonly synthesized in the nanoparticle form via either     most important determinants for phase impurity formation are
+solid state39 or the sol−gel technique,40 or in thin-film form via      annealing temperatures outside the window of around 500 and
+sol−gel41 or physical vapor deposition.42 Sol−gel is a low-cost     650 °C and Bi/Fe metal ratios greater than 1.1 or less than 1.0,
+and  scalable  approach  to  synthesize  thin  films  that  are     which  is in line with known heuristics in the field. Feature
+important  in  device  industries, making   it  attractive  for      importance analysis shows that several features related to the
+commercialization. Reports of the synthesis of BiFeO3 thin      precursor solution preparation, such as the Bi/Fe ratio and
+films emerged in earnest between 2003 and 2006.43−45 As in      mixing  conditions,  are  strong  predictors  of phase  purity.
+other synthesis methods, impurity phases are common in sol−     However, statistical analysis of the dataset shows that several of
+
+                                                          B                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 3
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+these features are often missing from publications, between 21       are often very complex, spanning many values for a given condition
+and 47%  of  the  time depending on  the  condition. We         (e.g.,  if the authors are studying the effects of various annealing
+conducted a  set  of nine experimental syntheses aimed  at       temperatures). Additionally, the phase purity characterization is most
+                                                                            frequently  reported  in  a  separate  paragraph from  the  synthesisreplicating  procedures from  the  published  literature  with
+                                                                               description, which makes the automatic connection of the codifiedvarying degrees of “missingness” of synthesis conditions and
+                                                                             recipe to the appropriate phase purity outcome difficult. Because of
+show  to what  extent  missing  synthesis  values  can  be                                                                          these challenges and the relatively small number of collected synthesis
+hypothesized from the body of  literature. Additionally, we                                                                                            articles, the dataset of synthesis conditions and phase purity results
+discovered noticeable gaps in the synthesis condition space      constructed  for  this work was  developed  manually.  This was
+covered by the dataset, which led us to conduct 12 new      accomplished by two human experts in text and data mining, machine
+syntheses that navigate previously unexplored regions of the       learning, and materials science who read each paper (and supporting
+synthesis condition space. This modeling-experiment  inter-       information,  if  necessary)  individually  for  the  relevant  synthesis
+action represents a  single generation  in a potential  active       conditions and outcomes. The conditions extracted include the choice
+learning cycle for synthesis prediction between modeling from       of precursor, names of solvents, chelating agents, and other reagents,
+text mining and real experiments.                                       spin-coating speeds and times, and the combination of temperatures
+                                                               and times for various heating steps (discussed in more  detail in
+                                                                        Section 3). These consisted of a total of 50 synthesis features. The
+2. METHODS                                                             outcome for each experiment was represented as a list of any specific
+   2.1. Text Mining and Modeling.  2.1.1. Compiling BiFeO3       impurity phases that formed. The full schema for the extracted dataset
+Synthesis Corpus. To supply  sufficient data for  this text mining         is given in the Supporting Information (Table S1).
+study, we first performed a keyword search over a database of full-text          2.1.3. Data Processing. For data visualization and modeling, we
+materials  science  articles  to  identify  syntheses  with  frequent       assigned numerical values to all the features in the BiFeO3 sol−gel
+discussion of impurity phase formation. This search was performed       synthesis recipes dataset. After all processing, the dataset consists of
+over a body of nearly 5 million materials science publications that      47 unique features. These processing steps are summarized below:
+were scraped and parsed from online publishers, including Elsevier,          2.1.3.1. Reported Impurity Phases. For our various modeling
+Wiley, the Royal Society of Chemistry, Nature Publishing Group, the      frameworks, we implemented both binary (0 ⇒“phase-pure” vs 1 ⇒
+American  Institute  of  Physics,  Springer, the American Chemical      “phase-impure”) and multilabel (0 ⇒“phase-pure” vs 1 ⇒“Fe-rich
+Society, the American Physical  Society, and the Electrochemical       impurity” vs 2 ⇒“Bi-rich impurity” vs 3 ⇒“both kinds of impurity”)
+Society, with journals specific to materials science identified manually.      encodings of the reported impurity phases.
+Details on this process are described in a study by Kononova et al.16          2.1.3.2. Bi and Fe Precursors. The majority of published syntheses
+Only  articles published  after the year 2000 and that are in the       of BiFeO3 thin films through the sol−gel route use nitrate precursors
+HTML/XML  format were  scraped and  parsed  because PDFs       as the Bi and Fe sources. We used label encoding where 1 indicates
+(comprising the majority of article formats prior to 2000) are difficult       that nitrate precursors are used for both Bi and Fe sources, 0 indicates
+to  accurately parse  for  scientific writing  (e.g., complex chemical       that either the Bi or Fe source is not from a nitrate, and −1 indicates
+formulas), even through state-of-the-art optical character recognition       that both Bi and Fe source are not nitrate-based.
+methods.56 We performed a regular expression57 search over the full          2.1.3.3. Chemical Embeddings. Because of the complex nature of
+text of every paper for phrases and vocabulary related to phase purity       sol−gel synthesis, it is important to retain as much information about
+(e.g., “impurity phase”, “secondary phase”, “phase-pure”, etc.) via an       the  chemicals  involved  as  possible. One-hot encoding  of  these
+Apache Solr-based full-text search tool developed in-house (described                                                               components to the synthesis  is not satisfactory for dimensionality
+in a study by Cruse et al.18). This search yielded 82,196 articles. Of                                                                        reduction or modeling purposes because two chemicals would be
+these 82,196  articles, Chemical Named Entity Recognition15 was                                                                             treated as orthogonal  entities, even though  their function in the
+applied to the abstracts to extract any chemical names or formulas,                                                                             synthesis may be more or less similar to one another. An NLP-
+under the assumption that a synthesized material of interest would be                                                                             inspired method  for  capturing  this  similarity  or  dissimilarity  in
+mentioned in the abstract. After normalizing the extracted names                                                                       chemicals is mol2vec.59 We implemented the trained and published
+(e.g.,  through  name-to-formula  mapping,  correcting  for  various                                                              embedding model provided by Jaeger et al.59 for our purpose, which
+spellings, etc.), we determined BiFeO3, SrTiO3, and LiFePO4, to be                                                               was trained over a corpus of amino acids and organic molecules. The
+the most  frequently  discussed, with 966, 680, and 659  articles,
+                                                                             trained embeddings contain 300 dimensions; therefore, to reduce this
+respectively, and selected impurity phase formation for BiFeO3 as our                                                                            dimensionality, we performed principal component analysis (PCA)
+focus area. Since the mechanisms for impurity phase formation vary
+                                                                       over the embeddings of the set of possible chemicals in this material
+across synthesis method and desired morphology, we narrowed our
+                                                                             space,  leading  to 61  principle  components. To  determine  the
+study to BiFeO3 thin films synthesized through the sol−gel method.
+                                                                          appropriate number  of PCA components  that does not lead to
+Of the 966 BiFeO3 articles extracted above, 328 were determined to
+                                                                   redundant  representations but compresses  the  data  as much  asbe related to sol−gel synthesis based on a previously developed
+                                                                                 possible, we investigated the convergence of pairwise cosine similaritysynthesis paragraph  classifier.58 Of those 328, 121 were manually
+                                                                 between every chemical from 0 to 61 principal components. Based ondetermined to be related to sol−gel synthesis of BiFeO3 thin films and
+                                                                                      this convergence, a reasonable number of principal components wascontain enough synthesis information to be suitable for the dataset
+                                                                   determined to be 15. Although this is still a high number of features(the remaining  articles were  related to the sol−gel  synthesis  of
+                                                                                  for one synthesis component, we find it suitable for compressing thenanoparticles, synthesis of doped BiFeO3 thin films, or contained
+                                                                                larger  data  representation  while  maintaining  sufficient  fidelity.relevant synthesis protocols but contained no phase characterization
+in the text). To supplement this set, we performed a search over      Convergence  details and a table of related cosine  similarities for
+Clarivate Analytics’ Web of Science, specifically to supply more data       these  chemical  representations  are  provided  in  the  Supporting
+for articles published after 2020 (the most recent large-scale scrape for      Information (Section S2).
+                                                                                      2.1.3.4. Substrate Choice. The choice of the substrate, which isour database). This supplementary search yielded an additional 57
+relevant articles, totaling 178 articles for sol−gel-derived BiFeO3 thin-        largely  driven by  the  device  application,  has an  effect on  the
+film synthesis.                                                            nucleation  site preference and thus  final phase homogeneity and
+   2.1.2.  Extraction  of  Published Sol−Gel Route  Thin-Film        purity. The majority of substrates in our dataset consist of Pt/Ti/
+Syntheses. We manually extracted 340 sol−gel synthesis procedures       SiO2/Si, tin-based, or glass substrates. We represent substrate choice
+from 178 papers in our corpus. We removed nine procedures that lead       using one-hot encoding with a separate column representing each of
+to an amorphous product, leading to a final dataset of 331 procedures       the aforementioned types, one column for choices other than these
+from 177 papers. The sol−gel synthesis protocols described in the text       three, and one column for a missing substrate description. A plot
+
+                                                         C                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 4
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+depicting the most common substrates used in the dataset is provided      prepared with a chelating agent, citric acid (99.9%, Sigma-Aldrich)
+in our Supporting Information, Figure S4.                            was added to the precursor solution with a molar ratio of citric acid/
+   2.1.3.5.  Separate  Hydrolysis. Some  reports60,61  specify  the      metal salt (4:1). Stirring temperatures and times were between 25−90
+importance  of  mixing  the bismuth and  iron  nitrate  precursors     °C and 2−24 h, respectively, depending on the experiment. Each
+separately in the solvent due to their different hydrolysis rates. For       solution had a concentration of either 0.25 or 0.4 M depending on the
+this, we used binary encoding to indicate whether the bismuth and       experiment. After complete dissolution of the precursors, the solution
+iron precursors underwent separate dissolution.                        was spin-coated on either glass substrates, or the relevant substrate if
+   2.1.3.6. Annealing Atmosphere. According to the extracted data,       the experiment is an attempt to replicate a published synthesis (see
+the most typical annealing atmospheres for BiFeO3 thin films via sol−       Section 4.3), at 3000 rpm for 30 s. Then, the sample was dried on a
+gel are air, oxygen, and nitrogen, with one study using argon. One-hot      hot plate at 80 or 200 °C for 2 or 10 min and baked on a hot plate at
+encoding was used to represent the annealing atmosphere.              350 or 400 °C for 5 min according to the experiment. All drying and
+   2.1.3.7. Filling in Missing Data for Exploratory Data Analysis. To      baking was performed in air. The spin coating/baking procedure was
+deal with missing values in our dataset prior to exploratory data       repeated five times to obtain thick films. The as-cast baked films were
+analysis, we set all remaining quantitative values to 0 if they were not      annealed in a tube furnace at 550 or 640 °C with various annealing
+provided.                                                               times for exploratory experiments or at the reported temperature for
+   2.1.3.8.  Filling in Missing Data  for Modeling. For modeling       replication experiments. Film preparation was performed in air or O2
+purposes,  it  is necessary to impute missing data  that would be      atmosphere depending on the experiment.
+necessary to replicate the synthesis (e.g., precursor concentration, Bi/          2.2.2. X-ray Diffraction. XRD measurements were performed at
+Fe ratio) or implied to exist but were simply not provided (e.g., a     room temperature in the 2θ range of 10−60° with a step size of 0.01°
+prebake step was used and the temperature was given, but the time      and a scan speed of 4° min−1, using an X-ray diffractometer (Rigaku,
+was not). More details on the frequency of such missing information      SmartLab) with Cu Kα radiation (1.5406 Å) and a HyPix-3000 high-
+are provided in Section 4.1 and the Supporting Information (Figure       energy-resolution multidimensional semiconductor detector.
+S5). There are many techniques available to impute such data, known
+as missing  value imputation (MVI) methods. In our  study, we      3. TYPICAL SOL−GEL-DERIVED BIFEO3 THIN-FILM
+implement the most popular statistical (substituting median values)       SYNTHESIS
+and  machine-learned  (k-nearest  neighbors)  imputation methods
+                                               To provide context for this synthesis space and  its existingaccording to reviews of MVI methods.62,63 For k-nearest neighbors
+                                                                             heuristics, we provide a walkthrough  of a  typical sol−gelimputation, we found k = 5 to be an adequate number of neighbors to
+consider when imputing missing values, based on an analysis of     BiFeO3 synthesis. As discerned from the dataset constructed
+imputing randomly masked values in our dataset. Details of  this       for this work and a review of sol−gel BFO thin-film synthesis
+analysis are given in Section S4.2 in the Supporting Information.        by Zhang et al.,41 the primary steps of such syntheses include:
+   2.1.4. Decision Tree Modeling. We have sought  to  train an      (a)  solution  (“sol”)  preparation and  gelation  (“gel”), (b)
+interpretable machine learning model that provides insights into the      deposition and spin-coating along with possible drying and
+effects of synthesis conditions on the formation of impurity phases.      pyrolysis steps, (c) postdeposition pyrolysis, and (d) the final
+While there  are many  classifier algorithms  available with robust                                                                            crystallization (see Figure 2). Details of each step depicted in
+predictive power, we found that more advanced models perform
+                                                                 Figure 2 are described below.
+similarly to the decision tree on our text-mined dataset. Because of
+this  performance  similarity and  our  prioritization  of  easily        (a) The preparation of the solution involves mixing metal
+interpretable  predictions, we decided to move forward with the               salt precursors with a solvent and possible chelating
+decision tree classifier for this task, using the sci-kit learn’s Decision             agent. Bi and Fe precursors are most typically nitrate-
+Tree Classifier module (https://scikit-learn.org/stable/modules/tree.            based, though several studies (particularly early sol−gel
+html). Details of our comparison of different classifiers are provided in             thin-film syntheses) use acetate-based precursors. The Bi
+our Supporting Information Section S5.                                                                        precursor is often added in excess of the Fe precursor
+  In our comparison, we considered four model frameworks using a                                                              due to the volatility of bismuth metal during annealing.67different combination of MVI (between median value and k-nearest
+                                                                       Typical solvents include 2-methoxyethanol and ethyleneneighbors imputation) and prediction scheme (between binary and
+multilabel). For evaluation, we only considered the binary prediction             glycol or a combination of the two. Chelating agents
+task: phase-pure vs phase-impure. Within each of these frameworks,           such as citric acid, acetic acid, and acetic anhydride are
+we considered 10 different randomized splits for training and testing            frequently  used  in  solution  preparation  since  they
+data, with 20% of the data held out for testing in each, resulting in 40            balance the  rates of hydrolysis and condensation of
+possible models. In each  of these  splits, the appropriate hyper-           metal−organic complexes, which aides in the formation
+parameters were  determined  through  cross-validation. The  best             of the ultimate “gel” without unwanted precipitation.41
+estimator from each split was then applied to the held-out test data                                                                During mixing of the solution components, the mixture
+to obtain the evaluation metrics. Details on the hyperparameters of
+                                                      may be heated beyond room temperature to improve
+interest and the various evaluation metric values are given in Section
+                                                                   homogeneity, particularly if solid citric acid is used as aS5.1. Model comparison showed comparable performance between all
+models,  as shown  in  Section  S5.2.  Because we  prioritize  easy             chelating agent. The solution may be aged on the order
+interpretability, we decided to move forward with a simple decision             of days prior to deposition.
+tree model. With our best-performing  decision  tree models, we       (b) The  prepared  solution  is  then  deposited  onto  a
+constructed learning curves from each of these 40 estimators by fitting             substrate, which  is spun to create an evenly coated
+the models to an increasing number of training samples (from 10 to              layer. The spinning step may include only one step or
+80% of the total dataset).                                          two (the second step having a higher spinning rate than
+   2.2. BiFeO3 Synthesis Experiments. 2.2.1. Film Fabrication.                                                                       the first). The process should be repeated several times
+Experimental  syntheses  were  performed  either  for  exploratory                                                                              in order to reach the desired thickness. The thin film is
+purposes or as an attempt to replicate one of the four published
+procedures.46,64−66 Precursor solutions were prepared by dissolving           then often dried, which takes place at temperatures of
+                                                       ∼100 °C.Bi(NO3)3·5H2O(≥99%,  Sigma-Aldrich)  and Fe(NO3)3·9H2O
+(≥99%, Sigma-Aldrich) in 2-methoxyethanol [2-ME] (anhydrous,        (c) Pyrolysis  (prebaking) may be  included  to remove
+99.9%,  Sigma-Aldrich). The  stoichiometry  of Bi/Fe was  varied            extraneous solvent and organic material. This occurs
+between  0.9 and 1.05 depending on the  experiment. For  films             either after  all layers are spun onto the substrate or
+
+                                                 D                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 5
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+
+
+
+
+Figure 2. Schematic of typical sol−gel BiFeO3 thin-film synthesis. (a) Metal precursor salts are mixed with solvents and other reagents under
+choice of heating and stirring time. (b) Mixed solution is deposited onto a spinning substrate, usually in multiple layer-by-layer steps to reach the
+desired film thickness; the repetitive layer-by-layer coating procedures can be applied either after drying, prebaking, or annealing steps. (c) Optional
+pyrolysis (or prebake) step to remove any remnant organic species. (d) Annealing to crystallize the final phase.
+
+                                                                     4.1. Text-Mined  Dataset.  Across  all 331  extracted     between every layering step (“layer-by-layer pyrolysis”,
+                                                                  experiments, 24.2% resulted in a sample containing one or      depicted by the greyed out portion in Figure 2b). This
+                                                     more impurity phases; across all 177 articles, 21.4% contained       typically  takes  place  at  slightly  higher  temperatures
+     (∼300 °C).                                                        at least one experiment resulting in phase impurities. The most
+                                                    commonly appearing impurity phase is the Fe-rich Bi2Fe4O9.
+  (d) Annealing for crystallization is the highest temperature      Several Bi-rich phases, such as Bi25FeO30, make up the next
+      step (generally between 500 and 600 °C). This may be     most prevalent impurity phases, followed by the binary oxides
+      executed once after all layers are deposited or between     Bi2O3 and Fe2O3. The overwhelming majority of syntheses
+      every layering step (“layer-by-layer annealing”, depicted     (317 out of the 331 extracted syntheses) use hydrated nitrates
+     by the grayed out portion in Figure 2b). Sometimes,      as  the  metal  precursors. A  visual summary  of common
+      experimentalists use a different temperature during the      chemical reagents (solvents and chelating agents), processing
+       final annealing compared to the layer-by-layer steps.         temperatures, and frequently omitted information is provided
+                                                                        in Figure 3.
+  The  phase  composition  of  the  final  sample  is  then
+                                                     The most common combinations of chemicals used to build
+determined using XRD. Impurity phases are often detected
+                                                                 the precursor  solution  are  listed  in Figure  3a. The most
+in the final film, including the binary oxides Bi2O3 and Fe2O3,                                                                    frequently used solvent is 2-methoxyethanol (“2ME”), and it is
+Fe-rich Bi2Fe4O9, and several Bi-rich phases such as Bi25FeO30,                                                       most  often mixed  with  chelating  agents  such  as  acetic
+Bi25FeO40, and Bi36Fe24O57. The mullite Bi2Fe4O9 and sillenite                                                              anhydride (“AAnhyd”), acetic acid (“AA”), or a combination
+Bi25FeO39 (and  other  related)  phases  are known  to be                                                                      of the two. Another common chelating agent that is sometimes
+thermodynamically competitive with the  target BiFeO3
+phase.68  Hypotheses  for  the mechanisms  leading  to  the     mixed with 2-methoxyethanol is citric acid (“CA”). Ethylene
+                                                                       glycol (“EG”) is used less frequently and is usually mixed withformation and frequent persistence of these two phases have
+                                                                                   citric acid and nitric acid (“NA”).been investigated previously for solid-state settings, including
+                                                     The range of choices for temperature in the various heatingthe  possibility  of  competing  diffusional  processes39 and
+                                                                      steps  in  this  synthesis  process  is  illustrated  through  thepseudo-ternary  phase  competition between  the  starting
+                                                                histograms in Figure 3b. “Layer-by-layer” and “final” prebakebismuth and  iron  precursors and  metal  oxide  impurities
+                                                       and  annealing  steps  are combined  for  their  respectivepresent in those precursors.69 For sol−gel synthesis, in-depth
+                                                                          distributions, which is why the “Annealing” histogram containsstudies on the chemical processes encountered in the precursor
+                                                     more than 331 counts. Each step shows a skewed overallsolution have been conducted;70 however, mechanistic under-
+                                                                       distribution (left-skewed for drying and annealing steps andstanding for the formation of these impurity phases in wet
+                                                                 right-skewed for prebake). Additionally, each step has a fairlychemical environments (such as in sol−gel synthesis which is
+                                                                        substantial spread of temperatures, ranging across about 200the  focus  of  this study)  is  largely  driven by analogy or
+                                                 °C for drying steps, 300 °C for prebake steps, and over 400 °Cextrapolation from these solid-state studies.
+                                                                         for annealing steps. The normalized standard deviations are
+                                                                        0.38, 0.22, and 0.12 for the drying, prebake, and annealing
+4. RESULTS                                                                           steps, respectively. The extent to which samples need extensive
+We divide the results of our study into four sections: (1) a      drying and prebaking will depend on the organic reagents used
+summary  of  the  conditions  extracted  in  our  text-mined     and the concentration of the precursor; thus, their value will
+synthesis  dataset, (2)  results from  predictive modeling  of     depend on those experimental choices, partly explaining why
+impurity phase formation using decision trees, and results from      drying and  prebake  temperatures  have  larger  normalized
+informed experiments focused on (3) reproducing existing      standard  deviations;  conversely, the annealing temperature
+results, and (4) exploring underexamined synthesis condition       for crystallization of the target phase is less dependent on these
+spaces.                                                           choices and more on an historical understanding for the typical
+
+                                                                 E                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 6
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+
+
+
+
+Figure 3. Summary of reported synthesis conditions. (a) Most frequently used combinations of solvents and chelating agents (out of 331 synthesis
+procedures); 2ME = 2-methoxyethanol, AAnhyd = acetic anhydride, AA = acetic acid, CA = citric acid, EG = ethylene glycol, and NA = nitric acid.
+(b) Histograms for drying, prebake, and annealing temperatures. (c) Box and whisker plots for the values of the missing synthesis conditions that
+are considered necessary for proper replication of a procedure and which are most frequently missing; orange lines indicate median value, bottom
+and top box boundaries are first and third quartiles, respectively; whiskers represent 1.5× extension from quartile bounds; individual points
+represent outliers; and bold percentages in x-axis indicate the percentage of articles missing that condition.
+
+temperatures needed to achieve a phase-pure product, in this      boxes, respectively), 1.5× extension from the quartile bounds
+case between 500 and 600 °C.                                    (whiskers), and  remaining  outliers  (points). The  bold
+  While the statistics for the extracted values in such synthesis      percentages  in  the  x-axis  labels  represent  the  fraction  of
+choices  are  helpful  in  verifying  appropriate  diversity and      recipes in the dataset that are missing that condition. The Bi/
+breadth of sampling for the dataset,  it  is also important to     Fe ratio is missing from 38 articles (21%) of articles. This is an
+understand the  level of “missingness” of conditions in the      important condition to consider for these syntheses because
+procedures extracted here. In  fact, many of the syntheses      too  little bismuth may  lead  to bismuth  loss (due  to  its
+extracted in the dataset are missing conditions that should be       volatility) but too much will often lead to Bi-rich impurity
+considered vital to successfully reproduce the synthesis, which      phases.53 The distribution of values for the Bi/Fe ratio is fairly
+we highlight in Figure 3c (note that supporting information      concentrated  around  1.05;  nonetheless,  studies53,71  have
+was  inspected  during  extraction,  as  well). The minimum                                                     shown  that even  small  deviations  in  this  ratio (ΔBi/Fe
+information for such reproducibility is debatable, particularly     ∼0.03) will affect the resulting phase composition. Precursor
+since those familiar with the field may be able to intuit certain                                                                 concentration and mixing conditions (temperature and time)
+conditions based on the total literature. For the purposes of                                                                                           all show fairly wide distributions of values, making it difficult to
+learning synthesis directly from the  literature, however, we                                                                            reliably assume the value that was used for a given synthesis if
+consider  the  following  information  at  a minimum  to be                                                                     that  information  is  omitted. The  concentration  of  the
+necessary for a “complete” recipe (with any other omitted
+                                                                  precursor solution  is missing from 54  articles (31%). This
+information assumed  to  simply  not be  included  in  the
+                                                                   value  is also important to include since the metal  nitrate
+synthesis, such as aging times):
+                                                                 concentration in the solution  is expected to influence the
+  •  precursors and reagents used (including metal nitrates,     homogeneity of the coated layers, as well as the chances of
+       solvents, and chelating agents)                                                        unwanted precipitation during gelation.41  Finally, the most
+  • precursor and reagent amounts                               frequently omitted processing conditions are the time (69
+  • Bi/Fe molar ratio                                                      articles, 39%) and temperature (83 articles, 47%) of solution
+  • precursor solution molar concentration                           stirring. These conditions are important to include since they
+  •  stirring conditions (time and temperature)                      will  also determine  the homogeneity  of  the predeposited
+  • annealing conditions (time and temperature)                  solution,  particularly when  solid  reagents with  dissolution
+ We acknowledge that this variable list may not be exhaustive      temperatures above room temperature, such as citric acid, are
+in  describing  a  synthesis. Of  these  conditions,  the  least      used. This overall lack of a uniform and complete synthesis
+frequently omitted are the metal precursor and reagent choice      procedure ontology72 also causes problems in modeling where
+and the choice of annealing conditions, all of which are left out      missing values must either be replaced by (possibly erroneous)
+of only two articles. Figure 3c provides a statistical breakdown      interpolated values or require entire data points to be removed,
+of  the  values employed  for  the  remaining  experimental      leading to the worse model performance. We deal with such
+conditions listed above along with their frequency of omission.      missing values using statistical (from the median value) and
+The  box-and-whisker  plots  illustrate  the  range  of  values      machine-learning  (from  k-nearest  neighbors)  imputation
+employed for each of these conditions, along with the median     methods in our modeling. A larger-scale visualization of the
+value (orange line), first and third quartiles (bottom and top of      frequency of missing data is given in Figure S5.
+
+                                                                  F                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 7
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+
+
+
+
+Figure 4. Predictive modeling of text-mined dataset. (a) F1 scores across increasing training set size (from 10 to 80% of total data, using 20% of
+data for test set in each evaluation). Error bars are generated through six different randomizations in train/test split for each number of training
+samples. Each curve represents a different combination of MVI and output labeling: “mmvi” ⇒median missing value imputation; “knn” ⇒k-
+nearest neighbors MVI; “binary” ⇒model predicts whether synthesis results in phase-pure synthesis or has phase impurities; “multilabel” ⇒model
+predicts outcomes among “phase-pure”, “Fe-rich impurities”, “Bi-rich impurities”, and “both kinds of impurities”.(b) Root of sample decision tree
+trained over text-mined dataset; specific features and decisions made at each node are provided. (c) Visual representation of important numerical
+features used as decision boundaries in the decision tree model: layer-by-layer annealing temperature and Bi/Fe molar ratio; (c)(i) and (c)(iii)
+panels show the distribution of values found from the literature for each of these parameters across phase-pure (blue) and phase-impure (orange)
+syntheses, with crossover between these outcomes indicated in purple; smooth distributions are constructed through Gaussian kernel density
+estimation (KDE); and (c)(ii) panel shows decision boundaries learned by this decision tree estimator, with blue regions indicating a phase-pure
+sample and orange regions indicating a sample with impurity phases. A scatter plot of individual data points overlays the decision boundaries;
+phase-pure points are empty blue  circles, phase-impure points are  solid orange  circles, and square points represent syntheses using 2-
+methoxyethanol + citric acid [corresponding to the second decision made in (b)].
+
+   4.2. Interpretable Phase Impurity Formation Model-      neighbors imputation for missing values. We did not need to
+ing. To predict the formation of impurity phases based on      consider the imputation of any categorical variables since those
+synthesis conditions, we trained decision tree models using the     were frequently reported.
+text-mined dataset. Our attempts to construct an interpretable        Because our dataset shows an imbalance between phase-pure
+model  that  predicts  impurity  phase  formation  based on     and phase-impure syntheses (75.8%:24.2%), an appropriate
+synthesis  conditions proved  to have  limited performance.      evaluation metric should be chosen so as not to misrepresent
+Nevertheless, we are still able to recover well-known heuristics                                                                 the predictability of the model. Unlike traditional accuracy
+for phase-pure synthesis, and we identify important determi-                                                                         scores, the F1  score, which  represents a harmonic mean
+nants of impurity phase formation in the preparation of the                                                          between the precision and  recall of a  classifier, takes into
+precursor solution.                                                              account the false negatives and false positives (in this case,
+ We chose to model this task using a decision tree for its easy
+                                                                  syntheses predicted to be phase-pure but  actually contain
+interpretability (as  if training a new bench chemist how to
+                                                             phase  impurities and  syntheses  predicted  to  have  phase
+make a set of decisions based on available resources) and
+                                                                     impurities but actually are phase-pure, respectively). It shouldability to capture nonlinear relationships. The details for data
+                                                          be noted that the F1 score does not completely remove issuesfeaturization and training are described in Section 2.1.4, and
+                                                          from evaluating imbalanced classification tasks, such as the factthe performance and  inferences made by  the model  are
+                                                                       that the class distribution during training and even testing maysummarized in Figure 4. In Figure 4a, we show the learning
+curves  for four  different model frameworks: binary  classi-      not persist when the model  is used out-of-the-box. Never-
+fication using median imputation for missing values; binary       theless, this is a partial solution for evaluating the present task.
+classification using k-nearest neighbors imputation for missing    We include evaluation on  additional  metrics, such  as the
+values; multilabel classification using median imputation for     Mathews Correlation Coefficient, in the Supporting Informa-
+missing values; and multilabel  classification using k-nearest       tion.
+
+                                                  G                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 8
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+  Both multilabel models show better performance compared      those traversing to the right result in a phase-pure sample.
+to their binary classifier counterparts, showing that providing    Upon inspection of the dataset, every procedure (27 total) that
+more information to the model (here, what specific types of      uses only 2ME and CA as its precursor solution reagents (i.e.,
+impurity phases form) helps improve the prediction ability.       traveling to the right from this node) results in a phase-pure
+The variation in F1 score for all models is quite substantial but      sample. Samples from  the  text-mined  dataset  using  this
+seems to improve with the addition of more data points,     combination of chemicals are depicted as squares in Figure
+indicating that a larger dataset can help improve model stability       4c(ii), and  all  of those  are  blue, representing phase-pure
+further. Both MVI methods perform similarly, with kNN-based       synthesis. Because this decision is made on a nondiversified
+imputation showing  slightly  better  variation  in F1  score,      subset of the dataset (i.e., every relevant data point is phase-
+highlighting a slight preference for ML-based imputation when      pure), such a result presents an opportunity for hypothesis
+consistency in performance is desired.                                testing  (e.g., “does the specific combination of 2ME + CA
+  Despite the limited predictive power of these models, our      mitigate the formation of impurity phases more than other
+best-performing models can identify decision boundaries that      reagents?”) and  to  probe  underexplored  regions  of  the
+corroborate known experimental  heuristics. Feature impor-      synthesis condition space. Finally, the model queries whether
+tance values from our modeling were tabulated and averaged      the Bi/Fe ratio is greater than (to the right) or less than or
+across each training. The top 5 most important features were      equal to (to the left) 1.1. Investigating the Bi/Fe molar ratio
+determined to be, in order, (1) the layer-by-layer annealing       distributions for phase-pure and phase-impure syntheses in the
+temperature, (2) the Bi/Fe  ratio, (3) the  final annealing      bottom-right panel of Figure 4c(iii), we see that, indeed, a
+temperature, and the (4) mixing temperature and (5) time.      noticeable peak and tail in the distribution of phase-impure
+These rankings are in line with known heuristics in the field, as      syntheses are seen at Bi/Fe ratios at and above 1.1:1.
+discussed in Section 2.2.1, and, incidentally, highlight the risk     We emphasize the overall complexity in predicting phase
+of not including vital synthesis details such as the Bi/Fe ratio      purity based on the provided synthesis conditions through the
+and mixing conditions, both of which are often omitted from      pairwise scatterplot between these two parameters, as shown in
+procedure descriptions as mentioned in Section 4.1. To assess      the bottom-left panel of Figure 4c(ii). Here, individual phase-
+the importance  of these under-reported  variables and the      pure (blue circles/squares) and phase-impure (orange dots)
+possible ineffectiveness of MVI, we conducted nine experi-      syntheses  overlay  the  decision  boundaries made by  the
+ments aimed at reproducing reported syntheses with varying      decision  tree model from Figure 4b, with orange regions
+degrees of missingness (see Section 4.3).                           representing phase-impure synthesis and blue regions being
+ We further inspect the ability of our models to distinguish      phase-pure. Compared to the single-condition distributions
+important boundaries in the synthesis condition space through     shown in Figure 4c(i) and Figure 4c(iii), Figure 4c(ii) makes it
+the top of the tree for one of these models, as shown in Figure      apparent  that  distinguishing  regions  of  combinations  of
+4b. We note that the order in which decisions appear does not      conditions  leading with  certainty  to  a phase-pure sample
+necessarily reflect the order of decisions that would be made in     from those leading to phase impurities becomes more difficult
+a laboratory but rather reflect the hierarchy of importance of      as the number of conditions considered increases. This  is
+the features in predicting the final phase purity of the sample,       particularly true for less predictive parameters, as seen in the
+as determined by the model. From the root of the tree in        full  set  of  pairwise  purity  visualizations  in  Figure  S6.
+Figure 4b, the model  first observes whether the synthesis      Additionally, despite the easy interpretability of decision tree
+employs  layer-by-layer  annealing  at  a  temperature above      modeling,  the  decisions made  are  not  always  physically
+(traversing to the right) or below (to the left) 655 °C. This      reasonable. For instance, the strip of blue predicting “phase-
+value is not a specific value found in the dataset but rather a      pure” syntheses above Bi/Fe ratio = 1.1 is within the typical
+boundary in the 47 dimensional feature space determined by     window of phase-pure syntheses when considering annealing
+the  decision  tree model  to most  effectively  discriminate      temperature; however, every synthesis above that Bi/Fe ratio
+between phase-pure and phase-impure syntheses. Syntheses     shows phase impurities. The density of points in this region is
+that anneal above this temperature are decidedly impure, and      low, so additional testing in this subspace would help improve
+those below this temperature encounter further decisions. A      the quality of decisions made here.
+visualization of the values for the parameters reflected in Figure         4.3. Reproducibility  of Published Procedures. To
+4b along with the synthesis outcome (phase-pure or phase-       investigate  the importance  of  specific  synthesis  condition
+impure) is shown in Figure 4c. Here, Figure 4c(i) illustrates       variables in reproducing published experiments, we conducted
+the  distribution  of  layer-by-layer  annealing  temperatures      a set of nine experiments aimed at replicating the results from
+employed across the  dataset, with distributions (calculated      four separate papers. The syntheses from these papers46,64−66
+using  Gaussian  kernel  density  estimation)  distinguished     were chosen specifically because they were missing what we
+between phase-pure and phase-impure syntheses. The y-axis      believed to be vital information to the successful replication of
+units are arbitrary since the distributions are scaled according      the experiments (discussed more in Section 4.1). For these
+to the number of samples in that subset (i.e., pure or impure).      missing conditions, we substituted either median values or
+The distributions support the first decision made by the tree       typical choices from the literature (particularly  if a median
+since we  see  a  noticeable  shift  in  the  centers  of  the      value does not make sense for another given condition, such as
+distributions  for  phase-pure  syntheses and  phase-impure       stirring at room temperature while using citric acid) or we
+syntheses at temperatures of 500 °C and higher. Following     considered  ranges  of  possible  reasonable  values. The
+now the left-hand branches of Figure 4b, the next observation      conditions, results, and predictions made by our models for
+made by the model is whether the metal nitrates are dissolved      these are provided in Table 1.
+in a mixture of 2ME and CA (traversing to the right) or some      Our attempt to reproduce the phase-pure synthesis in A1,64
+other chemical mixture (traversing to the left). The majority of     which was missing only the mixing temperature, was successful
+syntheses in the dataset traverse the leftward path, and all of     when we substituted 25 °C, the median mixing temperature.
+
+                                                 H                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 9
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+Table 1. Suggested Experimental Conditions to Reproduce Experiments in the Literature with Missing Values
+
+
+
+
+
+aPredicted outcome based on percentage of “phase-pure” predictions among the 10 best-performing models from each randomization seed and
+four modeling frameworks (40 predictions total).
+
+Our best-performing models predict that this synthesis would      phase-pure BiFeO3 and was missing the precursor concen-
+be phase-pure 95% of the time. Inspection of the decision trees       tration, the Bi/Fe ratio, and the stirring conditions. Our first
+reveals that the use of 2-methoxyethanol and ethylene glycol       replication attempt, A5, used the median precursor concen-
+together in the precursor solution often contributed to the 5%       tration (0.25 M), a  0.9:1 Bi/Fe metal  ratio  (lower-than-
+of phase impurity predictions. Experiment A2,66 which resulted       typical), and  the median  stirring  temperature and  time
+in phase-pure BiFeO3 in the literature, was missing the amount      provided in the dataset for synthesis with  citric acid. This
+of chelating agent (citric acid in this case) and the mixing      attempt resulted in an amorphous film and thus  failed to
+temperature. Our  replication attempt was  successful when      reproduce the reported results. Our second attempt, A6, used
+using the typical amount of citric acid chelating agent (4:1      the same precursor concentration and stirring conditions, but
+CA/Fe) and median mixing temperature for synthesis in the     we increased the Bi/Fe ratio to 1:1. This led to a binary Bi2O3
+literature that includes citric acid (75 °C). Our decision trees      impurity phase. We then increased the Bi/Fe metal ratio once
+correctly predict this synthesis, leading to a phase-pure result,     more to the median value, 1.05:1, in A7, which successfully
+87.5%  of the  time. Of  note,  this procedure combines  2-      reproduced the reported result. We extended these trials by
+methoxyethanol and citric acid in its precursor solution, which      increasing both the stirring time and temperature (due to the
+was shown to be a useful predictor for phase purity in this      limited solubility of solid  citric acid, lower stirring temper-
+dataset (see Section  4.2). A3−A446 reported a Bi2Fe4O9      atures produce an inhomogeneous precursor solution) and
+impurity phase and was missing the concentration of the      precursor concentration (since, according to the dataset, lower
+precursor solution. We were unable to reproduce this result      precursor concentration has a higher tendency to lead to phase
+since we were only able to produce phase-pure BiFeO3 using      impurities compared with higher precursor concentrations).
+either the median precursor concentration (0.25 M) or a     Both of these attempts, A8 and A9, also produced a phase-pure
+higher-than-typical precursor concentration (0.4 M). Interest-       target, indicating that the Bi/Fe metal ratio may be the most
+ingly, our model predictions  for  this  set returned a high        vital missing information in this case, which is in line with the
+percentage of phase-pure predictions, which agrees with our      feature importance values determined by our decision trees in
+results  but  disagrees  with what was  originally  reported.      Section 4.2. It should be noted that the intuition for a greater-
+Inspection  of  the  decision  tree  paths  traversed  for  this      than-one Bi/Fe ratio would require domain knowledge from a
+procedure shows that the annealing temperature of 500 °C      prospective experimenter attempting to replicate such a recipe;
+and the combination of 2-methoxyethanol with ethanolamine         still,  this  points  to  the  importance  of  specifying  this
+in the precursor solution are frequently considered as factors      information,  particularly   if  the  volatility  of  a  particular
+leading to phase-pure predictions. The high percentage of      precursor is not explicitly discussed. Additionally, our models
+phase-pure predictions along with the lack of production of      predicted phase-pure syntheses much less frequently for A5
+impurity phases indicates that the actual precursor concen-     and A6 than for A7−A9, which agrees with our results where
+tration used may have been  less than  the median  value      phase impurities formed only for experiments A5 and A6. The
+contained in the text-mined dataset. Finally, A5−A965 reported     most decisive factor leading to phase-impure predictions for A5
+
+                                                                                                                               I                                                 https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 10
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+
+
+
+
+Figure 5. Pairwise condition distributions with targeted regions of interest (ROIs) and resulting syntheses. (a,c) Pairwise condition distributions
+for various synthesis conditions (stirring temperature, precursor concentration, and final annealing time) taken from the literature with ROIs for
+additional experiments indicated by dashed black ellipses. (b,d) Results from the suggested syntheses are then incorporated into the dataset, and
+the condition distributions are revisualized (b,d). Orange points and regions represent syntheses resulting in phase impurities, and blue points and
+regions represent phase-pure syntheses. Square points represent the use of citric acid as a chelating agent, and circles represent syntheses without
+citric acid.
+
+Table 2. Suggested Experimental Conditions for Exploratory Synthesis of Sol−Gel-Derived BiFeO3 Thin Films Based on ROIs
+Identified in Figure 5
+
+  exp. ID    Bi/Fe     solvent     chelating agent     conc. (M)      stir temp.     anneal temp. (°C)     anneal time (h)           impurity phase(s)
+
+   B1        1.05     2-ME                             0.4          80             550                   0.5
+   B2                                                        60
+   B3                                                        40
+   B4        1.05     2-ME          citric acid                     80             550                   0.5
+   B5                                                      0.4          60                                               M-Bi2O3, Bi2Fe4O9
+   B6                                                        40
+   B7        1.05     2-ME                           0.25         70             550               3
+   B8                                                        55
+   B9                                                        40                                                  T-Bi2O3, Bi2Fe4O9, Bi25FeO39
+   B10       1.05     2-ME          citric acid          0.25         70             550               3
+   B11                                                       55
+   B12                                                       40
+
+and A6 is the lower-than-median Bi/Fe ratio. The majority of      in the literature, respectively. Regions of interest that appear
+predictions made for A7−A9 were phase-pure; however, the      unexplored are identified by dashed black ovals. For (a), we
+regions of the conditions space covering these procedures are      see that the use of a precursor concentration higher than the
+data poor, especially for A8 and A9. This local lack of diverse     median (0.25 M) appears to improve the final phase purity of
+data inspired additional syntheses to explore these synthesis      the sample, so we  tested  this by  extrapolating  to higher
+condition regions of interest, as is discussed in Section 4.4.        precursor concentrations (specifically 0.4 M, which had no
+   4.4. Informing New Experiments. We identified areas in      data from the literature in combination with this high of a
+the synthesis condition space that lacked data and proposed       stirring temperature). For (c), we wished to fill in a gap from
+experiments  to   fill those  gaps. With  the  results  of  these      the literature for a relatively frequently reported condition, in
+experiments, our decision tree model was then retrained to       this case the annealing time. We therefore suggested a set of 12
+update  the  decision  boundaries.  This  exploration and      experiments that explore these two data-poor regions, while
+retraining  is depicted in Figure 5. Following Figure 3b, we        filling in the remaining conditions with median values from the
+focused our attention on regions of synthesis conditions that       rest of the dataset or values that would further interrogate the
+are under-reported. Figure 5a,c depicts the visualizations of      decisions made by our trained model, such as the propensity to
+solution  stirring temperatures with  (a)  solution  precursor      predict phase-pure synthesis when using only 2-methoxyetha-
+concentrations and (c) final sample annealing times reported      nol and  citric  acid  as  the  solvent and  chelating  agent,
+
+                                                                                     J                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 11
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+respectively (see Section 4.2). These suggested experiments      missing  synthesis  conditions  can  help  produce  results
+are shown in Table 2, along with the resulting phase purity and      consistent with those  reported,  highlighting  the  utility  of
+any specific impurity phases that formed. These results were       large-scale text mining for rational data gap imputation. These
+then incorporated back into the synthesis dataset, with those      findings are only based on the reproduction of four syntheses
+results highlighted in Figures 5b,d.                                reported in the literature, and a more thorough study should
+  Overall,  the development  of  impurity  phases  in  these     be conducted to make an assessment of the reproducibility of
+experiments appears to be somewhat random.  Still, we can      sol−gel thin film syntheses in general.
+make some observations that indicate the importance of these      To meet  our modeling  goals, we  curated  our  dataset
+under-reported conditions in determining final phase purity      manually. However, automated text extraction using state-of-
+and that highlight ambiguous effects of the inclusion of citric       the-art NLP  tools  is  gaining  popularity  in many  fields,
+acid in the precursor solution. From our experiments exploring      including materials science. Despite the convenience of these
+higher  precursor  concentration  across  a  range  of  stirring     methods, they  are not  perfect and tend to  struggle with
+temperatures, represented by Figure 5b and B1−B6 of Table 2,     complex synthesis extraction and procedure-outcome linking.
+the only sample to form impurity phases corresponded to the      Addressing these problems  is becoming more approachable
+intermediate  stirring temperature (notably with  citric acid      with the proliferation of new large language models like GPT-
+included). This could indicate that other synthesis conditions       3, which has been proven useful in creating materials science
+that were not recorded (or are not typically reported) lead to      chatbot  assistants,32  the  extraction  of complex  synthesis
+both Bi-rich and Fe-rich impurity phases. We can, however,      procedures for gold nanorods,74 and structured information
+begin to see the formation of a positive correlation between      extraction  of  materials  properties,  structure, and  applica-
+precursor concentration and mixing temperature in achieving a       tion.75,76 Nonetheless, analyses performed on our manually
+phase-pure outcome,  as seen  in Figure 5b,  particularly  at      curated dataset represent an upper limit of what can be learned
+intermediate to high stirring temperatures. Our experiments      through literature mining alone for the end-to-end synthesis
+that explored longer annealing times across a range of stirring     pathways of a particular material.
+temperatures, represented by Figure 5d and B7−B12 of Table         5.2. Future Work in Experiments Inspired by Text
+2, show that impurity phases only form when the solution is     Mining. To the best of our knowledge, there have been no
+mixed  at  a  lower  temperature.  Additionally,  this mix  of      published studies that perform direct experiments based on
+impurity phases forms when citric acid is not incorporated into     modeling and imputation from a text-mined dataset to study
+the solution. From this, we may reinforce the need to include      the impact of synthesis conditions on phase purity. Our set of
+some chelating agent in order to achieve a suitable gel prior to      suggested experiments in Table 2 is an example of how text
+deposition.40 However, the fact that the inclusion of citric acid     mining the synthesis literature can be used to inform syntheses
+in B5 seemed to be the deciding factor leading to an impurity      that evaluate previously under-reported conditions and their
+phase (compared to the phase-pure synthesis from B2 without       effects on phase purity. In order to increase throughput for
+citric acid)  indicates  that  there remains something to be      such exploratory experiments, a combination  of automatic
+learned about the effects of citric acid on the synthesis pathway       identification of regions of interest to explore in the synthesis
+in this synthesis space. We recently investigated this effect of      condition space and execution of high-throughput experiments
+citric acid through in situ XRD experiments inspired by our      through robotic synthesis laboratories could be implemented
+text-mined dataset, as well as through first-principles modeling,       in the future. The results from these and additional informed
+leading to a conclusion that the use of citric acid helps mitigate      experiments can also aid in constructing hypotheses regarding
+the formation of the Bi2Fe4O9 impurity phase through the      the  effect of synthesis conditions and choices on reaction
+development  of  an  intermediate  bismuth  subcarbonate     mechanisms, which can be further interrogated through first-
+phase.73                                                               principles models77 or directly investigated through in situ
+                                                             phase characterization.78
+5. DISCUSSION
+                                                                 6. CONCLUSIONS  5.1.  Utility  of Manually Text-Mined Dataset  in
+Outcome Prediction and Variable Completion. Curating      In this work, we constructed a text-mined dataset of sol−gel
+a  dataset  relating  synthesis  procedures  to  phase  purity      synthesis procedures and phase purity outcomes for BiFeO3
+outcomes allowed us to train a decision tree model capable      thin films with the goal of developing a machine learning
+of recovering some well-known  heuristics and highlighting     model that predicts the presence of impurity phases as a
+several features that are considered important predictors for      function of synthesis conditions. The decision tree models we
+obtaining  phase-pure  BiFeO3. However,  several  of  these      trained for this task achieved limited performance, with F1
+important  predictors (such  as  the Bi/Fe  ratio and  other      scores between  0.47 and  0.52, though  they confirmed  a
+precursor  solution  conditions)  are  often  not  reported  in     number of known heuristics for the avoidance of impurity
+published synthesis descriptions, as seen from our summary of      phases, namely employing (1) an annealing temperature below
+the completeness of our dataset in Section 4.1. Replication of     ∼650 °C and (2) bismuth excess of ∼5%. Statistical analysis of
+published results is an important part of the research process      the dataset revealed that many conditions are often missing
+and is hampered when important parameters are omitted from     from synthesis descriptions in the literature, and our modeling
+the reported procedure. It can be possible to impute these     showed that several of these features (particularly the Bi/Fe
+values through a review of other similar published procedures       ratio and mixing conditions) are important predictors of phase
+that include more complete descriptions. As shown by our       purity. Experimental attempts to replicate published syntheses
+experiments in Section 4.3, reproducing published procedures      while substituting typical values from the literature for these
+that do omit synthesis information often leads to ambiguous      missing  conditions  can  aid  in  successfully  reproducing
+outcomes.  Still,  our  reproducibility  results  indicate  that      published  syntheses. These values  are not always obvious
+substituting median or typical values from the literature for      (such as the Bi/Fe ratio), and so these successes reflect the
+
+                                                         K                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 12
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+utility of data-driven experimental design. Some syntheses were        Christopher J. Bartel −Department of Materials Science &
+still  irreproducible  after  substituting  missing  values,  high-           Engineering, University of California, Berkeley, California
+lighting the importance of reporting these vital conditions for          94720, United States; Materials Sciences Division, Lawrence
+replication, namely the concentration of the precursor solution           Berkeley National Laboratory, Berkeley, California 94720,
+and the Bi/Fe ratio. Finally, new exploratory experiments were          United States; Department of Chemical Engineering and
+inspired by visible gaps in the synthesis condition coverage of           Materials Science, University of Minnesota, Minneapolis,
+the dataset. The results of these experiments highlight several          Minnesota 55455, United States;   orcid.org/0000-0002-
+of the synthesis conditions in precursor solution preparation         5198-5036
+that  affect  final  phase  purity,  namely,  the  precursor        Amalie Trewartha −Department of Materials Science &
+concentration, mixing conditions, as well as the inclusion of           Engineering, University of California, Berkeley, California
+citric acid as a chelating agent. These experiments represent an          94720, United States; Materials Sciences Division, Lawrence
+example of how a text-mined dataset of synthesis conditions           Berkeley National Laboratory, Berkeley, California 94720,
+and outcomes can be used to inspire new syntheses. Because it          United States; Energy and Materials, Toyota Research
+was manually extracted and  validated, our dataset can be             Institute, Los Altos, California 94022, United States
+considered as a gold standard for future ML-based synthesis       Anubhav Jain −Energy Technologies Area, Lawrence Berkeley
+learning tasks in this synthesis space or for automated text          National Laboratory, Berkeley, California 94720, United
+extraction models.                                                              States;   orcid.org/0000-0001-5893-9967
+                                                                  Carolin M. Sutter-Fella −Molecular Foundry Division,
+            CONTENT                                     Lawrence Berkeley National Laboratory, Berkeley, California■ASSOCIATEDData Availability Statement                                       94720, United States;   orcid.org/0000-0002-7769-0869
+Dataset and notebooks for data processing, modeling, and     Complete contact information is available at:
+visualization are provided at https://github.com/kevcruse96/      https://pubs.acs.org/10.1021/acs.chemmater.3c02203
+bfo-impurityphase-analysis.
+*sı  Supporting Information                               Author Contributions
+The Supporting Information  is  available  free of charge  at      K.C. conducted automated text mining, built and validated the
+https://pubs.acs.org/doi/10.1021/acs.chemmater.3c02203.          dataset, wrote  analysis  code, designed  reproducibility and
+                                                                   exploratory syntheses, and wrote the manuscript. V.B. built and      Details on  dataset  structure,  details on Mol2Vec
+                                                                      validated  the  dataset,  performed  analysis, and  wrote  the      implementation, frequency of substrates used,  details
+     on missing values and k-nearest neighbors imputation,      manuscript. M.A. and K.H.  designed  reproducibility and
+     comparison of classifier model performance, and visual-      exploratory syntheses, conducted experiments, and provided
+       ization of condition distributions and phase impurity      experimental expertise. C.J.B. and A.T. guided analysis of the
+      prevalence for larger subset of dataset features (PDF)        dataset and suggested experiments. A.J. supervised the project
+                                                        and wrote the manuscript. C.M.S.-F. developed the approach,
+                                                                 supervised  the  project, and  wrote  the  manuscript.  G.C.          INFORMATION
+                                                             developed the approach, supervised the project, and wrote■AUTHORCorresponding Author                                                                 the manuscript. All authors contributed to the final manuscript.
+  Gerbrand Ceder −Department of Materials Science &
+                                                       Notes
+     Engineering, University of California, Berkeley, California
+                                                   The authors declare no competing financial interest.    94720, United States; Materials Sciences Division, Lawrence
+     Berkeley National Laboratory, Berkeley, California 94720,
+    United States;   orcid.org/0000-0001-9275-3605;    Email: gceder@berkeley.edu                   ■ACKNOWLEDGMENTS                                                             This work was funded by the U.S. Department of Energy,
+Authors                                                            Office of Science, Office of Basic Energy Sciences, Materials
+  Kevin Cruse −Department of Materials Science &               Sciences and Engineering Division under contract no. DE-
+                                                    AC02-05-CH11231 (D2S2 program KCD2S2). This research     Engineering, University of California, Berkeley, California
+                                                            used resources of the National Energy Research  Scientific    94720, United States; Materials Sciences Division, Lawrence
+     Berkeley National Laboratory, Berkeley, California 94720,      Computing Center, a DOE Office of Science User Facility
+    United States;   orcid.org/0000-0002-0540-4165             supported by the Office of Science of the U.S. Department of
+   Viktoriia Baibakova −Energy Technologies Area, Lawrence       Energy  under  Contract No. DE-AC02-05CH11231  using
+     Berkeley National Laboratory, Berkeley, California 94720,     NERSC award BES-ERCAP0024004. Work at the Molecular
+    United States                                          Foundry was supported by the Office of Science, Office of
+  Maged Abdelsamie −Material Science and Engineering           Basic Energy Sciences, of the U.S. Department of Energy under
+    Department, King Fahd University of Petroleum and             contract no. DE-AC02-05CH11231. We thank Anna Sack-
+     Minerals (KFUPM), Dhahran 31261, Saudi Arabia;          mann, Rachael Samberg, and Timothy Vollmer (Science Data
+     Interdisciplinary Research Center for Intelligent                and Engineering Librarians at UC Berkeley) for assistance in
+    Manufacturing and Robotics, KFUPM, Dhahran 31261,         obtaining Text and Data Mining agreements with the relevant
+    Saudi Arabia                                                     publishers. We would also like to thank Zheren Wang, Tanjin
+  Kootak Hong −Chemical Sciences Division, Lawrence           He, Yuxing Fei, Bowen Deng, Haoyan Huo, Olga Kononova,
+     Berkeley National Laboratory, Berkeley, California 94720,       Nicholas Walker, Sanghoon  Lee,  Caitlin McCandler, Sam
+    United States; Department of Materials Science and             Gleason, Xingzhi Wang, and Jakob Dahl for valuable advice
+     Engineering, Chonnam National University, Gwangju 61186,     and discussion regarding the development of this pipeline and
+     Republic of Korea                                                  analysis of the data.
+
+                                                                    L                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 13
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+                                                                    (21) Hiszpanski, A. M.; Gallagher, B.; Chellappan, K.; Li, P.; Liu, S.;■REFERENCES                                              Kim,  H.; Han,  J.;  Kailkhura,  B.;  Buttler, D.  J.; Han,  T.  Y.-J. (1) Jansen, M. A Concept for Synthesis Planning in Solid-State                                                                    Nanomaterial Synthesis Insights from Machine Learning of Scientific
+Chemistry. Angew. Chem., Int. Ed. 2002, 41, 3746−3766.                                                                                  Articles by Extracting, Structuring, and Visualizing Knowledge.  J.
+ (2) DiSalvo, F. Solid State Chemistry. Solid State Commun. 1997,                                                               Chem. Inf. Model. 2020, 60, 2876−2887.
+102, 79−85.                                                                    (22) Shah, S.; Vora, D.; Gautham, B.; Reddy, S. A relation aware
+ (3) Cordova, D. L. M.; Johnson, D. C. Synthesis of Metastable
+                                                                         search engine for materials science. Integr. Mater. Manuf. Innov. 2018,
+Inorganic Solids with Extended Structures. ChemPhysChem 2020, 21,                                                                                      7, 1−11.
+1345−1368.
+                                                                    (23) Kim, E.; Huang, K.; Jegelka, S.; Olivetti, E. Virtual screening of
+ (4) Bianchini, M.; Wang, J.; Clément, R. J.; Ouyang, B.; Xiao, P.;
+                                                                           inorganic  materials  synthesis parameters with deep  learning.  npj
+Kitchaev, D.; Shi, T.; Zhang, Y.; Wang, Y.; Kim, H.; Zhang, M.; Bai, J.;
+                                                                  Comput. Mater. 2017, 3, 53.
+Wang, F.; Sun, W.; Ceder, G. The interplay between thermodynamics
+                                                                    (24) Kim, E.; Huang, K.; Saunders, A.; McCallum, A.; Ceder, G.;
+and kinetics in the solid-state synthesis of layered oxides. Nat. Mater.
+                                                                                      Olivetti, E. Materials Synthesis Insights from Scientific Literature via
+2020, 19, 1088−1095.
+                                                                   Text Extraction and Machine Learning. Chem. Mater. 2017,  29,
+ (5) Miura, A.; Bartel, C. J.; Goto, Y.; Mizuguchi, Y.; Moriyoshi, C.;
+                                                              9436−9444.
+Kuroiwa, Y.; Wang, Y.; Yaguchi, T.; Shirai, M.; Nagao, M.; Rosero-
+                                                                    (25) Kim, E.; Huang, K.; Tomala, A.; Matthews, S.; Strubell, E.;
+Navarro, N. C.; Tadanaga, K.; Ceder, G.; Sun, W. Observing and
+                                                                        Saunders, A.; McCallum, A.; Olivetti, E. Machine-learned and codifiedModeling the Sequential Pairwise Reactions that Drive Solid-State
+                                                                             synthesis parameters of oxide materials. Sci. Data 2017, 4, 170127.Ceramic Synthesis. Adv. Mater. 2021, 33, 2100312.
+                                                                    (26) Kim, E.; Jensen, Z.; van Grootel, A.; Huang, K.; Staib, M.; (6) McDermott, M. J.; Dwaraknath, S. S.; Persson, K. A. A graph-
+                                                                   Mysore,  S.; Chang, H.-S.; Strubell, E.; McCallum, A.; Jegelka,  S.;based network for predicting chemical reaction pathways in solid-state
+                                                                                      Olivetti, E. Inorganic materials synthesis planning with  literature-materials synthesis. Nat. Commun. 2021, 12, 3097.
+                                                                             trained Neural Networks. J. Chem. Inf. Model. 2020, 60, 1194−1201. (7) Aykol, M.; Montoya, J. H.; Hummelshøj, J. Rational Solid-State
+                                                                    (27) Wilary, D. M.; Cole, J. M. ReactionDataExtractor 2.0: A DeepSynthesis Routes for Inorganic Materials. J. Am. Chem. Soc. 2021, 143,
+                                                                      Learning Approach  for Data Extraction from Chemical Reaction9244−9259.
+                                                                   Schemes. J. Chem. Inf. Model. 2023, 63, 6053−6067. (8) Sari, T. P.; et al. Effect of Mixing Temperature on the Synthesis
+                                                                    (28) Sierepeklis, O.; Cole, J. M. A thermoelectric materials databaseof Hydroxyapatite by Sol-Gel Method. Orient.  J. Chem. 2014, 30,
+                                                                        auto-generated from  the  scientific  literature  using ChemDataEx-1799.
+                                                                                      tractor. Sci. Data 2022, 9, 648. (9) Ji, X.; Wang, C.; Luo, W.; Chen, G.; Zhang, S.; Tu, R.; Shen, Q.;
+                                                                    (29) Kumar, P.; Kabra, S.; Cole, J. M. Auto-generating databases ofShi, J.; Zhang, L. Effect of solution concentration on low-temperature
+                                                                           Yield Strength and Grain Size using ChemDataExtractor. Sci. Datasynthesis of BCZT powders by sol-gel-hydrothermal method. J. Sol-
+                                                                   2022, 9, 292.Gel Sci. Technol. 2020, 94, 205−212.
+                                                                    (30) Cha, Y.-O.; Hao, Y. The Dawn of Metamaterial Engineering (10) MacLeod, B.; Parlane, F. G. L.; Morrissey, T. D.; Häse, F.;
+                                                                     Predicted  via  Hyperdimensional Keyword  Pool and MemoryRoch, L. M.; Dettelbach, K. E.; Moreira, R.; Yunker, L. P. E.; Rooney,
+M.  B.; Deeth,  J. R.; et  al. Self-driving laboratory for accelerated       Learning. Adv. Opt. Mater. 2022, 10, 2102444.
+discovery of thin-film materials. Sci. Adv. 2020, 6, No. eaaz8867.           (31) Krenn, M.;  Zeilinger,  A.  Predicting  research  trends  with
+ (11) Shimizu, R.; Kobayashi, S.; Watanabe, Y.; Ando, Y.; Hitosugi,      semantic and neural networks with an application in quantum physics.
+T. Autonomous materials synthesis by machine learning and robotics.       Proc. Natl. Acad. Sci. U.S.A. 2020, 117, 1910−1916.
+APL Mater. 2020, 8, 111110.                                          (32) Zheng, Z.; Zhang, O.; Borgs, C.; Chayes, J. T.; Yaghi, O. M.
+ (12) Beckham, J. L.; Wyss, K. M.; Xie, Y.; McHugh, E. A.; Li, J. T.;     ChatGPT Chemistry Assistant for Text Mining and the Prediction of
+Advincula, P. A.; Chen, W.; Lin,  J.; Tour,  J. M. Machine Learning    MOF Synthesis. J. Am. Chem. Soc. 2023, 145, 18048−18062.
+Guided Synthesis of Flash Graphene. Adv. Mater. 2022, 34, 2106506.       (33) Manning, J. R. H.; Sarkisov, L. Unveiling the synthesis patterns
+ (13) Szymanski, N. J.; Nevatia, P.; Bartel, C. J.; Zeng, Y.; Ceder, G.       of nanomaterials: a text mining and meta-analysis approach with ZIF-
+Autonomous and dynamic precursor selection for solid-state materials      8 as a case study. Digital Discovery 2023, 2, 1783−1796.
+synthesis. Nat. Commun. 2023, 14, 6956.                               (34) Yang, J.-C.; He, Q.; Yu, P.; Chu, Y.-H. BiFeO3 Thin Films: A
+ (14) Szymanski, N.  J.; Zeng, Y.; Huo, H.; Bartel, C.  J.; Kim, H.;      Playground for Exploring Electric-Field Control of Multifunction-
+Ceder, G. Toward autonomous  design and  synthesis  of  novel         alities. Annu. Rev. Mater. Res. 2015, 45, 249−275.
+inorganic materials. Mater. Horiz. 2021, 8, 2169−2198.                   (35)  Eerenstein,  W.;  Mathur,  N.;  Scott,   J.  Multiferroic and
+ (15) He, T.; Sun, W.; Huo, H.; Kononova, O.; Rong, Z.; Tshitoyan,       magnetoelectric materials. Nature 2006, 442, 759−765.
+V.;  Botari,  T.; Ceder, G.  Similarity  of Precursors  in  Solid-State       (36) Yi, H.; Choi, T.; Choi, S.; Oh, Y.; Cheong, S.-W. Mechanism of
+Synthesis as Text-Mined from  Scientific  Literature. Chem. Mater.       the Switchable Photovoltaic  Effect  in  Ferroelectric BiFeO3. Adv.
+2020, 32, 7861−7873.                                                   Mater. 2011, 23, 3403−3407.
+ (16) Kononova, O.; Huo, H.; He, T.; Rong, Z.; Botari, T.; Sun, W.;       (37) Speranskaya, E.; Skorikov, V.; Rode, E. Y.; Terekhova, V. The
+Tshitoyan, V.; Ceder, G. Text-mined dataset of inorganic materials      phase diagram of the system bismuth oxide-ferric oxide. Russ. Chem.
+synthesis recipes. Sci. Data 2019, 6, 203.                                        Bull. 1965, 14, 873−874.
+ (17) Wang, Z.; Kononova, O.; Cruse, K.; He, T.; Huo, H.; Fei, Y.;       (38) Koizumi, H.; Niizeki, N.; Ikeda, T. An X-ray Study on Bi2O3-
+Zeng, Y.; Sun, Y.; Cai, Z.; Sun, W.; Ceder, G. Dataset of solution-      Fe2O3 System. Jpn. J. Appl. Phys. 1964, 3, 495.
+based inorganic materials synthesis procedures extracted from the       (39) Bernardo, M.; Jardiel, T.; Peiteado, M.; Caballero, A.; Villegas,
+scientific literature. Sci. Data 2022, 9, 231.                        M. Reaction pathways in the solid state synthesis of multiferroic
+ (18) Cruse, K.; Trewartha, A.; Lee, S.; Wang, Z.; Huo, H.; He, T.;      BiFeO3. J. Eur. Ceram. Soc. 2011, 31, 3047−3053.
+Kononova,  O.;  Jain,  A.; Ceder, G. Text-mined  dataset  of gold       (40) Kim,  J.  K.; Kim,  S.  S.; Kim,  W.-J.  Sol-gel  synthesis and
+nanoparticle synthesis procedures, morphologies, and size entities. Sci.       properties of multiferroic BiFeO3. Mater. Lett. 2005, 59, 4006−4009.
+Data 2022, 9, 234.                                                   (41) Zhang, Q.; Sando, D.; Nagarajan, V. Chemical route derived
+ (19) Mahbub, R.; Huang, K.; Jensen, Z.; Hood, Z. D.; Rupp, J. L.;      bismuth ferrite thin films and nanomaterials. J. Mater. Chem. C 2016,
+Olivetti, A. Text mining  for processing conditions  of  solid-state        4, 4092−4124.
+battery electrolytes. Electrochem. Commun. 2020, 121, 106860.             (42) Béa, H.; Bibes, M.; Barthélémy, A.; Bouzehouane, K.; Jacquet,
+ (20) Jayaram,  K.; G,  P.; V,  J. Automatic Extraction  of Rarely        E.; Khodan, A.; Contour,  J.-P.; Fusil,  S.; Wyczisk, F.; Forget, A.;
+Explored Materials and Methods Sections from Research Journals       Lebeugle, D.; Colson, D.; Viret, M. Influence of parasitic phases on
+using Machine Learning Techniques. Int.  J. Adv. Comput. Sci. Appl.       the properties of BiFeO3 epitaxial thin films. Appl. Phys. Lett. 2005, 87,
+2020, 11, 447−456.                                                 072508.
+
+                                        M                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX
+
+## PDF page 14
+Chemistry of Materials                                         pubs.acs.org/cm                                                     Article
+
+ (43) Wang, J.; Neaton, J.; Zheng, H.; Nagarajan, V.; Ogale, S.; Liu,       (62) Lin, W.-C.; Tsai, C. F. Missing value imputation: a review and
+B.; Viehland, D.; Vaithyanathan, V.; Schlom, D.; Waghmare, U.;       analysis of the literature (2006−2017). Artif.  Intell. Rev. 2019, 53,
+Spaldin, N.; Rabe, K.; Wuttig, M.; Ramesh, R.  Epitaxial BiFeO3      1487−1509.
+Multiferroic Thin Film Heterostructures. Science 2003, 299, 1719−       (63) Hasan, K.; Alam, A.; Roy, S.; Dutta, A.; Jawad, T.; Das, S.
+1722.                                                               Missing  value  imputation  affects  the  performance  of machine
+ (44) Singh, S.; Kim, Y.; Funakubo, H.; Ishiwara, H. Epitaxial BiFeO3       learning: A review and analysis of the literature (2010−2021). Inform.
+thin films fabricated by chemical solution deposition. Appl. Phys. Lett.      Med. Unlocked 2021, 27, 100799.
+                                                                    (64) Wang, J.; Luo, L.; Han, C.; Yun, R.; Tang, X.; Zhu, Y.; Nie, Z.;2006, 88, 162904.
+                                                                   Zhao, W.;  Feng,  Z. The  Microstructure,  Electric,  Optical and (45)  Iakovlev,  S.;  Solterbeck,  C.; Kuhnke,  M.;  Es-Souni, M.
+                                                                         Photovoltaic Properties of BiFeO3 Thin Films Prepared by LowMultiferroic BiFeO3  thin  films  processed  via  chemical  solution
+                                                                 Temperature Sol-Gel Method. Materials 2019, 12, 1444.deposition: Structural and electrical characterization.  J. Appl. Phys.
+                                                                    (65) Ren, Y.; Nan, F.; You, L.; Zhou, Y.; Wang, Y.; Wang, J.; Su, X.;
+2005, 97, 094901.
+                                                                      Shen, M.; Fang, L. Enhanced Photoelectrochemical Performance in
+ (46) Anthony  Raj,  C.; Muneeswaran,  M.;  Jegatheesan,  P.;
+                                                              Reduced Graphene Oxide/BiFeO3 Heterostructures. Small 2017, 13,
+Giridharan, N.; Sivakumar, V.; Senguttuvan, G. Effect of annealing
+                                                                  1603457.
+time in the low-temperature growth of BFO thin films spin coated on                                                                    (66) Cao, D.; Wang, Z.; Nasori; Wen, L.; Mi, Y.; Lei, Y. Switchable
+glass substrates. J. Mater. Sci.: Mater. Electron. 2013, 24, 4148−4154.                                                                      Charge-Transfer  in  the  Photoelectrochemical  Energy-Conversion
+ (47) William, R.; Marikani, A.; Madhavan, D. Dielectric behavior                                                                       Process  of  Ferroelectric BiFeO3  Photoelectrodes.  Angew. Chem.
+and magentical response for porous BFO thin films with various      2014, 126, 11207−11211.
+thicknesses over Pt/Ti/SiO2/Si  substrate. Ceram.  Int. 2016,  42,       (67) Xie, X.; Yang, S.; Zhang, F.; Fan, S.; Che, Q.; Wang, C.; Guo,
+6807−6816.                                                                    X.; Zhang, L. Effects of excess Bi on structure and electrical properties
+ (48) Lei, T.; Cai, W.; Fu, C.; Ren, H.; Zhang, Y.; Sun, Y.; Li, G. The       of BiFeO3 thin films deposited on indium tin oxide substrate using
+effects of grain size on electrical properties and domain structure of        sol-gel method. J. Mater. Sci.: Mater. Electron. 2015, 26, 10095−10101.
+BiFeO3 thin films by sol-gel method.  J. Mater. Sci.: Mater. Electron.       (68) Phapale, S.; Mishra, R.; Das, D. Standard enthalpy of formation
+2015, 26, 9495−9506.                                            and heat capacity of compounds in the pseudo-binary Bi2O3-Fe2O3
+ (49) Soram, B. S.; Ngangom, B. S.; Sharma, H. Effect of annealing       system. J. Nucl. Mater. 2008, 373, 137−141.
+temperatures on  the  structural and  optical  properties  of  sol-gel       (69) Valant, M.; Axelsson, A.-K.; Alford, N. Peculiarities of a Solid-
+processed nanocrystalline BiFeO3 thin films. Thin Solid Films 2012,       State Synthesis of Multiferroic Polycrystalline BiFeO3. Chem. Mater.
+524, 57−61.                                                        2007, 19, 5431−5436.
+ (50) Sharma, S.; Saravanan, P.; Pandey, O.; Vinod, V.; Černík, M.;       (70) Zhang, Q.; Valanoor, N.; Standard, O. Epitaxial (001) BiFeO3
+Sharma, P. Magnetic behavior of sol-gel driven BiFeO3 thin films with       thin-films with excellent ferroelectric properties by chemical solution
+different grain size distribution.  J. Magn. Magn. Mater. 2016, 401,       deposition-the role of gelation. J. Mater. Chem. C 2015, 3, 582−595.
+180−187.                                                           (71) Gupta, S.; Sharma, A.; Tomar, M.; Gupta, V.; Pal, M.; Guo, R.;
+                                                                                 Bhalla, A. Piezoresponse  force microscopy and  vibrating sample (51) Meera, A.; Ganesan, R.; Gnanasekaran, T. Studies on the
+                                                                magnetometer  study  of  single phased Mn  induced  multiferroicthermal stability of BiFeO3 and the phase diagram of Bi-Fe-O system.
+                                                              BiFeO3 thin film. J. Appl. Phys. 2012, 111, 064110.J. Alloys Compd. 2019, 790, 1108−1118.
+                                                                    (72) Kim, E.; Huang, K.; Kononova, O.; Ceder, G.; Olivetti, E. (52)  Selbach,  S.  M.;  Einarsrud, M.  A.;  Grande,  T. On  the
+                                                                                     Distilling a Materials Synthesis Ontology. Matter 2019, 1, 8−12.
+Thermodynamic Stability of BiFeO3. Chem. Mater. 2009, 21, 169−
+                                                                    (73) Abdelsamie, M.; Hong, K.; Cruse, K.; Bartel, C. J.; Baibakova,
+173.
+                                                                                V.; Trewartha, A.; Jain, A.; Ceder, G.; Sutter-Fella, C. M. Combining
+ (53) Gupta, S.; Tomar, M.; Gupta, V.; James, A.; Pal, M.; Guo, R.;
+                                                                                   text mining, in situ characterization, and ab  initio calculations to
+Bhalla, A. Optimization of excess Bi doping to enhance ferroic orders                                                                                  rationalize BiFeO3 crystallization pathways. Matter 2023, 6, 4291−
+of spin casted BiFeO3 thin film. J. Appl. Phys. 2014, 115, 234105.         4305.
+ (54) Liu, H.; Wang, X. Large electric polarization in BiFeO3 film       (74) Walker, N.; Lee, S.; Dagdelen, J.; Cruse, K.; Gleason, S.; Dunn,
+prepared via a simple sol−gel process. J. Sol-Gel Sci. Technol. 2008, 47,                                                                                 A.; Ceder, G.; Alivisatos, A.; Persson, K.; Jain, A. Extracting structured
+154−157.                                                             seed-mediated gold nanorod growth procedures from scientific text
+ (55) Tyagi, M.; Chatterjee, R.; Sharma, P. Structural, optical and      with LLMs. Digital Discovery 2023, 2, 1768−1782.
+ferroelectric behavior of pure BiFeO3 thin films synthesized by the       (75) Dunn, A.; Dagdelen, J.; Walker, N.; Lee, S.; Rosen, A. S.; Ceder,
+sol−gel method. J. Mater. Sci.: Mater. Electron. 2015, 26, 1987−1992.       G.; Persson,  K.;  Jain, A. Structured information  extraction from
+ (56) Kononova, O.; He, T.; Huo, H.; Trewartha, A.; Olivetti, E. A.;      complex scientific text with fine-tuned large language models. arXiv
+Ceder, G. Opportunities and challenges of text mining in materials      2022, arXiv:2212.05238.
+research. iScience 2021, 24, 102155.                                    (76) Xie, T.; Wan, Y.; Huang, W.; Zhou, Y.; Liu, Y.; Linghu, Q.;
+ (57) Jurafsky, D.; Martin,  J. Speech and Language Processing: An     Wang, S.; Kit, C.; Grazian, C.; Zhang, W.; Hoex, B. Large Language
+Introduction to Natural Language Processing, Computational Linguistics,      Models as Master Key: Unlocking the Secrets of Materials Science
+and Speech Recognition. Prentice Hall Series in  Artificial Intelligence;      with GPT. arXiv 2023, arXiv:2304.02213.
+Pearson Prentice Hall, 2009.                                          (77) Walters, L. N.; Zhang, C.; Dravid, V. P.; Poeppelmeier, K. R.;
+ (58) Huo, H.; Rong, Z.; Kononova, O.; Sun, W.; Botari, T.; He, T.;       Rondinelli,  J. M. First-Principles Hydrothermal Synthesis Design to
+Tshitoyan, V.; Ceder, G. Semi-supervised machine-learning  classi-      Optimize  Conditions and  Increase  the  Yield  of  Quaternary
+fication of materials synthesis procedures. npj Comput. Mater. 2019, 5,      Heteroanionic Oxychalcogenides. Chem. Mater. 2021,  33, 2726−
+62.                                                                   2741.
+ (59) Jaeger, S.; Fulle, S.; Turk, S. Mol2vec: Unsupervised Machine       (78) Shoemaker, D. P.; Hu,  Y.-J.; Chung, D. Y.; Halder, G.  J.;
+                                                                  Chupas, P. J.; Soderholm, L.; Mitchell, J. F.; Kanatzidis, M. G. In situLearning Approach with Chemical Intuition.  J. Chem.  Inf. Model.
+                                                                              studies of a platform for metastable inorganic crystal growth and2018, 58, 27−35.
+                                                                             materials discovery. Proc. Natl. Acad. Sci. U.S.A. 2014, 111, 10922− (60)  Srivastava,  A.;  Garg,  A.;  Morrison,  F.  D. Impedance
+                                                                    10927.
+spectroscopy studies on polycrystalline BiFeO3 thin films on Pt/Si
+substrates. J. Appl. Phys. 2009, 105, 054103.
+ (61) Qi, X.; Dho,  J.; Blamire, M.;  Jia, Q.; Lee,  J.-S.; Foltyn, S.;
+MacManus-Driscoll,  J. L. Epitaxial growth of BiFeO3 thin films by
+LPE and sol-gel methods. J. Magn. Magn. Mater. 2004, 283, 415−421.
+
+                                                 N                                                https://doi.org/10.1021/acs.chemmater.3c02203
+                                                                                                                                       Chem. Mater. XXXX, XXX, XXX−XXX

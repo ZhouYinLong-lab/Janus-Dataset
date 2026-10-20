@@ -1,0 +1,266 @@
+Research — Nullary
+∅
+Nullary
+Sign in
+Install MCP
+Research
+Technical reports and validation studies from the Nullary team. Two papers published; both report their own negative findings honestly.
+TLDR
+Bioactivity validation paper
+(DOI
+10.5281/zenodo.20370264
+): real measured negatives produce calibrated, target-specific activity models — 0.966 ROC-AUC under scaffold-disjoint split on the 25-kinase proof, dropping to 0.775 under the temporal split (the honest prospective-predictivity proxy). Decoy-comparison performed (real beats decoys directionally on all 25 targets; advantage clears the a priori 0.03 bar on 52% of targets). Y-randomization control performed.
+Analytics suite paper
+: tractability score predicts clinical progression at AUC 0.785; externally validated against Open Targets’ structure-derived druggability (independent of bioactivity data) at AUC 0.778. Cross-modality combination tested directly and reported as adding no predictive value (CRISPR × chemistry interactions non-significant; cross-validated AUC change +0.0003 [−0.0014, 0.0019]).
+Both papers explicitly state the controls still required and the limits of current claims.
+Models, indices, and registry accessible through Nullary’s MCP and REST interfaces; per-target supplementary CSVs available.
+Featured papers
+1. Real Measured Negatives as a Substrate for Calibrated, Target-Specific Bioactivity Prediction
+A validation of the Nullary negative-results data layer
+Nullary Team · Technical Report 1 · 24 May 2026
+DOI:
+10.5281/zenodo.20370264
+Download PDF →
+Abstract
+Public bioactivity resources are biased toward positive findings: compounds that work are published; the far larger set of measured failures is mostly discarded. Structure- and ligand-based virtual-screening models therefore train against computational decoys — molecules merely assumed inactive — a documented source of inflated benchmark scores and poor prospective generalization. Nullary aggregates experimentally measured negative results across modalities into a single queryable layer (122.3M findings).
+We report a validation study of whether these real negatives support predictive, well-calibrated activity models. Using ChEMBL single-protein human targets and Nullary’s own definition of an inactive, we train per-target classifiers (ECFP4 + gradient boosting) and evaluate them under Bemis–Murcko scaffold-disjoint splits. On 25 well-studied kinases, median ROC-AUC is 0.966 (0.950–0.973); the random-split median is only marginally higher (difference of medians 0.006; median of per-target paired differences 0.010; both small, the paired difference statistically significant). A small random-vs-scaffold gap does not by itself establish prospective generalization.
+In a controlled comparison, real-negative training was directionally better than decoy training on all 25 kinases (median paired advantage +0.031 ROC-AUC, Wilcoxon p<10⁻⁶), and decoy-trained models were markedly overoptimistic when validated on decoys; the per-target advantage cleared our a priori 0.03 bar on 52% of targets — below the 60% threshold we set in advance (and statistically indistinguishable from it at this sample size).
+Critically, under a temporal split (train on compounds first characterized ≤2018, test on ≥2020) — the honest prospective-predictivity proxy — the median falls to 0.775 (from 0.966 scaffold on the same targets, a 0.18-point drop): the scaffold-split headline does not hold prospectively, though performance stays well above chance. One split-validity control (AVE-debiasing) remains future work.
+Scaled to a registry of 398 kinase and GPCR targets, the median scaffold ROC-AUC is 0.926 (median Brier 0.081). We treat this as preliminary validation: the scaffold headline is consistent with a competent ECFP4+gradient-boosting model on an optimistic split, and the temporal split is the realistic forward-looking number.
+Key results
+25-kinase proof — scaffold-disjoint split
+Split
+ROC-AUC (median, IQR)
+PR-AUC (median, IQR)
+Brier (median, IQR)
+Scaffold-disjoint
+0.966 (0.950–0.973)
+0.917 (0.901–0.947)
+0.060 (0.044–0.081)
+Random compound
+0.972 (0.964–0.982)
+—
+—
+PR-AUC of 0.917 is read against the inactive-prevalence baseline of 0.45 — well above chance rather than near-perfect.
+Real negatives vs decoys (25 kinases, scaffold split, 1:1 ratio)
+Training negatives
+Test set
+Median ROC-AUC
+Real inactives (R)
+real inactives
+0.962
+Decoys (D)
+real inactives
+0.932
+Decoys (D)
+decoys
+0.987
+Real-negative training beats decoy training on the realistic test for all 25 targets (median paired advantage +0.031 ROC-AUC; paired Wilcoxon p < 10⁻⁶). Decoy-trained models are overoptimistic by ~0.055 when validated on decoys rather than real negatives — the documented decoy-bias failure mode, reproduced here. The effect size is borderline against our a priori bar: the advantage clears 0.03 on 13/25 targets (52%; Clopper–Pearson 95% CI 31–72%, which spans the 60% threshold). We report a consistent but modest advantage for real negatives, plus the avoidance of decoy-validation optimism — not a blanket claim of superiority.
+Caveat on decoy construction:
+decoys were filtered for dissimilarity to the actives (ECFP4 Tanimoto < 0.35) but not to the held-out real inactives, and the Tanimoto filter makes our decoys harder than stock DUD-E — likely why our decoy-validation inflation (~0.055) is smaller than the 0.10–0.15 often reported.
+Temporal split (25 kinases, train ≤2018 / test ≥2020)
+Split
+Median ROC-AUC (IQR)
+Scaffold-disjoint (same 25 targets)
+0.966
+Temporal (train ≤2018 / test ≥2020)
+0.775 (0.734–0.850)
+Per-target training sets ranged 938–7,368 pairs; prospective test sets ranged 34–1,366 pairs (median 378). All 25 targets had sufficient pre- and post-cutoff data, no per-target exclusions. Median paired drop −0.179. The scaffold-split headline does not survive temporal evaluation, though 0.78 remains well above chance.
+Decoy comparison under the temporal split: real and decoy training both fall to ~0.775; the median advantage shrinks from +0.031 (scaffold) to +0.014 (temporal, 17/25 targets). Evidence that measured negatives beat decoys is robust under scaffold splitting and marginal, directionally-preserved, under prospective evaluation.
+Honest reading:
+the realistic forward-looking number for a screening anti-filter is ~0.78, not ~0.97. The scaffold figure is an upper bound; the temporal number is the honest headline.
+Full kinase + GPCR registry (398 targets)
+Family
+Models
+Scaffold ROC-AUC (median, IQR)
+Brier (median)
+Kinase
+249
+0.913 (0.835–0.956)
+0.097
+GPCR
+149
+0.955 (0.899–0.979)
+0.061
+All
+398
+0.926 (0.855–0.968)
+0.081
+Methodology
+ChEMBL 35, single-protein human kinases and GPCRs
+ECFP4 (Morgan radius 2, 2048-bit) molecular fingerprints
+LightGBM gradient boosting, one model per target
+Bemis–Murcko scaffold-disjoint train/test split (80/20)
+Temporal split: train on pairs first characterized ≤2018, test on ≥2020 (2019 buffer)
+Decoy-baseline: DUD-E style property-matched, ECFP4 Tanimoto < 0.35 to actives, 1:1 ratio to real inactives
+Isotonic calibration with ≥500 examples per class; Platt/sigmoid otherwise
+Y-randomization control performed (median ROC-AUC 0.467, straddling chance)
+Limitations stated explicitly
+The paper states the controls and limits required before central framing is fully proven:
+Split validity.
+Bemis–Murcko scaffold splits leave analogue-series leakage. The temporal split confirms the scaffold figure is optimistic — AUC drops 0.18 to 0.775. One split-validity control still un-run: AVE-debiasing.
+Statistics.
+Y-randomization control performed and reported (median 0.467). Paired Wilcoxon reported for the random-vs-scaffold gap. Not yet reported: bootstrap CIs, multiple-testing correction, per-target reliability diagrams / ECE.
+Prior art.
+Per-target classifiers on measured inactives are established (PIDGIN). Our contribution is scale and the negative-results framing, not the method.
+Label engineering.
+Discarding the 1–10μM band raises class separability; cross-laboratory IC50 noise (~0.68 log) places the active/inactive boundary at ~1.5 SD of measurement noise.
+Assay heterogeneity.
+Inactives pooled across binding, cellular, and panel assays; dropping intra-target conflicts (1.2–1.4%) may preferentially remove promiscuous compounds and sanitize the inactive class.
+Calibration.
+Brier reported; ECE and reliability diagrams not yet computed. Isotonic at ≥500/class is below the ~1,000-point crossover where Platt would be safer.
+Scope & provenance.
+Kinases and GPCRs only; curated tier only; single-protein human filter; auto-extracted findings not yet manually verified.
+We present this as preliminary validation, not a prospective benchmark.
+Availability
+The negative-results layer, the target-exhaustion index (
+get_target_landscape
+), and the scoring registry are accessible through Nullary’s MCP server and REST API. Validation and training pipelines are deterministic and reproducible from ChEMBL 35. Per-target supplementary CSVs (UniProt, n_active, n_inactive, ROC-AUC, PR-AUC, Brier, scaffold/random gap) are available.
+Citation
+bibtex
+Copy
+@techreport{nullary2026bioactivity,
+  title={Real Measured Negatives as a Substrate for Calibrated, Target-Specific Bioactivity Prediction},
+  author={{Nullary Team}},
+  institution={Nullary},
+  number={Technical Report 1},
+  year={2026},
+  month={5},
+  doi={10.5281/zenodo.20370264},
+  url={https://doi.org/10.5281/zenodo.20370264}
+}
+Plain text: Nullary Team. (2026).
+Real Measured Negatives as a Substrate for Calibrated, Target-Specific Bioactivity Prediction: A validation of the Nullary negative-results data layer
+. Technical Report 1. DOI: 10.5281/zenodo.20370264
+2. The Nullary Analytics Suite: Coverage, Tractability, and Cross-Modality Analysis over Measured Negative Results
+Methods & validation
+Nullary Team · Technical Report 2 · 25 May 2026
+Download PDF →
+Abstract
+The premium Analytics suite turns Nullary’s measured-negative-results layer (122M findings) into four analytics: coverage maps, failure timelines, a tractability score, and cross-modality analysis. This report documents their methods and validation, and is deliberately honest about where each is strong or modest.
+Coverage and timelines are descriptive views over the layer and are exact as of ingestion. The tractability score (built from how heavily a target has been pursued, the best activity achieved against it, and its failure rate) predicts clinical progression at ROC-AUC 0.785. We check it against Open Targets two ways. It agrees with Open Targets clinical tractability (AUC 0.81, 86% agreement) — a consistency check, since that bucket is itself ChEMBL-derived. The genuine external test is that it predicts Open Targets’ structure-derived druggability (independent of our bioactivity data) at AUC 0.778. Its lift over a trivial popularity baseline is small but statistically significant (bootstrap CIs exclude zero), and CRISPR essentiality is near chance (0.55) for tractability.
+Cross-modality analysis finds CRISPR essentiality is largely orthogonal to chemical druggability (Spearman –0.08); the strong relationships sit within the chemistry/clinical axis (best activity vs clinical phase +0.41). Underpinning all of it, the negative signal reproduces across independent data sources (CRISPR cross-source concordance 98%, F1 0.89 on essential class).
+We tested cross-modality prediction directly (likelihood-ratio test on CRISPR × chemistry interactions for clinical progression, cross-validated AUC change +0.0003 [−0.0014, 0.0019]) and found it adds no predictive value over single-modality features. We offer the cross-modality view, not a cross-modality predictor.
+Key results
+Tractability scoring (2,446 targets)
+Predicting
+Popularity-only
+Quality-only
+Full model
+Reached clinic (ChEMBL)
+0.750
+0.767
+0.785
+Structural druggability (Open Targets, independent)
+0.754
+0.764
+0.778
+Bootstrap lift over popularity baseline (5,000 resamples)
+Validation label
+Lift
+95% CI
+ChEMBL clinical phase
++0.036
+[0.023, 0.048]
+Open Targets structural druggability
++0.023
+[0.005, 0.042]
+Both intervals exclude zero. Quality-only (without popularity proxy) does not reliably beat popularity-only — so the honest statement is precise: the negatives add a small but statistically reliable increment on top of popularity; they augment a popularity score rather than replace it.
+Cross-modality correlations (Spearman)
+Relationship
+Spearman r
+best activity ↔ clinical phase
++0.41
+failure rate ↔ clinical phase
+−0.21
+CRISPR essentiality ↔ clinical phase
+−0.08
+CRISPR essentiality ↔ best activity
+−0.07
+CRISPR essentiality is largely orthogonal to chemical and clinical tractability. The strong, actionable relationships live within the chemistry/clinical axis.
+Cross-modality prediction (likelihood-ratio test on CRISPR × chemistry interactions)
+Metric
+Value
+Likelihood-ratio test on interactions
+non-significant (p = 0.20)
+Cross-validated AUC change
++0.0003 [−0.0014, 0.0019]
+The cross-modality combination carries no predictive value over single-modality features.
+CRISPR cross-source concordance (17,608 genes in both DepMap and BioGRID-ORCS)
+Metric
+Value
+Overall agreement
+98%
+Cross-prediction AUC
+0.99
+Essential class precision
+97%
+Essential class recall
+82%
+Essential class F1
+0.89
+Methodology
+Tractability features: best activity ever achieved, small-molecule failure rate, breadth of compounds tried (popularity proxy), CRISPR essentiality
+Ground truth (clinical): maximum clinical phase among mechanism-of-action drugs in ChEMBL
+Independent validation: Open Targets structure-derived druggability (PDB pockets/ligands, independent of Nullary’s bioactivity data)
+Bootstrap: 5,000 resamples of targets
+Cross-modality: Spearman correlations + likelihood-ratio test on interaction terms
+Cross-source check: DepMap × BioGRID-ORCS essentiality calls (dependency probability ≥ 0.5)
+Limitations stated explicitly
+Modest discriminator.
+Tractability lift over popularity is small (though statistically significant); positioned as a calibrated competitive-landscape / coverage score, not a high-accuracy predictor of program success.
+Survivorship and popularity bias.
+Validation cohort filtered to targets with ChEMBL activity; “reached clinic” recorded only for pursued programs.
+Cross-modality coverage is uneven.
+CRISPR is gene-level, chemistry compound-level; join by gene symbol dilutes cross-modality correlation.
+Coverage and timelines are descriptive.
+Absence of a failure is not evidence of tractability.
+Chemistry-side cross-source concordance not yet done.
+CRISPR has the DepMap × BioGRID-ORCS check; chemistry awaits a parallel ChEMBL × PubChem check.
+Availability
+Coverage maps and the target-exhaustion index are live via the MCP tool
+get_target_landscape
+and the REST API. Tractability and cross-modality analytics are computed by the documented pipelines (deterministic, reproducible from ChEMBL 35, DepMap 26Q1, BioGRID-ORCS, Open Targets 26.03).
+Citation
+bibtex
+Copy
+@techreport{nullary2026analytics,
+  title={The Nullary Analytics Suite: Coverage, Tractability, and Cross-Modality Analysis over Measured Negative Results},
+  author={{Nullary Team}},
+  institution={Nullary},
+  number={Technical Report 2},
+  year={2026},
+  month={5},
+  url={https://nullary.ai/research/nullary-analytics-suite-2026-05.pdf}
+}
+Related materials
+Methodology
+— pipeline overview
+Coverage
+— current data coverage by modality
+Examples
+— concrete query examples
+Install Nullary
+— try the data layer in 30 seconds
+Working papers and future research
+Controls and extensions deliberately left as future work:
+AVE-debiasing on the 25-kinase cohort
+— the one split-validity control still un-run on the bioactivity paper
+Chemistry-side cross-source concordance
+(ChEMBL × PubChem) — parallel to the CRISPR check
+Failure-mode extraction benchmark
+— manual curation of 200–500 events with precision/recall on attribution
+PIDGINv4 head-to-head
+— credibility against published competitors
+Prospective validation panel
+— predicted actives + inactives sent to a contract lab, hit rate reported
+Have a research question about Nullary’s data, methodology, or validation? Email
+team@nullary.ai
+with subject “Research inquiry.”
+∅
+Nullary
+Negative results intelligence for drug discovery.
+©
+2026
+Nullary
+. Data carries source-level licenses and provenance.

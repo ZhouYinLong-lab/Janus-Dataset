@@ -1,0 +1,2774 @@
+BioMiner: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+License: arXiv.org perpetual non-exclusive license
+arXiv:2604.21508v1 [cs.AI] 23 Apr 2026
+BioMiner
+: A Multi-modal System for Automated Mining of Protein-Ligand Bioactivity Data from Literature
+Jiaxian Yan
+Jintao Zhu
+Yuhang Yang
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Qi Liu
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Affiliation:
+Qi Liu is the corresponding author. qiliuql@ustc.edu.cn.
+Kai Zhang
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Zaixi Zhang
+Affiliation:
+Princeton University
+Xukai Liu
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Boyan Zhang
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Kaiyuan Gao
+Affiliation:
+Huazhong University of Science and
+Technology
+Jinchuan Xiao
+Affiliation:
+Infinite Intelligence Pharma
+Enhong Chen
+Affiliation:
+State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China
+Affiliation:
+Center for Quantitative Biology, Academy for Advanced Interdisciplinary Studies, Peking University
+Affiliation:
+Jiaxian Yan and Jintao Zhu contribute equally to this work.
+Abstract
+Protein-ligand bioactivity data published in the literature are essential for drug discovery, yet manual curation struggles to keep pace with rapidly growing literature. Automated bioactivity extraction remains challenging because it requires not only interpreting biochemical semantics distributed across text, tables, and figures, but also reconstructing chemically exact ligand structures (e.g., Markush structures).
+To address this bottleneck, we introduce
+BioMiner
+, a multi-modal extraction framework that explicitly separates bioactivity semantic interpretation from ligand structure construction. Within
+BioMiner
+, bioactivity semantics are inferred through direct reasoning, while chemical structures are resolved via a chemical-structure-grounded visual semantic reasoning paradigm, in which multi-modal large language models operate on chemically grounded visual representations to infer inter-structure relationships, and exact molecular construction is delegated to domain chemistry tools. For rigorous evaluation and method development, we further establish
+BioVista
+, a comprehensive benchmark comprising 16,457 bioactivity entries curated from 500 publications.
+BioMiner
+validates its extraction ability and provides a quantitative baseline, achieving an F1 score of 0.32 for bioactivity triplets.
+BioMiner
+’s practical utility is demonstrated via three applications: (1) extracting 82,262 data from 11,683 papers to build a pre-training database that improves downstream models performance by 3.9%; (2) enabling a human-in-the-loop workflow that doubles the number of high-quality NLRP3 bioactivity data, helping 38.6% improvement over 28 QSAR models and identification of 16 hit candidates with novel scaffolds; and (3) accelerating protein-ligand complex bioactivity annotation, achieving a 5.59-fold speed increase and 5.75% accuracy improvement over manual workflows in PoseBusters dataset.
+BioMiner
+and
+BioVista
+provide a scalable extraction methodology and a rigorous benchmark, paving the way to unlock bioactivity data that previously required extensive human effort.
+All data and code are available at
+GitHub
+.
+Main
+Protein-ligand bioactivity data represent a cornerstone of modern drug discovery
+[
+15
+,
+52
+]
+, underpinning structure-activity relationships (SAR) analysis
+[
+43
+,
+24
+,
+37
+,
+30
+,
+50
+,
+23
+,
+31
+,
+53
+,
+14
+]
+, quantitative structure-activity relationship (QSAR) modeling, and AI-driven virtual screening
+[
+16
+,
+7
+]
+.
+Despite the availability of large public resources such as ChEMBL
+[
+51
+]
+, BindingDB
+[
+26
+]
+, and PDBbind
+[
+27
+]
+, the continual expansion of these databases still relies predominantly on manual expert curation.
+This reliance has emerged as a fundamental scalability bottleneck, increasingly unable to keep pace with the exponential growth of the scientific literature.
+Automated data extraction tools have been developed in various scientific domains, yet a critical gap exists in specialized tools tailored for the extraction of protein-ligand bioactivity data.
+Early tools, constrained by the limitations of prior natural language processing (NLP) and computer vision (CV) techniques, primarily focused on tasks of extracting fundamental chemical information, such as named entity recognition (NER)
+[
+25
+,
+40
+,
+10
+]
+and optical chemical structure recognition (OCSR)
+[
+32
+]
+.
+Recently, the development of large language models (LLMs) has advanced some more promising text-mining tools. For example, GPT-based tools have been proposed for extracting metal-organic framework synthesis conditions and enzyme-substrate interactions from literature
+[
+54
+,
+39
+,
+21
+]
+.
+However, these methods, while demonstrating progress, are not yet equipped to handle the extraction of protein-ligand bioactivity data (Table S1), which requires jointly resolving biochemical semantics and chemically exact structural representations.
+This intrinsic coupling fundamentally distinguishes bioactivity extraction from conventional scientific information extraction and gives rise to three core challenges.
+First
+, bioactivity data is inherently multi-modal, distributed across different modalities, including text, tables, figures, and crucial chemical structures.
+This multi-modal challenge requires robust cross-modal reasoning rather than unimodal extraction.
+Second
+, the accurate recognition and conversion of chemical structures, particularly the widely used Markush structures (which represent groups of related chemical compounds)
+[
+38
+]
+, remains a significant obstacle. While existing OCSR methods have the ability to recognize some Markush scaffold or R-group substitute structures, the crucial step of enumerating the specific, individual compounds they represent—a necessity for precise bioactivity data extraction—has been largely unexplored.
+Third
+, besides these intrinsic data complexities, the field lacks standardized, large-scale benchmarks. This critical gap severely hinders the rigorous evaluation, comparative analysis, and systematic advancement of automated methodologies, impeding the development and validation of robust, generalizable solutions capable of reliably unlocking the wealth of bioactivity data embedded within the scientific literature.
+Figure 1:
+Overview of protein-ligand bioactivity extraction framework
+BioMiner
+and benchmark
+BioVista
+.
+(a) The whole protein-ligand bioactivity extraction framework
+BioMiner
+.
+(b) The chemical structure extraction agent. In this agent, explicit full structures and Markush structures are both processed. For clarification, explicit full structures are plotted in purple boxes, and Markush scaffolds and R-group substituents are plotted in blue boxes.
+(c) The new benchmark
+BioVista
+, containing 16,457 bioactivity data and 8,735 structures as ground-truth labels from 500 publications. Based on these data, six evaluation tasks are designed for comprehensive evaluation, ranging from component-level tasks to end-to-end tasks.
+To overcome these challenges, we propose
+BioMiner
+, a multi-modal agentic system designed to automatically extract protein-ligand bioactivity data from literature.
+Rather than relying on one-shot end-to-end extraction,
+BioMiner
+decomposes the extraction task into document parsing, chemical structure extraction, bioactivity measurement extraction, and cross-modal integration, with each subtask handled by specialized agents.
+As illustrated in Figure
+1
+(a), the two core subtasks (bioactivity measurement extraction and chemical structure extraction) are explicitly separated and addressed using fundamentally different strategies, where bioactivity measurements are directly extracted through semantic reasoning, whereas chemical structures are resolved via a chemical-structure-grounded visual semantic reasoning (CSG-VSR) mechanism.
+This design is motivated by their intrinsic difference: bioactivity measurement extraction is dominated by biochemical semantic reasoning, while chemical structure extraction additionally requires the exact construction of chemically valid symbolic representations.
+We therefore decouple chemical semantic reasoning from strict symbolic construction and integrate multi-modal LLM (MLLM) reasoning with domain-specific models (DSMs) and chemistry tools for chemical symbolic processing. Such a strategy enables the resolution of complex chemical representations, particularly enumerating complex Markush structures into specific full molecular structures—a pivotal step previously unaddressed at scale for automated bioactivity extraction (Figure
+1
+(b)).
+To provide standardized resources for evaluation and support future research, we further introduce benchmark
+BioVista
+, to our knowledge, the largest benchmark dedicated to protein-ligand bioactivity extraction.
+Meticulously curated by domain experts,
+BioVista
+comprises 16,457 bioactivity entries and 8,735 unique chemical structures extracted from 500 recent publications indexed in PDBbind v2020
+[
+27
+]
+.
+The data originates from diverse modalities within the source papers: text (15.8%), figures (11.6%), and tables (72.5%), with a substantial fraction of chemical structures (48.7%) derived from challenging Markush representations.
+BioVista
+supports six distinct evaluation tasks, ranging from end-to-end bioactivity extraction to component-level Markush enumeration, allowing for comprehensive evaluation (Figure
+1
+(c)).
+To enable rigorous and unbiased evaluation,
+BioVista
+is constructed with a strictly held-out test set and a separate validation set used exclusively for model development and ablation, preventing any form of test-time tuning or leakage.
+When evaluated on
+BioVista
+,
+BioMiner
+achieves an F1 score of 0.32 for extracting complete bioactivity triplets.
+We further perform three applications to showcase
+BioMiner
+’s practical utility and broad applicability.
+First
+, we use
+BioMiner
+to construct a bioactivity pre-training database containing 82,262 data points extracted from 11,683 papers within three days. Models pre-trained on this
+BioMiner
+-generated database demonstrate improved performance (3.9% and 3.4% improvement in RMSE metric) on two independent test sets (PDBbind v2016 core set
+[
+41
+]
+and CSAR-HiQ
+[
+12
+]
+) compared to models trained only on existing curated data (PDBbind v2016 refined set, 3,767 data points).
+Second
+, we implement a human-in-the-loop (HITL) bioactivity extraction workflow, where human experts collect data by reviewing the extraction result of
+BioMiner
+rather than
+de novo
+identification and transcription, to correct errors of fully automated extraction and ensure data quality. With the HITL workflow, 1,592 bioactivity data of NLRP3
+[
+42
+]
+, a high-priority target for anti-inflammatory therapies, are collected from 85 papers in 26 hours, doubling the NLRP3 data available in ChEMBL. This expanded dataset yields improved QSAR models (38.6% improvement in EF1% metric), based on which we screen ChemDiv
+[
+8
+]
+and Enamine
+[
+13
+]
+virtual compound libraries and identify 16 hit candidates with novel scaffolds.
+Third
+, besides bioactivity extraction, we utilize
+BioMiner
+to label complex structures with reported bioactivity data, which is important in structure-based drug design for establishing datasets like PDBbind.
+Evaluated on 242 complexes from the PoseBusters database
+[
+6
+]
+,
+BioMiner
+-assisted workflow outperformed fully manual annotation across 2 crossover analyses (4 annotators), improving the average accuracy from 90.5% to 96.25% and reducing the average annotation time from 195.8 s to 35.0 s (5.59-fold faster).
+These experiments, taken together, demonstrate
+BioMiner
+’s efficiency, applicability, and potential to accelerate drug discovery through both fully automated and HITL workflows. In summary,
+BioMiner
+and
+BioVista
+provide a new system and evaluation standard for automated bioactivity data extraction. These contributions offer a pathway to unlock vast amounts of previously inaccessible bioactivity data, accelerating data-driven drug discovery and establishing a foundation for future progress in automated scientific literature mining.
+Results
+To elucidate the performance and utility of our proposed framework,
+BioMiner
+, we first briefly outline its architecture, with a focus on the core chemical structure extraction agent that underpins its ability to handle complex structure data (including Markush structures). Next, we introduce
+BioVista
+, to the best of our knowledge, the largest benchmark designed to rigorously evaluate bioactivity extraction performance.
+We provide a detailed analysis of
+BioMiner
+’s extraction performance on diverse tasks of
+BioVista
+. Finally, we demonstrate
+BioMiner
+’s practical value through three real-world applications, highlighting its versatility and impact in benefiting bioactivity data extraction and drug design.
+Framework
+BioMiner
+BioMiner
+, depicted in Figure
+1
+(a), is a multi-modal agentic system specially designed for protein-ligand bioactivity extraction.
+Overview of
+BioMiner
+Rather than introducing
+BioMiner
+as a collection of agents or models, we first clarify the design principle that governs the entire system.
+The central challenge in automated protein–ligand bioactivity extraction lies in two fundamentally different requirements:
+(1) semantic reasoning over heterogeneous, multi-modal bioactivity evidence, and
+(2) the exact construction of chemically valid ligand structures, particularly Markush structures.
+End-to-end extraction approaches entangle these requirements, rendering the task structurally brittle, particularly in the presence of complex chemical representations.
+Instead of performing a one-shot end-to-end prediction,
+BioMiner
+explicitly decouples bioactivity semantic interpretation from ligand structure construction.
+Specifically,
+BioMiner
+decomposes the task into four stages—document parsing, bioactivity measurement interpretation, chemical structure resolution, and cross-modal integration—each corresponding to a distinct source of uncertainty and handled by specialized components.
+The document is first parsed with MinerU
+[
+48
+]
+, after which bioactivity measurement extraction and chemical structure resolution proceed in parallel.
+Both branches are built around
+BioMiner-Instruct
+, a domain-specialized MLLM fine-tuned from Qwen3-VL-32B
+[
+3
+]
+.
+Bioactivity measurements are extracted separately from text, tables, and figures using a post-fusion strategy.
+We adopt this strategy in
+BioMiner
+and optimize
+BioMiner-Instruct
+for this setting based on our empirical result (Figure S12(a)), where the general MLLM Gemini-2.0-flash achieves better extraction performance under post-fusion.
+In the other branch, ligand structures are resolved through a CSG-VSR strategy, described in detail below, which anchors MLLM reasoning to detected chemical depictions and enforces chemical validity through DSMs and chemistry tools.
+Finally, a post-processing agent integrates semantic bioactivity measurements with resolved ligand structures to produce complete bioactivity triplets.
+Chemical-Structure-Grounded Visual Semantic Reasoning
+Chemical structure resolution constitutes the primary structural bottleneck in automated bioactivity extraction, particularly for Markush representations that encode combinatorial chemical spaces rather than explicit molecules.
+To address this challenge,
+BioMiner
+introduces a CSG-VSR mechanism, which anchors high-level MLLM reasoning to chemically grounded visual and symbolic representations.
+CSG-VSR operates in three stages.
+First, DSMs detect and parse 2D chemical depictions from figures and tables. MolDetv2
+[
+44
+]
+identifies molecular structure regions, followed by OCSR using
+MolGlyph
+(details in Methods section) to generate SMILES representations. This stage provides a chemically grounded visual substrate that constrains subsequent reasoning.
+Second, an MLLM performs visual semantic reasoning over augmented images containing indexed chemical depictions. For explicit full structures, the model resolves coreference between textual mentions and detected depictions. For Markush structures, the model identifies the Markush scaffold and semantically enumerates associated R-group definitions, which may be expressed visually, textually, or symbolically. Crucially, the MLLM is responsible only for relational and semantic reasoning (e.g., scaffold–substituent associations), not for enforcing chemical validity.
+Third, chemical symbolic construction is carried out deterministically using domain tools to systematically zip the recognized Markush scaffold SMILES with the enumerated R-group substituent SMILES, generating the final list of specific, full chemical structures represented by the Markush definition.
+Notably, R-group substituents are often described textually (e.g., IUPAC names, abbreviations, chemical formulas) rather than visually. Before the RDKit zipping step, these 1D R-group substituents are converted into SMILES, employing OPSIN
+[
+29
+]
+for IUPAC names and a Gemini-assisted, manually curated mapping table for abbreviations and chemical formulas.
+By decoupling semantic reasoning from chemical symbolic construction and grounding both stages in domain-specific representations, CSG-VSR enables scalable and reliable resolution of complex Markush structures without task-specific model training.
+This capability is essential for automated bioactivity extraction at scale and underpins the performance gains observed in subsequent evaluations.
+Figure 2:
+Benchmarking extraction performance of
+BioMiner
+on
+BioVista
+.
+(a) Performance of bioactivity triplet and individual attributes extraction. For overall extraction performance, one-shot end-to-end extraction baseline and
+BioMiner
+w/o CSG-VSR ablation study are included additionally.
+(b) Performance of the structure-bioactivity annotation task.
+(c) Detailed error source analysis of bioactivity triplet extraction.
+(d) Component-level performance of OCSR models (left) and MLLM models (right).
+(e) Quantitative analysis of Markush enumeration recall under varying R-group modalities (left) and substitution complexity (right).
+(f) Failed examples of Markush enumeration with three R-groups.
+(g,h) Two examples of Markush structures successfully processed by
+BioMiner
+.
+Benchmark
+BioVista
+and Performance Evaluation
+To enable rigorous evaluation and facilitate the development of future extraction methods, we introduce
+BioVista
+, a comprehensive and challenging benchmark for protein-ligand bioactivity data extraction.
+To our knowledge, this is the largest benchmark dedicated to the bioactivity extraction task.
+In this subsection, we first present the construction process of
+BioVista
+, and then detail
+BioMiner
+’s performance.
+Construction of
+BioVista
+BioVista
+is derived from 500 recent publications referenced in PDBbind v2020
+[
+27
+]
+, ensuring its relevance to real-world scenarios.
+While sourced from PDBbind, our benchmark represents a diverse and challenging distribution of scientific literature. Analysis shows that these 500 publications cover 102 distinct journals, exhibiting a "long-tail" distribution unlike standard databases (e.g., ChEMBL), which are heavily concentrated in a few top-tier journals (Figure S2). This ensures the model is evaluated on a wide variety of layout styles and textual reporting habits.
+
+Unlike PDBbind data curation,
+BioVista
+includes all bioactivity data reported within these publications, not just the reported bioactivity to the PDB structure.
+Domain experts manually (details about experts in Table S3) curate all bioactivity data points, annotating attributes beyond the core triplet (protein, ligand SMILES, bioactivity value) to enable fine-grained analysis (Figure
+1
+(c)).
+These attributes (e.g., location, ligand coreference, scaffold-substitutes) include information such as the source modality to analyze the ability to process different modal data.
+Notably, all alternative names (alternames) for proteins and ligands are carefully collected, ensuring completeness and preventing ambiguity or overlap.
+To ensure high data quality and completeness, we employed a model-assisted verification strategy aimed at identifying potential omissions (false negatives) in the initial human annotations. Specifically, the
+BioMiner
+was utilized to scan the curated publications, and its extractions were cross-referenced with human annotations. Any discrepancies or newly identified data points were rigorously reviewed by domain experts. Only data points with explicit location verified by humans were added to the ground truth, ensuring the dataset remains objective and free from model-induced hallucinations.
+After annotation, we conducted an Inter-Annotator Agreement study
+[
+28
+]
+on a random 10% subset (50 papers) to analyze the quality of
+BioVista
+. Such analysis yielded an F1 score of 0.899, indicating high consistency and reliability.
+The finalized
+BioVista
+dataset comprises 16,457 bioactivity data points sourced from text (15.8%), figures (11.6%), and tables (72.5%) (Figure S1), along with 8,735 chemical structures (of which 48.7% are derived from Markush structures).
+To strictly prevent "tuning on the test set" and ensure unbiased evaluation,
+BioVista
+papers were randomly partitioned into a Validation Set (50 papers, 10%) and a held-out Test Set (450 papers, 90%).
+We employed the 10%/90% split ratio to prioritize a more stable estimate of final model performance on unseen papers.
+All prompt engineering, hyperparameter tuning, and rule refinement described in this study were conducted exclusively based on the Validation Set. The Test Set remained unseen for
+BioMiner
+and was used solely for the performance evaluation.
+BioVista
+defines two end-to-end tasks and four component-level tasks to thoroughly assess the extraction performance of
+BioMiner
+. The two end-to-end tasks evaluate overall extraction capability, specifically: (1) extracting all bioactivity data reported in a publication, and (2) annotating PDB structures with bioactivity information presented in associated papers. These tasks directly reflect the practical utility of bioactivity extraction methods. Additionally, four specialized component-level tasks—molecule detection, OCSR, full structure coreference resolution, and Markush enumeration—provide deeper insights into the performance of critical chemical structure extraction processes, facilitating method development and optimization. Detailed descriptions of these evaluation tasks can be found in Supplementary Note 1. Together,
+BioVista
+serves not only as a comprehensive benchmark for
+BioMiner
+, but also as a valuable foundation for advancing bioactivity extraction systems.
+Table 1:
+Performance of
+BioMiner
+with different MLLMs on
+BioVista
+. This table focuses on presenting MLLMs-related results and comparing the performance of different MLLMs. Note that recall is reported at multiple top ranks for the bioactivity-structure annotation task. The best results are bolded, and the second best results are
+underlined.
+Tasks
+Metric
+Gemini-
+2.0-flash
+GPT-4o-mini
+GPT-4.1-mini
+Grok-4-fast
+Claude-
+haiku-4-5
+Qwen3-
+VL-32B
+Qwen3-VL-
+235B
+BioMiner-
+Instruct
+Component-level evaluation for chemical structure extraction
+Full Structure
+Coreference
+Recall
+0.786
+0.552
+0.781
+0.559
+0.722
+0.766
+0.785
+0.815
+Precision
+0.783
+0.550
+0.777
+0.558
+0.719
+0.762
+0.782
+0.812
+F1
+0.784
+0.551
+0.779
+0.558
+0.720
+0.764
+0.783
+0.813
+Markush Enum.
+w/ Coreference
+Recall
+0.579
+0.039
+0.219
+0.168
+0.309
+0.375
+0.611
+0.709
+Precision
+0.545
+0.041
+0.220
+0.162
+0.289
+0.369
+0.576
+0.687
+F1
+0.561
+0.040
+0.219
+0.165
+0.299
+0.372
+0.593
+0.698
+Markush Enum.
+w/o Coreference
+Recall
+0.628
+0.050
+0.255
+0.223
+0.380
+0.422
+0.655
+0.743
+Precision
+0.594
+0.058
+0.287
+0.212
+0.363
+0.422
+0.618
+0.719
+F1
+0.611
+0.054
+0.270
+0.217
+0.371
+0.422
+0.636
+0.731
+Different attributes evaluation for end-to-end extraction and annotation
+Structure
+w/ Coreference
+Recall
+0.482
+0.310
+0.413
+0.413
+0.269
+0.406
+0.462
+0.516
+Precision
+0.520
+0.360
+0.482
+0.468
+0.312
+0.489
+0.498
+0.541
+F1
+0.500
+0.333
+0.445
+0.439
+0.289
+0.444
+0.479
+0.528
+Bioactivity
+Measurement
+Recall
+0.583
+0.251
+0.363
+0.513
+0.400
+0.628
+0.611
+0.647
+Precision
+0.522
+0.236
+0.422
+0.368
+0.255
+0.501
+0.423
+0.606
+F1
+0.551
+0.243
+0.390
+0.429
+0.311
+0.557
+0.500
+0.626
+Bioactivity
+Triplet
+Recall
+0.284
+0.089
+0.145
+0.225
+0.112
+0.253
+0.271
+0.328
+Precision
+0.260
+0.082
+0.171
+0.174
+0.073
+0.202
+0.199
+0.319
+F1
+0.272
+0.085
+0.157
+0.196
+0.088
+0.224
+0.230
+0.323
+Bioactivity-Structure
+Annotation
+Top-1
+0.198
+0.218
+0.192
+0.198
+0.214
+0.198
+0.238
+0.202
+Top-3
+0.362
+0.458
+0.400
+0.372
+0.400
+0.376
+0.444
+0.378
+Top-10
+0.568
+0.652
+0.598
+0.570
+0.626
+0.586
+0.652
+0.598
+End-to-end Evaluation
+The end-to-end bioactivity extraction performance is shown in Figure
+2
+(a).
+BioMiner
+achieves a precision of 0.319, a recall of 0.328, and an F1 score of 0.323 for bioactivity triplets. In contrast, a one-shot end-to-end baseline that directly processes full-text and images attains an F1 score of 0.00042, highlighting the intrinsic difficulty of the task and the necessity of principled task decomposition.
+Granular analysis of individual attributes reveals even more robust performance compared to the integrated triplet. Ligand coreference-SMILES extraction achieves an F1 score of 0.528, with performance varying by complexity (Explicit Full F1 = 0.565 vs. Markush F1 = 0.349).
+Bioactivity measurement extraction (protein-ligand coreference-bioactivity value) achieves an F1 score of 0.626, with table-based extraction being the most effective (Table F1 = 0.600; Figure F1 = 0.382; Text F1 = 0.368). Isolated attribute extraction is notably proficient, reaching F1 scores of 0.857 for bioactivity values and 0.606 for ligand structures.
+These results underscore the significant challenge of bioactivity extraction and indicate component strengths of
+BioMiner
+despite integration challenges.
+To quantify the specific contribution of CSG-VSR, an ablation study is conducted with the same
+BioMiner-Instruct
+backbone. The removal of CSG-VSR leads to a sharp drop in the bioactivity triplet F1 from 0.323 to 0.011 (Figure
+2
+(a); Table S8), confirming the effectiveness of the CSG-VSR mechanism.
+Performance on the structure-bioactivity annotation task is presented in Figure
+2
+(b).
+Given a complex structure and the associated paper,
+BioMiner
+extracts all bioactivity data from the paper, and ranks them based on ligand similarity between the extracted data and the given structure.
+Evaluation of the top-10 candidates reveals a recall rate of 0.598 for the reported bioactivity (Table
+1
+).
+The result suggests that while the top-ranked match may not always be correct, the reported bioactivity of the given structure is frequently ranked among the top candidates, thereby facilitating efficient automated annotation and HITL validation.
+Component-level Evaluation
+Chemical structure extraction, as the core module of
+BioMiner
+and a critical determinant of overall extraction fidelity, is rigorously assessed through four purpose-built component-level tasks. As introduced above,
+BioMiner
+resolves ligand structures in three stages. These tasks assess the first-stage molecule detection, OCSR, and the second-stage processes of full structure coreference resolution and Markush enumeration.
+In the first stage,
+BioMiner
+utilizes MolDetv2 for molecule detection, yielding an mAP of 0.747, and an AP
+50
+of 0.922 (Table S6).
+For OCSR, the
+MolGlyph
+model employed herein surpasses existing methods, attaining superior overall accuracy (0.764) with a remarkable advantage in resolving Markush structures (0.770 accuracy; Table S7).
+Regarding second-stage tasks,
+BioMiner-Instruct
+achieves F1 scores of 0.813 and 0.698 for full structure coreference resolution and Markush enumeration with coreference, respectively (Table
+1
+). The latter increases to 0.731 when coreference resolution is excluded, highlighting
+BioMiner-Instruct
+’s robustness in Markush enumeration.
+Further benchmark study shows that
+BioMiner-Instruct
+outperforms several general-purpose MLLMs, including Gemini, GPT
+[
+20
+]
+, Claude
+[
+1
+]
+, Qwen
+[
+2
+]
+, and Grok
+[
+17
+]
+, in both end-to-end extraction and component-level reasoning tasks (Table
+1
+). Collectively,
+BioMiner
+demonstrates leading performance in protein–ligand bioactivity extraction tasks owing to its efficient modular design.
+Error Analysis and Cases Study
+We next analyze the component-wise error contribution within
+BioMiner
+’s end-to-end bioactivity triplet extraction.
+Errors in bioactivity measurement extraction contribute the predominant fraction (32.68%), followed by OCSR inaccuracies (25.31%), and Markush enumeration failures (15.91%). Molecule detection (15.82%) and explicit full structures coreference resolution (10.28%) contribute less to the overall error (Figure
+2
+(c)). This breakdown provides critical insights for directing future research toward optimizing the system components.
+We observe that, in addition to bioactivity extraction, errors arising from OCSR and Markush enumeration constitute the most substantial portions of the overall error budget.
+Accordingly, a more detailed analysis of these two components is conducted.
+For OCSR, the results indicate that, beyond Markush structures, chirality recognition remains a major challenge.
+Even for our best-performing OCSR model, the accuracy on chiral structures is limited to 0.504, highlighting the intrinsic difficulty of precise stereochemical interpretation from heterogeneous visual inputs (Figure
+2
+(d)).
+For Markush enumeration, we find that the recall is lowest when R-groups are jointly specified in both textual and graphical forms, suggesting that cross-modal alignment between textual R-group descriptions and visual depictions is error-prone (Figure
+2
+(e)).
+Moreover, we observe a pronounced decline in recall when the number of R-groups increases to three, reflecting the combinatorial complexity introduced by multi-substituent enumeration (Figure
+2
+(e, f)).
+These results indicate that advancing stereochemical OCSR and cross-modal Markush enumeration will be pivotal for further improvement.
+Qualitative evidence of
+BioMiner
+’s advanced capabilities is shown in Figure
+2
+(g, h), which displays examples of complex Markush structures successfully processed by the system. This includes correct scaffold identification, R-group enumeration, 1D R-group processing (IUPAC names and abbreviations), and accurate generation of the final enumerated SMILES strings, indicating its ability to process challenging Markush structures.
+In summary, the benchmarking results on
+BioVista
+validate
+BioMiner
+’s capacity for automated, multi-modal bioactivity data extraction. While quantifying the performance across various dimensions and pinpointing key challenges for future work, the results demonstrate certain bioactivity extraction ability and substantial efficiency advantages over manual curation. This positions
+BioMiner
+as a valuable tool for accelerating data acquisition and unlocking previously inaccessible data in the vast body of drug discovery literature.
+Figure 3:
+Using
+BioMiner
+collecting large-scale bioactivity data for deep learning model training.
+(a) Time and cost analysis of
+BioMiner
+.
+(b) Statistical comparison between the manually curated PDBbind v2016 dataset and our extracted dataset.
+(c) Number of extracted bioactivity data in each paper. Papers without any bioactivity data are excluded.
+(d) The top-10 protein distribution within extracted bioactivity data.
+(e) Performance comparison of models with and without pre-training on the
+BioMiner
+extracted set. Data are presented as mean ± SD from five independent runs (
+n
+=
+5
+n=5
+).
+Automated Collection of Large-scale Bioactivity Data for Model Training
+A key objective in developing
+BioMiner
+is to overcome the limitations of existing, manually curated bioactivity databases, and to unlock the wealth of previously inaccessible data hidden within scientific literature. To demonstrate
+BioMiner
+’s capacity for large-scale data acquisition, we apply it to construct a bioactivity database. Deep learning-based bioactivity prediction models are further pre-trained on this extracted database to demonstrate their utility.
+To construct a large-scale dataset, we target the European Journal of Medicinal Chemistry (EJMC), a high-impact journal known for its density of protein-ligand bioactivity data, making it an ideal source. 11,683 articles published in EJMC since 2010 are collected, excluding earlier articles due to potential low resolution. Employing
+BioMiner
+, we process the 11,683 papers within just three days (cost about 21 seconds and 0.024$ per paper, as shown in Figure
+3
+(a) and Table S4), a speed that would be practically impossible with manual curation.
+From these papers, 226,076 bioactivity triplets are extracted. To support the training of bioactivity prediction models, we further enrich these data with protein structure information. Using the extracted protein names,
+BioMiner
+searches external structure databases (including AlphaFoldDB
+[
+45
+]
+and PDB
+[
+5
+]
+) for protein structure information.
+82,262 data points are successfully enriched with protein structure information, providing a large-scale extracted database that significantly expands the available data compared to PDBbind refined and general sets (Figure
+3
+(b)).
+After excluding papers without any bioactivity data, analysis of the extracted dataset reveals a mean of 22.83 bioactivity values per paper (median = 12; 95th percentile = 79), highlighting the density of bioactivity data within individual publications (Figure
+3
+(c)). Further analysis of the extracted dataset shows the top-10 protein distributions, indicating the most researched proteins and their potential application in bioactivity prediction (Figure
+3
+(d)).
+Critically, we evaluate the impact of this automatically extracted database on the performance of downstream deep learning models.
+While the end-to-end extraction precision (0.32) implies the presence of noise in the extracted triplets, deep learning models have shown remarkable robustness to massive label noise when trained on sufficiently large datasets
+[
+35
+]
+. We hypothesize that the scale of our extracted data allows the model to "average out" the noise and capture generalized interaction features.
+We pre-train several graph neural network (GNN) architectures (GAT
+[
+47
+]
+, EGNN
+[
+36
+]
+, AttentiveFP
+[
+49
+]
+, and GCN
+[
+22
+]
+) on the
+BioMiner
+-derived database and compare their performance with models trained solely on the PDBbind v2016 refined set (details in Supplementary Note 3). Across two independent test sets (PDBbind v2016 core set and CSAR-HiQ set), pre-trained models consistently achieve performance improvements in both RMSE and Pearson correlation (Figure
+3
+(e)). Average RMSE reductions of 3.9% and 3.4% are achieved, respectively.
+To rigorously distinguish the value of the mined bioactivity signals from the benefit of simply scaling up structural data (unsupervised representation learning), we conduct additional comparisons against two baselines: (1) an unsupervised pre-training strategy that masks atoms/residues without using bioactivity labels, and (2) a negative control using shuffled bioactivity labels.
+As shown in Figure S8, the downstream performance follows a clear hierarchy: Shuffled << No pre-training < Unsupervised < Ours (
+BioMiner
+). Our method (3.9% improvement) outperforms the unsupervised strategy (1.4% improvement), confirming that the mined bioactivity values, despite inherent noise, provide unique and critical supervision signals regarding binding physics that cannot be learned from structural data alone.
+These results underscore the value of automatically extracted bioactivity data for enhancing the accuracy and predictive power of computational models in drug discovery.
+BioMiner
+can serve as an efficient and cost-effective method for mining scientific literature, which is crucial for data-driven AI-powered drug design.
+Figure 4:
+Using
+BioMiner
+for NLRP3 bioactivity data collection from 85 papers and inhibitor screening.
+(a) Consuming time (about 18.4 minutes on average) and the number of collected data points for each paper. The final consuming time is highly related to the number of bioactivity data and chemical structures.
+(b) Comparison of pIC50 distribution between
+BioMiner
+collected bioactivity data and ChEMBL data.
+Classification (c) and regression (d) performance comparison between QSAR models trained on
+BioMiner
+data and ChEMBL data. The Glide-XP docked binding pose within the NP3-253-binding pocket (PDB ID: 9GU4), stacked bar plot of the interaction fraction during MD simulation, and RMSD curve of protein, ligand, and ADP for Z6739936901 (e) and Z5232931194 (f), respectively.
+Human-in-the-loop Curation of NLRP3 Bioactivity Data and Enhanced Inhibitor Screening
+While fully automated extraction using
+BioMiner
+demonstrates high throughput, potential data errors will be introduced.
+In a practical scenario, correcting potential errors and ensuring high data quality is crucial for sensitive downstream applications like QSAR model building and drug screening.
+To address this, we introduce a HITL workflow to enable high-quality and efficient data collection aided by
+BioMiner
+and validate its effectiveness in a practical task.
+Bioactivity Data Collection HITL Workflow
+In the HITL workflow, human experts extract bioactivity data by reviewing and validating the chemical structure and bioactivity measurement extraction results of
+BioMiner
+, which consists the final bioactivity triplet.
+For chemical structures, as shown in Figure S3, S5, and S6, a human expert verifies the first stage molecule detection, OCSR, and the second stage full structure coreference recognition, Markush enumeration, sequentially.
+For bioactivity measurement, the expert directly confirms the correctness of the extracted protein-ligand coreference-bioactivity value tuples, the output of the bioactivity measurement extraction agent.
+Critically, human intervention is targeted only at these verification steps. Other components within
+BioMiner
+, such as 1D R-group processing and Markush scaffold-R-group zipping, are rule-based steps that do not require manual review.
+Overall, this HITL workflow omits the
+de novo
+identification and transcription of chemical structure and bioactivity, and experts primarily focus on verifying
+BioMiner
+’s outputs, significantly accelerating curation compared to fully manual extraction.
+NLRP3 Inflammasome Bioactivity Data Collection
+To showcase this workflow’s practical utility, we apply it to curate NLRP3
+[
+42
+]
+inflammasome bioactivity data.
+NLRP3 is a high-priority target for anti-inflammatory therapies, yet publicly available bioactivity data, such as in ChEMBL, remains relatively sparse. Our objective is to expand the size of high-quality NLRP3 bioactivity dataset and utilize this enriched data to develop more accurate models for inhibitor discovery.
+We identify 85 relevant scientific publications reporting NLRP3 bioactivity data through literature searches and then collect 1,592 data from these publications with this HITL workflow.
+The time required per paper is correlated with the number of chemical structures and bioactivity data points (Figure
+4
+(a)).
+On average, it takes approximately 18.4 minutes for each paper and consumes 26 hours for all 85 papers.
+This effort effectively doubles the amount of NLRP3 bioactivity data previously available in ChEMBL (Figure
+4
+(b)), providing a substantially larger and chemically diverse dataset. The expert oversight inherent in the HITL process also allows for meticulous handling of ambiguities and edge cases, further ensuring data quality.
+QSAR Models Training
+To assess the impact of this data expansion, we train QSAR models for predicting NLRP3 inhibition using both the original ChEMBL NLRP3 dataset and our expanded,
+BioMiner
+-curated NLRP3 dataset, respectively.
+As shown in Table S9 and Table S10, various QSAR models with different algorithms (e.g., Random Forest
+[
+4
+]
+, SVM
+[
+18
+]
+, etc.), different tasks (regression, classification), and different molecular representations (ECFP
+[
+34
+]
+, CATS
+[
+33
+]
+) are evaluated comprehensively.
+Models trained on the
+BioMiner
+-curated dataset consistently outperform those trained on the ChEMBL dataset across all settings. On average, considering the EF1% metric across 28 distinct model configurations, the
+BioMiner
+-curated dataset yields a 38.6% performance improvement. The performance of the top-performing models under various settings is visualized in Figure
+4
+(c, d). Notably, for classification using ECFP fingerprints, the AUROC improves from 0.954 (ChEMBL) to 0.977 (
+BioMiner
+-curated). Similarly, for CATS-based regression, the Pearson correlation increases substantially from 0.385 to 0.600. This marked enhancement in predictive performance significantly increases the reliability of bioactivity prediction for novel chemical entities, thereby improving prospects for effective inhibitor screening.
+NLRP3 Inhibitor Screening
+Leveraging the superior QSAR models trained on the
+BioMiner
+-curated data, we initiate a virtual screening against chemical libraries (i.e., ChemDiv and Enamine).
+Through our established rational screening pipeline (Figure S11 and see Supplementary Note 5 for details), sixteen compounds are manually selected as potential hit candidates, exhibiting both high structural diversity and novelty (Table S11).
+Further MM/PBSA binding free energy calculation reveals six compounds exhibit comparable or better binding free energies than both MCC950
+[
+9
+]
+and NP3-562
+[
+46
+]
+, suggesting their potential as highly potent NLRP3 inhibitors (Table S11).
+Docking simulation demonstrates two promising candidates, Z6739936901 and Z5232931194, showing considerable binding mode between the NBD, HD1, WHD, and HD2 domains (Figure
+4
+(e, f)). MD simulation of 100 ns is performed to investigate the binding stability of identified compounds. The RMSD of protein and ligand shows that Z6739936901 and Z5232931194 bind stably with the binding pocket in the last 60 ns. Z6739936901 maintains persistent hydrogen bonding, cation-
+π
+\pi
+and
+π
+\pi
+-
+π
+\pi
+interactions with ARG578 and TYR632. Its solvent-exposed charged amino group forms strong salt bridges and hydrogen bonds with ASP662, anchoring the oxazole moiety rigidly. Meanwhile, the phenyl fragment remains tightly bound within a large hydrophobic subpocket. Z5232931194 frequently forms hydrogen bonds and cation-
+π
+\pi
+with ARG578, and
+π
+\pi
+-
+π
+\pi
+interactions with PHE575 and TYR632. The bromine-substituted benzofuran moiety remains tightly bound within the hydrophobic subpocket. Notably, the ADP bound in the substrate pocket remains stable throughout MD simulations, with low RMSD values (< 1.5 Å) confirming its rigid positioning with minimal conformational changes. This observation suggests that both Z6739936901 and Z5232931194 effectively stabilize the inactive conformation of the NBD, HD1, WHD, and HD2 domains. Collectively, our
+BioMiner
+-curated data-augmented QSAR models identifies several structurally novel hit candidates exhibiting high potential as potent NLRP3 inhibitors. These candidates represent promising chemotypes for future experimental validation, potentially unlocking new avenues in NLRP3-targeted drug discovery.
+In summary, this study demonstrates the effectiveness of a
+BioMiner
+-powered HITL workflow for rapidly constructing large, high-quality, target-specific bioactivity datasets. The efficiency gain over manual curation, combined with the significant improvement in downstream QSAR model performance, underscores the potential of
+BioMiner
+to accelerate data-driven drug discovery efforts.
+Figure 5:
+Controlled evaluation of the
+BioMiner
+-assisted structure–bioactivity annotation on PoseBusters.
+(a)
+Study design with one blank-baseline set (42 entries) and two crossover sets (100 entries each) from 242 test cases. 4 annotators, including 2 experts and 2 novices, are organized into matched pairs.
+(b)
+Fully automated annotation performance of
+BioMiner
+on the PoseBusters dataset.
+(c)
+Per-entry annotation time and error decomposition of the expert group.
+(d)
+Per-entry annotation time and error decomposition of the novice group. Full experimental details are provided in Supplementary Note 6.
+Enhancing Structure-Bioactivity Annotation for PoseBusters
+Besides bioactivity data extraction, annotating experimentally determined protein-ligand complex structures with their reported bioactivity measurements in the literature is also important in structure-based drug design field for establishing datasets like PDBbind.
+In the experiments on the
+BioVista
+,
+BioMiner
+has demonstrated its capability to perform this task. The reported bioactivity measurement of a given structure is often found among the top candidates of the extracted bioactivity data (top-10 recall = 0.598).
+Here, we further demonstrate
+BioMiner
+’s utility in a practical annotation scenario, proposing a HITL annotation workflow and presenting a detailed analysis for fully automated data annotation beyond Top-N Recall.
+Structure-Bioactivity Annotation HITL Workflow
+In the HITL annotation workflow, given a PDB complex structure and associated publication,
+BioMiner
+first extracts all potential protein-ligand SMILES-bioactivity triplets and ranks extracted data based on ligand similarity between extracted SMILES and PDB ligand SMILES.
+Then, a human expert rapidly verifies the bioactivity data in the ranked list one by one.
+Compared with purely human annotation, such a HITL streamlines the expert’s task to validation rather than
+de novo
+annotation.
+Controlled evaluation on PoseBusters PDF-complexes
+We select the PoseBusters benchmark
+[
+6
+]
+, which contains 308 high-quality protein–ligand complex structures, as a realistic set for structure–bioactivity annotation.
+After filtering for entries with accessible full-text PDF articles and usable inputs, 242 PDB–article pairs are retained for formal evaluation.
+To explicitly control for inter-annotator variability, 4 annotators are recruited, including 2 expert annotators and 2 novice annotators.
+The 242 cases are divided into one blank-baseline subset of 42 entries and two crossover subsets of 100 entries each (Figure
+5
+(a)).
+On the blank-baseline subset, both annotators within each group perform fully manual annotation, providing a direct estimate of baseline variability under the same condition.
+On the two crossover subsets, the annotators within each group alternate between manual annotation and the
+BioMiner
+-assisted HITL workflow, so that each annotator completes one subset under each condition.
+The blank-baseline analysis confirms that annotator-specific variability is non-negligible (Figure
+5
+(c, d)), supporting the need for a controlled evaluation protocol.
+Despite this baseline variability, the crossover evaluation consistently favors the HITL workflow.
+In the expert group, HITL reduces annotation time from 167 s (166 s) to 63 s (33 s) per entry while improving accuracy from 95.0% (92.0%) to 98.0% (99.0%); in the novice group, it reduces annotation time from 198 s (253 s) to 19 s (24 s) while improving accuracy from 88.0% (87.0%) to 90.0% (98.0%) (Figure
+5
+(c, d)).
+Aggregated over all crossover subsets, HITL improves final accuracy from 90.5% to 96.25% and reduces the average annotation time from 195.8 s to 35.0 s per entry, corresponding to a 5.59-fold speedup (
+P
+<
+0.05
+P<0.05
+, univariate general linear model).
+Error decomposition further shows that the assisted workflow can reduce failures caused by missed bioactivity evidence, incorrect protein/ligand matching, and appendix-related omissions.
+Overall, these results show that
+BioMiner
+provides a practical and robust basis for structure–bioactivity annotation in a controlled HITL setting, improving both annotation efficiency and final annotation accuracy relative to fully manual curation.
+Fully Automated Annotation
+Based on the HITL annotation result, we further analyze the performance of the fully automated annotation beyond the Top-N Recall (Figure
+5
+(b)).
+For 82 of 242 complexes,
+BioMiner
+finds no bioactivity data in the publications. Among these complexes, 77 complexes are correct (consistent with manual verification confirming absence).
+For the remaining 160 complexes where bioactivity data are potentially present,
+BioMiner
+successfully extracts candidate bioactivity measurements.
+Within this group, 51 complexes have at least one extracted bioactivity measurement associated with a ligand structure perfectly matching the PDB ligand , of which 49 are confirmed to be correct. 
+For these matches, the data postprocessing agent (utilizing the Gemini MLLM) selects the most probable bioactivity value based on contextual consistency with the protein name and PDB structure title,  identifying a candidate value in 46 cases. Manual validation confirms that 36 of these 46 automatically selected annotations are correct, yielding an accuracy of 78.3% for this specific subset. Combining the 82 cases correctly identified as having no data with the 46 cases where a candidate value is proposed,
+BioMiner
+demonstrates reliable automated handling for 128 out of 242 structures (52.9%). This suggests that nearly half of the annotation task for this dataset could potentially be automated with high confidence (Accuracy = 0.88), significantly reducing manual effort, while the remaining cases benefit from the efficient HITL verification.
+The ability to rapidly generate and verify high-fidelity structure-activity annotations for large structural datasets like PoseBusters is highly valuable for the development of structure-based drug design algorithms.
+By significantly accelerating the creation and curation of these critical datasets with enhanced accuracy,
+BioMiner
+directly facilitates progress in structure-guided drug discovery and the application of machine learning in structural biology.
+Discussion
+In this work, we introduced
+BioMiner
+, a multi-modal system for automated extraction of protein–ligand bioactivity data from scientific literature, built upon a principled integration of MLLMs, DSMs, and chemistry tools.
+To support rigorous evaluation and foster systematic progress in this area, we further established
+BioVista
+, the largest benchmark to date dedicated to protein–ligand bioactivity extraction, comprising 16,457 bioactivity entries and 8,735 chemical structures across six carefully designed evaluation tasks.
+Evaluated on
+BioVista
+,
+BioMiner
+demonstrated meaningful extraction capability under this highly challenging setting, achieving F1 scores of 0.32 for complete bioactivity triplets, 0.53 for chemical structure extraction, and 0.63 for bioactivity measurement extraction.
+Beyond benchmark performance, the practical utility of
+BioMiner
+was substantiated through three real-world applications.
+First, its scalability enabled the rapid construction of a large-scale bioactivity database (82,262 entries from 11,683 papers within three days), which yielded consistent improvements in downstream binding affinity prediction models, including a 3.9% reduction in RMSE after pre-training.
+Second, HITL workflows highlighted the complementary strengths of automated extraction and expert validation: for the therapeutically important target NLRP3, HITL-assisted extraction doubled the volume of high-quality bioactivity data relative to ChEMBL within 26 hours, leading to substantially improved QSAR performance (38.6% gain in EF1%) and the identification of 16 novel hit candidates.
+Third,
+BioMiner
+proved effective for accelerating structure-centric annotation tasks, achieving a 5.59-fold speedup and higher accuracy (96.25% versus 90.5%) in labeling bioactivity-linked structures within the PoseBusters dataset.
+Despite these advances, the modest end-to-end F1 score for complete triplet extraction underscores the intrinsic difficulty of the task.
+Protein–ligand bioactivity extraction requires precise cross-modal integration, reliable chemical structure reconstruction (particularly for Markush representations), and accurate association of entities and measurements scattered across heterogeneous document elements.
+Our error analysis identifies several dominant bottlenecks, including bioactivity measurement extraction (32.68% of errors), OCSR (25.31%), and Markush structure enumeration (15.91%).
+These findings indicate that performance limitations primarily stem from fundamental task complexity rather than superficial system design choices.
+Besides, regarding our architectural choice of modality separation via post-fusion, we acknowledge that our empirical comparison is limited by the fact that neither
+BioMiner
+nor the proxy model is optimized for an early fusion setting. Therefore, fully unified fusion architectures explicitly aligned for this multi-modal task remain a promising direction for future research to better exploit cross-modal synergies.
+Finally, our evaluation design entails a trade-off with respect to the validation–test split. To maximize the robustness of our final evaluation, we restricted the validation set to 10% of the data (50 papers). While sufficient for the limited prompt refinement performed in this study, this size leaves a relatively thin basis for extensive development decisions. Future work requiring more complex prompt engineering or extensive hyperparameter tuning would benefit from the curation of larger validation sets.
+Looking forward, the modular design of
+BioMiner
+suggests its potential for extension to related extraction tasks where exact chemical identity is required, such as extracting molecular ADMET properties from the literature.
+Although the current study does not yet examine cross-domain generalization, we believe
+BioMiner
+can serve as a transferable starting point, whose architecture may facilitate adaptation to related tasks with domain-specific adjustment.
+In summary,
+BioMiner
+represents a step toward scalable, structure-aware automation of bioactivity data extraction, while
+BioVista
+establishes a much-needed standard for systematic evaluation in this domain.
+Together, they provide a foundation for unlocking large volumes of previously inaccessible bioactivity data embedded in literature, enabling more comprehensive data-driven modeling and accelerating future advances in drug discovery and automated scientific knowledge extraction.
+Methods
+Preliminary
+For notation, a scientific article is represented as a multi-modal document
+D
+D
+(PDF), containing text, tables, and figures.
+The goal is to extract a set of protein–ligand bioactivity records
+ℬ
+=
+{
+(
+p
+i
+,
+ℓ
+i
+,
+v
+i
+)
+}
+i
+=
+1
+N
+\mathcal{B}=\{(p_{i},\ell_{i},v_{i})\}_{i=1}^{N}
+,
+where
+p
+i
+p_{i}
+is a protein target mention,
+ℓ
+i
+\ell_{i}
+is a chemically valid ligand representation (SMILES), and
+v
+i
+v_{i}
+is a quantitative bioactivity value with its associated assay context.
+A key challenge is that bioactivity mining from literature
+structurally couples
+:
+(i) semantic reasoning over heterogeneous modalities (to interpret bioactivity measurements and entity relations) and
+(ii)
+exact
+symbolic construction of ligand structures (especially for Markush representations).
+End-to-end generation is brittle.
+BioMiner
+addresses this by decoupling:
+ℳ
+⁡
+(
+D
+)
+→
+{
+(
+p
+,
+c
+,
+v
+)
+}
+⏟
+bioactivity measurement: semantic reasoning
+and
+𝒮
+⁡
+(
+D
+)
+→
+{
+(
+c
+,
+ℓ
+)
+}
+⏟
+chemical structure: grounded + constrained construction
+,
+\underbrace{\mathcal{M}(D)\rightarrow\{(p,c,v)\}}_{\text{bioactivity measurement: semantic reasoning}}\quad\text{and}\quad\underbrace{\mathcal{S}(D)\rightarrow\{(c,\ell)\}}_{\text{chemical structure: grounded + constrained construction}},
+(1)
+and then integrating them via ligand coreference
+c
+c
+:
+ℬ
+=
+𝒥
+⁡
+(
+{
+(
+p
+,
+c
+,
+v
+)
+}
+,
+{
+(
+c
+,
+ℓ
+)
+}
+)
+.
+\mathcal{B}=\mathcal{J}\big(\{(p,c,v)\},\{(c,\ell)\}\big).
+(2)
+Here
+c
+c
+denotes a ligand coreference string/identifier (e.g., compound name, label, or alias) used as the join key across modalities.
+System overview
+BioMiner
+is implemented as four specialized agents:
+data preprocessing
+A
+p
+​
+r
+​
+e
+A^{pre}
+, chemical structure extraction
+A
+s
+​
+t
+​
+r
+A^{str}
+, bioactivity measurement extraction
+A
+m
+​
+e
+​
+a
+A^{mea}
+, and postprocessing/integration
+A
+p
+​
+o
+​
+s
+​
+t
+A^{post}
+.
+At deployment,
+BioMiner
+runs inference-only: it orchestrates fixed-weight models and deterministic chemistry tools without document-specific training.
+(
+D
+t
+​
+x
+​
+t
+,
+D
+v
+​
+i
+​
+s
+)
+=
+A
+p
+​
+r
+​
+e
+​
+(
+D
+)
+,
+𝒮
+=
+{
+(
+c
+,
+ℓ
+)
+}
+=
+A
+s
+​
+t
+​
+r
+​
+(
+D
+v
+​
+i
+​
+s
+)
+,
+ℳ
+=
+{
+(
+p
+,
+c
+,
+v
+)
+}
+=
+A
+m
+​
+e
+​
+a
+​
+(
+D
+t
+​
+x
+​
+t
+,
+D
+v
+​
+i
+​
+s
+)
+,
+ℬ
+=
+A
+p
+​
+o
+​
+s
+​
+t
+​
+(
+𝒮
+,
+ℳ
+)
+.
+(D^{txt},D^{vis})=A^{pre}(D),\quad\mathcal{S}=\{(c,\ell)\}=A^{str}(D^{vis}),\quad\mathcal{M}=\{(p,c,v)\}=A^{mea}(D^{txt},D^{vis}),\quad\mathcal{B}=A^{post}(\mathcal{S},\mathcal{M}).
+(3)
+Backbone models and tools.
+BioMiner
+uses a locally deployable multi-modal language model
+BioMiner-Instruct
+(fine-tuned from Qwen3-VL-32B) for cross-modal reasoning,
+a domain-specific OCSR model
+MolGlyph
+for chemical structure recognition in scientific figures,
+and domain tools including RDKit for chemical graph operations and OPSIN for IUPAC-to-SMILES conversion.
+(Implementation details and prompts are provided in Supporting Information.)
+Agent 1: data preprocessing (
+A
+p
+​
+r
+​
+e
+A^{pre}
+)
+The preprocessing agent parses
+D
+D
+into aligned textual and visual representations while preserving layout and reading order.
+We apply MinerU to obtain text and layout elements:
+(
+D
+t
+​
+x
+​
+t
+,
+D
+l
+​
+a
+​
+y
+)
+=
+MinerU
+​
+(
+D
+)
+,
+(D^{txt},D^{lay})=\texttt{MinerU}(D),
+(4)
+where
+D
+t
+​
+x
+​
+t
+D^{txt}
+contains extracted text segments and
+D
+l
+​
+a
+​
+y
+D^{lay}
+stores page-level layout elements with their bounding boxes and categories (e.g., paragraph, table, figure, caption).
+For visual grounding, each page is rasterized into an image and we additionally extract figure/table crops when possible:
+D
+v
+​
+i
+​
+s
+=
+(
+D
+p
+​
+a
+​
+g
+​
+e
+v
+​
+i
+​
+s
+,
+D
+s
+​
+e
+​
+g
+v
+​
+i
+​
+s
+)
+.
+D^{vis}=\big(D^{vis}_{page},D^{vis}_{seg}\big).
+(5)
+D
+p
+​
+a
+​
+g
+​
+e
+v
+​
+i
+​
+s
+D^{vis}_{page}
+contains full-page images, which are robust to imperfect caption detection and support molecule detection at page scale.
+D
+s
+​
+e
+​
+g
+v
+​
+i
+​
+s
+D^{vis}_{seg}
+contains segmented figure/table regions (with captions when detected) to reduce surrounding noise for downstream visual reasoning.
+Agent 2: chemical structure extraction (
+A
+s
+​
+t
+​
+r
+A^{str}
+)
+A
+s
+​
+t
+​
+r
+A^{str}
+produces a set of ligand coreferences and their chemically valid SMILES:
+𝒮
+=
+{
+(
+c
+k
+,
+ℓ
+k
+)
+}
+k
+=
+1
+K
+=
+A
+s
+​
+t
+​
+r
+​
+(
+D
+v
+​
+i
+​
+s
+)
+.
+\mathcal{S}=\{(c_{k},\ell_{k})\}_{k=1}^{K}=A^{str}(D^{vis}).
+(6)
+Chemical structures in literature appear as:
+(i) explicit full structures, and
+(ii) Markush structures that define families of compounds via variable substituents (R-groups).
+Our scope focuses on Markush instances where the scaffold and attachment points are representable in SMILES; other Markush types (e.g., variable positions/repeats not representable in SMILES) are handled as out-of-scope and reported separately.
+CSG-VSR resolves chemical structures through a three-stage grounded pipeline:
+(detect + recognize)
+→
+(grounded relation inference)
+→
+(tool-constrained symbolic construction)
+.
+\text{(detect + recognize)}\rightarrow\text{(grounded relation inference)}\rightarrow\text{(tool-constrained symbolic construction)}.
+(7)
+Stage I: molecule detection and OCSR.
+We detect 2D chemical depictions in
+D
+p
+​
+a
+​
+g
+​
+e
+v
+​
+i
+​
+s
+D^{vis}_{page}
+and
+D
+s
+​
+e
+​
+g
+v
+​
+i
+​
+s
+D^{vis}_{seg}
+and recognize each depiction into a preliminary SMILES string.
+Let
+{
+(
+x
+m
+,
+ℓ
+~
+m
+)
+}
+m
+=
+1
+M
+\{(x_{m},\tilde{\ell}_{m})\}_{m=1}^{M}
+denote detected bounding boxes
+x
+m
+x_{m}
+with OCSR outputs
+ℓ
+~
+m
+\tilde{\ell}_{m}
+.
+Depictions with attachment points are tagged as Markush components; otherwise they are treated as explicit full structures.
+Stage II: grounded relation inference (coreference + Markush enumeration).
+To reliably refer to visual structures, we create an augmented image by overlaying bounding boxes and unique indices on each detected depiction.
+Given an augmented image
+I
+a
+​
+u
+​
+g
+I^{aug}
+,
+BioMiner-Instruct
+infers:
+•
+Coreference for explicit structures:
+mapping from visual indices to ligand identifiers
+c
+c
+(e.g., “compound 12”, “AZD1234”, “R1”).
+•
+Markush enumeration:
+for each Markush scaffold, identify the scaffold index and enumerate substituent sets (R-groups), where substituents can be (a) visual indices of depicted fragments or (b) textual 1D mentions (IUPAC, abbreviations, formulas).
+Stage III: tool-constrained symbolic construction.
+We convert R-group substituents into SMILES:
+IUPAC names via OPSIN, and abbreviations/formulas via a curated mapping table (assisted by
+BioMiner-Instruct
+during construction; the finalized table is fixed for deployment).
+Finally, RDKit composes scaffold and substituent SMILES by attachment-point “zipping” to generate chemically valid full structures.
+This stage enforces chemical validity deterministically and isolates the MLLM from error-prone string construction.
+The final output
+𝒮
+\mathcal{S}
+merges:
+(i) explicit structures
+(
+c
+,
+ℓ
+)
+(c,\ell)
+and
+(ii) Markush-enumerated structures
+(
+c
+,
+ℓ
+)
+(c,\ell)
+obtained by RDKit construction.
+Agent 3: bioactivity measurement extraction (
+A
+m
+​
+e
+​
+a
+A^{mea}
+)
+A
+m
+​
+e
+​
+a
+A^{mea}
+extracts bioactivity measurements as semantic tuples
+(
+p
+,
+c
+,
+v
+)
+(p,c,v)
+from both text and visual modalities:
+ℳ
+=
+{
+(
+p
+t
+,
+c
+t
+,
+v
+t
+)
+}
+t
+=
+1
+T
+=
+A
+m
+​
+e
+​
+a
+​
+(
+D
+t
+​
+x
+​
+t
+,
+D
+v
+​
+i
+​
+s
+)
+.
+\mathcal{M}=\{(p_{t},c_{t},v_{t})\}_{t=1}^{T}=A^{mea}(D^{txt},D^{vis}).
+(8)
+We run
+BioMiner-Instruct
+over (a)
+D
+t
+​
+x
+​
+t
+D^{txt}
+and (b) page-level images
+D
+p
+​
+a
+​
+g
+​
+e
+v
+​
+i
+​
+s
+D^{vis}_{page}
+to capture measurements reported in paragraphs, tables, and figure panels.
+Outputs are normalized into a unified schema, including value types (e.g., IC
+50
+, K
+i
+), numeric values, and units when available.
+Text- and vision-derived tuples are then merged with deduplication based on entity/value consistency rules (Supporting Information).
+Agent 4: postprocessing and integration (
+A
+p
+​
+o
+​
+s
+​
+t
+A^{post}
+)
+The postprocessing agent joins
+ℳ
+\mathcal{M}
+and
+𝒮
+\mathcal{S}
+via ligand coreference to produce final triplets:
+ℬ
+=
+A
+p
+​
+o
+​
+s
+​
+t
+​
+(
+𝒮
+,
+ℳ
+)
+=
+{
+(
+p
+,
+ℓ
+,
+v
+)
+}
+.
+\mathcal{B}=A^{post}(\mathcal{S},\mathcal{M})=\{(p,\ell,v)\}.
+(9)
+Optional enrichment.
+For downstream usability,
+A
+p
+​
+o
+​
+s
+​
+t
+A^{post}
+optionally enriches records with external identifiers and structures by querying public databases (e.g., UniProtKB, PDB, AlphaFoldDB), and can link extracted bioactivities to reported PDB complexes by SMILES matching and target consistency checks.
+Summary.
+Overall,
+BioMiner
+operationalizes a structure-grounded paradigm:
+BioMiner-Instruct
+performs cross-modal
+relation inference
+(what refers to what, which R-groups belong where, which measurements belong to which targets),
+while DSMs provide perception (OCSR/detection) and domain tools guarantee
+exact
+chemical symbolic construction and validity.
+Model training for
+BioMiner
+BioMiner
+is an inference-only agentic system at deployment time; however, we develop two open-weight models to enable fully reproducible local execution: (i) an OCSR model
+MolGlyph
+for robust recognition of complex chemical depictions in scientific figures, and (ii) a bioactivity-oriented multimodal instruction model
+BioMiner-Instruct
+for grounded cross-modal reasoning (coreference, Markush enumeration, and image-based bioactivity parsing). Importantly, the training of these models is
+document-independent
+and strictly isolated from
+BioVista
+to avoid data leakage.
+Training OCSR
+MolGlyph
+Architecture.
+MolGlyph
+follows an encoder–decoder OCSR design instantiated from MolScribe, using a Swin-Transformer visual encoder and an Transformer decoder with 12 layers, 16 attention heads, and 512 hidden dimension.
+Tokenizer and data format.
+We implement the tokenizer and sequence format following the MolParser paper specification.
+MolParser does not provide an open-source implementation; therefore, all tokenization, rendering, and training pipelines are independently implemented in this work, while remaining compatible with the released MolParser pretraining data.
+Training Data.
+We use three complementary data sources:
+(1)
+MolParser pretraining set
+(8M images), which contains
+∼
+\sim
+2M synthesized Markush-like samples and provides broad coverage of depiction styles;
+(2)
+MolParser real-world set
+(91k images) as a curated evaluation-oriented distribution of real depictions;
+(3)
+Literature-specific OCSR set
+(170k images) constructed in this work to mitigate domain shift from patents to scientific articles.
+The MolParser corpus is predominantly patent-derived, which differs from the visual style and composition of biomedical literature (e.g., tighter layouts, multi-panel figures, smaller line widths, and heavier co-occurrence with biological annotations).
+To bridge this gap, we collect chemical depiction panels from (i) PDBbind-cited publications prior to 2019 and (ii) high-bioactivity-density medicinal chemistry journals (JMC, JNP, BMC, BMCL).
+To prevent evaluation leakage, we ensure that journals/papers included in
+BioVista
+are excluded from this OCSR training pool; additionally, to reduce redundancy, we sample 3–5 figure panels per paper and cap the number of samples per article source when necessary.
+Among the three data sources, the literature-specific set is weakly labeled by MolParser (closed API) to obtain paired (image, SMILES) supervision. We treat these labels as
+pseudo-ground-truth
+and rely on large-scale diversity + curriculum learning (below) to reduce sensitivity to occasional labeling noise.
+Curriculum learning and augmentation.
+MolGlyph
+is trained with a curriculum strategy: we first pretrain on the large-scale MolParser pretraining set, and then progressively introduce stronger augmentations and harder samples.
+After convergence, we perform joint training on a mixed corpus consisting of: the MolParser real-world 91k set, a balanced subset of
+∼
+\sim
+200k synthesized Markush samples, and the 170k literature-specific set.
+This final mixture emphasizes the scientific-figure distribution while retaining sufficient Markush coverage.
+Optimization and hyperparameters.
+The model is trained end-to-end using teacher-forced cross-entropy loss with label smoothing of 0.1.
+We use the AdamW optimizer with separate learning rates of
+4
+×
+10
+−
+4
+4\times 10^{-4}
+for both encoder and decoder.
+A linear warm-up schedule is applied for the first 2% of training steps, followed by cosine decay.
+Training is conducted for 10 epochs over the combined corpus.
+To improve stability on noisy pseudo-labeled data, we filter invalid structure graphs during training and apply SMILES syntax constraints during decoding.
+It takes 7 days to train
+MolGlyph
+on 4 A800 80G GPUs.
+Training MLLM
+BioMiner-Instruct
+Base model.
+We initialize
+BioMiner-Instruct
+from Qwen3-VL-32B-Instruct and perform multi-task supervised instruction tuning (SFT) on a curated multi-modal dataset covering three tasks used by
+BioMiner
+:
+(1)
+Markush enumeration
+(scaffold identification and R-group set enumeration),
+(2)
+Full-structure coreference recognition
+(mapping depicted structures/fragments to textual identifiers),
+(3)
+Image bioactivity extraction
+(interpreting dense quantitative bioactivity values).
+Instruct-tunning Data.
+All candidate papers are drawn from PDBbind-cited publications prior to 2019 and the same four high-bioactivity journals (JMC, JNP, BMC, BMCL), with explicit exclusion of the 500
+BioVista
+papers.
+This isolation is enforced at the paper level (no shared PDF sources).
+We first run a proprietary MLLM (Gemini-2.0-flash) to generate candidate input–output pairs for all three tasks.
+Then, we filter and mine difficult examples to avoid over-representing trivial instances. For Markush enumeration, we discard invalid outputs and cases enumerating fewer than 8 structures. For image bioactivity extraction we prioritize dense figures. And for coreference recognition, since
+BioMiner
+adopts a divide-and-conquer strategy with a controlled number of molecules per image (typically
+≤
+\leq
+4), we select data randomly.
+Followed by human expert checking to ensure data quality, the final multi-task SFT set contains approximately 754 Markush enumeration instances, 2,215 coreference instances, and 4,375 image bioactivity instances.
+Fine-tuning strategy.
+BioMiner
+is obtained by supervised instruction tuning of Qwen3-VL-32B-Instruct using parameter-efficient low-rank adaptation (LoRA)
+[
+19
+]
+.
+We adopt 4-bit quantization during training (QLoRA)
+[
+11
+]
+to reduce GPU memory usage while preserving model capacity.
+The instruction dataset jointly covers three tasks: Markush enumeration, full-structure coreference recognition, and image-based bioactivity extraction. These three tasks are mixed uniformly during training without task-specific weighting.
+Optimization and hyperparameters.
+Training is performed using the AdamW optimizer with a peak learning rate of
+5
+×
+10
+−
+5
+5\times 10^{-5}
+.
+A cosine learning-rate scheduler with a warm-up ratio of 0.1 is applied.
+It takes one day to train
+BioMiner-Instruct
+on 4 A800 80G GPUs.
+Acknowledgements
+We sincerely thank Xi Fang from DP Technology for their support of MolParser.
+We also extend our gratitude to Ruikang Li and Qingchuan Li from USTC, as well as Qian Yan, Qian Xie, Yiwen Zhang, Tongtong Yan, Huangdong Liang, and Li Wang from iFLYTEK, for their invaluable support in the construction of the benchmark
+BioVista
+.
+Author contributions statement
+Conceptualization: J.X.Y., X.K.L., J.T.Z., Z.X.Z., and Q.L.;
+Data Curation: J.X.Y., K.Z., Y.H.Y., and B.Y.Z.;
+Formal Analysis: J.X.Y., Y.H.Y., K.Z., Z.X.Z., J.T.Z., and X.K.L.;
+Investigation: J.X.Y., and J.T.Z.;
+Methodology: J.X.Y., X.K.L., Z.X.Z., and J.T.Z.;
+Software: J.X.Y., Y.H.Y., J.T.Z., and J.C.X.;
+Validation: J.X.Y., J.T.Z., K.Z., Z.X.Z., and Q.L.;
+Visualization: J.X.Y., and J.T.Z.;
+Writing – Original Draft: J.X.Y., and J.T.Z.;
+Writing – Review & Editing: J.X.Y., J.T.Z., Z.X.Z., K.Y.G., and Q.L.;
+Supervision: Z.X.Z., K.Z., and Q.L.;
+Project administration: K.Z., and Q.L.;
+Resources: K.Z., K.Y.G., and Q.L.;
+Funding Acquisition: Q.L.;
+All authors reviewed the manuscript.
+Data availability
+The proposed benchmark
+BioVista
+is available in
+https://github.com/jiaxianyan/BioMiner
+.
+The PDBbind dataset is available in
+http://www.pdbbind.org.cn/
+.
+The ChEMBL dataset is available in
+https://www.ebi.ac.uk/chembl/
+.
+The molecule library ChemDiv is available in
+https://www.chemdiv.com/
+.
+The molecule library Enamine is available in
+https://enamine.net/
+.
+The PoseBuster dataset is available in
+https://github.com/maabuu/posebusters
+. All source data, including extracted bioactivity dataset from EJMC papers, extracted NLRP3 bioactivity data and annotated structure-bioactivity pairs for PoseBusters set are provided in
+https://github.com/jiaxianyan/BioMiner
+.
+Code availability
+All codes and model weights of proposed
+BioMiner
+are released and publicly available at
+https://github.com/jiaxianyan/BioMiner
+. The code was released under the MIT license.
+References
+[1]
+Anthropic
+(2025)
+Claude haiku 4.5 system card
+.
+Note:
+https://www.anthropic.com/claude-haiku-4-5-system-card
+Cited by:
+Component-level Evaluation
+.
+[2]
+J. Bai, S. Bai, S. Yang, S. Wang, S. Tan, P. Wang, J. Lin, C. Zhou, and J. Zhou
+(2023)
+Qwen-VL: a versatile vision-language model for understanding, localization, text reading, and beyond
+.
+arXiv preprint arXiv:2308.12966
+.
+Cited by:
+Component-level Evaluation
+.
+[3]
+S. Bai, Y. Cai, R. Chen, K. Chen, X. Chen, Z. Cheng, L. Deng, W. Ding, R. Fang, C. Gao, C. Ge, W. Ge, Z. Guo, Q. Huang, J. Huang, F. Huang, B. Hui, S. Jiang, Z. Li, M. Li, M. Li, K. Li, Z. Lin, J. Lin, X. Liu, J. Liu, C. Liu, Y. Liu, D. Liu, S. Liu, D. Lu, R. Luo, C. Lv, R. Men, L. Y. Meng, X. Ren, X. Ren, S. Song, Y. Sun, J. Tang, J. Tu, J. Wan, P. Wang, P. Wang, Q. Wang, Y. Wang, T. Xie, Y. Xu, H. Xu, J. Xu, Z. Yang, M. Yang, J. Yang, A. Yang, B. Yu, F. Zhang, H. Zhang, X. Zhang, B. Zheng, H. Zhong, J. Zhou, F. Zhou, J. Zhou, Y. Zhu, and K. Zhu
+(2025)
+Qwen3-VL technical report
+.
+arXiv preprint arXiv:2511.21631
+.
+Cited by:
+Overview of
+BioMiner
+.
+[4]
+L. Breiman
+(2001)
+Random forests
+.
+Machine Learning
+45
+,
+pp. 5–32
+.
+External Links:
+Link
+Cited by:
+QSAR Models Training
+.
+[5]
+S. K. Burley, R. Bhatt, C. Bhikadiya, C. Bi, A. Biester, P. Biswas, S. Bittrich, S. Blaumann, R. Brown, H. Chao,
+et al.
+(2025)
+Updated resources for exploring experimentally-determined PDB structures and Computed Structure Models at the RCSB Protein Data Bank
+.
+Nucleic Acids Research
+53
+(
+D1
+),
+pp. D564–D574
+.
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[6]
+M. Buttenschoen, G. M. Morris, and C. M. Deane
+(2023)
+PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences
+.
+Chemical Science
+15
+,
+pp. 3130–3139
+.
+External Links:
+Link
+Cited by:
+Main
+,
+Controlled evaluation on PoseBusters PDF-complexes
+.
+[7]
+D. Cao, G. Chen, J. Jiang, J. Yu, R. Zhang, M. Chen, W. Zhang, L. Chen, F. Zhong, Y. Zhang, C. Lu, X. Li, X. Luo, S. Zhang, and M. Zheng
+(2024)
+Generic protein-ligand interaction scoring by integrating physical prior knowledge and data augmentation modelling
+.
+Nat. Mach. Intell.
+6
+,
+pp. 688–700
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[8]
+(2023)
+ChemDiv, available:
+https://www.chemdiv.com/
+.
+Cited by:
+Main
+.
+[9]
+R. C. Coll, J. R. Hill, C. J. Day, A. Zamoshnikova, D. Boucher, N. L. Massey, J. L. Chitty, J. A. Fraser, M. P. Jennings, A. A. B. Robertson, and K. Schroder
+(2019)
+MCC950 directly targets the NLRP3 ATP-hydrolysis motif for inflammasome inhibition
+.
+Nature Chemical Biology
+15
+,
+pp. 556–559
+.
+External Links:
+Link
+Cited by:
+NLRP3 Inhibitor Screening
+.
+[10]
+J. Dagdelen, A. Dunn, S. Lee, N. Walker, A. S. Rosen, G. Ceder, K. A. Persson, and A. Jain
+(2024)
+Structured information extraction from scientific text with large language models
+.
+Nature Communications
+15
+,
+pp. 1418
+.
+Cited by:
+Main
+.
+[11]
+T. Dettmers, A. Pagnoni, A. Holtzman, and L. Zettlemoyer
+(2023)
+QLoRA: efficient finetuning of quantized LLMs
+.
+Adv. Neural Inf. Process. Syst.
+36
+,
+pp. 10088–10115
+.
+Cited by:
+Fine-tuning strategy.
+.
+[12]
+J. B. Dunbar Jr, R. D. Smith, K. L. Damm-Ganamet, A. Ahmed, E. X. Esposito, J. Delproposto, K. Chinnaswamy, Y. Kang, G. Kubish, J. E. Gestwicki, J. A. Stuckey, and H. A. Carlson
+(2013)
+CSAR data set release 2012: ligands, affinities, complexes, and docking decoys
+.
+Journal of Chemical Information and Modeling
+53
+,
+pp. 1842–1852
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[13]
+(2023)
+Enamine, available:
+https://enamine.net/
+.
+Cited by:
+Main
+.
+[14]
+B. Feng, Z. Liu, N. Huang, Z. Xiao, H. Zhang, S. Mirzoyan, H. Xu, J. Hao, Y. Xu, M. Zhang, and S. Wang
+(2024)
+A bioactivity foundation model using pairwise meta-learning
+.
+Nat. Mach. Intell.
+6
+,
+pp. 962–974
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[15]
+A. Gaulton, L. J. Bellis, A. P. Bento, J. Chambers, M. Davies, A. Hersey, Y. Light, S. McGlinchey, D. Michalovich, B. Al-Lazikani, and J. P. Overington
+(2012)
+ChEMBL: a large-scale bioactivity database for drug discovery
+.
+Nucleic Acids Research
+40
+,
+pp. D1100–D1107
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[16]
+F. Gentile, J. C. Yaacoub, J. Gleave, M. Fernández, A. Ton, F. Ban, A. Stern, and A. Cherkasov
+(2022)
+Artificial intelligence–enabled virtual screening of ultra-large chemical libraries with deep docking
+.
+Nature Protocols
+17
+,
+pp. 672–697
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[17]
+(2023)
+Grok, available:
+https://grok.x.ai/
+.
+Cited by:
+Component-level Evaluation
+.
+[18]
+M. A. Hearst, S. T. Dumais, E. Osuna, J. Platt, and B. Scholkopf
+(1998)
+Support vector machines
+.
+IEEE Intelligent Systems & Their Applications
+13
+,
+pp. 18–28
+.
+External Links:
+Link
+Cited by:
+QSAR Models Training
+.
+[19]
+E. J. Hu, Y. Shen, P. Wallis, Z. Allen-Zhu, Y. Li, S. Wang, and W. Chen
+(2022)
+LoRA: low-rank adaptation of large language models
+.
+In
+Proc. 10th Int. Conf. on Learning Representations
+,
+Cited by:
+Fine-tuning strategy.
+.
+[20]
+A. Hurst, A. Lerer, A. P. Goucher, A. Perelman, A. Ramesh, A. Clark, A. Ostrow, A. Welihinda, A. Hayes, A. Radford, A. Mkadry, A. Baker-Whitcomb, A. Beutel, A. Borzunov, A. Carney, A. Chow, A. Kirillov, A. Nichol, A. Paino, A. Renzin, A. Passos, A. Kirillov, A. Christakis, A. Conneau, A. Kamali, A. Jabri, A. Moyer, A. Tam, A. Crookes, A. Tootoochian, A. Tootoonchian, A. Kumar, A. Vallone, A. Karpathy, A. Braunstein, A. Cann, A. Codispoti, A. Galu, A. Kondrich, A. Tulloch, A. Mishchenko, A. Baek, A. Jiang, A. Pelisse, A. Woodford, A. Gosalia, A. Dhar, A. Pantuliano, A. Nayak, A. Oliver, B. Zoph, B. Ghorbani, B. Leimberger, B. Rossen, B. Sokolowsky, B. Wang, B. Zweig, B. Hoover, B. Samic, B. McGrew, B. Spero, B. Giertler, B. Cheng, B. Lightcap, B. Walkin, B. Quinn, B. Guarraci, B. Hsu, B. Kellogg, B. Eastman, C. Lugaresi, C. L. Wainwright, C. Bassin, C. Hudson, C. Chu, C. Nelson, C. Li, C. J. Shern, C. Conger, C. Barette, C. Voss, C. Ding, C. Lu, C. Zhang, C. Beaumont, C. Hallacy, C. Koch, C. Gibson, C. Kim, C. Choi, C. McLeavey, C. Hesse, C. Fischer, C. Winter, C. Czarnecki, C. Jarvis, C. Wei, C. Koumouzelis, D. Sherburn, D. Kappler, D. Levin, D. Levy, D. Carr, D. Farhi, D. Mély, D. Robinson, D. Sasaki, D. Jin, D. Valladares, D. Tsipras, D. Li, P. D. Nguyen, D. Findlay, E. Oiwoh, E. Wong, E. Asdar, E. Proehl, E. Yang, E. Antonow, E. Kramer, E. Peterson, E. Sigler, E. Wallace, E. Brevdo, E. Mays, F. Khorasani, F. P. Such, F. Raso, F. Zhang, F. von Lohmann, F. Sulit, G. Goh, G. Oden, G. Salmon, G. Starace, G. Brockman, H. Salman, H. Bao, H. Hu, H. Wong, H. Wang, H. Schmidt, H. Whitney, H. Jun, H. Kirchner, H. P. de Oliveira Pinto, H. Ren, H. Chang, H. W. Chung, I. D. Kivlichan, I. O’Connell, I. Osband, I. Silber, I. Sohl, İ. C. Okuyucu, I. Lan, I. Kostrikov, I. Sutskever, I. Kanitscheider, I. Gulrajani, J. Coxon, J. Menick, J. W. Pachocki, J. Aung, J. Betker, J. Crooks, J. Lennon, J. R. Kiros, J. Leike, J. Park, J. Kwon, J. Phang, J. Teplitz, J. Wei, J. Wolfe, J. Chen, J. Harris, J. Varavva, J. G. Lee, J. Shieh, J. Lin, J. Yu, J. Weng, J. Tang, J. Yu, J. Jang, J. Q. Candela, J. Beutler, J. Landers, J. Parish, J. Heidecke, J. Schulman, J. Lachman, J. McKay, J. Uesato, J. Ward, J. W. Kim, J. Huizinga, J. Sitkin, J. Kraaijeveld, J. Gross, J. Kaplan, J. Snyder, J. Achiam, J. Jiao, J. Lee, J. Zhuang, J. Harriman, K. Fricke, K. Hayashi, K. Singhal, K. Shi, K. Karthik, K. Wood, K. Rimbach, K. Hsu, K. Nguyen, K. Gu-Lemberg, K. Button, K. Liu, K. Howe, K. Muthukumar, K. Luther, L. Ahmad, L. Kai, L. Itow, L. Workman, L. Pathak, L. Chen, L. Jing, L. Guy, L. Fedus, L. Zhou, L. Mamitsuka, L. Weng, L. McCallum, L. Held, O. Long, L. Feuvrier, L. Zhang, L. Kondraciuk, L. Kaiser, L. Hewitt, L. Metz, L. Doshi, M. Aflak, M. Simens, M. Boyd, M. Thompson, M. Dukhan, M. Chen, M. Gray, M. Hudnall, M. Zhang, M. Aljubeh, M. Litwin, M. Zeng, M. Johnson, M. Shetty, M. Gupta, M. Shah, M. A. Yatbaz, M. Yang, M. Zhong, M. Glaese, M. Chen, M. Janner, M. Lampe, M. Petrov, M. Wu, M. Wang, M. Fradin, M. Pokrass, M. Castro, M. Castro, M. Pavlov, M. Brundage, M. Wang, M. Khan, M. Murati, M. Bavarian, M. Lin, M. Yesildal, N. Soto, N. Gimelshein, N. Cone, N. Staudacher, N. Summers, N. LaFontaine, N. Chowdhury, N. Ryder, N. Stathas, N. Turley, N. A. Tezak, N. Felix, N. Kudige, N. S. Keskar, N. Deutsch, N. Bundick, N. Puckett, O. Nachum, O. Okelola, O. Boiko, O. Murk, O. Jaffe, O. Watkins, O. Godement, O. Campbell-Moore, P. Chao, P. McMillan, P. Belov, P. Su, P. Bak, P. Bakkum, P. Deng, P. Dolan, P. Hoeschele, P. Welinder, P. Tillet, P. Pronin, P. Tillet, P. Dhariwal, Q. Yuan, R. Dias, R. Lim, R. Arora, R. Troll, R. Lin, R. G. Lopes, R. Puri, R. Miyara, R. H. Leike, R. Gaubert, R. Zamani, R. Wang, R. Donnelly, R. Honsby, R. Smith, R. Sahai, R. Ramchandani, R. Huet, R. Carmichael, R. Zellers, R. Chen, R. Chen, R. R. Nigmatullin, R. Cheu, S. Jain, S. Altman, S. Schoenholz, S. Toizer, S. Miserendino, S. Agarwal, S. Culver, S. Ethersmith, S. Gray, S. Grove, S. Metzger, S. Hermani, S. Jain, S. Zhao, S. Wu, S. Jomoto, S. Wu, S. Xia, S. Phene, S. Papay, S. Narayanan, S. Coffey, S. Lee, S. Hall, S. Balaji, T. Broda, T. Stramer, T. Xu, T. Gogineni, T. Christianson, T. Sanders, T. A. Patwardhan, T. Cunninghman, T. Degry, T. Dimson, T. Raoux, T. Shadwell, T. Zheng, T. Underwood, T. Markov, T. Sherbakov, T. Rubin, T. Stasi, T. Kaftan, T. Heywood, T. Peterson, T. Walters, T. Eloundou, V. Qi, V. Moeller, V. Monaco, V. Kuo, V. Fomenko, W. Chang, W. Zheng, W. Zhou, W. Manassra, W. Sheu, W. Zaremba, Y. Patil, Y. Qian, Y. Kim, Y. Cheng, Y. Zhang, Y. He, Y. Zhang, Y. Jin, Y. Dai, and Y. Malkov
+(2024)
+GPT-4o system card
+.
+arXiv preprint arXiv:2410.21276
+.
+Cited by:
+Component-level Evaluation
+.
+[21]
+Y. Kang and J. Kim
+(2024)
+ChatMOF: an artificial intelligence system for predicting and generating metal-organic frameworks using large language models
+.
+Nature Communications
+15
+,
+pp. 4705
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[22]
+T. N. Kipf and M. Welling
+(2017)
+Semi-supervised classification with graph convolutional networks
+.
+In
+Proc. 5th Int. Conf. on Learning Representations
+,
+External Links:
+Link
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[23]
+H. Y. Koh, A. T. N. Nguyen, S. Pan, L. T. May, and G. I. Webb
+(2024)
+Physicochemical graph neural network for learning protein-ligand interaction fingerprints from sequence data
+.
+Nat. Mach. Intell.
+6
+,
+pp. 673–687
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[24]
+H. Lai, L. Wang, R. Qian, J. Huang, P. Zhou, G. Ye, F. Wu, F. Wu, X. Zeng, and W. Liu
+(2024)
+Interformer: an interaction-aware model for protein-ligand docking and affinity prediction
+.
+Nature Communications
+15
+,
+pp. 10223
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[25]
+T. Lan, S. Su, P. Ping, G. Hutvagner, T. Liu, Y. Pan, and J. Li
+(2024)
+Generating mutants of monotone affinity towards stronger protein complexes through adversarial learning
+.
+Nat. Mach. Intell.
+6
+,
+pp. 315–325
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[26]
+T. Liu, L. Hwang, S. K. Burley, C. I. Nitsche, C. Southan, W. P. Walters, and M. K. Gilson
+(2025)
+BindingDB in 2024: a FAIR knowledgebase of protein-small molecule binding data
+.
+Nucleic Acids Research
+53
+(
+D1
+),
+pp. D1633–D1644
+.
+Cited by:
+Main
+.
+[27]
+Z. Liu, Y. Li, L. Han, J. Li, J. Liu, Z. Zhao, W. Nie, Y. Liu, and R. Wang
+(2015)
+PDB-wide collection of binding data: current status of the PDBbind database
+.
+Bioinformatics
+31
+,
+pp. 405–412
+.
+Cited by:
+Main
+,
+Main
+,
+Construction of
+BioVista
+.
+[28]
+M. Lombard, J. Snyder-Duch, and C. C. Bracken
+(2002)
+Content analysis in mass communication: assessment and reporting of intercoder reliability
+.
+Hum. Commun. Res.
+28
+(
+4
+),
+pp. 587–604
+.
+Cited by:
+Construction of
+BioVista
+.
+[29]
+D. M. Lowe, P. T. Corbett, P. Murray-Rust, and R. C. Glen
+(2011)
+Chemical name to structure: OPSIN, an open source solution
+.
+Journal of Chemical Information and Modeling
+51
+,
+pp. 739–753
+.
+External Links:
+Link
+Cited by:
+Chemical-Structure-Grounded Visual Semantic Reasoning
+.
+[30]
+Z. Lu, G. Song, H. Zhu, C. Lei, X. Sun, K. Wang, L. Qin, Y. Chen, J. Tang, and M. Li
+(2025)
+DTIAM: a unified framework for predicting drug-target interactions, binding affinities and drug mechanisms
+.
+Nature Communications
+16
+,
+pp. 2548
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[31]
+A. Mastropietro, G. Pasculli, and J. Bajorath
+(2023)
+Learning characteristics of graph neural networks predicting protein-ligand affinities
+.
+Nat. Mach. Intell.
+5
+,
+pp. 1427–1436
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[32]
+L. Morin, V. Weber, G. I. Meijer, F. Yu, and P. W. J. Staar
+(2024)
+PatCID: an open-access dataset of chemical structures in patent documents
+.
+Nature Communications
+15
+,
+pp. 6532
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[33]
+M. Reutlinger, C. P. Koch, D. Reker, N. Todoroff, P. Schneider, T. Rodrigues, and G. Schneider
+(2013)
+Chemically advanced template search (CATS) for scaffold-hopping and prospective target prediction for ‘orphan’ molecules
+.
+Mol. Inform.
+32
+,
+pp. 133–138
+.
+External Links:
+Link
+Cited by:
+QSAR Models Training
+.
+[34]
+D. Rogers and M. Hahn
+(2010)
+Extended-connectivity fingerprints
+.
+Journal of Chemical Information and Modeling
+50
+,
+pp. 742–754
+.
+External Links:
+Link
+Cited by:
+QSAR Models Training
+.
+[35]
+D. Rolnick, A. Veit, S. Belongie, and N. Shavit
+(2017)
+Deep learning is robust to massive label noise
+.
+arXiv preprint arXiv:1705.10694
+.
+External Links:
+Link
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[36]
+V. G. Satorras, E. Hoogeboom, and M. Welling
+(2021)
+E(n) equivariant graph neural networks
+.
+In
+Proc. 38th Int. Conf. on Machine Learning
+,
+Vol.
+139
+,
+pp. 9323–9332
+.
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[37]
+P. M. Shah, H. Zhu, Z. Lu, K. Wang, J. Tang, and M. Li
+(2025)
+DeepDTAGen: a multitask deep learning framework for drug-target affinity prediction and target-aware drugs generation
+.
+Nature Communications
+16
+,
+pp. 5021
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[38]
+E. S. Simmons
+(2003)
+Markush structure searching over the years
+.
+World Patent Information
+25
+,
+pp. 195–202
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[39]
+N. Smith, X. Yuan, C. Melissinos, and G. Moghe
+(2025)
+FuncFetch: an LLM-assisted workflow enables mining thousands of enzyme–substrate interactions from published manuscripts
+.
+Bioinformatics
+41
+,
+pp. btae756
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[40]
+B. Song, F. Li, Y. Liu, and X. Zeng
+(2021)
+Deep learning methods for biomedical named entity recognition: a survey and qualitative comparison
+.
+Brief. Bioinform.
+22
+(
+6
+),
+pp. bbab282
+.
+Cited by:
+Main
+.
+[41]
+M. Su, Q. Yang, Y. Du, G. Feng, Z. Liu, Y. Li, and R. Wang
+(2018)
+Comparative assessment of scoring functions: the CASF-2016 update
+.
+Journal of Chemical Information and Modeling
+59
+,
+pp. 895–913
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[42]
+K. V. Swanson, M. Deng, and J. P.-Y. Ting
+(2019)
+The NLRP3 inflammasome: molecular activation and regulation to therapeutics
+.
+Nature Reviews Immunology
+19
+,
+pp. 477–489
+.
+External Links:
+Link
+Cited by:
+Main
+,
+NLRP3 Inflammasome Bioactivity Data Collection
+.
+[43]
+R. Theisen, T. Wang, B. Ravikumar, R. Rahman, and A. Cichońska
+(2024)
+Leveraging multiple data types for improved compound-kinase bioactivity prediction
+.
+Nature Communications
+15
+,
+pp. 7596
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[44]
+Uni-Parser Team
+(2025)
+MolDetv2: a smaller, faster, and more powerful molecular detection model
+.
+Hugging Face
+,
+pp.
+https://huggingface.co/UniParser/MolDetv2
+.
+Cited by:
+Chemical-Structure-Grounded Visual Semantic Reasoning
+.
+[45]
+M. Varadi, D. Bertoni, P. Magana, U. Paramval, I. Pidruchna, M. Radhakrishnan, M. Tsenkov, S. Nair, M. Mirdita, J. Yeo,
+et al.
+(2024)
+AlphaFold Protein Structure Database in 2024: providing structure coverage for over 214 million protein sequences
+.
+Nucleic Acids Research
+52
+(
+D1
+),
+pp. D368–D375
+.
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[46]
+J. Velcicky, P. Janser, N. Gommermann, S. Brenneisen, S. Ilic, E. Vangrevelinghe, N. Stiefl, A. Boettcher, C. Arnold, C. Malinverni, J. Dawson, R. Murgasova, S. Desrayaud, K. Beltz, A. Hinniger, C. Dekker, C. J. Farady, and A. Mackay
+(2024)
+Discovery of potent, orally bioavailable, tricyclic NLRP3 inhibitors.
+.
+J. Med. Chem.
+67
+,
+pp. 1544–1562
+.
+External Links:
+Link
+Cited by:
+NLRP3 Inhibitor Screening
+.
+[47]
+P. Velickovic, G. Cucurull, A. Casanova, A. Romero, P. Lio’, and Y. Bengio
+(2018)
+Graph attention networks
+.
+In
+Proc. 6th Int. Conf. on Learning Representations
+,
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[48]
+B. Wang, C. Xu, X. Zhao, L. Ouyang, F. Wu, Z. Zhao, R. Xu, K. Liu, Y. Qu, F. Shang, B. Zhang, L. Wei, Z. Sui, W. Li, B. Shi, Y. Qiao, D. Lin, and C. He
+(2024)
+MinerU: an open-source solution for precise document content extraction
+.
+arXiv preprint arXiv:2409.18839
+.
+Cited by:
+Overview of
+BioMiner
+.
+[49]
+Z. Xiong, D. Wang, X. Liu, F. Zhong, X. Wan, X. Li, Z. Li, X. Luo, K. Chen, H. Jiang, and M. Zheng
+(2020)
+Pushing the boundaries of molecular representation for drug discovery with the graph attention mechanism.
+.
+J. Med. Chem.
+63
+,
+pp. 8749–8760
+.
+External Links:
+Link
+Cited by:
+Automated Collection of Large-scale Bioactivity Data for Model Training
+.
+[50]
+Q. Ye, C. Hsieh, Z. Yang, Y. Kang, J. Chen, D. Cao, S. He, and T. Hou
+(2021)
+A unified drug–target interaction prediction framework based on knowledge graph and recommendation system
+.
+Nature Communications
+12
+,
+pp. 6775
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[51]
+B. Zdrazil, E. Felix, F. Hunter, E. J. Manners, J. Blackshaw, S. Corbett, M. de Veij, H. Ioannidis, D. M. Lopez, J. F. Mosquera,
+et al.
+(2024)
+The ChEMBL Database in 2023: a drug discovery platform spanning multiple bioactivity data types and time periods
+.
+Nucleic Acids Research
+52
+(
+D1
+),
+pp. D1180–D1192
+.
+Cited by:
+Main
+.
+[52]
+Z. Zhang, J. Yan, Y. Huang, Q. Liu, E. Chen, M. Wang, and M. Zitnik
+(2025)
+Structure-based drug design with geometric deep learning: a comprehensive survey
+.
+ACM Computing Surveys
+58
+,
+pp. 1–35
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[53]
+Z. Zhang, W. X. Shen, Q. Liu, and M. Zitnik
+(2024)
+Efficient generation of protein pockets with PocketGen
+.
+Nat. Mach. Intell.
+6
+,
+pp. 1382–1395
+.
+External Links:
+Link
+Cited by:
+Main
+.
+[54]
+Z. Zheng, O. Zhang, C. Borgs, J. T. Chayes, and O. M. Yaghi
+(2023)
+ChatGPT chemistry assistant for text mining and the prediction of MOF synthesis
+.
+Journal of the American Chemical Society
+145
+(
+32
+),
+pp. 18048–18062
+.
+Cited by:
+Main
+.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from
+        our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+Major funding support from

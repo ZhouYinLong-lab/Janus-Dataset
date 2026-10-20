@@ -1,0 +1,313 @@
+# Abstract
+AbstractSolid-state synthesis is widely used to obtain various inorganic materials, such as battery materials and bulk thermoelectrics. Despite its prevalence, the process remains challenging due to the lack of a general theory and well-understood underlying reaction mechanisms. While prior works have successfully extracted structured datasets from literature, they often neglect product phase purity or yield. In this work, we construct a solid-state synthesis dataset consisting of 80,806 syntheses extracted with a large language model (LLM), including 18,869 reactions with impurity phase(s). Our dataset not only validates expected thermodynamic trends for impurity phase formation but also identifies challenging cases where impurity phases emerge even when the target phase is significantly more stable.Subject terms: Materials science, Cheminformatics
+
+
+## Background & Summary
+
+P0003: Solid-state synthesis is widely used to produce various targets including battery materials and nanomaterials1. Despite its widespread application, theories for synthesis are still developing and are not yet fully unified under a general framework2,3. The formation of a compound typically requires an interplay of thermodynamic driving force, diffusion, and other transport phenomena across multiple interfaces3–5.
+
+P0012: In the quest for improved understanding and control of these multi-step, multi-variable reactions, data-driven strategies have gained considerable momentum. The quantity and quality of available data can be the deciding factor in the success of machine learning (ML) models6. Crystal structure and energy representation have benefitted tremendously from the development of both experiment-based7 and computation-based8 databases. While these databases serve as invaluable resources, providing large volumes of structured materials data, their coverage of synthesis details remains limited.
+
+P0019: Recent advances in ML offer promising avenues for tackling the complexities of solid-state synthesis. In particular, learned representations (embeddings) of materials from the literature have led to new pathways for materials discovery9–11. Progress in machine-learned interatomic potentials12 has further enabled highly accurate energy calculations of crystal structures, with some models demonstrating the ability to generate structures13,14 that are experimentally realized via high-throughput autonomous synthesis15–17.
+
+P0031: Previous studies have successfully derived structured datasets from existing literature. Extracting structured datasets from existing literature offers distinct advantages over other databases due to its expansive and customizable scope. Kononova et al. have extracted a dataset of 19,488 solid-state syntheses18. This motivated several studies including target stoichiometry prediction19, reaction pathway predictions20,21, precursor and synthesis condition recommendations22–24. Building on the broader interest in synthesis, Wang et al. compiled a large dataset of solution-based reactions25. Although literature-based datasets have been noted to exhibit human-driven bias26,27, these datasets have proven highly valuable as consolidated experimental datasets, serving as effective validation sets for theory-based prediction models20,21.
+
+P0051: However, one major bottleneck in applying data-driven methods to real-world syntheses is the lack of negative data - i.e., records of “failed” or phase-impure experiments. In the literature, such syntheses are rarely highlighted, which can introduce bias into our understanding of reaction mechanisms and limit the predictive power of ML models28. While truly “failed” reactions are rarely reported, we focus in this paper on reactions that produce undesired byproducts or “impurity phases” (also referred to as “secondary phases” or “minor phases”) along with the target phase in solid-state synthesis, as these minor phases can contain valuable information of the reaction pathway that was taken.
+
+P0054: Minor deviations in synthesis conditions can trigger the formation of impurity phases during inorganic syntheses. As an example, in the synthesis of the multiferroic BiFeO3, its narrow thermodynamic stability range and the volatility of bismuth frequently result in the formation of parasitic phases of Bi2Fe4O9 and Bi25FeO40 as impurity phases29–32. Similarly, the fabrication of the thin-film Cu2ZnSnS4 often leads to competing phases including ZnS, Cu2S, SnS2, and Cu2SnS3 which are known to be detrimental to its device performance33,34.
+
+P0073: Recently, Thway et al. presented a case study of 82 ternary chalcogenide syntheses, incorporating phase purity and leveraging ChatGPT to process 168 relevant papers35. This work also trained a decision tree classifier using a dataset of 168 papers with 61.5% test accuracy on the formation of impurity phases, highlighting the scientific possibilities of such datasets. In this work, we construct a structured solid-state synthesis dataset of 80,806 solid-state syntheses, featuring 18,869 reactions that explicitly report impurity phase(s). This approach aims to fill the gap left by conventional literature mining efforts and further pave the way for more robust data-driven approaches in elucidating solid-state synthesis routes.
+
+
+## Methods
+
+P0079: The recipe extraction pipeline is described in Fig. 1. The final dataset includes 80,806 reported solid-state synthesis reactions, 18,869 with impurity phases, and 61,937 without reported impurity phase. For enhanced precision, we excluded publications using multiple synthesis protocols.
+
+P0084: Schematics of solid-state synthesis extraction pipeline. The right panel shows an example of processing a recipe paragraph using simplified ChatGPT prompts. The paper portion consists of the abstract, solid-state synthesis paragraph(s), results, and discussion sections. Products refer to the target phase and, if present, any impurity phases. The full descriptions of the prompts are in Supplementary Information. The example paper portion is adopted from XG Cao et al., J. Mater. Chem. A, 2, 20739-20747 (2014)67.
+
+
+## Content Acquisition
+
+P0094: We started from a literature database of 8.4 million publications sourced from the following publishers (retrieved as XML files), in a similar fashion to the methods in Kononova et al.18:
+
+P0100: American Chemical Society (2000–2020)
+
+P0102: American Institute of Physics (2000–2023)
+
+P0104: American Physical Society (2000–2020)
+
+P0106: Elsevier (2000–2023)
+
+P0108: Institute of Physics (2000–2024)
+
+P0110: Springer Nature (2000–2024)
+
+P0112: The Royal Society of Chemistry (2000–2023)
+
+P0114: Wiley (2000–2020)
+
+P0115: For publishers with broader topic distributions (e.g., Elsevier) we manually confined our initial search for papers related to journals related to materials science, engineering, physics, chemistry, and other topics that would cover inorganic synthesis. Papers were gathered via dedicated publisher API, secure file transfer protocol (SFTP), or direct web scraping with Scrapy-based tools (https://www.scrapy.org/). We only gathered papers from 2000 and after since those are commonly provided as HTML/XML and parsing PDFs via OCR is difficult for scientific papers. The articles were parsed into a machine readable format using the Beautiful Soup package (https://beautiful-soup-4.readthedocs.io/en/latest/). The papers and their parsed contents are stored across internally maintained MongoDB collections (https://www.mongodb.com/). GitHub repositories are available containing relevant code for scraping (https://github.com/kevcruse96/Borges) and parsing (https://github.com/kevcruse96/LimeSoup) according to each publisher. We also share the DOI list of all the publications in the literature database (https://github.com/slee-lab/solid-state-recipes-with-impurity).
+
+
+## Recipe Paragraph Classification
+
+P0124: We collected solid-state synthesis paragraphs using a machine-learned paragraph classifier. Based on our previous work18, we manually determined a list of keywords that appear in the section headings of synthesis paragraphs (“preparation”, “prepared”, “experiment”, “method”, “material”, “synthes”). To save computing resources, we designed a regular-expression-based filter to screen for synthesis paragraphs using these keywords. Out of a total of 292M paragraphs, we filtered out 233.5M as non-synthesis. We then applied a MatBERT10 classifier to the remaining 58.5M paragraphs, classifying each (using a batch size of 16) into one of the following five classes: solid-state, sol-gel, precipitation, hydrothermal, and something else. MatBERT identified 145K solid-state synthesis paragraphs; we then aggregated at the paper level, selecting papers containing one or more solid-state synthesis paragraphs and no paragraphs labeled as other classes. We applied an additional filtering step to remove paragraphs with scores below 0.8, thereby improving the reliability of the extracted data.
+
+
+## Recipe Extraction and Labeling
+
+P0131: For each solid-state synthesis paper, only relevant portions (abstract, synthesis paragraphs, results and discussions) are collected using the section headings. Introduction and conclusion sections are discarded as they often involve repeated information or discuss synthesis processes and results of the previous works.
+
+P0132: Next, the reactions (precursors, targets, and impurity phases) are extracted using few-shot LLM36,37(gpt-4o-2024-05-13 with temperature = 0) using OpenAI API. The example input and output are demonstrated in Fig. 1. The full prompts and configuration used are described in Supplementary Information. The validation of the reaction extractor is described in Technical Validation.
+
+P0138: The dataset is then post-processed and labeled with additional features. The raw LLM output string gets parsed to detect target, precursors and impurity phases, and duplicate reactions occurring within the same output (i.e., from one paper portion) are removed. Firstly, the materials were detected from the output string using MaterialParser, and reactions were balanced using ReactionBalancer18 consistent with Kononova et al. We introduced an additional filter for MaterialParser material detection by using LLM as a verifier for cases where the input string was different from the detected material formula (described further in Supplementary Information). An optional feature of mp_id was added by querying materials (target and impurity phases) formulas to the Materials Project (MP) and fetching mp_id of the most stable entry. Also, reaction conditions including mixing and heating conditions are extracted using synthesis action retriever38.
+
+
+## Data Records
+
+P0147: The dataset of 80,806 solid-state synthesis reactions is provided as a JSON file available at 10.6084/m9.figshare.3042327439. The data record format and content are described in Table 1. Each record corresponds to a solid-state synthesis reaction extracted from a publication with a DOI of the source publication. A reaction is described by the target reaction and impurity phase reaction(s), along with each material entity and synthesis operations. An example entry from the dataset is shown in Supplementary Information.
+
+
+TABLE: Table 1
+
+Data record format.
+
+Data Description | Data Key Label | Data Type
+
+DOI of the original paper | DOI | string
+
+Balanced target reaction | target_reaction | if not balanced, blank list; if balanced, list of dicts:
+
+- left: list of {material: string, amount: float}
+
+- right: list of {material: string, amount: float}
+
+Balanced side reactions for impurity phase | impurity_phase_reaction | list of dicts, same as target_reaction
+
+Target material | target | list of dicts:
+
+- material_string: string
+
+- material_formula: string or None
+
+- composition: list of {formula: string, elements: {element: amount of element}, amount: string}
+
+- additives: list of strings
+
+- element_vars: {var: list of strings}
+
+- amounts_vars: {var: list of dicts}
+
+- oxygen_deficiency: boolean
+
+- mp_id: string
+
+Impurity phase | impurity_phase | list of dicts (See target)
+
+Precursor materials | precursors | list of dicts (See target)
+
+Synthesis conditions extracted from the paper | conditions_forDOI | list of dicts:
+
+- token: string
+
+- type: string
+
+- heating_temperature: {value: float, unit: string}
+
+- heating_time: {value: float, unit: string}
+
+- heating_atmosphere: list of strings
+
+- mixing_device: list of strings
+
+- mixing_media: list of strings
+
+P0155: Data record format.
+
+
+## Data Overview
+
+P0228: The top 8 common reactions and corresponding impurity phases in the phase-impure dataset are summarized in Table 2. BiFeO3 (BFO), a room-temperature multiferroic, is challenging to synthesize as a single phase29–32,40 due to formation of Bi2Fe4O9 and Bi25FeO3941 at elevated temperatures, and the formation of such phases is also known to be sensitive to synthesis conditions including (precursor) impurities42. In our dataset, BFO is the most prevalent target in the phase-impure syntheses, while interestingly, it is also frequently present in the phase-pure dataset.
+
+
+TABLE: Table 2
+
+Most common reactions with impurity phases.
+
+Reactions (Fraction pure) | Impurity phases
+
+0.5 Bi2O3 + 0.5Fe2O3 → BiFeO3 (107 / 221) | Bi25FeO40 + Bi2Fe4O9(18)
+
+unspecified(18)
+
+Bi2Fe4O9(17)
+
+Bi25FeO39 + Bi2Fe4O9(16)
+
+Bi25FeO40(6)
+
+CaCO3 + 3CuO + 4TiO2 → CaCu3Ti4O12 + CO2(119/179) | unspecified (15)
+
+CaTiO3 + CuO(7)
+
+Cu2O + CuO(5)
+
+2BaCO3 + 3CuO + 0.25O2 + 0.5Y2O3 → YBa2Cu3O7 + 2CO2(91/138) | unspecified(22)
+
+Y2BaCuO5(8)
+
+2C + Si + 3Ti → Ti3SiC2 (26 / 71) | TiC(16)
+
+SiC + TiC(6)
+
+unspecified(6)
+
+BaCO3 + TiO2 → BaTiO3 + CO2 (258 / 302) | Ba2TiO4(9)
+
+unspecified(6)
+
+Al + 2C + 3Ti → Ti3AlC2 (52 / 91) | (14)
+
+unspecified(9)
+
+Al2O3 + MgO → MgAl2O4 (83 / 121) | (21)
+
+2Li2CO3 + 5TiO2 → Li4Ti5O12 + 2CO2 (117 / 146) | TiO2(12)
+
+unspecified(8)
+
+Li2TiO3 + TiO2(5)
+
+P0247: Most common reactions with impurity phases.
+
+P0374: CaCu3Ti4O12 (CCTO), was recognized in 2000 for its “giant” dielectric constant, making it a desirable candidate for capacitor applications43,44. Such large permittivity is widely attributed to be from a grain boundary internal barrier layer capacitance (IBLC)45, which is sensitive to microstructural features such as grain size46. However, the synthesis of single crystal CCTO is often challenging due to the appearance of tenorite (CuO) as an impurity phase, which has been reported in both stoichiometric and Cu-deficient conditions47. Interestingly, Marchin et al. found in their coprecipitation synthesis that an excess CuO in the calcined powder led to increased grain size upon sintering -ultimately enhancing the effective permittivity48.
+
+P0390: Another notable material, YBa2Cu3Ox (YBCO) is a high-temperature superconductor, discovered in 1987 and synthesized through a solid-state method with heating at 930 ° C for 1 day49,50. However, phase-pure synthesis of YBCO via conventional solid-state synthesis is known to be challenging due to slow diffusion and potential impurity phases51,52.
+
+P0401: Ti3SiC2, Ti3AlC2 and Cr2AlC are MAX phases that exhibit both metallic and ceramic properties53. These phases demonstrate high electrical and thermal conductivity, along with excellent corrosion resistance. The synthesis reactions of Ti3AlC2 in our dataset highlights the crucial role of precursor selection in determining phase purity. When using elemental precursors Al + C + Ti, Ti3AlC2 was synthesized both phase-pure (52 data points) and phase-impure (39), with 4 data points that form TiC + Ti2AlC impurity phases (see Table S3). This suggests that while the elemental route is viable, impurity phase formation is likely. In contrast, starting with the compound precursors of Ti2AlC + TiC markedly favors the production of phase-pure Ti3AlC2, observed in 32 phase-pure data points. Although there are 2 phase-impure data points using this route, these had impurity phases of only unreacted TiC precursor. The predominance of pure phases with compound precursors implies that pre-formed carbides create a more controlled synthesis pathway, effectively minimizing the formation of additional phases.
+
+P0418: Interestingly, we observed a considerable amount of cases where the impurity phases consisted of unreacted precursors. Li4Ti5O12 spinel is a battery material used both as cathode and anode material54, and 14 out of 29 datapoints in the phase-impure dataset had TiO2 as one of the impurity phases. Documenting these unreacted precursors is particularly valuable, as it can easily be an indicator of whether a given reaction has reached completion under the reported conditions. For instance, the presence of unreacted precursors can pinpoint specific bottlenecks in reaction kinetics, such as insufficient diffusion or driving force that hinders a synthesis pathway. Beyond serving as an indicator, these synthesis data points can guide subsequent optimization efforts for autonomous labs.
+
+P0425: We further investigated reactions in which impurity phases include unreacted precursors more frequently. Table S4 shows reactions with the fraction of reactions with unreacted precursors higher than 0.39, and Table S5 shows precursors that are more or less likely to appear as impurity phases. TiC, for example, is a prominent precursor that is detected as an impurity phase in a majority of phase-impure data points of Al + Ti + 2TiC → Ti3AlC2 and Si+Ti+2TiC → Ti3SiC2.
+
+
+## Technical Validation
+
+
+## Validation of Recipe Paragraph Classifier
+
+P0434: To evaluate the performance of the paragraph classification pipeline, we constructed a stratified validation dataset consisting of 480 paragraphs with manually evaluated class labels. We randomly sampled 10 paragraphs for each of 8 publishers across 6 classes: solid-state, sol-gel, hydrothermal, precipitation, something else (determined by MatBERT), and filtered out (determined by a keyword filter). The dataset was balanced by publisher and class label. Two materials science PhD candidates then independently annotated the sampled paragraphs, agreeing on the labels for 429 out of 480 paragraphs (89%). The ground truth for the class labels was subsequently determined through discussion of the annotators until an agreement was reached. Human annotator 1 matched the ground truth for 446 paragraphs (93%), human annotator 2 for 459 paragraphs (96%), and the MatBERT classifier matched the ground truth for 412 paragraphs (86%). Finally, for all 6 classes, we built a confusion matrix comparing the ground truth with the classifier predictions to calculate recall and precision. MatBERT achieved a precision of 0.84 and a recall of 0.97 for solid-state synthesis classification, as shown in Table 3. Further details on the validation and the confusion matrix (Figure S1) are provided in the Supplementary Information.
+
+
+TABLE: Table 3
+
+Evaluation metrics of recipe extraction. For reaction extraction (target, precursors, and impurity phases), a validation set was randomly pulled from 116K SS synthesis papers and annotated.
+
+Entity | Method | Precision | Recall | F1 score | Support (TP+FN)
+
+Recipe Classifier: solid-state synthesis | MatBERT | 0.84 | 0.97 | 0.90 | 80
+
+Targets | GPT4o + post-process | 0.90 | 0.69 | 0.78 | 83
+
+Precursors | GPT4o + post-process | 0.95 | 0.97 | 0.96 | 179
+
+Impurity phases | GPT4o + post-process | 0.86 | 0.90 | 0.88 | 21
+
+P0441: Evaluation metrics of recipe extraction. For reaction extraction (target, precursors, and impurity phases), a validation set was randomly pulled from 116K SS synthesis papers and annotated.
+
+
+## Validation of Reaction Extractor
+
+P0482: To assess the accuracy of the reaction extraction pipeline, we first randomly sampled 78 paper portions from 116K solid-state synthesis papers. These were manually annotated, yielding a total of 98 reactions from 59 paper portions, with each reaction containing a target, precursors, and impurity phases if reported. The remaining 19 paper portions were excluded from annotation due to various challenges to provide straightforward ground truth annotation using the established annotation schema. These include cases with ambiguous synthesis types or targets (e.g. glass synthesis), and cases requiring figures55 or tables56 to identify synthesis target composition or impurity phase formation.
+
+P0487: The validation dataset was then processed through the same recipe extraction and post-processing pipeline as the main dataset, as outlined in Fig. 1. During this step, one paper portion was removed due to a blank LLM output, and four others were excluded due to invalid GPT-4o output formats (e.g. missing closing bracket) hence filtered out in post-processing. After this screening process, the final validation dataset consisted of 83 reactions from 54 paper portions.
+
+P0489: To evaluate extraction performance, we computed micro-averaged precision, recall, and F1 scores of the final validation dataset for three reaction entity types: target materials, precursors, and impurity phases. Ground truth annotations were first matched to extracted reactions based on target material formulas. If an annotated paper portion contained three reactions with targets A, B, and C, but the extraction produced two reactions with targets A and D, this was recorded as one true positive (A), one false positive (D), and two false negatives (B, C).
+
+P0490: Once reactions were matched, extracted precursors and impurity phases were compared against their ground-truth annotations. For example, in a reaction extracted from Kim et al.57, the model identified the target material of '(1-x)NdAlO3-xCaTiO3', with precursors ['Nd2O3', 'Al2O3', 'CaCO3', 'TiO2'], and impurity phases as ['Nd4Al2O9', 'Al-rich phase']. The ground-truth annotation for this reaction listed the same target and precursors but included only ['Nd4Al2O9'] as an impurity phase. Based on this comparison, the precursor extraction records four true positives, while impurity phase extraction records one true positive and one false positive. These counts were aggregated across all reactions to compute micro-averaged precision, recall, and F1 scores, as shown in Table 3.
+
+P0495: Overall, our extraction pipeline achieved F1 scores above 0.78; metrics can further increase when filtering by labels - for instance, impurity phase F1 increases from 0.88 to 0.93 when using only balanced reactions. Despite the inherent complexity of capturing long-range context-dependent features, these results underscore the reliability of our approach in straightforward scenarios.
+
+P0496: The few-shot GPT-4o achieved high precision (0.86–0.95) overall, despite frequent challenges such as long-range linking, since impurity phase information is often reported in the discussion section rather than within the recipe itself. We also observed promising cases where the model correctly captured negative or preventive statements, for example: “procedure A was conducted to prevent phase B formation” and “phases C and D are commonly known to form...”. These instances indicate that large language models can indeed recognize and extract deeper contextual clues about undesired phases and their mitigation strategies.
+
+
+## Coverage of the dataset
+
+P0499: Figure 2 shows the coverage of the dataset in ternary compound target systems. For oxides, there is a clear cluster of high-density data (both red and blue) in the transition metal (Ti, V, Cr, Mn, Fe, Co, Ni) and alkali and alkaline earth elements, suggesting these are among the most extensively studied and synthesized ternary systems. This is expected given their technological importance in areas such as batteries and catalysis.
+
+P0504: Ternary compound targets in the phase-impure/pure dataset. The lower left triangle shows oxides, while the upper right triangle includes ternary compounds where only two of the elements in the fixed elements set (shown in the axis) are present, excluding those containing all three.
+
+P0508: Overall, the presence of both phase-pure (blue in Fig. 2) and phase-impure (red) in most cells suggests that achieving phase purity can be challenging even in well-studied systems. As an example, the La-Ti-O system has 47 phase-pure and 12 phase-impure reactions. While the reaction La2O3 + 2TiO2 → La2Ti2O7 is mostly phase pure, with 96% of reactions yielding a pure phase (Table S1), the 12 phase-impure reactions consist of cases involving alternative precursors, such as La2(CO3)3, or different target compounds, such as La2TiO5. On the other hand, some systems such as Y-Nb-O and Mo-Cs-O have no phase-impure reactions but only phase-pure reactions (39 and 12 reactions respectively), indicating better synthetic control.
+
+
+## Thermodynamic driving force for impurity phase formation
+
+P0541: Thermodynamic analyses often rely on the concept of energy above hull (Ehull) to assess the synthesizability of a compound. A material with zero energy above hull is predicted to be stable, while values slightly above zero typically indicate metastable compounds that may still be experimentally synthesizable, though this correlation has been shown to be necessary but not sufficient to guarantee possible synthesis58. The Ehull has proven useful in high-throughput computational materials design. However, the accuracy of first-principles energy calculations can be limited by factors such as exchange-correlation functionals (e.g. GGA59, r2SCAN60) and temperature-dependent entropy corrections61.
+
+P0555: To verify the quality of the phase-impure reactions data, we collected 6,542 reactions that have specified impurity phase and balanced target reactions, from 18,869 phase-impure syntheses. Then, we screened for 3,267 reactions in which all materials (i.e. precursors, target, and any reported impurity phases) could be mapped to entries in the Materials Project (MP) database with GGA/GGA+U calculations8. Figure 3 shows the distribution of Ehull of the target phase and the impurity phase for those 3,267 reactions. In roughly 31% of pairs, the impurity phase has lower Ehull than the target, implying a straightforward thermodynamic explanation for why impurity phases formed. However, 15% of the reactions show the impurity phase having a higher Ehull than the target, yet it still appears experimentally. Moreover, 1,752 reactions have both target and impurity phases on the convex hull (Ehull = 0), underscoring the limitation of relying solely on Ehull to predict reaction outcomes. Further analysis beyond Ehull is in Supplementary Information (Figure S2).
+
+P0575: Histogram of difference in energies above hulls in target-impurity pairs in phase-impure synthesis dataset (log-scaled). Target and impurity phase material formulas were queried to Materials Project to fetch energy above hull. Four outliers were manually checked and filtered out.
+
+P0579: The utility of the literature-mined dataset must be considered in light of two fundamental challenges. First, as Raccuglia et al. demonstrated, published literature typically omits failed experiments, creating a systematic bias toward successful outcomes28. These “dark reactions" of unsuccessful attempts, though valuable for understanding synthesis parameters, often remain buried. Second, as highlighted in Jia et al., researchers tend to explore confined regions of synthesis space rather than sampling randomly, leading to potentially overlooked opportunities in unexplored parameter regions26.
+
+P0586: Our dataset of 80,806 solid-state syntheses, including 18,869 with reported impurity phases, provides unique value in addressing these challenges. The inclusion of phase-impure syntheses is particularly significant as “failed” phase-pure syntheses. This allows immediate cross-validation of any given synthesis recipe against multiple reported attempts, including both successful and unsuccessful outcomes, providing a more complete picture of synthesis reproducibility.
+
+P0587: This dataset enables three key applications. First, when multiple groups report consistent phase-pure outcomes for a particular synthetic route (as shown in Table S1), researchers can confidently “exploit” these reproducible recipes and extract general principles for successful synthesis. Second, when different groups report conflicting outcomes under seemingly identical conditions (as shown in some examples like BFO in Table 2), it suggests the presence of critical but hidden variables that necessitate further investigation. These discrepancies can guide focused studies to identify and understand undocumented factors affecting phase purity. Third, by mapping the documented synthesis space, our dataset reveals regions where exploration has been limited by anthropogenic bias. Also shown in an example of gold nanoparticle synthesis62, these gaps represent opportunities for systematic investigation beyond conventional parameter ranges, potentially leading to the discovery of rarely used precursor sets, or added protocols in mixing or heating, ultimately for improved understanding of reaction mechanisms. This comprehensive view of both explored and unexplored synthesis space, combined with phase purity information, provides a foundation for more systematic and efficient materials synthesis development.
+
+
+## Supplementary information
+
+P0597: Supplementary Information for Text-mined dataset of solid-state syntheses with impurity phases using Large Language Model
+
+
+## Acknowledgements
+
+P0600: This work was intellectually led by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, Materials Sciences and Engineering Division under Contract No. DE-AC02-05CH11231 (D2S2 program KCD2S2). This research used resources of the National Energy Research Scientific Computing Center (NERSC), a Department of Energy Office of Science User Facility supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC02-05CH11231 using NERSC award BES-ERCAP0028631. We thank Olga Kononova, Haoyan Huo, Tanjin He, Ziqin Rong, Tiago Botari, Wenhao Sun and Vahe Tshitoyan for creating the source database. We thank Anna Sackmann, Rachael Samberg, and Timothy Vollmer (Science Data and Engineering Librarians at UC Berkeley) for assistance in obtaining Text and Data Mining agreements with the relevant publishers.
+
+
+## Author contributions
+
+P0603: S.L. developed the recipe extraction pipeline, analyzed the data and wrote the manuscript. K.C. curated the literature database, and developed parsers. V.B. deployed and validated the MatBERT paragraph classifier. G.C. supervised the project, and revised the manuscript. A.J. developed the approach, supervised the project, and revised the manuscript. All authors contributed in revising the manuscript.
+
+
+## Data availability
+
+P0606: The dataset is in a single JSON file that can be accessed in programming languages including Python. It is publicly available at 10.6084/m9.figshare.3042327439.
+
+
+## Code availability
+
+P0611: The code used to collect and process the dataset is available at https://github.com/CederGroupHub/text-mined-synthesis_public18. Additionally, the project used OpenAI API for inference using gpt-4o-2024-05-13, Qwen 2.563 using LBNL CBORG API (https://cborg.lbl.gov/) and other open libraries including pymatgen, mp-api, numpy, matplotlib, Synthesis Paragraph Classifier https://github.com/CederGroupHub/MatBERT-synthesis-classifier64, Synthesis Action Retrieval 10.5281/zenodo.638338065. The code used for post-processing LLM outputs and a tutorial are available at https://github.com/slee-lab/solid-state-recipes-with-impurity66.
+
+
+## Competing interests
+
+P0628: The authors declare no competing interests.
+
+
+## Footnotes
+
+P0633: Publisher’s note Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.
+
+
+## Supplementary information
+
+P0637: The online version contains supplementary material available at 10.1038/s41597-025-06222-y.
+
+
+## References
+
+
+## Associated Data
+
+
+## Supplementary Materials
+
+P1213: Supplementary Information for Text-mined dataset of solid-state syntheses with impurity phases using Large Language Model
+
+
+## Data Availability Statement
+
+P1216: The dataset is in a single JSON file that can be accessed in programming languages including Python. It is publicly available at 10.6084/m9.figshare.3042327439.
+
+P1219: The code used to collect and process the dataset is available at https://github.com/CederGroupHub/text-mined-synthesis_public18. Additionally, the project used OpenAI API for inference using gpt-4o-2024-05-13, Qwen 2.563 using LBNL CBORG API (https://cborg.lbl.gov/) and other open libraries including pymatgen, mp-api, numpy, matplotlib, Synthesis Paragraph Classifier https://github.com/CederGroupHub/MatBERT-synthesis-classifier64, Synthesis Action Retrieval 10.5281/zenodo.638338065. The code used for post-processing LLM outputs and a tutorial are available at https://github.com/slee-lab/solid-state-recipes-with-impurity66.

@@ -1,0 +1,571 @@
+## PDF page 1
+     Discourse-Wide Extraction of Assay Frames from the Biological
+                               Literature
+
+
+       Dayne Freitag              Paul Kalmar                 Eric Yeh
+      SRI International           SRI International           SRI International
+  9988 Hibert Street, Suite 203 9988 Hibert Street, Suite 203   333 Ravenswood Avenue
+  San Diego, CA 92131, USA  San Diego, CA 92131, USA  Menlo Park, CA 94025, USA
+  freitag@ai.sri.com  paul.kalmar@sri.com    yeh@ai.sri.com
+
+
+
+                Abstract                        targeting of a ﬁxed set of simpliﬁed, typically
+                                                   binary relations does justice neither to the com-
+  We consider the problem of populating                                                       plexity of information expressed in a typical sen-
+    multi-part knowledge frames from textual                                                       tence, nor to the biological processes under discus-
+    information distributed over multiple sen-                                                        sion. And the methodology places an emphasis on
+    tences in a document. We present a corpus                                                    pieces of information amenable to expression in
+    constructed by aligning papers from the                                                      individual sentences, leaving untouched informa-
+    cellular signaling literature to a collection                                                       tion that can be assembled only through traversal
+    of approximately 50,000 reference frames                                                    of multiple sentences.
+    curated by hand as part of a decade-long                                                      In this paper we address the problem of con-
+    project. We present and evaluate two ap-                                                       structing multi-slot knowledge frames from the
+    proaches to the challenging problem of re-                                                      technical literature on cellular signaling networks.
+    constructing these frames, which formal-                                          The frames in our study are a faithful representa-
+    ize biological assays described in the lit-                                                       tion of assays reported in this literature, called da-
+    erature. One approach is based on clas-                                                  tums, with only approximate localization to spe-
+    sifying candidate records nominated by                                                  ciﬁc textual regions. We have no one-to-one map-
+    sentence-local entity co-occurrence. In the                                                 ping between frames and sentences, no guaran-
+   second approach, we introduce a novel vir-                                                       tee that the slots of a frame co-occur in a single
+    tual register machine that traverses an arti-                                                     sentence, and no universal presentational conven-
+    cle and generates frames, trained on our                                                       tion governing the sequence of slot-relevant ex-
+    reference data.  Our evaluations provide                                                      pressions. Nevertheless, we seek to learn proce-
+    evidence that best performance in the task                                                  dures for populating frames in new documents.
+    ultimately hinges on an integration of in-                                                  Success in this endeavor would have signiﬁcant
+    formation distributed over multiple sen-                                                        practical impact.   If we can automate the sep-
+    tences.                                                      aration of experimental evidence from common
+                                            knowledge and speculation, we have the means
+1  Introduction
+                                                       to construct a high-quality biomedical resource of
+Biological event and relation extraction have been    use to both experimental and computational biolo-
+the focus of considerable study in recent years,    gists. Our efforts, for example, ultimately seek to
+resulting  in  the  availability of annotated  cor-   automate the maintenance and extension of high-
+pora (Kim et al., 2003; Pyysalo et al., 2007; Kim    ﬁdelity machine models of signaling pathways as-
+et al., 2008; Thompson et al., 2009). In the interest    sociated with Ras-driven human cancer.
+of replicability and progress on critical challenges,    We offer three contributions. First, we describe
+such resources typically decompose the hard prob-    a problem of clear biomedical signiﬁcance that in-
+lem of factual understanding into several simpler    volves synthesis of information distributed across
+problems, such as entity recognition, binary rela-    a document, one that poses pertinent challenges to
+tion detection, and co-reference resolution.           the current practice of machine reading. Second,
+  This methodology is subject to several  criti-   we describe and evaluate an approach (the frame
+cisms. The reliance on thorough annotation im-    classiﬁcation approach) that formalizes this prob-
+poses overheads that prevent rapid progress. The   lem as a binary classiﬁcation of frames nominated
+
+
+                                         15
+                Proceedings of the Biomedical NLP Workshop associated with RANLP 2017, pages 15–23,
+                                          Varna, Bulgaria, 8 September 2017.
+                                   https://doi.org/10.26615/978-954-452-044-1_003
+
+## PDF page 2
+by protein pairs co-occurring in sentences. We    that elaborates this idea.
+provide evidence that good performance on this                                            Our focus on multi-slot, multi-sentence factual
+problem requires attention to how entities are ref-                                                frames is reminiscent of early formulations of the
+erenced across a document, even in multiple doc-                                                  information extraction problem used in the Mes-
+uments, not just in the nominating sentence.  Fi-                                                 sage Understanding Conference (MUC) (Grish-
+nally, we describe and evaluate an approach (the                                      man and Sundheim, 1996; Chinchor et al., 1993).
+register machine approach) that attempts to correct                                           Over successive iterations of MUC, target frames
+deﬁciencies of the frame classiﬁcation approach,                                          became quite elaborate, similar in complexity to
+speciﬁcally its limiting reliance on sentence-local                                                     the datums we ultimately seek to populate. Many
+juxtaposition of frame slot elements.  This ap-                                                    of the tasks that the information extraction com-
+proach formalizes the frame extraction problem                                              munity views as canonical, including named entity
+as learning the best sequence of instructions for                                                      recognition, co-reference resolution, word sense
+frame generation through document traversal.                                                  disambiguation, and relation and event extrac-
+                                                            tion, were introduced as simpliﬁcations of the core
+2  Related Work                                                   frame-ﬁlling task in MUC6. The ﬁeld has since
+                                                       largely neglected the discourse-wide frame-ﬁlling
+Progress  in biomedical  information  extraction
+                                                     challenge.
+(BioIE) is measured against shared annotated cor-
+pora that decompose the problem into entity ex-     Of course, to take  it up again and address  it
+traction and sentence-level relation and event de-    with the latest machine learning techniques, we
+tection (Kim et al., 2003; Pyysalo et al., 2007;    require heuristics to align slot-level information
+Kim et al., 2008; Thompson et al., 2009).  The   found in reference frames to expressions in train-
+structure of these tasks has remained remarkably    ing sentences.  Using such heuristics, in combi-
+stable over the years, differing in some important    nation with structured ground-truth data, such as
+ways from the task addressed in this paper. Most    our collection of datums, is commonly referred
+notably, the canonical BioIE task is highly local-    to as distant supervision, an approach pioneered
+ized and mostly agnostic to discourse context. The   on a biomedical extraction problem (Craven and
+objective is to determine whether a single sen-   Kumlien, 1999).  Relatively little work has ap-
+tence expresses some event of interest–gene ex-    plied distant supervision to discourse-level extrac-
+pression, phosphorylation, regulation, etc.–and, if    tion problems. A counter-example is Reschke et
+so, what roles the entities appearing in the sen-     al. (2014), which addresses event extraction at
+tence play in the putative event. The “events” de-    the document level, attempting to populate event-
+tected in this fashion are divorced from their dis-    related Wikipedia “info boxes” with article source
+course context (modulo coreference resolution),    text.  The Reschke  et  al.   approach employs
+although some attention has been paid to epis-  SEARN (Daume III et al., 2009), a technique that
+temic qualiﬁcations, such as negations and spec-    reduces complex structured classiﬁcation prob-
+ulations (Kim et al., 2011). We have posed our-   lems into simpler sequence learning problems,
+selves a more focused task—extract the experi-   ﬁnding that it yields performance superior to sev-
+ments described in a paper—and are forced to do    eral strong baselines.
+without reliable sentence-level annotation.             Recently,  the problem of understanding ac-
+  There  is no doubt that our system must re-    counts of experiments in the biological  litera-
+spond to some of the same expressions that are    ture has been the focus of a small amount of
+addressed in some of these shared tasks. In par-    study (Dasigi et al., 2017; Burns et al., 2016). This
+ticular, the Genia Event Extraction Task (Kim   work, which springs from the same motivation and
+et  al., 2011) targets phosphorylation and regu-    shares some of the same data as our own, is largely
+lation events involving phosphorylation, among   concerned with modeling the discourse structure
+other things. Many of these event mentions are en-    of experimental narratives.  It is therefore largely
+countered in sections detailing experiments. Thus,   complementary to our work, which targets factual
+our task can be addressed in part through disam-    experimental details. Success in discourse model-
+biguation and assimilation of these events—which    ing promises to solve key problems that we face,
+were actually observed in experiments? In this pa-   such as the segmentation of the text into distinct
+per, we describe an approach to datum extraction    experiments.
+
+
+                                         16
+
+## PDF page 3
+                                                 cause ﬁgure captions and body sentences contain-
+                                                   ing ﬁgure references are on average relatively rich
+                                                       in information needed to populate the simpliﬁed
+                                             datums attached to corresponding ﬁgures.
+
+
+                                                                        1. Phosphorylation and activation of JAK1 and Stat6 are
+
+                                                                     essential for induction of Stat6 DNA binding activity. 2.
+ Figure 1: An annotated Pathway Logic datum.       To ascertain whether the decrease in Stat6 DNA binding
+
+                                                                         activity in the SOCS-1 stable transfectants was due to in-
+3  Problem                                                    hibition of JAK1 kinase activity, we immunoprecipitated
+                                                                     lysates from cells untreated or treated with IL-4 with Abs
+The Pathway Logic (PL) project pursues high-       to JAK1 or Stat6 and probed with Ab to phospho-tyrosine.
+ﬁdelity signaling pathway models centering on the       3.  Induction of JAK1 and Stat6 phosphorylation in the
+Ras family of proteins (Eker et al., 2004).  Part     SOCS-1 stable clones was reduced when compared with
+of the effort involves a manual curation of ex-      control (Fig. 3A), while induction in the SOCS-2 stable
+perimental results, which has resulted in approx-      clones (Fig. 3B) and in the SOCS-3 stable clones (Fig.
+imately 50K records, each containing a detailed     3C) was similar to that of controls. 4. To further conﬁrm
+formal representation of a reported experiment and       that SOCS-1 suppresses JAK1 activation, we measured
+its outcomes. Such records, called datums, retain      the IL-4-induced kinase activity of JAK1 in the SOCS-1
+pointers to the papers and ﬁgures from which they       stable clones by in vitro kinase assay.
+were derived.
+  Figure 1 displays a typical datum in its compact    Table 1:  Example sentences potentially express-
+formal syntax, highlighting the four key compo-    ing the key elements of a “phos” datum.
+nents: the assay, encoding the type of assay con-
+ducted (here, an in-vitro kinase activity assay); the      Table 1, which excerpts four contiguous sen-
+subject, the entity whose response was measured    tences (we have numbered them for convenience)
+(“Jnk1”); the treatment, the substance applied to   from a relevant article, renders this concrete, but
+the cellular environment (here, some member of    also illustrates some of the subtleties involved.
+the IL-1 family, either IL-1 alpha or IL-1 beta);   Our data notes two distinct phosphorylation assays
+and the change or experimental outcome. It should    in this passage, both linked to Sentence 3 (the only
+be apparent from the ﬁgure that the typical da-    sentence with ﬁgure references), corresponding to
+tum records many additional experimental details.    the subjects JAK1 and Stat6, respectively, each of
+We refer to the combination of these four ﬁelds,   which are phosphorylated (i.e., the change of the
+stripped of such qualiﬁers, as a simpliﬁed datum,   “phos” assay is “increased”) in response to IL-4
+and seek to reconstruct these 4-tuples in our exper-    (the treatment).
+iments.                                            This passage is abundant in evidence about the
+  Notable among the ﬁelds in Figure 1, is an en-    relevant experiments, but the information is dis-
+coding of the source of the datum, most frequently    tributed.  Sentences 1 and 3 both contain inﬂec-
+as a PubMed ID and ﬁgure reference. The datum    tions of “phosphorylate,” providing evidence that
+curator, not a computational linguist, found it most    a “phos” assay was conducted, but both lack the
+natural to localize datums to the ﬁgures display-    treatment IL-4, which is referenced in Sentences 2
+ing assay outcomes. As a consequence, we do not   and 4. Note that the “phosphorylate” sentences are
+have access to a simple procedure for identifying    rich in entities, potentially posing a combinatoric
+speciﬁc textual expressions for the various datum    discrimination problem. Ultimately, if we wish to
+elements. In fact, the data comes with no guaran-    extract the two target datums at Sentence 3, in-
+tee that such expressions are present at all.          formation about the experimental treatment must
+  However, after a manual review of a large num-   be pulled in from one of the adjacent sentences,
+ber of datums, we know that while some datums   and we must determine that exactly two datums
+are not adequately described in the text of anno-    are warranted.1
+tated articles, most are.  Furthermore, the align-
+                                                                     1Actually, a number of experimental variants are under
+ment of datums to ﬁgures enables weak localiza-                                                               discussion in this passage. These are captured the database
+tion of datum elements to individual sentences, be-     in supplementary records called “extras.” Extras are not the
+
+
+                                         17
+
+## PDF page 4
+  Whatever the textual evidence for datums in a    various sentence contexts. Thus, the word “pro-
+paper, our problem is essentially extraction at the    tein” corresponds to three distinct features: one
+level of documents. Formally, we are given a set    feature recording its frequency of occurrence be-
+of examples {⟨di, yi⟩}, in which di is a document    fore P1 in the set of sentences, between P1 and
+and yi is a set of tuples {⟨sij, tij, aij, cij⟩}, the el-   P2 (encountered in that order), between P2 and P1
+ements of each tuple representing subjects, treat-    (encountered in that order), and after P2, respec-
+ments, assay types, and observed changes, respec-     tively.
+tively. Assay and change values are drawn from    We also included and recorded a small perfor-
+closed classes, assays from the set of types rep-   mance beneﬁt from two non-lexical features. First,
+resented in the Pathway Logic knowledge base,    observing that datum protein pairs tend to be more
+and changes from the set {increased, decreased,    frequent than others, we deﬁned a feature that re-
+unchanged}.  Subjects and treatments are drawn    ﬂects the number of sentences in which a pair co-
+from the effectively open class of chemicals used    occurs. Second, we deﬁned indicator features that
+for experiments in the literature. In practice, they    reﬂect whether speciﬁc proteins ﬁll a subject or
+are usually proteins, and in our experiments these    treatment role anywhere in the training data.
+two slots take Uniprot IDs. Our extraction task in-      Admittedly, this approach suffers from certain
+volves inferring the correct set yi, given some di.     limitations, most obviously limited recall, as  it
+                                               can only distinguish datums whose subject and
+4  Approaches                                  treatment co-occur in a sentence—e.g., discard-
+                                                   ing some 40% of phosphorylation datums. And as
+We investigate two distinct approaches to  this
+                                                    noted, because the classiﬁcation problem is con-
+problem, the frame classiﬁcation approach and the
+                                                     ditioned on assay and change, we must learn a
+register machine approach. The ﬁrst is applica-
+                                                     separate classiﬁer for each observed assay-change
+ble only to subject-treatment pairs that co-occur in
+                                                 combination. This is tractable in practice, because
+individual sentences, while the second approach
+                                                     the number of frequently observed assay-change
+can in principle associate subjects and treatments
+                                                combinations occurring is manageable.
+found in different sentences.
+                                                    4.2  Register Machine
+4.1  Frame Classiﬁcation
+                                          To accommodate the distribution of relevant in-
+We observe that datum subjects and treatments
+                                                 formation across the sentences in a discourse, we
+tend to be mentioned together in individual sen-
+                                               imagine a model capable of traversing sentences,
+tences.  This motivates a simple framing of the
+                                                accumulating information, and synthesizing da-
+datum extraction problem as binary classiﬁcation.
+                                                 tums. We suppose that datums are produced by
+Speciﬁcally, if we ﬁx the assay type (e.g., “phos”)
+                                                 a virtual machine with four registers (one for each
+and change (e.g., “increased”), we can view each
+                                                    of the slots in a simpliﬁed datum) and two cursors
+document as a set of co-mentioned proteins—
+                                                          (to traverse the sentences in a caption and article
+all pairs of proteins mentioned together in some
+                                                 body, respectively). At each time step, the ma-
+sentence—and attempt to distinguish pairs in the
+                                                  chine can execute an instruction to advance either
+subject-treatment relation from other pairs.  Of
+                                                        cursor, populate or delete the contents of registers,
+course, we must perform this procedure for all
+                                                    or produce one or more datums. Speciﬁcally, we
+assay-change pairs of interest.
+                                            deﬁne the following instructions:
+  We follow an approach to featurization pro-
+posed in Xu et al (2016).  Consider the set of     • advanceSectionCursor, where Section can
+sentences containing protein entities P1 and P2.        be either Caption or Body. One of the cur-
+Given a target assay-change conﬁguration we train         sors is advanced to the next entity within the
+two binary classiﬁcation models, one to distin-         current sentence, if present, or to the begin-
+guish cases in which P1 and P2 are subject and        ning of the next sentence in body or among
+treatment, respectively, and one for the opposite        ﬁgure captions.
+assignment. Our feature vectors have four parts,                                             • setClosedValue, where Closed can be either
+each part containing features that require the fre-                                                   Assay or Change, and Value is one of the le-
+quency of lexical unigrams and bigrams found in                                                          gal values for the indicated closed-class reg-
+focus of this paper’s work, but are ultimately important.                ister. The register becomes populated with
+
+
+                                         18
+
+## PDF page 5
+     the speciﬁed value, replacing any previous      Learning  ˆπ  is essentially a ranking problem:
+     contents.                                     given all legal instructions in the current state,
+                                            which is best to execute? We therefore adopt a
+  • setOpenfromSection, where Open is either                                                     learning-to-rank approach, training an empirical
+     Subject or Treatment. The indicated register                                           model to map machine states to real values, such
+      is populated with the entity under the cursor                                                          that the highest-scoring instruction is the best to
+     for Section. This instruction is illegal if there                                                  execute in the current state. To this end, we im-
+      is no such entity.                                               plemented an oracular policy (henceforth the “or-
+                                                      acle”) that nominates instructions based on full  • addOpenfromSection.  This instruction is
+                                            knowledge of ground truth.  Given our uncer-     like the previous one, except the entity is ac-
+                                                         tainty about which sentences express datum ele-    cumulated into the indicated register. As this
+                                             ments (the subject of one or more datums might be     implies, open-class registers can hold multi-
+                                              mentioned dozens of time in an article), this policy     ple entities.
+                                                         heuristically orients datum production around ﬁg-
+  • deleteRegister empties the indicated register.    ure captions and sentences containing ﬁgure refer-
+                                                    ences: datums are aligned to such sentences, using
+  • deleteAll empties all registers.
+                                                           their source ﬁeld, and the machine is instructed to
+  • produceDatums causes datums to be gener-    load its registers and produce datums as close as
+     ated from register contents. A different da-    possible to the sentences identiﬁed in this way. For
+    tum is generated for each distinct combina-   example, if a datum having subject a and treatment
+     tion of entities in the subject and treatment    b is linked to sentence si, and b is mentioned in si,
+      registers.                                      but the nearest mention of a is in si−1, the oracle
+                                                         instructs the machine to load its subject register at
+Let us suppose we are given a sequence of instruc-                                                     the a mention in si−1, and its treatment, assay, and
+tions I = i1 · · · im applying the machine to some                                              change registers at the b mention in si, followed
+example ⟨di, yi⟩. It is easy to see than any such I                                           by a produceDatums instruction (and typically
+yields a set of datums y∗i , which we can formal-   some combination of delete instructions).
+ize as some function, F(d, I) = y.2 Further, we
+                                                      In our current implementation, we train a multi-can speak of a policy π(d) = I that nominates
+                                                       class perceptron model to perform ranking, up-instructions sequences, given a document.  Ulti-
+                                                    dating  it whenever  it ranks an inappropriate in-mately, our objective is to ﬁnd the best policy:
+                                                       struction highest.  The mistake-driven nature of     X
+       argmin    L(F(di, π(di)), yi)       (1)    this training regime enables us to accommodate
+           π                            i                               a subtlety of the problem: there are often several
+                                           good instructions in any given state, and we cannot
+Here, L(y∗, y) is the loss experienced by some
+                                       know that the instruction preferred by the oracle is
+machine-generated set of datums y∗with respect
+                                                         truly optimal. To respond to this reality, the oracle
+to the ground-truth y. In practice, we seek to op-
+                                                  provides a second service—assessment of instruc-
+timize the F1 of extracted datums versus ground
+                                                       tions preferred by the model. If such an instruction
+truth under a strict equality standard,  i.e., only
+                                                                 is deemed adequate—if it does not ultimately pre-
+those datums that agree in all slots with some
+                                                   vent the register machine from producing upcom-
+ground-truth datum are counted as successes.
+                                                   ing datums—the model’s preferred instruction is
+  Of course, Equation 1 is difﬁcult to satisfy di-
+                                          deemed correct, and no update is performed.
+rectly.  Instead, we seek to learn a local ranking
+model for individual instructions. Let S(d, I1,k)    Any feature of the machine’s state, including
+represent the state of the machine after executing    the contents of its registers, datums produced so
+k instructions I1,k = i1 · · · ik against document d,     far, recently executed instructions, and, most im-
+including the positions of the cursors, the state of    portantly, the language at and around cursors, may
+the registers, and any generated datums. We seek   be encoded to train the model. Table 2 lists the fea-
+to learn a local policy ˆπ(S(d, I1,k)) = ik+1 that    tures implemented to date, which should be self-
+chooses the best next instruction.                    explanatory, except for the “Pattern” features. To
+                                             implement these, we separately induce a set of pat-  2We posit that illegal instructions (e.g., advancing a cursor
+at the end of the document) have no effect.                   terns over dependency parses to detect expressions
+
+
+                                         19
+
+## PDF page 6
+ Type      Feature                              Description
+ Cursor    atPosition(curs, pos)            True if the cursor curs (body or caption) is at the
+                                                   indicated pos in its section (beginning, internal,
+                                               end)
+ Register  populated(reg)                   True if the indicated reg (subject, treatment, assay,
+                                                  or change) is populated.
+          cregContains(reg, val)           True  if a  closed-class  register reg  (assay  or
+                                              change) contains a particular value val legal for
+                                                        that type (e.g. the assay register contains “phos”).
+          oregContains(curs, reg)          True if the open-class register reg contains the en-
+                                                               tity under the cursor curs.
+          allPopulated                      True if all four registers are populated.
+ Lexical   sentContains(curs, word)         True if the sentence under curs contains word.
+          wordAtOffset(curs, offs, word)  True if word is observed at offset offs, ranging
+                                                over [−2, +2], from curs.
+ Pattern   activeAtSent(pat, curs)          True if the detection pattern pat matches the sen-
+                                                  tence under curs.
+          activeAtEnt(pat, curs)           True if the pattern pat matches the entity under
+                                               curs.
+ Other    producedDatums                   True immediately after a produceDatums instruc-
+                                                      tion has been executed.
+          bias                            Always true.
+
+
+                  Table 2: Features used in experiments with the register machine.
+
+
+that tend to signal the presence of an assay sub-                                  All   Phos
+ject or treatment (Freitag and Niekrasz, 2016). For        Database             17,444   4,864
+each such pattern, we deﬁne two features, which        Experimental corpus    6,554   3,152
+are true if the corresponding pattern matches any-         Visible                5,981   2,989
+where in a cursor sentence or at a cursor entity, re-         Fully visible           2,336   1,418
+spectively. In addition to the features listed in the
+table, we automatically generate a large number of                                                 Table 3:   Visibility of datums (of any type vs.
+conjunctive features from feature pairs, returning                                                   those representing phosphorylation assays).
+true when both the constituent features are true.
+
+5  Evaluation                             comes with no guarantee that the datums are actu-
+                                                          ally described in the text of an article.4 Moreover,
+We constructed our experimental data from the set    failures in entity recognition or resolution further
+of datums in the Pathway Logic database, along    reduce what our models have the potential to “see”
+with the 2,394 papers to which they refer.  Be-    in the text. We therefore limit our attention to “vis-
+cause most of these papers are available only as    ible” datums, those datums for which we recog-
+PDF,3 we converted them to plain text and heuris-    nize either the subject or treatment entity some-
+tically identiﬁed paper sections, converting each   where in the paper to which a datum is aligned. We
+to a sequence of sentences.  This data was then    call datums for which both entities are recognized
+annotated by machine to identify mentions of pro-    “fully visible.” Our experimental corpus consists
+tein entities (heuristically mapped to Uniprot iden-    of the 518 papers aligned to at least one visible
+tiﬁes) and ﬁgure references. The latter were used   datum.
+to align datums heuristically to sentences.
+                                                         4Nor is there a strong guarantee that all experiments de-
+  As noted previously, the Pathway Logic data     scribed in a paper have been converted into datums. Our cura-
+                                                                       tor has it in her charter to do so, but we have encountered ex-
+   3Much of the curated data predates the establishment of    periments for which no datum was created. We do not know
+the NXML format.                                 how common this is.
+
+
+                                         20
+
+## PDF page 7
+  Method       Precision   Recall     F1       difﬁcult to do so, even for a heuristically imple-
+   Oracle         0.6935  0.5708  0.5996      mented oracle.
+   Frame Gold     0.9302  0.4937  0.6017       The remaining two rows compare the two learn-
+   Frame          0.2426    0.296  0.2322       ing approaches to datum extraction described in
+   Machine       0.2056  0.1877    0.165       the paper, frame classiﬁcation (Frame) and the
+                                                          register machine (Machine). Note that the exam-
+Table 4: Macro-averaged precision, recall, and F1    ple generation procedure used in Frame leads to
+in extracting simpliﬁed “phos” datums.              considerable class skew, with the set of negative
+                                             example dwarﬁng the positive.  In these experi-
+                                                 ments, we randomly sampled the negative exam-
+  Table 3 provides an overview of the data we                                                      ples to achieve a ten-to-one negative-to-positive
+work with.  For convenience in comparing our                                                              ratio.
+two approaches, we focus on “phos” datums ex-                                            The results appear to suggest that the relative
+clusively, and therefore present separate totals for                                                      simplicity of frame classiﬁcation more than com-
+“phos” datums in the table. (The register machine                                                   pensates for the fact that it cannot account for a
+targets all visible assay types, but we evaluate its                                                    signiﬁcant fraction of datums, those whose sub-
+performance only against “phos” datums.)  The                                                           jects and treatments are not found together in an
+row labeled Database lists counts calculated from                                                      individual sentence. We see clear evidence that
+our snapshot of the datum database, while Exper-                                                accumulation of evidence spread across sentences
+imental corpus considers only the subset aligned                                               enhances performance. In a separate experiment,
+to papers in our collection of 518 articles. The                                                       in which we classiﬁed individual sentences (simi-
+rows Visible and Fully visible document the num-                                                             lar to canonical relation extraction), we saw a drop
+ber of datums actually available for experiments.                                                       in F1 of about 2 points.
+The performance numbers that follow correspond                                            The register machine, which in principle can
+to those datums contained in the cell labeled Visi-                                           accommodate the “distributed” datums that the
+ble, Phos.                                              frame classiﬁer ignores, has difﬁculty learning in-
+  In our experiments, we randomly sampled 75%                                                       struction sequences well enough to achieve com-
+of our 518 articles (and the corresponding da-                                                   parable performance. Its difﬁculty appears to cen-
+tums) for training, and evaluated against the re-                                                             ter primarily on the extracted components of da-
+maining 25%.  In training the register machine,                                                 tums, the subjects and treatments.  If we evalu-
+we reserve some of the training data for valida-                                                       ate the register machine’s performance on indi-
+tion, using F1 against this hold-out data as a stop-                                                    vidual slots (e.g., by scoring the set of phos sub-
+ping criterion to prevent overﬁtting. To be deemed                                                           jects extracted against the set found in phos da-
+correct, an extracted simpliﬁed datum must agree                                            tums aligned to a paper), we observe F1s of 0.92
+with a ground-truth datum on all four slots. When                                             and 0.67 on assay and change, respectively, but
+a ground-truth datum is partially visible, an extrac-                                                 only 0.42 and 0.38 on subject and treatment. We
+tor must populate the empty slot with a null in or-                                                     believe that the feature set currently employed by
+der to be awarded credit. Note that this necessarily                                                     the machine is too impoverished to perform these
+limits the recall of frame classiﬁcation, which has                                                      extractions accurately. Note that while frame clas-
+no way to produce a null slot.                                                     siﬁcation accumulates evidence relevant to a pro-
+  Table 4 presents the results of our experiments.                                                          tein pair from across an article, the register ma-
+The ﬁrst two rows in the table establish approxi-                                                  chine relies on mostly local information. This is
+mate upper bounds on performance. Oracle mea-                                              an unnecessary limitation, which we are attempt-
+sures the performance of the policy used to gen-                                                   ing to rectify.
+erate training data for the register machine, while
+Frame Gold  lists the performance of a perfect                                       6  Discussion
+classiﬁer of candidate protein pairs nominated us-
+ing the sentence co-occurrence heuristic. Interest-   Our work with the frame classiﬁer is leading the
+ingly, the difference in recall between these two   way in this regard. In preliminary work conducted
+approaches is fairly small, indicating that although    after the experiments presented here, we have con-
+the register machine can in principle integrate ev-    tinued to mitigate keys drawbacks of the approach.
+idence distributed over multiple sentences,  it is   For example, by training individual protein classi-
+
+
+                                         21
+
+## PDF page 8
+ﬁers for “subjectness” and “treatmentness,” using    of little further use. We argue that the opposite
+information distributed across an article, we ob-     is true, that this admittedly domain-speciﬁc chal-
+serve a frame classiﬁcation F1 of 0.30 in prelimi-    lenge is an instance of a type of problem that will
+nary experiments. We are also working to increase   become increasingly salient as machine reading
+the number of assay-change combinations targeted    matures. Eventually, the ﬁeld must move beyond
+by frame classiﬁcation to practical levels.             sentence-local, contextless, low-arity extraction to
+                                                     the full population of knowledge frames summa-  All this makes clear that the strict evaluation
+                                                       rizing information relevant to important use cases.metric used in this paper–simultaneous agreement
+                              A key resource to this end will be “found” struc-on four key slots with target datums–poses a stiff
+                                                    tured resources loosely attached to textual sourcechallenge for computer readers.  These perfor-
+                                                       material, such as the auxiliary data associated withmance levels are understandable. Robust solutions
+                                                      biological publications with increasing frequency,for many types of binary relation and event ex-
+                                                    or Wikipedia info-boxes summarizing events intraction have yet to be reported. For example, a
+                                             newswire (Reschke et al., 2014).  The ﬁeld re-characteristic approach to ACE-style relation ex-
+                                                     quires methods that exploit such resources for thetraction reports peak F1 of about 0.55 (GuoDong
+                                                        interpretation of key facts in text.et  al., 2005), and recent work in comparable
+biomedical  extraction problems  yields  qualita-
+                                       7  Conclusion
+tively comparable performance–e.g., F1 of 0.53 in
+a pathway curation task involving primarily binary   The problem introduced in this paper—that of ex-
+interactions having high domain overlap with the    tracting faithful representations of experiments de-
+current paper (N´edellec et al., 2013). As a rule,    scribed in the biological literature—has two fea-
+adding slots to a target template leads to consider-    tures that distinguish  it from much of the work
+ably lowered extraction performance under a strict   on biomedical NLP: (1) It is closely aligned to
+matching regime. Moreover, the heuristic align-    the needs of computational biology, stemming
+ment of slot values to speciﬁc textual expressions   from research independent from and uninformed
+adds further noise to the training and evaluation   by NLP. And (2) it cannot be adequately addressed
+processes.                                   by models that target the information found in in-
+                                                     dividual sentences in isolation. These two features  However, there is reason to believe that even
+                                        make for a problem of considerable depth and im-these modest performance numbers are useful
+                                                     portance, both for biology and NLP. While it isfor certain applications.  In separate work under
+                                                       clear that we have not solved this problem with thethe DARPA Big Mechanism program, we imple-
+                                                approaches documented here, we have sketchedmented a manual datum extractor, as part of a sys-
+                                           two potential solutions and illuminated some oftem that sought to conﬁrm events and relations
+                                                     the speciﬁc challenges that remain.extracted by general-purpose bio-NLP readers by
+looking for corroborative experiments in the same
+                                      Acknowledgments
+paper. We were able to show, using hand-scored
+results from the program evaluation, that 80% of    This project was supported by the U.S. Army Re-
+machine extractions corroborated in this way were    search Ofﬁce. The content of this paper does not
+correct (about 17% of all such extractions), ver-    necessarily reﬂect the position or policy of the
+sus a baseline accuracy of 50%. This despite the    U.S. Government. No ofﬁcial endorsement should
+fact that we estimated the F1 of our the hand-   be inferred.
+authored system, which over-generates wildly, at
+less than 0.02. Thus, even a very noisy experiment
+                                          Referencesextractor has value as a source of corroboration
+for assertions extracted without attention to prag-    Gully APC Burns, Pradeep Dasigi, Anita de Waard,
+matic context. Possibly key to this outcome was      and Eduard H Hovy. 2016. Automated detection of
+                                                           discourse segment and experimental types from the
+the strict standard applied in the program evalua-
+                                                                   text of cancer pathway results sections.  Database
+tion, which deprecated speculation or statements      2016.
+of background knowledge.
+                                              Nancy  Chinchor,  David D  Lewis,  and  Lynette
+  Our focus on a very speciﬁc problem and data      Hirschman. 1993. Evaluating message understand-
+set may leave the impression that these results are       ing systems: an analysis of the third message under-
+
+
+                                         22
+
+## PDF page 9
+   standing conference (muc-3).  Computational lin-   Sampo Pyysalo,  Filip Ginter, Juho Heimonen,  Jari
+   guistics 19(3):409–449.                                  Bjrne, Jorma Boberg,  Jouni Jrvinen, and Tapio
+                                                            Salakoski. 2007. BioInfer: a corpus for information
+Mark Craven and Johan Kumlien. 1999. Constructing       extraction in the biomedical domain. BMC bioinfor-
+   biological knowledge bases by extracting informa-      matics 8(1):50.
+   tion from text sources. In ISMB. volume 1999, pages
+  77–86.                                         Kevin Reschke, Martin Jankowiak, Mihai Surdeanu,
+                                                          Christopher D. Manning, and Daniel Jurafsky. 2014.
+P. Dasigi, G. A. P. C. Burns, E. Hovy, and A. de Waard.      Event Extraction Using Distant Supervision.   In
+  2017.  Experiment Segmentation in Scientiﬁc Dis-     LREC. pages 4527–4531.
+   course as Clause-level Structured Prediction using
+  Recurrent Neural Networks. ArXiv e-prints .           Paul Thompson, Syed A. Iqbal, John McNaught, and
+                                                     Sophia Ananiadou. 2009. Construction of an anno-
+Hal Daume  III, John Langford, and Daniel Marcu.       tated corpus to support biomedical information ex-
+  2009. Search-based structured prediction. Machine        traction. BMC bioinformatics 10(1):1.
+   learning 75(3):297–325.
+                                                   Jun Xu, Yonghui Wu, Yaoyun Zhang, Jingqi Wang,
+Steven Eker, Merrill Knapp, Keith Laderoute, Patrick      Hee-Jin Lee, and Hua Xu. 2016.  Cd-rest: a sys-
+   Lincoln, and Carolyn  Talcott. 2004.   Pathway      tem for extracting chemical-induced disease relation
+   logic:  Executable models of biological networks.       in literature. Database 2016.
+   Electronic Notes in Theoretical Computer Science
+  71:144–161.
+
+Dayne Freitag and John Niekrasz. 2016.   Feature
+   derivation for exploitation of distant annotation via
+   pattern induction against dependency parses.   In
+  Proceedings of the 15th Workshop on Biomedi-
+   cal Natural Language Processing. Association for
+  Computational Linguistics, Berlin, Germany, pages
+  36–45.
+
+Ralph Grishman and Beth Sundheim. 1996. Message
+   understanding conference-6: A brief history. In Pro-
+   ceedings of the 16th conference on Computational
+   linguistics-Volume 1. Association for Computational
+   Linguistics, pages 466–471.
+
+Zhou GuoDong, Su Jian, Zhang Jie, and Zhang Min.
+  2005. Exploring various knowledge in relation ex-
+   traction. In Proceedings of the 43rd annual meeting
+  on association for computational linguistics. Asso-
+   ciation for Computational Linguistics, pages 427–
+   434.
+
+J.-D. Kim, Tomoko Ohta, Yuka Tateisi, and Junichi
+   Tsujii. 2003.  GENIA corpusa semantically an-
+   notated corpus for bio-textmining.  Bioinformatics
+   19(suppl 1):i180–i182.
+
+Jin-Dong Kim, Tomoko Ohta, and Jun’ichi Tsujii.
+  2008.  Corpus annotation for mining biomedical
+   events from literature. BMC bioinformatics 9(1):1.
+
+Jin-Dong Kim, Yue Wang, Toshihisa Takagi, and Aki-
+   nori Yonezawa. 2011.  Overview of genia event
+   task in bionlp shared task 2011.  In Proceedings
+   of the BioNLP Shared Task 2011 Workshop. Asso-
+   ciation for Computational Linguistics, Stroudsburg,
+  PA, USA, BioNLP Shared Task ’11, pages 7–15.
+
+Claire N´edellec, Robert Bossy, Jin-Dong Kim, Jung-
+   Jae Kim, Tomoko Ohta, Sampo Pyysalo, and Pierre
+  Zweigenbaum. 2013.  Overview of bionlp shared
+   task 2013.  In Proceedings of the BioNLP Shared
+  Task 2013 Workshop. Association for Computational
+   Linguistics Soﬁa, Bulgaria, pages 1–7.
+
+
+                                         23
