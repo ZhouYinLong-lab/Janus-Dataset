@@ -1,0 +1,23 @@
+{
+  "scope": "artifact integrity only; not scientific validation",
+  "source_files": 19,
+  "source_bytes": 3289939,
+  "xml_articles": 11,
+  "csv_rows": {
+    "主线证据.csv": 10,
+    "酶文献字段试填.csv": 7,
+    "branches/amp/evidence.csv": 5,
+    "branches/delivery/evidence.csv": 16
+  },
+  "expert_tables": {
+    "TPD_GT_Glues.csv": {
+      "rows": 104,
+      "unique_dois": 7
+    },
+    "TPD_GT_PROTAC.csv": {
+      "rows": 209,
+      "unique_dois": 15
+    }
+  },
+  "failures": []
+}

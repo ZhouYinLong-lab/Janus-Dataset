@@ -1,0 +1,113 @@
+A Comprehensive Dataset of Lipid Nanoparticle Compositions and Properties for Nucleic Acid Delivery
+
+Lipid nanoparticles (LNPs) have emerged as the leading delivery platform for nucleic acid therapeutics, with clinical success demonstrated in mRNA vaccines and therapeutic applications. However, rational design of LNP remains challenging due to the complex relationships among LNP composition, physicochemical properties, and biological performance, as well as the scattered experimental data across the literature. Here, we present LNP Atlas, a comprehensive dataset containing LNP formulations extracted from peer-reviewed publications. We developed an artificial intelligence-assisted data extraction workflow, followed by automated standardization pipelines implemented in Python to ensure data consistency and quality. The dataset contains lipid types and compositions, including molar ratios and SMILES codes, physicochemical properties (particle size, polydispersity index, zeta potential), synthesis parameters, and bioactivity profiles. This resource is expected to support the research community by facilitating data-driven insights into lipid nanoparticle formulation and accelerating the development of effective nucleic acid delivery systems.
+
+
+## Background & Summary
+
+The field of nucleic acid therapeutics has undergone revolutionary advancement, largely driven by innovations in LNP delivery technology1,2. The clinical success of LNPs in COVID-19 mRNA vaccines (BNT162b2, mRNA-1273)3–6 and the approval of Onpattro (patisiran) for hereditary transthyretin amyloidosis7,8 have validated LNPs as a leading platform for nucleic acid delivery. Beyond these successes, LNPs show tremendous promise for treating genetic disorders, cancer, and infectious diseases through delivery of various nucleic acid modalities including mRNA, siRNA, antisense oligonucleotides, and gene editing tools9–12.
+
+The complexity of LNP systems stems from their multicomponent architecture, typically consisting of four distinct lipid classes: (1) ionizable lipids that facilitate nucleic acid encapsulation through electrostatic interactions and promote endosomal escape, (2) PEGylated lipids that provide colloidal stability and reduce protein adsorption, (3) cholesterol that maintains membrane fluidity and structural integrity, and (4) helper lipids that support bilayer formation and fusogenic properties13–19. The precise composition, molar ratios, and synthesis conditions of these components critically determine particle properties including size, surface charge, stability, cellular uptake efficiency, biodistribution patterns, and ultimately therapeutic efficacy20.
+
+While several databases exist for lipid and lipid-based nanoparticle information, including formulation databases21, LIPID MAPS22–24, and specialized vesicle databases25, a critical barrier to advancing rational LNP design is the highly fragmented nature of experimental data reported across the literature26,27. LNP formulation data are dispersed across hundreds of publications, limiting systematic analyses of structure–activity relationships and hindering effective knowledge transfer among research groups. Moreover, the absence of standardized databases restricts the use of machine learning and artificial intelligence approaches that could accelerate LNP optimization through predictive modeling.
+
+To address these gaps, we developed the LNP Atlas, a comprehensive dataset that systematically compiles and standardizes LNP formulation data from peer-reviewed studies. Our approach leverages artificial intelligence for efficient data extraction and applies rigorous standardization procedures to ensure data quality and consistency. The dataset contains 1,092 unique formulations spanning diverse lipid compositions, cargo types, and biological applications. This resource is expected to facilitate data-driven insights into LNP formulation and advance the development of more effective nucleic acid therapeutics.
+
+
+## Methods
+
+
+## Data collection
+
+The overall workflow for dataset construction is shown in Fig. 1. We collected peer-reviewed publications reporting LNP formulations for nucleic acid delivery published between 2005 and 2025. The search strategy employed multiple databases, including PubMed, Web of Science, Scopus, and Google Scholar, using exact keyword matching for query terms that combined LNP-related keywords (“lipid nanoparticle,” “liposome,” “LNP”) with nucleic acid terms (“mRNA,” “siRNA,” “oligonucleotide,” “gene delivery”) and delivery-related terminology (“drug delivery,” “formulation”). Studies were included if they (1) reported original experimental data on LNPs, (2) provided detailed composition information for at least three lipid components, and (3) presented quantitative physicochemical characterization data. Review articles, patents, conference abstracts, and studies lacking sufficient formulation details were excluded. This screening process identified 63 relevant publications containing 1,092 LNP formulations with sufficient data for extraction and standardization1,13,28–88. All source publications are cited in the dataset with paper title, authors, DOI, journal name, and publication year in dedicated columns.Fig. 1Overview of the LNP Atlas dataset construction and release.
+
+
+## Data curation
+
+We developed an AI-assisted workflow using Claude (Anthropic) to extract LNP formulation data from the literature and convert it into a structured JSON format. We provided Claude with the full text of each publication along with a standardized JSON template that defined the required data fields and structure. The template included fields for literature metadata, particle size, polydispersity index (PDI), zeta potential, encapsulation efficiency, loading capacity, target type, nucleic acid sequence, synthesis information, and bioactivity profile. The extraction was guided by the same query prompt for all documents. This standardized approach ensured consistent data extraction across all publications. Tabulated data were extracted without difficulty; however, some figures required manual curation. For figures in which the extracted data appeared incorrect, the relevant images were manually cropped from the original publications and subsequently digitized separately using Claude. Each extracted dataset underwent quality control through automated consistency checks, manual expert review of representative entries, cross-referencing with original publications, and iterative refinement of the extraction protocols.
+
+
+## Data standardization
+
+Following AI-assisted data extraction, we developed a comprehensive Python-based pipeline to ensure consistency, completeness, and analytical utility across all datasets. First, we standardized the nomenclature of lipids following a commonly used shorthand chemical nomenclature. The lipid name mappings are available on the Lipid Table page under the Mapping section of the LNP Atlas website. The original lipid names, as reported in the source studies, are also provided on the detailed pages of the LNP Atlas website for transparency. In addition, the corresponding SMILES codes were systematically mapped to each lipid entry. For lipid molar ratios, we adopted a consistent order represented as ionizable lipid:peg lipid:sterol lipid:helper lipid. Parameters such as particle size, polydispersity index (PDI), zeta potential, encapsulation efficiency, and loading capacity were standardized to a uniform reporting format—expressed as a single value, a range, or a value with an associated ± error.
+
+The synthesis info column compiles detailed synthesis information, including parameters such as synthesis method, device used, total flow rate (ml/min), flow rate ratio, aqueous phase composition, organic phase composition, mixing time (sec), temperature condition, post processing, sterilization, and storage buffer. The bioactivity profile column captures complementary experimental data including cell line, animal model, administration route, dose, and gene expression results. Together, these columns ensure that key experimental variables and outcomes are recorded in a structured, traceable, and comparable format that links formulation parameters with biological performance.
+
+
+## Data Records
+
+The LNP Atlas dataset has been deposited in Zenodo89 and contains 1,092 unique LNP formulations compiled from 63 peer-reviewed publications spanning 2005–2025. The dataset is structured with 28 standardized fields organized into six main categories: (1) composition details including ionizable lipid, PEG lipid, sterol lipid, helper lipid, and their molar ratios; (2) standardized physicochemical properties with consistent units and formatting; (3) target nucleic acid specifications with standardized cargo classifications; (4) consolidated synthesis information combining method, device, flow rates, and processing conditions; (5) integrated bioactivity profiles including cell lines, animal models, administration routes, dosing, and performance metrics; and (6) comprehensive metadata including paper information, DOI references, and chemical structure codes (SMILES) (Table 1).Table 1Data structure and field descriptions of the LNP Atlas dataset.Field NameDescriptionlnp_idUnique identifier for each LNP formulationionizable_lipidStandardized name of ionizable lipid component. Known lipids are referred to by their specific names, whereas lab-synthesized lipids are designated as “Custom lipid.”peg_lipidStandardized name of PEGylated lipid componentsterol_lipidSterol component (typically cholesterol)helper_lipidHelper lipid component (e.g., DOPE, DSPC)lipid_molar_ratioMolar ratios of lipid components (format: ionizable:PEG:sterol:helper)particle_size_nm_stdStandardized particle size measurementpdi_stdStandardized polydispersity indexzeta_potential_mv_stdStandardized zeta potential measurementencapsulation_efficiency_percent_stdStandardized encapsulation efficiencyloading_capacity_stdStandardized loading capacity with unified notation for ratios and concentrations (e.g., w/w, N/P, µg/mg)target_typeClassified nucleic acid cargo type (mRNA, siRNA, DNA, ASO, empty)nucleic_acid_sequenceStandardized target/sequence description (e.g., firefly_luciferase, factor_vii)synthesis_infoConsolidated synthesis parameters (method, device, flow rates, conditions)bioactivity_profileIntegrated biological performance data (cell lines, animal models, efficacy)paper_*Literature metadata(paper title, authors, DOI, journal, publication year, and PubMed ID)*_smilesSMILES chemical structure notation for computational analysis
+
+Each formulation entry represents a unique combination of lipid components tested experimentally. Multiple entries from the same publication indicate variations in composition or testing conditions. The dataset includes comprehensive source attribution, with each data point linked to its original publication through dedicated reference columns (paper_title, paper_authors, paper_doi, paper_journal, paper_year). This ensures complete traceability and allows users to consult original sources for additional experimental details.
+
+The curated LNP dataset exhibits robust parameter coverage, including 96.1% for standardized particle size, 68.1% for polydispersity index, 29.9% for zeta potential, 58.5% for encapsulation efficiency, and 85.4% for loading capacity. For ionizable lipids, a critical component of LNP performance, the dataset comprises 39 distinct lipid species across 1,092 formulations, with 97.4% featuring complete SMILES structural annotations. Among the annotated lipids, C12-200, DLin-KC2-DMA, and DLin-MC3-DMA are most frequently represented, appearing in 172, 95, and 86 formulations, respectively, highlighting a research focus on these well-established lipid scaffolds. The high SMILES annotation rate further facilitates computational chemistry-based analyses.
+
+
+## Technical Validation
+
+We implemented comprehensive validation strategies to ensure data reliability and consistency throughout the dataset construction process. The AI-assisted extraction workflow was validated through systematic comparison of extracted data with source documents, focusing on critical parameters including lipid compositions, molar ratios, and physicochemical properties. Expert reviewers manually verified a subset of extracted data against original publications to identify potential errors that automated checks might miss, including nomenclature inconsistencies and SMILES accuracy. Quality control procedures included automated validation rules that identified potential inconsistencies through molar ratio sum validation (ensuring ratios summed appropriately), physicochemical parameter range checks (flagging outliers beyond reasonable experimental ranges such as particle sizes outside 10-1000 nm or PDI values outside 0-1), and logical consistency verification between synthesis methods and reported properties.
+
+We acknowledge that validation processes have inherent limitations. While automated checks effectively identify numerical inconsistencies and out-of-range values, they may not detect subtle errors in chemical nomenclature or context-dependent inaccuracies. The heterogeneity in reporting standards across publications also presents challenges for complete validation.
+
+
+## Usage Notes
+
+The LNP Atlas dataset can be accessed and utilized through multiple channels. The complete dataset is available for download from Zenodo89 as a CSV file, enabling bulk data analysis and integration with computational workflows.
+
+For researchers working with specific lipids, the dataset enables searches by lipid name (e.g., DLin-MC3-DMA, ALC-0315, SM-102) or SMILES notation. Physicochemical property filters allow identification of formulations within desired parameter ranges, such as particle sizes suitable for specific delivery routes or PDI values indicating monodisperse populations. The dataset structure facilitates various analytical approaches, including structure-activity relationship studies, machine learning model development, and meta-analyses of formulation trends.
+
+Researchers should note that while the dataset provides comprehensive coverage of published LNP formulations, performance metrics may vary between studies due to differences in experimental conditions, characterization methods, and biological assay systems. For example, particle size measurements may differ based on whether dynamic light scattering or nanoparticle tracking analysis was used. Similarly, encapsulation efficiency values depend on the specific quantification method employed (e.g., RiboGreen assay vs. UV spectroscopy). Users are encouraged to consider these methodological variations when making comparative analyses and to refer to original publications for detailed experimental protocols.
+
+Lipid nanoparticles for mRNA delivery
+
+Lipid Nanoparticles for Drug Delivery
+
+Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine
+
+Effectiveness of mRNA BNT162b2 COVID-19 vaccine up to 6 months in a large integrated health system in the USA: a retrospective cohort study
+
+Efficacy and Safety of the mRNA-1273 SARS-CoV-2 Vaccine
+
+Real-world effectiveness of the mRNA-1273 vaccine against COVID-19: Interim results from a prospective observational cohort study
+
+Efficacy and safety of patisiran for familial amyloidotic polyneuropathy: a phase II multi-dose study
+
+Patisiran, an RNAi Therapeutic, for Hereditary Transthyretin Amyloidosis
+
+Systemic RNA delivery to dendritic cells exploits antiviral defence for cancer immunotherapy
+
+An Open‐Label, Multicenter, Phase I, Dose Escalation Study with Phase II Expansion Cohort to Determine the Safety, Pharmacokinetics, and Preliminary Antitumor Activity of Intravenous TKM‐080301 in Subjects with Advanced Hepatocellular Carcinoma
+
+CRISPR-Cas9 In Vivo Gene Editing for Transthyretin Amyloidosis
+
+Individualised neoantigen therapy mRNA-4157 (V940) plus pembrolizumab versus pembrolizumab monotherapy in resected melanoma (KEYNOTE-942): a randomised, phase 2b study
+
+Rational design of cationic lipids for siRNA delivery
+
+Maximizing the Potency of siRNA Lipid Nanoparticles for Hepatic Gene Silencing In Vivo**
+
+Influence of the steric barrier activity of amphipathic poly(ethyleneglycol) and ganglioside GM1 on the circulation time of liposomes and on the target binding of immunoliposomes in vivo
+
+Influence of polyethylene glycol lipid desorption rates on pharmacokinetics and pharmacodynamics of siRNA lipid nanoparticles
+
+Phase equilibria in the phosphatidylcholine-cholesterol system
+
+Effect of Cholesterol Content of Lipid Composition in mRNA-LNPs on the Protein Expression in the Injected Site and Liver After Local Administration in Mice
+
+Roles of lipid polymorphism in intracellular delivery
+
+Review of structural design guiding the development of lipid nanoparticles for nucleic acid delivery
+
+FormulationMM: A universal computer-driven drug formulation platform
+
+LIPID MAPS online tools for lipid research
+
+LMSD: LIPID MAPS structure database
+
+LIPID MAPS: update to databases and tools for the lipidomics community
+
+Building a digital library on research into mineralizing vesicles: a systematic review-based approach
+
+Exploring the Challenges of Lipid Nanoparticle Development: The In Vitro–In Vivo Correlation Gap
+
+Challenges and opportunities in computational studies for lipid nanoparticle development

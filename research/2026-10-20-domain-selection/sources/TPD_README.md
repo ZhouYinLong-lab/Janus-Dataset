@@ -1,0 +1,274 @@
+# LLM-TPD-Extraction
+
+LLM-assisted literature extraction workflow for augmenting targeted protein degradation (TPD) databases.
+
+This repository accompanies the paper *Beyond Manual Curation: Augmenting Targeted Protein Degradation Databases via Agentic Literature Extraction Workflows.*
+
+The workflow extracts structured degradation assay records from full-text articles and supplementary materials, with fields covering compound identity, degradation target, recruiter, assay context, and quantitative endpoints such as DC50 and Dmax.
+
+---
+
+## Overview
+
+TPD assay records are often distributed across main text, tables, and supplementary files. Existing manually curated resources such as MolGlueDB and PROTAC-DB often lack assay context, timepoints, concentrations, or complete endpoint coverage. This repository provides:
+
+- An LLM-assisted extraction workflow for molecular glue and PROTAC assay records;
+- CAPO, a lightweight cross-validated prompt-refinement module;
+- post-processing utilities for unit normalization, compound identifier enrichment, and record standardization;
+- record-level and field-level evaluation code;
+- prompt templates and semantic matching utilities;
+- extracted molecular glue and PROTAC datasets;
+- expert-annotated ground-truth data used for evaluation.
+
+---
+## Repository structure
+
+```
+LLM-TPD-Extraction/
+├── tpd_curator/                       # Python package
+│   ├── pipeline.py                    # Core workflow: extraction, post-processing, matching, and evaluation
+│   ├── capo.py                        # CAPO prompt-refinement loop
+│   ├── llm/
+│   │   └── run_llm_api.py             # OpenRouter API utilities for single- and multi-turn LLM calls
+│   ├── preprocessing/
+│   │   ├── convert_pdf_to_md.py       # PDF-to-Markdown conversion wrapper
+│   │   ├── data_cleaning.py           # PMC XML/JSON parsing and cleaning utilities
+│   │   └── data_cleaning_pdf.py       # Supplementary PDF Markdown cleaning utilities
+│   ├── utils/
+│   │   └── pause_manager.py           # Pause/resume utilities for long-running CAPO jobs
+│   └── config/                        # YAML configuration templates
+├── scripts/
+│   ├── run_pipeline.py                # CLI for full-cohort extraction and post-processing
+│   ├── run_capo.py                    # CLI for CAPO prompt refinement
+│   └── capo_visualize.py              # Script for CAPO convergence plots
+├── prompts/                           # Seed and optimized prompts
+├── notebooks/                         # Analysis notebooks for reproducing paper tables, figures, and dataset summaries
+├── data/                              # Baseline, ground-truth, and LLM-extracted datasets
+├── output/                            # Generated run outputs; not tracked by git
+├── semantic_cache/                    # Cached semantic-matching decisions
+├── pixi.toml                          # Dependency manifest
+└── pixi.lock                          # Pinned dependency lockfile
+```
+
+---
+
+## Installation
+
+### Requirements
+
+- Python 3.10
+- [Pixi](https://pixi.sh) ≥ 0.43
+- ~2 GB disk for the Python environment
+
+### Setup
+```bash
+git clone https://github.com/yaochenr/LLM-TPD-Extraction.git
+cd LLM-TPD-Extraction
+pixi install
+```
+
+This creates a self-contained environment at `.pixi/envs/default/`.
+
+### API credentials
+
+Create a `.env` file at the repository root:
+
+```dotenv
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+LLM_MODEL_NAME=openai/gpt-5
+```
+
+Any OpenRouter-supported chat model can be used; substitute `LLM_MODEL_NAME` accordingly. To reproduce the paper's results, use the model `openai/gpt-5`.
+
+---
+
+## Quick start
+
+### End-to-end extraction
+Run the full extraction workflow on a corpus specified by a YAML config:
+
+```bash
+pixi run python scripts/run_pipeline.py \
+    --config_path <INPUT_CONFIG_YAML> \
+    --input_prompt <INPUT_PROMPT> \
+    --cleaning \
+    --llm \
+    --with_history \
+    --use_api \
+    --csv
+```
+
+Replace `<INPUT_CONFIG_YAML>` with a corpus configuration file, for example:
+
+```bash
+tpd_curator/config/llm_extraction_config.yaml
+```
+
+Replace `<INPUT_PROMPT>` with an extraction prompt, for example:
+
+```bash
+prompts/champion_prompt_glues.md
+```
+
+For PROTAC extraction, use the corresponding PROTAC prompt:
+```bash
+prompts/champion_prompt_protacs.md
+```
+The command writes outputs to a timestamped directory under:
+```bash
+output/results/YYMMDD_HHMM/
+```
+The output directory contains raw LLM responses, intermediate extraction files, and an aggregated CSV of extracted assay records.
+
+---
+
+## Extracted dataset schema
+Each row corresponds to one degradation assay record.
+
+| Field | Description |
+|---|---|
+| DOI | Source publication DOI |
+| Compound_Name | Compound identifier as reported in the paper |
+| IUPAC_Name | IUPAC name, if available |
+| SMILES | SMILES string, if available |
+| Degradation_Target | Protein targeted for degradation |
+| Recruiter | E3 ligase or recruiter |
+| Assay | Assay type used to measure degradation |
+| Cell_Line | Cell line or `cell-free` |
+| DC50 | Concentration required for 50% degradation |
+| DC50_units | Units for DC50 |
+| DC50_h | Timepoint for DC50 measurement |
+| Dmax | Maximal degradation value |
+| Dmax_h | Timepoint for Dmax measurement |
+| Dmax_conc | Concentration at which Dmax was measured |
+
+Use `notebooks/process-llm-extracted-data` to complete or enrich `IUPAC_Name`, `SMILES`, and `StandardInChIKey` fields.
+
+---
+
+## Evaluation and reproducing paper results
+
+The evaluation code supports three comparison settings:
+
+1. **LLM vs. ground truth**: evaluates extraction accuracy.
+2. **Baseline vs. ground truth**: audits MolGlueDB / PROTAC-DB coverage against expert annotations.
+3. **LLM vs. baseline**: measures database overlap and augmentation.
+
+By default, evaluation uses **Experimental mode**: compound, target, recruiter, assay, and cell line define a record. Add `--ternary_complex_level` to run **Mechanistic mode**, where records are matched by compound, target, and recruiter only.
+
+### LLM or baseline vs. ground truth
+
+```bash
+PYTHONPATH=. pixi run python scripts/run_pipeline.py \
+    --config_path <EVAL_CONFIG_YAML> \
+    --accuracy \
+    --use_api \
+    --pred <LLM_OR_BASELINE_CSV> \
+    --labeled <GROUND_TRUTH_CSV>
+```
+For Mechanistic-mode evaluation, add:
+```bash
+--ternary_complex_level
+```
+
+### LLM vs. baseline
+```bash
+PYTHONPATH=. pixi run python scripts/run_pipeline.py \
+    --config_path <EVAL_CONFIG_YAML> \
+    --llm_vs_baseline \
+    --pred <LLM_EXTRACTED_CSV> \
+    --baseline <BASELINE_CSV> \
+    --eval_output_dir <OUTPUT_DIR>
+```
+
+### Reproducing tables and figures
+The main paper tables and figures can be reproduced from the released datasets and semantic cache without rerunning LLM extraction.
+
+Analysis notebooks are provided in:
+
+```text
+notebooks/visualization
+```
+
+
+---
+
+
+## CAPO prompt refinement
+
+CAPO performs cross-validated prompt refinement from expert-annotated papers. To run CAPO:
+
+```bash
+pixi run python scripts/run_capo.py \
+    --config_path <CAPO_CONFIG_YAML> \
+    --input_prompt <INITIAL_PROMPT> \
+    --batch_size <SPECIFY_BATCH_SIZE> \
+    --precision_threshold <SPECIFY_THRESHOLD> \
+    --recall_threshold <SPECIFY_THRESHOLD>
+```
+
+For the MG LOOCV experiments reported in the paper, we used `prompts/initial_prompt.md` as the seed prompt, with `batch_size=6`, `precision_threshold=0.9`, and `recall_threshold=0.9`.
+
+CAPO writes per-round extraction outputs, evaluation metrics, accept/reject decisions, and prompt versions to the configured output directory. Long runs can be paused with `--pause-after-extraction` and resumed with `--resume`, allowing manual review of semantic-match cache entries before continuing.
+
+To visualize convergence:
+```bash
+pixi run python scripts/capo_visualize.py --results_dir <CAPO_OUTPUT_DIR>
+```
+
+---
+## Data
+The `data/` directory contains the derived datasets used in the paper:
+
+```text
+data/
+├── molecular_glues/
+│   ├── baseline/
+│   │   ├── baseline-molgluedb-70.csv
+│   │   └── baseline-molgluedb-processed.csv
+│   ├── ground_truth/
+│   │   └── GT_Glues.csv
+│   ├── llm/
+│   │   └── glue_data_llm.csv
+│   └── manual_audit_result/
+│       ├── glue_baseline_only_manual_audit.csv
+│       └── glue_llm_only_manual_audit.csv
+└── protacs/
+    ├── baseline/
+    │   ├── PROTACDB-baseline-141.csv
+    │   └── PROTACDB-baseline-processed.csv
+    ├── ground_truth/
+    │   └── PROTAC-GT.csv
+    ├── llm/
+    │   └── protac-data-llm.csv
+    └── manual_audit_result/
+        ├── protacs_baseline_only_manual_audit.csv
+        └── protacs_llm_only_manual_audit.csv
+```
+File groups:
+- `baseline/`: baseline records derived from MolGlueDB or PROTAC-DB for the processed PMC full-text cohorts.
+- `ground_truth/`: expert-annotated records used for ground-truth evaluation.
+- `llm/`: final LLM-extracted records.
+- `manual_audit_result/`: manual review results for LLM-only and baseline-only records used in database-augmentation analysis.
+---
+
+## Citation
+
+If you use this workflow or dataset, please cite:
+```bibtex
+@misc{anonymous2026tpdcurator,
+  title = {Beyond Manual Curation: Augmenting Targeted Protein Degradation Databases via Agentic Literature Extraction Workflows},
+  author = {Anonymous},
+  year = {2026},
+  note = {Anonymous submission}
+}
+```
+
+---
+
+## License
+
+Code is released under the MIT License. Derived structured assay datasets are released under CC BY 4.0.
+
+Original publications, MolGlueDB, PROTAC-DB, PMC content, and other upstream resources remain subject to their respective licenses and terms of use.

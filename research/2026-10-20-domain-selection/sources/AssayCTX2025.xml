@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8"?><article xml:lang="en" article-type="research-article"><front><journal-meta><journal-id journal-id-type="pmc-domain-id">822</journal-id><journal-id journal-id-type="pmc-domain">acssd</journal-id><journal-title-group><journal-title>Journal of Chemical Information and Modeling</journal-title><abbrev-journal-title>J Chem Inf Model</abbrev-journal-title></journal-title-group></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC12264928</article-id><article-id pub-id-type="pmcaid">12264928</article-id><article-id pub-id-type="pmcaiid">12264928</article-id><article-id pub-id-type="pmid">40586820</article-id><article-id pub-id-type="doi">10.1021/acs.jcim.5c00603</article-id><title-group><article-title>Toward Assay-Aware
+Bioactivity Model(er)s: Getting
+a Grip on Biological Context</article-title></title-group><contrib-group content-type="author"><contrib><name name-style="western"><surname>Schoenmaker</surname><given-names initials="L">Linde</given-names></name><xref ref-type="aff" rid="aff1">†</xref></contrib><contrib><name name-style="western"><surname>Sastrokarijo</surname><given-names initials="EG">Enzo G</given-names></name><xref ref-type="aff" rid="aff1">†</xref></contrib><contrib><name name-style="western"><surname>Heitman</surname><given-names initials="LH">Laura H</given-names></name><xref ref-type="aff" rid="aff1">†</xref><xref ref-type="aff" rid="aff2">‡</xref></contrib><contrib><name name-style="western"><surname>Beltman</surname><given-names initials="JB">Joost B</given-names></name><xref ref-type="aff" rid="aff3">§</xref></contrib><contrib><name name-style="western"><surname>Jespers</surname><given-names initials="W">Willem</given-names></name><xref ref-type="aff" rid="aff1">†</xref></contrib><contrib><name name-style="western"><surname>van Westen</surname><given-names initials="GJP">Gerard JP</given-names></name><xref ref-type="aff" rid="aff1">†</xref><xref rid="cor1" ref-type="author-notes">*</xref></contrib></contrib-group><aff id="aff1">
+<label>†</label>
+Division
+of Medicinal Chemistry, Leiden Academic Centre for Drug Research, Leiden University, Einsteinweg 55, 2333
+CC
+Leiden, The Netherlands
+</aff><aff id="aff2">
+<label>‡</label>
+Oncode
+Institute, 2333 CC
+Leiden, The Netherlands
+</aff><aff id="aff3">
+<label>§</label>
+Division
+of Cell Systems and Drug Safety, Leiden Academic Centre for Drug Research, Leiden University, Einsteinweg 55, 2333
+CC
+Leiden, The Netherlands
+</aff><author-notes><fn id="cor1"><label>*</label><p>
+Email: <email>gerard@lacdr.leidenuniv.nl</email>.</p></fn></author-notes><pub-date><day>30</day><month>6</month><year>2025</year></pub-date><volume>65</volume><issue>13</issue><fpage>7013</fpage><page-range>7013–7023</page-range><pub-history><event event-type="pmc-release"><date><day>17</day><month>7</month><year>2025</year></date></event></pub-history><permissions><copyright-statement>© 2025 The Authors. Published by American Chemical Society</copyright-statement><license><license-p>This article is licensed under CC-BY 4.0</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ci5c00603.pdf" content-type="pmc-pdf"><?cloudpmc-path ee3c/12264928/94a96b7df3c5/ci5c00603.pdf?><?cloudpmc-bucket app?><?size 6075128?></self-uri><abstract id="abstract1"><title>Abstract</title><p>Protein–ligand interaction prediction with proteochemometric
+(PCM) models can provide valuable insights during early drug discovery
+and chemical safety assessment. These models have benefitted from
+the large amount of data available in bioactivity databases. However,
+an issue that is often overlooked when using this data is the broad
+diversity in the biological assays present. The effect of small molecules
+on a protein can be measured in various ways, and this can influence
+the outcome. Yet, currently there is a lack of standardized, specific
+assay metadata, while this could help increase understanding of the
+origin of data points, improve data curation, and lead to better models
+that are both more accurate and make predictions specific to the readout
+of interest. To make use of the existing information on the biological
+context, we set out to create and validate multiple assay descriptors
+and test their use in protein–ligand interaction models. Dimensionality
+reduction of embedded free text assay descriptions from ChEMBL showed
+that text embeddings capture relevant features. Additionally, clustering
+of these embedded descriptions groups the assays in a way that enriches
+purity, matches manually categorized assays, and yields sensible topic
+describing words. From ligand-protein combinations with multiple measurements,
+it becomes apparent that the deviation between different measurements
+in general is higher than the deviation of measurements within assay
+categories, with a logarithmic mean absolute deviation of 0.83 and
+0.66, respectively. Incorporating this biological context into the
+PCM models in the form of BioBERT-based embeddings improved the average <italic>R</italic>
+<sup>2</sup> from 0.67 to 0.69 across different data sets
+and splits. Conversely, using simpler methods such as bag-of-words
+(in which frequently used words are used as features) no improvement
+was seen (average <italic>R</italic>
+<sup>2</sup> 0.66). Overall, models
+that integrate assay embeddings yield more accurate predictions and
+give the user the option to train their model on all available data
+yet still predict specific end points. In addition, the novel method
+for assay categorization described here facilitates data curation
+and provides a useful overview of the biological context of studied
+targets. In conclusion, biological assay context is important for
+bioactivity modeling and provides a means to easily get insight into
+this context.</p></abstract><abstract id="abstract2" abstract-type="graphical"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" xlink:href="ci5c00603_0007.jpg"><?cloudpmc-path blobs/ee3c/12264928/9eaf4c2ba3fe/ci5c00603_0007.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 368?><?original-width 974?><?scaled-height 245?><?scaled-width 649?></graphic></abstract><abstract id="abstract3" abstract-type="toc-graphic"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="tgr1" xlink:href="ci5c00603_0006.jpg"><?cloudpmc-path blobs/ee3c/12264928/9eaf4c2ba3fe/ci5c00603_0006.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 368?><?original-width 974?><?scaled-height 245?><?scaled-width 649?></graphic></abstract><custom-meta-group><custom-meta><meta-name>status</meta-name><meta-value>released</meta-value></custom-meta><custom-meta><meta-name>display-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>is-in-collection-domain</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>is-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-journal-matter</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-scanned</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-retracted</meta-name><meta-value>no</meta-value></custom-meta></custom-meta-group></article-meta><notes notes-type="article-notes"><sec id="historyarticle-meta1" sec-type="history" disp-level="2"><p>Received 2025 Mar 19; Accepted 2025 Jun 12; Revised 2025 May 20; Collection date 2025 Jul 14.</p></sec></notes></front><body><sec id="sec1" disp-level="1"><title>Introduction</title><p>A pivotal step in the drug discovery process
+is quantifying the
+interaction of a compound with a protein target of interest. For this
+purpose, many different biological assays have been developed that
+quantify these interactions in systems ranging from (radio)­ligand
+binding assays on cell membranes to functional downstream effects
+in cellular systems. To capture structure activity relationships in
+the data gathered by these assays, protein–ligand interaction
+models have proven to be useful. These <italic>in silico</italic> methods allow for the identification of compounds
+with a desired predicted interaction profile and they can increase
+the efficiency of the drug discovery process. This can be used to
+enrich for compounds with a high potency on a drug target or with
+minimal interactions that cause side-effects.</p><p>Previous research
+into protein–ligand interaction prediction
+has established that grouping data from multiple protein targets improves
+performance. These proteochemometric (PCM)
+models make use of similarities and dissimilarities between proteins
+in addition to the compound structures used in the target-specific
+quantitative structure–activity relationship (QSAR) models.
+This way, the addition of target information increases both model
+performance and types of applications (for example to extend modeling
+to several protein targets simultaneously or the inclusion of genetic
+variants).</p><p>An important aspect of creating a data set for modeling
+is data
+curation. Bioactivity data sets, such as ChEMBL, make large sets of
+data from different sources available. For modeling, it is often assumed that data from different biological
+assays can be combined. However, this has been criticized and previous
+research has shown that reported half-maximal response concentrations
+(IC<sub>50</sub> or EC<sub>50</sub>) values, inhibitory binding constants
+(K<sub>i</sub>) and dissociation constants (K<sub>D</sub>) are noisy.<italic>
+−
+
+</italic> Next to experimental error, this could in part be caused by assay
+heterogeneity; experiments vary in their format, target modifications,
+detection method, and end point, which can all affect the readout.<italic>
+,
+</italic>
+</p><p>Recently, multiple studies have been published on ways of
+combining
+data from different sources while preserving the assay context. One
+method to achieve this is by adding generic assay descriptors as an
+additional model input. The addition of a fingerprint denoting whether
+the assay is a binding or functional assay, i.e. measures a direct
+interaction or indirect effects, can lead to improvements in predictive
+performance. Another approach that has
+been explored is multitask modeling, where the model simultaneously
+makes predictions for various tasks, for example the assay categories,
+and derives both shared and task-specific parameters. This has been
+applied on broad assay categorizations such as the distinction between
+binding and functional experiments, different
+readouts, and on the detailed level of
+individual publications/records.<italic>
+,
+</italic> Taken together, the
+recent interest in biological assay context has led to an improved
+predictive performance of models, and has hugely benefitted from the
+metadata available in ChEMBL. However, for the current metadata in
+ChEMBL, categorization is either very broad or unique to the specific
+publication that data originated from. Currently, assay-specific descriptions
+in ChEMBL are available and provide information on the aim, target
+and method of the experiment. However, they are present in the form
+of free text and can therefore not easily be used to group similar
+assays.</p><p>Recent advances in natural language processing (NLP)
+allow the
+use of these descriptions for assay categorization. NLP models are
+well suited for the purpose of processing unstandardized text. The
+language model BERT, for example, has substantially improved performance
+within the field of language understanding tasks. More recently, large language model-based text embeddings
+have shown state-of-the art performance. With such pretrained NLP models, meaningful embeddings –
+numeric vectors representing text – can be created from the
+assay descriptions annotated in ChEMBL. Learned embeddings based on
+these descriptions improve predictive quality, in the context of zero-
+and few-shot learning. We propose that
+NLP-based embeddings can also be used in traditional machine learning
+protocols like QSAR and PCM models. Additionally, with an NLP-based
+clustering pipeline, BERTopic, assay description-based embeddings
+can be grouped into topics – with different levels of specificity–
+allowing for a new way of describing and grouping related biological
+assays. Using this form of neural topic
+modeling, we propose a novel method that leverages biological context
+in an easily understandable way and show how it can be employed for
+bioactivity modeling. In cases where the experimental design influences
+the bioactivity outcome, the inclusion of assay context might improve
+performance by removing unexplained variance or by predicting the
+effect at different readout levels.</p><p>In this study, we set out
+to create biological assay descriptions
+suitable for data curation and modeling purposes. To this end, we
+examined various methods for incorporating biological assay context,
+analyzed the difference between biological assays, and evaluated the
+use of assay context for PCM models on representative sets of target
+groups. The findings contribute to the incorporation of biological
+assay context into the bioactivity model and adaptation of this context
+by the modeler.</p></sec><sec id="sec2" disp-level="1"><title>Material &amp; Methods</title><sec id="sec2.1" disp-level="2"><title>Data Set Creation and Preparation</title><p>The data and code
+discussed in this study are available on <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX</ext-link>. For clarity an overview of the workflow is presented in <xref rid="fig1" ref-type="fig">Figure 
+</xref>. To obtain a data
+set with bioactivity values and annotated assay information, ChEMBL
+(version 34) was used. Assays were described by the following properties:
+description, assay_type, assay_tax_id, bao_format, confidence_score,
+curated_by, pref_name, standard_type. Only
+entries from binding (B) and functional (F) assays were kept. This resulted in 1,277,311 unique assay entries
+with 1,142,320 unique descriptions. Inspection of the assay description
+lengths showed that description length is right-skewed and most descriptions
+have fewer than 500 characters (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 1</ext-link>). Descriptions beyond this length often contain whole experimental
+protocols and therefore deviate from most other descriptions. Therefore,
+we removed assay descriptions when they contained more than 500 characters,
+a step which filtered out 2441 unique assay descriptions.</p><fig id="fig1" position="float"><?disp-level 3?><label>1</label><caption><p>Workflow of
+the steps taken to create the data set, prepare model
+inputs, and evaluate the results.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr1" xlink:href="ci5c00603_0001.jpg"><?cloudpmc-path blobs/ee3c/12264928/0d3dc8c7e1e1/ci5c00603_0001.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1208?><?original-width 1870?><?scaled-height 483?><?scaled-width 748?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="ci5c00603_0001.gif"><?cloudpmc-path blobs/ee3c/12264928/950c95eb1327/ci5c00603_0001.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>To evaluate the performance of the assay clustering
+method (described
+in section “<xref rid="sec2.3" ref-type="sec">Assay Clustering</xref>”
+below), we annotated biological assays from a small subset of the
+data. For this purpose, all assays (2476) from the 4 human adenosine
+receptors (ARs) were collected: AA<sub>1</sub>R (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.ncbi.nlm.nih.gov/protein/P30542" ext-link-type="uri">P30542</ext-link>), AA<sub>2A</sub>R (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.ncbi.nlm.nih.gov/protein/P29274" ext-link-type="uri">P29274</ext-link>), AA<sub>2B</sub>R (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.ncbi.nlm.nih.gov/protein/P29275" ext-link-type="uri">P29275</ext-link>), and AA<sub>3</sub>R (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.ncbi.nlm.nih.gov/protein/P0DMS8" ext-link-type="uri">P0DMS8</ext-link>).
+This subset was deemed small enough for manual annotation and at the
+same time representative for binding and functional assays recorded
+in ChEMBL as it includes a variety of different experiments. We labeled
+the meta target and the detection technology of these assays based
+on the assay description using subcategorizations previously described
+in literature.<italic>
+,
+</italic> To speed up manual categorization,
+keywords relating to radioligands, fluorescence methods and functional
+responses were used for classification. The resulting label frequencies
+are shown in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Table SI 1</ext-link> and indicate that
+out of the 13 meta targets the most frequent ones include ligand displacement
+and cyclic adenosine monophosphate (cAMP) assays, whereas other labels
+occur less frequently.</p><p>To investigate the effect of using biological
+assay context for
+bioactivity modeling, we created several representative bioactivity
+data sets using the Papyrus data set (version 05.7). Specifically, we collected data for targets from the class
+A G protein-coupled receptors (GPCRs), protein tyrosine kinases, and
+solute carriers (SLCs). Only the subset describing ChEMBL data was
+kept as this can be linked to annotated assay information therein.
+Low quality data points, i.e. censored bioactivity values and binary
+activity classes, were removed using the “low quality”
+data label present in the Papyrus set, as well as compounds with a
+molecular weight over 1000 Da and data points from publications describing
+allosteric modulators. As a final filtering
+step, only targets with more than 100 unique compounds were kept.
+As visible from the number of targets, compounds and individual data
+points, the final data sets of the GPCRs and protein tyrosine kinases
+are larger than for the SLCs (Table SI 2). The preprocessed data is
+available on <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://zenodo.org/records/15302295" ext-link-type="uri">https://zenodo.org/records/15302295</ext-link>.</p></sec><sec id="sec2.2" disp-level="2"><title>Assay Descriptors</title><p>Two different types of assay descriptors
+were evaluated: fingerprints and embedded assay descriptions. Fingerprints
+were created based on metadata available in ChEMBL and bag-of-words
+feature extraction. For the fingerprints based on metadata, properties
+were included if 100% of the property was defined and the property
+contained 40 or less unique categories (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Table SI 3</ext-link>). This was the case for the following properties: relationship
+type, standard type, src id, confidence score, BioAssay Ontology (BAO)
+format, curated by, and assay type. For the bag-of-words featurization
+of the assay descriptions, stemming was applied and English stop words
+(from scikit learn) and assay specific stop words (see <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 2</ext-link>) were removed. The maximum descriptor
+length was capped at 1024 bits. On average 7.5 bits (each representing
+a word) were present per description.</p><p>The ChEMBL assay descriptions
+were also encoded using BioBERT v1.2, a language representation model
+pretrained on biomedical texts, and gte-Qwen2-1.5B-instruct, a general
+text embedding model with a high ranking on the Massive Text Embedding
+Benchmark.<italic>
+,,
+</italic> In both cases assay descriptions of up to 500 characters in length
+were used. The resulting embeddings consisted of 768 bits and 1536
+bits for BioBERT and gte-Qwen2-1.5B-instruct, respectively.</p></sec><sec id="sec2.3" disp-level="2"><title>Assay Clustering</title><p>To group similar assays, we performed
+neural topic modeling based on the assay descriptions available in
+ChEMBL. To create a generalizable description grouping, clustering
+with BERTopic was applied to all unique assay descriptions in ChEMBL
+(with &lt;500 characters). First, assay
+embeddings were created using either BioBERT or gte-Qwen2-1.5B-instruct
+as described previously. These embeddings were then reduced to 5 dimensions
+using Uniform Manifold Approximation and Projection (UMAP) as is the
+default setting in BERTopic. Apart from
+unsupervised dimensionality reduction, we also tested semisupervised
+UMAP. To this end, the categorical labels, assay type, BAO format
+and standard type from ChEMBL were used. The number of neighbors used
+for manifold approximation was set to 15 and the minimum distance
+between embedded points to 0.1. These embeddings were then clustered
+using Hierarchical Density-Based Spatial Clustering of Applications
+with Noise (HDBSCAN). In order to vary
+the level of detail captured by the topics, HDBSCAN was fitted with
+16, 32, 68, and 126 as minimum cluster size. Using BERTopic, the word
+importance within a cluster was assigned with class-based term frequency–inverse
+document frequency (c-TF-IDF). Descriptions that were not assigned
+to a cluster after training, hereafter referred to as outliers, were
+assigned to the most similar cluster based on c-TF-IDF. Because this
+is a stochastic clustering approach results are given as the mean
+± standard deviation of three repeats with different seeds. We
+have made Jupyter Notebook-based tutorials to show how to obtain these
+clusters for any ChEMBL data set of interest and how to get information
+on the underlying pharmacological experiments using a pretrained large-language
+model (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX/blob/main/assayctx/descriptors/" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX/blob/main/assayctx/descriptors/</ext-link>).</p></sec><sec id="sec2.4" disp-level="2"><title>Cluster Evaluation</title><p>To evaluate the clustering results,
+multiple metrics were assessed. First, the clustering results were
+compared to manually annotated labels for a subset of the data. To
+quantify the similarity between annotated labels and generated clusters,
+we used both the homogeneity, i.e., the label agreement of records
+within the same cluster, and the completeness, i.e., the extent to
+which all occurrences of a particular experiment are assigned to the
+same cluster. Second, the similarity of records in the same cluster
+was assessed based on the normalized purity of the properties assay
+type, BAO format and standard type. For this purpose the normalized
+purity was calculated as follows:</p><disp-formula id="ueq1"><mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" id="d1e378" display="block" indentalign="left" indentshift="1.0em" indentshiftfirst="0em" linebreak="auto" mathsize="9.0pt"><mml:mrow><mml:mi>n</mml:mi><mml:mi>o</mml:mi><mml:mi>r</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>l</mml:mi><mml:mi>i</mml:mi><mml:mi>z</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi><mml:mo linebreak="nobreak" lspace="0em" rspace="0.25em">⁣</mml:mo><mml:mi>p</mml:mi><mml:mi>u</mml:mi><mml:mi>r</mml:mi><mml:mi>i</mml:mi><mml:mi>t</mml:mi><mml:mi>y</mml:mi></mml:mrow><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mrow><mml:mi>p</mml:mi><mml:mi>u</mml:mi><mml:mi>r</mml:mi><mml:mi>i</mml:mi><mml:mi>t</mml:mi><mml:mi>y</mml:mi></mml:mrow><mml:mo>−</mml:mo><mml:mi mathvariant="normal">prevalence of the most frequently occurring label</mml:mi></mml:mrow><mml:mrow><mml:mn>1</mml:mn><mml:mo>−</mml:mo><mml:mi mathvariant="normal">prevalence of the most frequently occurring label</mml:mi></mml:mrow></mml:mfrac></mml:math></disp-formula><p>This means that the normalized purity
+of a cluster is one if it only contains objects of the same label,
+and zero if no label is enriched compared to the whole data set. Third,
+the weighted average of the mean absolute deviations for protein-compound
+measurements grouped by assay category was compared to the equivalent
+deviation inthe whole data set.</p></sec><sec id="sec2.5" disp-level="2"><title>PCM Modeling</title><p>To compare the different methods of adding
+assay context for bioactivity modeling, assay-aware PCM models were
+trained and evaluated for different protein families. For the control
+condition, a single task PCM model trained on all agglomerated data
+without assay context was used. The assay descriptors were evaluated
+using a single task model with the additional input of the assay descriptor.
+We evaluated assay-based transfer learning using PCM multitask models,
+with the tasks corresponding to assay clusters.</p><p>For data preparation
+and modeling, the python package QSPRpred was used. For all models, the same data sets were used. Bioactivity
+was expressed in pChEMBL values, i.e., the negative logarithmic of
+either the scaled half-maximal response concentration, potency, or
+affinity values. For compound-protein pairs with multiple measurements,
+either the median pChEMBL value of all measurements was used (control),
+or the median pChEMBL value of the assays from the same category (multitask)
+or with the same description (assay descriptor). Molecules were standardized
+and then described using extended-connectivity fingerprints with a
+radius of 3 bonds and were folded to 2048 bits (ECFP6). The protein
+sequences (whole protein, rather than only the binding site) for each
+protein family were aligned separately via multiple sequence alignment
+using Clustal Omega (final alignment is available here: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX/tree/main/qspr/data" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX/tree/main/qspr/data</ext-link>) and described using Hellberg’s z-scales.<italic>
+−
+
+</italic> For the assay
+descriptor condition, we included additional assay descriptions (as
+described in the section “<xref rid="sec2.2" ref-type="sec">Assay Descriptors</xref>”). Finally, high correlation (&gt;0.8) and low variance (&lt;0.05)
+filters were applied to the resulting descriptors from the training
+set to keep the most informative features. We compared two splitting
+methods for training set (90%) and test set (10%) creation, based
+on either a random split or a scaffold split (at the molecule level).</p><p>We performed both single and multitask modeling with regression
+gradient boosting models constructed using pyboost, using the mean
+squared error (MSE) as the loss function. For multitask modeling, where the output often consisted of a sparce
+matrix, missing values were masked. During cross validation, we applied
+early stopping based on (masked) R-squared (R<sup>2</sup>) values
+on a holdout set. The models were created using a maximum number of
+1000 trees (lower in case early stopping was triggered during cross
+validation), a learning rate of 0.1, a minimum of 50 data points per
+leaf, a maximum depth of 8, and a subsample of 80% per tree. Feature
+importance was recorded based on the gain in RMSE decrease during
+training.</p></sec><sec id="sec2.6" disp-level="2"><title>Validation</title><p>For model validation, the R<sup>2</sup>,
+root-mean-square error (RMSE) and Kendall’s Tau on the test
+set are reported as the mean ± standard deviation of three repeats
+based on different seeds used for the data split. For the multitask
+models, these values were calculated for each task independently and
+the weighted average based on the number of data points per task is
+reported.</p></sec></sec><sec id="sec3" disp-level="1"><title>Results</title><sec id="sec3.1" disp-level="2"><title>Natural Language Processed Assay Descriptions Reflect Assay
+Characteristics</title><p>The present study is aimed at incorporating
+biological assay context into bioactivity modeling. In order to make
+the assay descriptions that are available in ChEMBL machine interpretable,
+we compared a bag-of-words and an NLP-based embeddings. In the first
+method, assay descriptions were converted to a bag-of-words based
+fingerprint (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 3</ext-link>). In the second
+method, the assay descriptions were embedded by the pretrained language
+models BioBERT and gte-Qwen2–1.5B-instruct. Subsequently, dimensionality
+reduction was applied to the resulting embeddings. Coloring the data
+points based on properties from the ChEMBL metadata shows that BioBERT
+yields informative representations: for several relevant properties
+a separation is visible among the plotted records (<xref rid="fig2" ref-type="fig">Figure 
+</xref>) also when the data points
+are shown as bivariate density estimates (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 4</ext-link>). The separation is most pronounced for the division between
+binding and functional assays and for the BAO format. The BAO format
+shows that within the functional assays there is a clear distinction
+between the records involving living organisms (orange, organism-based)
+and cell-based assays (green, cell-based). By coloring on assay tax
+id (i.e., the assay taxonomy) it also becomes clear that most binding
+assays and a large part of functional assays are done in human based
+systems (H. sapiens, red). The majority of experiments done in mice
+(M. musculus, blue) and rats (R. norvegicus, orange) cluster together
+and do not overlap with human-based systems. There is a marked overlap
+between confidence scores and assay types. Interestingly, the different
+standard types do not separate as clearly as other assay properties,
+although the readouts minimum inhibitory concentration (MIC), activity,
+and K<sub>i</sub> do occur frequently in certain regions. Similarly
+to the BioBERT-based embeddings, the UMAP of gte-Qwen2–1.5B-instruct
+embeddings shows local clustering of properties with the same label,
+although the clusters of the latter are more dispersed (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 5</ext-link>). Taken together, these results suggest
+that free text assay descriptions can be transformed into an informative
+descriptor with NLP-based approaches.</p><fig id="fig2" position="float"><?disp-level 3?><label>2</label><caption><p>BioBERT embeddings of assay descriptors
+visualized by UMAP for
+the categories: assay type, tax id, confidence score, standard type,
+and BAO format. Data points are colored by the top 5 most prevalent
+labels; points belonging to other categories are shown in gray. The
+axes are cropped to exclude highly diverging embeddings.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr2" xlink:href="ci5c00603_0002.jpg"><?cloudpmc-path blobs/ee3c/12264928/10de7f7ecaf6/ci5c00603_0002.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1715?><?original-width 1968?><?scaled-height 686?><?scaled-width 787?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="ci5c00603_0002.gif"><?cloudpmc-path blobs/ee3c/12264928/6e4a3b0b11db/ci5c00603_0002.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig></sec><sec id="sec3.2" disp-level="2"><title>Automated Assay Clustering Yields Accurate Groupings</title><p>In ChEMBL broad assay categorizations are available but it does not
+contain groupings of the same – or closely related–
+assays. Instead, each publication/record is assigned a unique assay
+ID. To cluster biological assays on the assay level, we created a
+novel, detailed assay categorization based on embedded assay descriptions.
+Briefly, we employed UMAP and semisupervised UMAP representations
+as input for HDBSCAN clustering with a varied minimum cluster size,
+and c-TF-IDF was used to assign outliers to their closest related
+cluster.</p><p>The clustering performance on the whole data set was
+evaluated based on the ‘purity’ of the preannotated
+labels within different categories. Here normalized purity is defined
+as the sum of the frequencies of the dominant class labels for all
+clusters divided by the total number of records, and min-max scaled
+by the prevalence of the most frequently occurring label per property
+(meaning that no clustering/random clustering leads to a normalized
+purity of 0). For assay type, BAO format and standard type, the most
+frequently occurring labels have a prevalence of 0.63, 0.35, and 0.30,
+respectively. <xref rid="fig3" ref-type="fig">Figure 
+</xref> shows that clustering based on BioBERT embeddings increases normalized
+purity. Records with the same assay type and BAO format are more successfully
+grouped together than ones with the same the standard type. This analysis
+also shows that outlier reduction has a beneficial effect on cluster
+normalized purity and that increasing the minimum cluster size reduces
+normalized purity. For the gte-Qwen2-1.5B-instruct embeddings the
+same trends in purity scores are observed but with slightly lower
+scores (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Figure SI 6</ext-link>).</p><fig id="fig3" position="float"><?disp-level 3?><label>3</label><caption><p>Bar plot of the normalized
+purity for the labels assay type, BAO
+format, and standard type based on clustering with BioBERT embeddings.
+The purity is shown for models with and without outlier reduction
+(OLR) and with different minimum cluster sizes (16, 32, 64, and 128).
+Mean and standard deviation are based on independent clustering runs
+(<italic>n</italic> = 3).</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr3" xlink:href="ci5c00603_0003.jpg"><?cloudpmc-path blobs/ee3c/12264928/10ae42db1f93/ci5c00603_0003.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 741?><?original-width 1000?><?scaled-height 494?><?scaled-width 666?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="ci5c00603_0003.gif"><?cloudpmc-path blobs/ee3c/12264928/9cc03e912c38/ci5c00603_0003.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>To evaluate the automated clustering method on
+cluster labels based
+on manual annotations, we performed manual categorization on records
+related to the adenosine receptors. The concurrence with this manual
+categorization was evaluated based on multiple metrics (see <xref rid="tbl1" ref-type="table">Table 
+</xref>). The best performance
+in terms of balance between completeness (extent to which members
+of the same category are assigned to the same cluster) and homogeneity
+(extent to which a cluster contains members of a single category)
+was achieved by using BioBERT and a minimum cluster size of 128. Clustering
+based on gte-Qwen2–1.5B-instruct embeddings results in slightly
+worse scores. Interestingly, there is a marked difference between
+the accuracy of clustering for binding and functional assays. The
+completeness of the functional assays (0.34) is higher than for the
+binding assays (0.10), which indicates oversegmentation of similar
+binding assays. For the functional assays a homogeneity of 0.61 is
+achieved and for binding assays the homogeneity is 0.26. As a side
+note, the employment of semisupervised UMAP based on assay type or
+standard type does not improve the clustering accuracy (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">Table SI 4</ext-link>). The final clustering method (based
+on BioBERT embeddings and nonsupervised clustering) leads to a total
+of 1,027 clusters with a median size of 638 records per cluster and
+the largest cluster containing 24,105 entries. Qualitative evaluation
+of the topic-describing words that are enriched within the generated
+clusters (as derived by class-based TF-IDF) shows that they are interpretable
+and refer to existing assays (<xref rid="tbl2" ref-type="table">Table 
+</xref>). In summary, these results show that although the
+clustering is not identical to assigned labels our clustering method
+gives an accurate and interpretable grouping of the data.</p><table-wrap id="tbl1" position="float"><?disp-level 3?><label>1</label><caption><title>Clustering Performance Evaluation
+of Different Minimum Cluster Sizes<sup/>
+</title></caption><table frame="hsides" rules="groups"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1">
+<bold>Type</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Minimum size</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>AMI</bold>
+<sup/>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Homogeneity</bold>
+<sup/>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Completeness</bold>
+<sup/>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>V-measure</bold>
+<sup/>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Fowlkes-Mallows</bold>
+<sup/>
+</th></tr></thead><tbody><tr><td align="left" colspan="1" rowspan="1">BioBERT</td><td align="left" colspan="1" rowspan="1">Functional</td><td align="left" colspan="1" rowspan="1">16</td><td align="left" colspan="1" rowspan="1">0.29</td><td align="left" colspan="1" rowspan="1">0.69</td><td align="left" colspan="1" rowspan="1">0.25</td><td align="left" colspan="1" rowspan="1">0.37</td><td align="left" colspan="1" rowspan="1">0.37</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">32</td><td align="left" colspan="1" rowspan="1">0.29</td><td align="left" colspan="1" rowspan="1">0.64</td><td align="left" colspan="1" rowspan="1">0.25</td><td align="left" colspan="1" rowspan="1">0.36</td><td align="left" colspan="1" rowspan="1">0.41</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">64</td><td align="left" colspan="1" rowspan="1">0.37</td><td align="left" colspan="1" rowspan="1">0.64</td><td align="left" colspan="1" rowspan="1">0.32</td><td align="left" colspan="1" rowspan="1">0.42</td><td align="left" colspan="1" rowspan="1">0.53</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">128</td><td align="left" colspan="1" rowspan="1">0.39</td><td align="left" colspan="1" rowspan="1">0.61</td><td align="left" colspan="1" rowspan="1">0.34</td><td align="left" colspan="1" rowspan="1">0.43</td><td align="left" colspan="1" rowspan="1">0.56</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Binding</td><td align="left" colspan="1" rowspan="1">16</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.38</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.15</td><td align="left" colspan="1" rowspan="1">0.36</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">32</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.34</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.14</td><td align="left" colspan="1" rowspan="1">0.36</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">64</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.28</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.13</td><td align="left" colspan="1" rowspan="1">0.41</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">128</td><td align="left" colspan="1" rowspan="1">0.11</td><td align="left" colspan="1" rowspan="1">0.26</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.15</td><td align="left" colspan="1" rowspan="1">0.50</td></tr><tr><td align="left" colspan="1" rowspan="1">QWEN</td><td align="left" colspan="1" rowspan="1">Functional</td><td align="left" colspan="1" rowspan="1">16</td><td align="left" colspan="1" rowspan="1">0.24</td><td align="left" colspan="1" rowspan="1">0.60</td><td align="left" colspan="1" rowspan="1">0.22</td><td align="left" colspan="1" rowspan="1">0.32</td><td align="left" colspan="1" rowspan="1">0.33</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">32</td><td align="left" colspan="1" rowspan="1">0.24</td><td align="left" colspan="1" rowspan="1">0.49</td><td align="left" colspan="1" rowspan="1">0.23</td><td align="left" colspan="1" rowspan="1">0.31</td><td align="left" colspan="1" rowspan="1">0.49</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">64</td><td align="left" colspan="1" rowspan="1">0.35</td><td align="left" colspan="1" rowspan="1">0.52</td><td align="left" colspan="1" rowspan="1">0.32</td><td align="left" colspan="1" rowspan="1">0.40</td><td align="left" colspan="1" rowspan="1">0.65</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">128</td><td align="left" colspan="1" rowspan="1">0.35</td><td align="left" colspan="1" rowspan="1">0.45</td><td align="left" colspan="1" rowspan="1">0.35</td><td align="left" colspan="1" rowspan="1">0.40</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Binding</td><td align="left" colspan="1" rowspan="1">16</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.38</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.14</td><td align="left" colspan="1" rowspan="1">0.29</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">32</td><td align="left" colspan="1" rowspan="1">0.11</td><td align="left" colspan="1" rowspan="1">0.33</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.16</td><td align="left" colspan="1" rowspan="1">0.50</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">64</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.28</td><td align="left" colspan="1" rowspan="1">0.09</td><td align="left" colspan="1" rowspan="1">0.13</td><td align="left" colspan="1" rowspan="1">0.43</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">128</td><td align="left" colspan="1" rowspan="1">0.11</td><td align="left" colspan="1" rowspan="1">0.23</td><td align="left" colspan="1" rowspan="1">0.10</td><td align="left" colspan="1" rowspan="1">0.14</td><td align="left" colspan="1" rowspan="1">0.59</td></tr></tbody></table><table-wrap-foot><fn id="t1fn2"><label>a</label><p>Adjusted Mutual Information, measure
+for agreement of assigned and predicted labels.</p></fn><fn id="t1fn3"><label>b</label><p>The label agreement of records within
+the same cluster.</p></fn><fn id="t1fn4"><label>c</label><p>The extent
+to which all occurrences
+of a label are assigned to the same cluster.</p></fn><fn id="t1fn5"><label>d</label><p>Harmonic mean of homogeneity and
+completeness.</p></fn><fn id="t1fn6"><label>e</label><p>The geometric
+mean of the pairwise
+precision and recall.</p></fn><fn id="t1fn1"><label>f</label><p>The
+performance was evaluated for
+functional and binding assays separately.</p></fn></table-wrap-foot></table-wrap><table-wrap id="tbl2" position="float"><?disp-level 3?><label>2</label><caption><title>Top 8 Most Frequently Occurring Clusters
+Found in the Adenosine Receptor (AR) Dataset<sup/>
+</title></caption><table frame="hsides" rules="groups"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th align="center" colspan="1" rowspan="1">
+<bold>Cluster ID</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Total
+entries</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Entries in AR subset</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Topic describing words</bold>
+</th><th align="center" colspan="1" rowspan="1">
+<bold>Predominant assay type (in AR
+subset)</bold>
+</th></tr></thead><tbody><tr><td align="left" colspan="1" rowspan="1">1</td><td align="left" colspan="1" rowspan="1">20199</td><td align="left" colspan="1" rowspan="1">102</td><td align="left" colspan="1" rowspan="1">displacement, 3h, from, 125i,
+membranes, scintillation, counting,
+dopamine, radioligand, receptor</td><td align="left" colspan="1" rowspan="1">Binding</td></tr><tr><td align="left" colspan="1" rowspan="1">3</td><td align="left" colspan="1" rowspan="1">11550</td><td align="left" colspan="1" rowspan="1">78</td><td align="left" colspan="1" rowspan="1">calcium,
+camp, flipr, forskolin, agonist, intracellular, fluo,
+mobilization, antagonist, am</td><td align="left" colspan="1" rowspan="1">Functional</td></tr><tr><td align="left" colspan="1" rowspan="1">63</td><td align="left" colspan="1" rowspan="1">2212</td><td align="left" colspan="1" rowspan="1">770</td><td align="left" colspan="1" rowspan="1">adenosine,
+a1, a2a, dpcpx, a3, 21680, cgs, meca, ab, displacement</td><td align="left" colspan="1" rowspan="1">Binding</td></tr><tr><td align="left" colspan="1" rowspan="1">192</td><td align="left" colspan="1" rowspan="1">917</td><td align="left" colspan="1" rowspan="1">34</td><td align="left" colspan="1" rowspan="1">cyclase, adenylate, adenylyl, ecd, forskolin, neca,
+ng108,
+stimulation, adenosine, moles</td><td align="left" colspan="1" rowspan="1">Functional</td></tr><tr><td align="left" colspan="1" rowspan="1">222</td><td align="left" colspan="1" rowspan="1">1176</td><td align="left" colspan="1" rowspan="1">185</td><td align="left" colspan="1" rowspan="1">adenosine, a1, a2a, a3, receptor, a2b, affinity, binding, a2,
+radioligand</td><td align="left" colspan="1" rowspan="1">Binding</td></tr><tr><td align="left" colspan="1" rowspan="1">327</td><td align="left" colspan="1" rowspan="1">782</td><td align="left" colspan="1" rowspan="1">355</td><td align="left" colspan="1" rowspan="1">adenosine, a2a, dpcpx,
+a1, zm241385, scintillation, counting,
+a3, displacement, cgs21680</td><td align="left" colspan="1" rowspan="1">Binding</td></tr><tr><td align="left" colspan="1" rowspan="1">352</td><td align="left" colspan="1" rowspan="1">782</td><td align="left" colspan="1" rowspan="1">283</td><td align="left" colspan="1" rowspan="1">adenosine,
+camp, a2b, neca, a2a, a3, a1, cho, forskolin, antagonist</td><td align="left" colspan="1" rowspan="1">Functional</td></tr><tr><td align="left" colspan="1" rowspan="1">652</td><td align="left" colspan="1" rowspan="1">217</td><td align="left" colspan="1" rowspan="1">88</td><td align="left" colspan="1" rowspan="1">mre3008, f20, range, a3, adenosine, hek, suppressant,
+glu,
+1st, tyr</td><td align="left" colspan="1" rowspan="1">Binding</td></tr></tbody></table><table-wrap-foot><fn id="t2fn1"><label>a</label><p>The total cluster size as well as
+the number of assays in the subset are shown. For each cluster the
+topic describing words (based on class-based TF-IDF) are included
+and the predominant assay type is given.</p></fn></table-wrap-foot></table-wrap></sec><sec id="sec3.3" disp-level="2"><title>Assay Groupings Explain Variance between Measurements</title><p>To establish whether inclusion of detailed information on assay context
+could be helpful for bioactivity prediction modeling, we compared
+bioactivity outcomes from different assays with overlapping protein-compound
+measurements (423,195 data points). Plots of pChEMBL values of protein-compound
+pairs that were measured repeatedly, show a large variability in measured
+pChEMBL values for the same target-compound combination (<xref rid="fig4" ref-type="fig">Figure 
+</xref>). The mean absolute
+deviation for all repeated data points with an associated accession
+value is 0.83. For GPCRs, tyrosine kinases and SLCs this is 0.76,
+1.16 and 0.54, respectively. To establish whether assay context explains
+part of this variance, the average of the mean absolute deviation
+within assay clusters derived from the best performing clustering
+approach was calculated. Overall, this reduces the mean absolute deviation
+to 0.66 ± 0.02 (based on n = 3 clustering repeats). Notably,
+the effect of clustering does differ for the chosen target groups.
+Specifically, the variance of the measured pChEMBL values reduces
+more for the kinases (mean absolute deviation 0.84 ± 0.09) than
+for the GPCRs (mean absolute deviation 0.69 ± 0.08) and SLCs
+(mean absolute deviation 0.47 ± 0.03). In conclusion, biological
+assay context as extracted with NLP-based clustering partially explains
+the variance observed in ChEMBL data.</p><fig id="fig4" position="float"><?disp-level 3?><label>4</label><caption><p>pChEMBL values from compound-protein combinations
+tested in multiple
+assays for the GPCRs, tyrosine (TK) protein kinases and SLCs.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr4" xlink:href="ci5c00603_0004.jpg"><?cloudpmc-path blobs/ee3c/12264928/361796c310ab/ci5c00603_0004.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 583?><?original-width 1708?><?scaled-height 233?><?scaled-width 683?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="ci5c00603_0004.gif"><?cloudpmc-path blobs/ee3c/12264928/eceefb9b4b8d/ci5c00603_0004.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig></sec><sec id="sec3.4" disp-level="2"><title>Influence of Assay Context on Modeling Performance</title><p>To assess the effect of adding assay context on PCM model performance,
+we trained and evaluated multiple models. As control condition a single-task
+PCM model was trained that did not include assay context. This model
+has an R<sup>2</sup> of 0.73, 0.68, and 0.69 for SLCs, GPCRs, and
+tyrosine kinases, respectively. (<xref rid="tbl3" ref-type="table">Table 
+</xref>, random split). Interestingly, adding a bag-of-words
+descriptor (a descriptor representing frequently occurring words)
+consistently slightly decreases model performance, indicating that
+this might lead to overfitting. The fingerprint based on assay metadata
+does not affect model performance. For the GPCR case a slight increase
+in performance occurs when assay description embeddings are used as
+additional input descriptor (R<sup>2</sup> of 0.71). This effect is
+consistent across both the random split and the more challenging scaffold
+split. Moreover, for GPCRs the RMSE and Kendall’s Tau correlation
+coefficient exhibit a consistent improvement when using the embeddings.
+However, no significant improvement occurs upon adding the assay embeddings
+to the SLC and tyrosine kinase models. Investigation of feature importance
+shows that assay embeddings are among the most important features
+for achieving an RMSE decrease during model training (<xref rid="fig5" ref-type="fig">Figure 
+</xref>). For all targets, the MT
+models performed worse than the control, indicating that using our
+assay categories as separate outputs does not improve performance.
+Overall these results indicate that assay context can improve model
+performance and that assay embeddings best represent this context.</p><table-wrap id="tbl3" position="float"><?disp-level 3?><label>3</label><caption><title>Performance of PCM Models with Different
+Ways of Adding Assay Context Compared to Control<sup/>
+</title></caption><table frame="hsides" rules="groups"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th colspan="8" align="center" rowspan="1">A. SLCs<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th colspan="3" align="center" rowspan="1">
+<bold>Random split</bold>
+<hr/></th><th colspan="3" align="center" rowspan="1">
+<bold>Scaffold
+split</bold>
+<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th></tr></thead><tbody><tr><td align="left" colspan="1" rowspan="1">Control</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">0.73</td><td align="left" colspan="1" rowspan="1">0.42 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.67</td><td align="left" colspan="1" rowspan="1">0.65</td><td align="left" colspan="1" rowspan="1">0.58 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1">Assay Descriptor</td><td align="left" colspan="1" rowspan="1">Fingerprint</td><td align="left" colspan="1" rowspan="1">0.73 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.41 ± 0.03</td><td align="left" colspan="1" rowspan="1">0.67
+± 0.01</td><td align="left" colspan="1" rowspan="1">0.66</td><td align="left" colspan="1" rowspan="1">0.57 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Bag-of-words</td><td align="left" colspan="1" rowspan="1">0.72 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.43 ± 0.03</td><td align="left" colspan="1" rowspan="1">0.6 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.66</td><td align="left" colspan="1" rowspan="1">0.57 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Embedding</td><td align="left" colspan="1" rowspan="1">0.74 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.4 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.68</td><td align="left" colspan="1" rowspan="1">0.67</td><td align="left" colspan="1" rowspan="1">0.56 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1">MT</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">NA</td><td align="left" colspan="1" rowspan="1">1.10 ± 0.03</td><td align="left" colspan="1" rowspan="1">0.42 ± 0.01</td><td align="left" colspan="1" rowspan="1">NA</td><td align="left" colspan="1" rowspan="1">1.10</td><td align="left" colspan="1" rowspan="1">0.44 ± 0.01</td></tr></tbody></table><table frame="hsides" rules="groups"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th colspan="8" align="center" rowspan="1">B. GPCRs<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th colspan="3" align="center" rowspan="1">
+<bold>Random split</bold>
+<hr/></th><th colspan="3" align="center" rowspan="1">
+<bold>Scaffold
+split</bold>
+<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th></tr></thead><tbody><tr><td align="left" colspan="1" rowspan="1">Control</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">0.68</td><td align="left" colspan="1" rowspan="1">0.55 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td><td align="left" colspan="1" rowspan="1">0.6</td><td align="left" colspan="1" rowspan="1">0.69</td><td align="left" colspan="1" rowspan="1">0.58</td></tr><tr><td align="left" colspan="1" rowspan="1">Assay Descriptor</td><td align="left" colspan="1" rowspan="1">Fingerprint</td><td align="left" colspan="1" rowspan="1">0.68</td><td align="left" colspan="1" rowspan="1">0.55 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63</td><td align="left" colspan="1" rowspan="1">0.62</td><td align="left" colspan="1" rowspan="1">0.67</td><td align="left" colspan="1" rowspan="1">0.59</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Bag-of-words</td><td align="left" colspan="1" rowspan="1">0.65</td><td align="left" colspan="1" rowspan="1">0.61</td><td align="left" colspan="1" rowspan="1">0.61</td><td align="left" colspan="1" rowspan="1">0.58</td><td align="left" colspan="1" rowspan="1">0.74</td><td align="left" colspan="1" rowspan="1">0.56</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Embedding</td><td align="left" colspan="1" rowspan="1">0.71</td><td align="left" colspan="1" rowspan="1">0.5 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.65</td><td align="left" colspan="1" rowspan="1">0.65</td><td align="left" colspan="1" rowspan="1">0.61</td><td align="left" colspan="1" rowspan="1">0.61</td></tr><tr><td align="left" colspan="1" rowspan="1">MT</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">0.64</td><td align="left" colspan="1" rowspan="1">0.5 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.66</td><td align="left" colspan="1" rowspan="1">0.51</td><td align="left" colspan="1" rowspan="1">0.64</td><td align="left" colspan="1" rowspan="1">0.60 ±
+0.01</td></tr></tbody></table><table frame="hsides" rules="groups"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th colspan="8" align="center" rowspan="1">C. Tyrosine
+kinases<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th colspan="3" align="center" rowspan="1">
+<bold>Random split</bold>
+<hr/></th><th colspan="3" align="center" rowspan="1">
+<bold>Scaffold split</bold>
+<hr/></th></tr><tr><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1"> </th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th><th align="center" colspan="1" rowspan="1">R<sup>2</sup>
+</th><th align="center" colspan="1" rowspan="1">RMSE</th><th align="center" colspan="1" rowspan="1">KT</th></tr></thead><tbody><tr><td align="left" colspan="1" rowspan="1">Control</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">0.69 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.47 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.64
+± 0.01</td><td align="left" colspan="1" rowspan="1">0.68</td><td align="left" colspan="1" rowspan="1">0.52</td><td align="left" colspan="1" rowspan="1">0.63</td></tr><tr><td align="left" colspan="1" rowspan="1">Assay Descriptor</td><td align="left" colspan="1" rowspan="1">Fingerprint</td><td align="left" colspan="1" rowspan="1">0.68 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.51 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.63 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.66</td><td align="left" colspan="1" rowspan="1">0.54</td><td align="left" colspan="1" rowspan="1">0.62</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Bag-of-words</td><td align="left" colspan="1" rowspan="1">0.66 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.53 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.62 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.64</td><td align="left" colspan="1" rowspan="1">0.58 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.6</td></tr><tr><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">Embedding</td><td align="left" colspan="1" rowspan="1">0.7 ± 0.02</td><td align="left" colspan="1" rowspan="1">0.47 ± 0.03</td><td align="left" colspan="1" rowspan="1">0.65 ± 0.01</td><td align="left" colspan="1" rowspan="1">0.68</td><td align="left" colspan="1" rowspan="1">0.5</td><td align="left" colspan="1" rowspan="1">0.64</td></tr><tr><td align="left" colspan="1" rowspan="1">MT</td><td align="left" colspan="1" rowspan="1"> </td><td align="left" colspan="1" rowspan="1">0.63
+± 0.03</td><td align="left" colspan="1" rowspan="1">0.48 ± 0.03</td><td align="left" colspan="1" rowspan="1">0.64 ±
+0.02</td><td align="left" colspan="1" rowspan="1">NA</td><td align="left" colspan="1" rowspan="1">0.52</td><td align="left" colspan="1" rowspan="1">0.63</td></tr></tbody></table><table-wrap-foot><fn id="t3fn1"><label>a</label><p>Performance is assessed using the
+correlation (R<sup>2</sup>), root mean squared error (RMSE), and Kendall’s
+Tau (KT). Mean ± standard deviation of 3 repeats is shown, in
+cases where the standard deviation is 0 only the mean is shown.</p></fn></table-wrap-foot></table-wrap><fig id="fig5" position="float"><?disp-level 3?><label>5</label><caption><p>Proportion of different descriptor types for top 30 features based
+on feature importance. We calculated feature importance by their average
+gain in mean squared error reduction over 3 repeats for different
+random splits.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr5" xlink:href="ci5c00603_0005.jpg"><?cloudpmc-path blobs/ee3c/12264928/c97415e543db/ci5c00603_0005.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 788?><?original-width 1375?><?scaled-height 394?><?scaled-width 687?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="ci5c00603_0005.gif"><?cloudpmc-path blobs/ee3c/12264928/5efb97e7507d/ci5c00603_0005.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig></sec></sec><sec id="sec4" disp-level="1"><title>Discussion</title><p>In this research we set out to address the
+question whether employment
+of aggregated bioactivity data from different biological assays can
+be improved by taking this experimental context into account. We demonstrated
+that one can use NLP techniques to create novel assay descriptors
+and to give an overview of assays present in a data set. Additionally,
+clustering of similar biological assays showed that a substantial
+part of the variance between measurements of the same compound-protein
+combinations is due to assay context. Finally, including assay context
+in the form of embeddings slightly improved the predictive performance
+of PCM models in some data sets.</p><p>The main objective of our study
+was to facilitate the use of the
+large corpus of written, unstandardized assay descriptions available
+in the ChEMBL database. To harness this information for incorporating
+assay context into the bioactivity modeling process, these descriptions
+were embedded and clustered. For the embedding approach, the pretrained
+biomedical language representation model BioBERT and the general text
+embedding model gte-Qwen2–1.5B-instruct were used.<italic>
+,
+</italic> The resulting embeddings both capture relevant information as is
+shown by the concurrence of their mapping with other assay characteristics
+annotated in ChEMBL. However, BioBERT embeddings show a more concentrated
+grouping of assays with similar labels. Specifically, a clear division
+was apparent for the categories assay type, taxonomy, assay format
+and ChEMBL confidence score. Note that this confidence score reflects
+the specificity and characterization of the target used for the measurement,
+hence records with a similar description are indeed expected to have
+a similar confidence score. The separation based on standard type
+(i.e., the type of readout) was less strict. This could be caused
+by the fact that the standard type is not dependent on assay properties
+like the meta target or detection method but instead on the perturbagen
+concentration. This information may not be prominently mentioned in
+the assay descriptions. In general, despite these minor shortcomings
+these results suggest that the embeddings provide usable information.
+Further improvements could possibly be achieved with domain-specific
+large language models like ChemLLM.
+</p><p>In ChEMBL, identical or similar biological assays are currently
+not grouped together. However, such a grouping could be useful to
+obtain a clear overview of how the data in a data set was derived,
+and for modeling purposes. Therefore, one of the objectives of our
+study was to use neural topic modeling with TF-IDF to cluster similar
+records, which was successful. It should be mentioned that for all
+metrics used here we do not expect to see perfect clustering; a perfect
+way to group – or even label – this very heterogeneous
+collection of biological experiments does not exist. Overall, the
+best clustering was obtained for models with a minimum cluster size
+of 128 (see <xref rid="tbl1" ref-type="table">Table 
+</xref>) and using outlier reduction (see <xref rid="fig3" ref-type="fig">Figure 
+</xref>). The normalized purity of labels annotated
+in ChEMBL showed that the resulting clusters enriched for similar
+properties, especially when small clusters were allowed. Interestingly,
+the records that clustered together generally had the same ChEMBL
+assay type (binding/functional) and BAO format but more diverse standard
+types. This was in line with the UMAP visualization, in which standard
+types did not occupy distinct regions. Further evaluation based on
+comparison to manually annotated labels showed that the assay clusters
+also grouped similar assays together on a detailed level. Here large
+minimum cluster sizes perform slightly better than small sizes. In
+general, the grouping of functional assays performed better than binding
+assays. One difference between these types of assay is that functional
+assays are much more diverse than binding assays. The functional assay
+descriptions, for that reason, often contain highly assay-specific
+information. Binding assays with different detection methods often
+only contain detailed information on the radioligand and target which
+is not relevant for the classification of the assay type. This is
+for example apparent for the binding assay clusters found for the
+adenosine receptors, as shown by the receptor and perturbagen specific
+topic-describing words (<xref rid="tbl2" ref-type="table">Table 
+</xref>). Overall, our qualitative analysis established that these
+words made sense and often referred to a specific type of experimental
+protocol. To facilitate the interpretation of these topics, we have
+made a Jupyter Notebook that shows how to use a pretrained large-language
+model to link the keywords to a type of pharmacological experiment
+(<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX/blob/main/assayctx/descriptors/llm_agent.ipynb" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX/blob/main/assayctx/descriptors/llm_agent.ipynb</ext-link>). It should be noted that the relevance of the assay descriptor
+is contingent on the specificity of the assay description. Specific
+assay conditions that can influence the outcome, e.g. the presence
+of an agonist, can only be taken into account when they are mentioned
+in the assay description.</p><p>This research set out with the hypothesis
+that different biological
+assays give significantly deviating outcomes. To evaluate if this
+hypothesis holds, we established the average deviation between measurements
+on the same protein-compound combinations. In general, there was a
+substantial variance between bioactivity values within the same protein-compound
+pair (mean absolute deviation0.83). This variance was clearly lower
+when the assay context was considered. Prior studies have also found
+that results from different assays vary.<italic>
+,,
+</italic> An interesting finding is that a larger variation
+in outcomes occurred for the kinase data set than for the GPCRs and
+SLCs. This seemed to mainly be due to assay effects, as the variation
+within the same assay – as approximated by assay clusters –
+exhibited a marked decrease especially for the kinase data set. One
+possible explanation for this finding could be that IC<sub>50</sub> values reported for kinase inhibitors that are ATP-competitive are
+affected by the ATP-concentration used in the assay. Another explanation could be that for kinase inhibitors
+the binding site of the molecule influences its biological effect,
+in this work the kinase inhibitor type was not taken into account.
+It should be noted that we did not look for systematic trends between
+different assay outcomes. Instead, we focused on using machine learning
+models to correct for assay specific outcomes.</p><p>We showed that
+including assay context can improve modeling results
+in some data sets, by explaining part of the variance present in the
+modeled data. Interestingly, for the kinase data set using assay embeddings
+on top of the other inputs did not help. Assay descriptions have previously
+been shown to be useful for modeling by Seidl et al., who found that
+ChEMBL’s assay descriptions can be used for zero-shot and few-shot
+learning. Here we aimed to improve models
+of targets with sufficient existing data. To this end we utilized
+multiple PCM models that include assay context. The embedding-based
+descriptor showed a consistent improvement for the largest data set
+that was modeled, resulting in an R<sup>2</sup> increasing from 0.68
+to 0.71 in the random split condition and from 0.60 to 0.65 in the
+scaffold split condition. For most of the other methods and data sets
+that were analyzed including assay context did not have an effect
+or even had a negative effect. Specifically, the bag-of-words fingerprint
+and the models with separate tasks for the assay topics decreased
+performance. These findings suggest that the heterogeneous nature
+of assay descriptions requires assay embeddings in order to obtain
+a clear signal among this noisy information in order to improve performance.
+For example, to improve the performance for the bag-of-words approach
+one could attempt to select the used words/bits that improve modeling
+performance. Alternatively, since the assay descriptions do not always
+include information that is available in the assay labels (most notably
+the assay readout), NLP-derived assay embeddings could also be combined
+with annotated labels to improve performance. The reason that assay
+embeddings perform well but that MT models with assay topics based
+on these embeddings have hardly any predictive performance could be
+due to the balance between data sparsity on one hand and cluster size
+on the other.</p><p>These findings have provided insight into the
+challenges associated
+with aggregated data for bioactivity modeling. Currently such agglomerated
+data is commonly used for modeling purposes and it has been reported
+that this comes at the cost of a large unexplained variance between
+measurements. However, until now, little
+has been done to address this problem. Here, we demonstrated that
+measured bioactivity values indeed vary strongly and that part of
+this variance is explained by the experimental context. Moreover,
+we showed that the presence of different assays in our data sets negatively
+influences model performance, although these effects are small and
+depend on the data set. Prior to our work it was difficult to get
+an overview of the assays present in ChEMBL and use that information
+for data curation. With our clustering method, similar assays are
+grouped and summarized with a few topic describing words. Additionally,
+we showed that assay embeddings hold information on the assays performed
+and are therefore valuable to include when modeling data derived from
+different biological experiments. At inference time, these types of
+models would be queried with compound, protein and assay combinations
+to yield predictions for specific end points. A natural follow-up
+of this work is to apply it in a prospective validation setting.</p><p>Being limited to annotated data from ChEMBL and a small subset
+of manually annotated assays, we could not assess the validity of
+the majority of found clusters. From the clusters we were able to
+validate, we concluded that similar assays indeed grouped together,
+yet also contained some data points where clustering could be further
+improved. Moreover, in some cases different clusters actually described
+the same assay, as shown by the completeness score. This was especially
+true for binding assays, while the resulting readouts are expected
+to be similar. Part of this oversegmentation could be caused by receptor
+classes and specific radioligands mentioned in a lot of the assay
+descriptions. In order to prevent this additional separation based
+on protein specific information, words referring to such information
+could be ignored or replaced by a generic abstract term. Ideally,
+increased awareness of the assay context would help establish validated,
+standardized ways to deal with this assay context. There is, for example,
+a definite need for assay-level benchmark data sets.</p></sec><sec id="sec5" disp-level="1"><title>Conclusion</title><p>Here we have shown that assay context can
+affect bioactivity modeling
+outcomes for specific data sets. Our approach enables the use of this
+context both for the bioactivity model and the modeler. This work
+does highlight the importance of bioactivity data to be accompanied
+by well-annotated assay descriptions. Continued efforts should be
+made to make these descriptions available in a standardized format.
+Furthermore, follow-up work can likely further improve the handling
+of free text assay descriptions and therefore of large bioactivity
+data sets.</p></sec><sec id="sec16" disp-level="1"><title>Supplementary Material</title><supplementary-material id="sifile1" position="float"><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ci5c00603_si_001.pdf" mimetype="application" mime-subtype="pdf"><?cloudpmc-path ee3c/12264928/2fc9d41a13de/ci5c00603_si_001.pdf?><?cloudpmc-bucket app?><?size 937398?></media></supplementary-material></sec><sec id="notes-3" disp-level="1"><p>The data and
+code required to recreate the results of this paper are available
+in the following GitHub repository: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX</ext-link>.</p></sec><sec id="notes-2" disp-level="1"><p>The Supporting
+Information
+is available free of charge at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/10.1021/acs.jcim.5c00603?goto=supporting-info" ext-link-type="uri">https://pubs.acs.org/doi/10.1021/acs.jcim.5c00603</ext-link>.</p><list list-type="simple" id="silist"><list-item><p>Additional data analysis results including tables on
+data set composition, (point density) UMAP of BioBERT, bag-of-word
+and gte-Qwen2–1.5B-instruct embeddings, and additional performance
+metrics (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.5c00603/suppl_file/ci5c00603_si_001.pdf" ext-link-type="uri">PDF</ext-link>)</p></list-item></list></sec><sec id="notes-6" disp-level="1"><p>LS
+conceived
+the study. LS and EGS developed and implemented the method. WJ and
+GJPvW supervised the study. LHH, JBB, WJ, and GJPvW provided feedback
+and critical input. All authors read, commented on, and approved the
+final manuscript.</p></sec><sec id="notes-5" disp-level="1"><p>This work was
+supported by the VHP4Safety. The VHP4Safety project is funded by The
+Netherlands Research Council (NWO) ‘Netherlands Research Agenda:
+Research on Routes by Consortia’ (NWA-ORC 1292.19.272).</p></sec><sec id="notes-4" disp-level="1"><p>The authors
+declare no competing financial interest.</p></sec><sec id="ref-list1" sec-type="ref-list" disp-level="1"><title>References</title><sec id="ref-list1_sec2" disp-level="2"><ref-list><ref id="ref1"><mixed-citation id="cit1"><named-content content-type="citation-string">Lenselink E. B.. et al. Beyond the hype: deep neural networks outperform established methods
+using a ChEMBL bioactivity benchmark set. J.
+Cheminformatics. 2017;9:45. doi: 10.1186/s13321-017-0232-0.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-017-0232-0"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC5555960"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29086168"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=Beyond the hype: deep neural networks outperform established methods using a ChEMBL bioactivity benchmark set&amp;author=E. B. Lenselink&amp;volume=9&amp;publication_year=2017&amp;pages=45&amp;pmid=29086168&amp;doi=10.1186/s13321-017-0232-0&amp;"/></mixed-citation></ref><ref id="ref2"><mixed-citation id="cit2"><named-content content-type="citation-string">Bongers B. J., IJzerman A. P., Van Westen G. J.. Proteochemometrics–recent
+developments in bioactivity and selectivity modeling. Drug Discovery Today Technol. 2019;32:89–98. doi: 10.1016/j.ddtec.2020.08.003.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.ddtec.2020.08.003"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="33386099"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Drug Discovery Today Technol.&amp;title=Proteochemometrics–recent developments in bioactivity and selectivity modeling&amp;author=B. J. Bongers&amp;author=A. P. IJzerman&amp;author=G. J. Van Westen&amp;volume=32&amp;publication_year=2019&amp;pages=89-98&amp;pmid=33386099&amp;doi=10.1016/j.ddtec.2020.08.003&amp;"/></mixed-citation></ref><ref id="ref3"><mixed-citation id="cit3"><named-content content-type="citation-string">Gaulton A.. et al. ChEMBL: a large-scale bioactivity database for drug
+discovery. Nucleic Acids Res. 2012;40:D1100–D1107. doi: 10.1093/nar/gkr777.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/nar/gkr777"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC3245175"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="21948594"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nucleic Acids Res.&amp;title=ChEMBL: a large-scale bioactivity database for drug discovery&amp;author=A. Gaulton&amp;volume=40&amp;publication_year=2012&amp;pages=D1100-D1107&amp;pmid=21948594&amp;doi=10.1093/nar/gkr777&amp;"/></mixed-citation></ref><ref id="ref4"><mixed-citation id="cit4"><named-content content-type="citation-string">Alves V. M.. et al. Curated Data In 
+Trustworthy In Silico Models Out: The Impact
+of Data Quality on the Reliability of Artificial Intelligence Models
+as Alternatives to Animal Testing. Altern. Lab.
+Anim. 2021;49:73–82. doi: 10.1177/02611929211029635.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1177/02611929211029635"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC8609471"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="34233495"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Altern. Lab. Anim.&amp;title=Curated Data In  Trustworthy In Silico Models Out: The Impact of Data Quality on the Reliability of Artificial Intelligence Models as Alternatives to Animal Testing&amp;author=V. M. Alves&amp;volume=49&amp;publication_year=2021&amp;pages=73-82&amp;pmid=34233495&amp;doi=10.1177/02611929211029635&amp;"/></mixed-citation></ref><ref id="ref5"><mixed-citation id="cit5"><named-content content-type="citation-string">Kalliokoski T., Kramer C., Vulpetti A., Gedeck P.. Comparability of mixed
+IC50 data–a statistical analysis. PloS
+One. 2013;8:e61007.  doi: 10.1371/journal.pone.0061007.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1371/journal.pone.0061007"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC3628986"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="23613770"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=PloS One&amp;title=Comparability of mixed IC50 data–a statistical analysis&amp;author=T. Kalliokoski&amp;author=C. Kramer&amp;author=A. Vulpetti&amp;author=P. Gedeck&amp;volume=8&amp;publication_year=2013&amp;pages=e61007&amp;pmid=23613770&amp;doi=10.1371/journal.pone.0061007&amp;"/></mixed-citation></ref><ref id="ref6"><mixed-citation id="cit6"><named-content content-type="citation-string">Landrum G. A., Riniker S.. Combining IC50 or Ki
+Values from Different Sources
+Is a Source of Significant Noise. J. Chem. Inf.
+Model. 2024;64:1560–1567. doi: 10.1021/acs.jcim.4c00049.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.4c00049"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC10934815"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="38394344"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Combining IC50 or Ki Values from Different Sources Is a Source of Significant Noise&amp;author=G. A. Landrum&amp;author=S. Riniker&amp;volume=64&amp;publication_year=2024&amp;pages=1560-1567&amp;pmid=38394344&amp;doi=10.1021/acs.jcim.4c00049&amp;"/></mixed-citation></ref><ref id="ref7"><mixed-citation id="cit7"><named-content content-type="citation-string">Thorne N., Auld D. S., Inglese J.. Apparent activity in high-throughput
+screening: origins of compound-dependent assay interference. Curr. Opin. Chem. Biol. 2010;14:315–324. doi: 10.1016/j.cbpa.2010.03.020.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.cbpa.2010.03.020"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC2878863"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="20417149"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Curr. Opin. Chem. Biol.&amp;title=Apparent activity in high-throughput screening: origins of compound-dependent assay interference&amp;author=N. Thorne&amp;author=D. S. Auld&amp;author=J. Inglese&amp;volume=14&amp;publication_year=2010&amp;pages=315-324&amp;pmid=20417149&amp;doi=10.1016/j.cbpa.2010.03.020&amp;"/></mixed-citation></ref><ref id="ref8"><mixed-citation id="cit8"><named-content content-type="citation-string">Kenakin T., Christopoulos A.. Signalling bias in new drug discovery:
+detection, quantification
+and therapeutic impact. Nat. Rev. Drug Discovery. 2013;12:205–216. doi: 10.1038/nrd3954.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/nrd3954"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="23411724"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Rev. Drug Discovery&amp;title=Signalling bias in new drug discovery: detection, quantification and therapeutic impact&amp;author=T. Kenakin&amp;author=A. Christopoulos&amp;volume=12&amp;publication_year=2013&amp;pages=205-216&amp;pmid=23411724&amp;doi=10.1038/nrd3954&amp;"/></mixed-citation></ref><ref id="ref9"><mixed-citation id="cit9"><named-content content-type="citation-string">
+
+Pentina, A.
+; 
+Clevert, D.-A.
+. 
+Multi-task
+proteochemometric modelling. ChemRxiv
+2022. 10.26434/chemrxiv-2022-d5tzd
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.26434/chemrxiv-2022-d5tzd"/></mixed-citation></ref><ref id="ref10"><mixed-citation id="cit10"><named-content content-type="citation-string">
+
+Seidl, P.
+; 
+Vall, A.
+; 
+Hochreiter, S.
+; 
+Klambauer, G.
+. 
+Enhancing activity
+prediction
+models in drug discovery with the ability to understand human language. arXiv
+2023. 10.48550/arXiv.2303.03363
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2303.03363"/></mixed-citation></ref><ref id="ref11"><mixed-citation id="cit11"><named-content content-type="citation-string">Hu F., Wang D., Huang H., Hu Y., Yin P.. Bridging the
+Gap between Target-Based and Cell-Based Drug Discovery with a Graph
+Generative Multitask Model. J. Chem. Inf. Model. 2022;62:6046–6056. doi: 10.1021/acs.jcim.2c01180.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.2c01180"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="36401569"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Bridging the Gap between Target-Based and Cell-Based Drug Discovery with a Graph Generative Multitask Model&amp;author=F. Hu&amp;author=D. Wang&amp;author=H. Huang&amp;author=Y. Hu&amp;author=P. Yin&amp;volume=62&amp;publication_year=2022&amp;pages=6046-6056&amp;pmid=36401569&amp;doi=10.1021/acs.jcim.2c01180&amp;"/></mixed-citation></ref><ref id="ref12"><mixed-citation id="cit12"><named-content content-type="citation-string">
+
+Vinogradova, E.
+; 
+Pats, K.
+; 
+Molnár, F.
+; 
+Fazli, S.
+. 
+MLT-LE: predicting
+drug-target
+binding affinity with multi-task residual neural networks. arXiv
+2022. 10.48550/arXiv.2209.06274
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2209.06274"/></mixed-citation></ref><ref id="ref13"><mixed-citation id="cit13"><named-content content-type="citation-string">
+
+Chan, L.
+; 
+Verdonk, M.
+; 
+Poelking, C.
+. 
+Embracing
+assay
+heterogeneity with neural processes for markedly improved bioactivity
+predictions. arXiv
+2023. 10.48550/ARXIV.2308.09086.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/ARXIV.2308.09086"/></mixed-citation></ref><ref id="ref14"><mixed-citation id="cit14"><named-content content-type="citation-string">
+
+Devlin, J.
+; 
+Chang, M.-W.
+; 
+Lee, K.
+; 
+Toutanova, K.
+. 
+BERT: Pre-training of Deep Bidirectional
+Transformers for Language Understanding. Preprint
+at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://arxiv.org/abs/1810.04805" ext-link-type="uri">http://arxiv.org/abs/1810.04805</ext-link>
+2019. 10.48550/arXiv.1810.04805
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.1810.04805"/></mixed-citation></ref><ref id="ref15"><mixed-citation id="cit15"><named-content content-type="citation-string">
+
+Enevoldsen, K.
+; et al. 
+MMTEB: Massive multilingual text embedding benchmark.arXiv
+2025. 10.48550/arXiv.2502.13595
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2502.13595"/></mixed-citation></ref><ref id="ref16"><mixed-citation id="cit16"><named-content content-type="citation-string">
+
+Grootendorst, M.
+
+BERTopic:
+Neural topic modeling with a class-based TF-IDF procedure. arXiv
+2022. 10.48550/arXiv.2203.05794
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2203.05794"/></mixed-citation></ref><ref id="ref17"><mixed-citation id="cit17"><named-content content-type="citation-string">Zdrazil B.. et al. The ChEMBL Database
+in 2023: a drug discovery platform spanning multiple
+bioactivity data types and time periods. Nucleic
+Acids Res. 2024;52:D1180–D1192. doi: 10.1093/nar/gkad1004.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/nar/gkad1004"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC10767899"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="37933841"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nucleic Acids Res.&amp;title=The ChEMBL Database in 2023: a drug discovery platform spanning multiple bioactivity data types and time periods&amp;author=B. Zdrazil&amp;volume=52&amp;publication_year=2024&amp;pages=D1180-D1192&amp;pmid=37933841&amp;doi=10.1093/nar/gkad1004&amp;"/></mixed-citation></ref><ref id="ref18"><mixed-citation id="cit18"><named-content content-type="citation-string">Lee S.-H.. Platform
+technologies for research on the G protein coupled receptor: Applications
+to drug discovery research. Biomol. Ther. 2011;19:1–8. doi: 10.4062/biomolther.2011.19.1.001.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.4062/biomolther.2011.19.1.001"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Biomol. Ther.&amp;title=Platform technologies for research on the G protein coupled receptor: Applications to drug discovery research&amp;author=S.-H. Lee&amp;volume=19&amp;publication_year=2011&amp;pages=1-8&amp;doi=10.4062/biomolther.2011.19.1.001&amp;"/></mixed-citation></ref><ref id="ref19"><mixed-citation id="cit19"><named-content content-type="citation-string">Stoddart L. A., White C. W., Nguyen K., Hill S. J., Pfleger K. D.. Fluorescence-and
+bioluminescence-based approaches to study GPCR ligand binding. Br. J. Pharmacol. 2016;173:3028–3037. doi: 10.1111/bph.13316.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1111/bph.13316"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC5125978"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="26317175"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Br. J. Pharmacol.&amp;title=Fluorescence-and bioluminescence-based approaches to study GPCR ligand binding&amp;author=L. A. Stoddart&amp;author=C. W. White&amp;author=K. Nguyen&amp;author=S. J. Hill&amp;author=K. D. Pfleger&amp;volume=173&amp;publication_year=2016&amp;pages=3028-3037&amp;pmid=26317175&amp;doi=10.1111/bph.13316&amp;"/></mixed-citation></ref><ref id="ref20"><mixed-citation id="cit20"><named-content content-type="citation-string">Béquignon O. J.. et al. Papyrus: a large-scale curated dataset aimed at bioactivity predictions. J. Cheminformatics. 2023;15:1–11. doi: 10.1186/s13321-022-00672-x.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-022-00672-x"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC9824924"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="36609528"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=Papyrus: a large-scale curated dataset aimed at bioactivity predictions&amp;author=O. J. Béquignon&amp;volume=15&amp;publication_year=2023&amp;pages=1-11&amp;pmid=36609528&amp;doi=10.1186/s13321-022-00672-x&amp;"/></mixed-citation></ref><ref id="ref21"><mixed-citation id="cit21"><named-content content-type="citation-string">Luukkonen S.. et al. Large-Scale Modeling of Sparse Protein Kinase
+Activity Data. J. Chem. Inf. Model. 2023;63:3688. doi: 10.1021/acs.jcim.3c00132.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.3c00132"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC10302492"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="37294674"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Large-Scale Modeling of Sparse Protein Kinase Activity Data&amp;author=S. Luukkonen&amp;volume=63&amp;publication_year=2023&amp;pages=3688&amp;pmid=37294674&amp;doi=10.1021/acs.jcim.3c00132&amp;"/></mixed-citation></ref><ref id="ref22"><mixed-citation id="cit22"><named-content content-type="citation-string">Lee J.. et al. BioBERT: a pre-trained
+biomedical language representation model for
+biomedical text mining. Bioinformatics. 2020;36:1234–1240. doi: 10.1093/bioinformatics/btz682.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/bioinformatics/btz682"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC7703786"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="31501885"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Bioinformatics&amp;title=BioBERT: a pre-trained biomedical language representation model for biomedical text mining&amp;author=J. Lee&amp;volume=36&amp;publication_year=2020&amp;pages=1234-1240&amp;pmid=31501885&amp;doi=10.1093/bioinformatics/btz682&amp;"/></mixed-citation></ref><ref id="ref23"><mixed-citation id="cit23"><named-content content-type="citation-string">
+
+Li, Z.
+; et al. 
+Towards general text embeddings with multi-stage
+contrastive learning. arXiv
+2023. 10.48550/arXiv.2308.03281
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2308.03281"/></mixed-citation></ref><ref id="ref24"><mixed-citation id="cit24"><named-content content-type="citation-string">
+
+McInnes, L.
+, 
+Healy, J.
+; 
+Melville, J.
+. 
+UMAP: Uniform manifold approximation
+and projection for dimension reduction. arXiv
+2018. 10.48550/arXiv.1802.03426
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.1802.03426"/></mixed-citation></ref><ref id="ref25"><mixed-citation id="cit25"><named-content content-type="citation-string">McInnes L., Healy J., Astels S.. hdbscan: Hierarchical
+density based
+clustering. J. Open Source Softw. 2017;2:205. doi: 10.21105/joss.00205.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.21105/joss.00205"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Open Source Softw&amp;title=hdbscan: Hierarchical density based clustering&amp;author=L. McInnes&amp;author=J. Healy&amp;author=S. Astels&amp;volume=2&amp;publication_year=2017&amp;pages=205&amp;doi=10.21105/joss.00205&amp;"/></mixed-citation></ref><ref id="ref26"><mixed-citation id="cit26"><named-content content-type="citation-string">
+
+van den Maagdenberg, H. W.
+; et al. 
+QSPRpred: a Flexible Open-Source Quantitative
+Structure-Property
+Relationship Modelling Tool.J. Cheminformatics
+2024, 16. 10.1186/s13321-024-00908-y
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-024-00908-y"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC11566221"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="39543652"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=QSPRpred: a Flexible Open-Source Quantitative Structure-Property Relationship Modelling Tool&amp;volume=16&amp;publication_year=2024&amp;pmid=39543652&amp;doi=10.1186/s13321-024-00908-y&amp;"/></mixed-citation></ref><ref id="ref27"><mixed-citation id="cit27"><named-content content-type="citation-string">Sievers F.. et al. Fast, scalable generation
+of high-quality protein multiple sequence
+alignments using Clustal Omega. Mol. Syst. Biol. 2011;7:539. doi: 10.1038/msb.2011.75.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/msb.2011.75"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC3261699"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="21988835"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Mol. Syst. Biol.&amp;title=Fast, scalable generation of high-quality protein multiple sequence alignments using Clustal Omega&amp;author=F. Sievers&amp;volume=7&amp;publication_year=2011&amp;pages=539&amp;pmid=21988835&amp;doi=10.1038/msb.2011.75&amp;"/></mixed-citation></ref><ref id="ref28"><mixed-citation id="cit28"><named-content content-type="citation-string">Goujon M.. et al. A new bioinformatics
+analysis tools framework at EMBL–EBI. Nucleic Acids Res. 2010;38:W695–W699. doi: 10.1093/nar/gkq313.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/nar/gkq313"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC2896090"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="20439314"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nucleic Acids Res.&amp;title=A new bioinformatics analysis tools framework at EMBL–EBI&amp;author=M. Goujon&amp;volume=38&amp;publication_year=2010&amp;pages=W695-W699&amp;pmid=20439314&amp;doi=10.1093/nar/gkq313&amp;"/></mixed-citation></ref><ref id="ref29"><mixed-citation id="cit29"><named-content content-type="citation-string">Sandberg M., Eriksson L., Jonsson J., Sjöström M., Wold S.. New chemical descriptors relevant for the design of biologically
+active peptides. A multivariate characterization of 87 amino acids. J. Med. Chem. 1998;41:2481–2491. doi: 10.1021/jm9700575.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/jm9700575"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="9651153"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Med. Chem.&amp;title=New chemical descriptors relevant for the design of biologically active peptides. A multivariate characterization of 87 amino acids&amp;author=M. Sandberg&amp;author=L. Eriksson&amp;author=J. Jonsson&amp;author=M. Sjöström&amp;author=S. Wold&amp;volume=41&amp;publication_year=1998&amp;pages=2481-2491&amp;pmid=9651153&amp;doi=10.1021/jm9700575&amp;"/></mixed-citation></ref><ref id="ref30"><mixed-citation id="cit30"><named-content content-type="citation-string">Iosipoi L., Vakhrushev A.. SketchBoost: Fast Gradient Boosted Decision Tree for
+Multioutput Problems. Adv. Neural Inf. Process.
+Syst. 2022;35:25422–25435.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Adv. Neural Inf. Process. Syst.&amp;title=SketchBoost: Fast Gradient Boosted Decision Tree for Multioutput Problems&amp;author=L. Iosipoi&amp;author=A. Vakhrushev&amp;volume=35&amp;publication_year=2022&amp;pages=25422-25435&amp;"/></mixed-citation></ref><ref id="ref31"><mixed-citation id="cit31"><named-content content-type="citation-string">
+
+Zhang, D.
+; et al. 
+ChemLLM: A chemical large language model. arXiv
+2024. 10.48550/arXiv.2402.06852
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2402.06852"/></mixed-citation></ref><ref id="ref32"><mixed-citation id="cit32"><named-content content-type="citation-string">Kramer C., Kalliokoski T., Gedeck P., Vulpetti A.. The Experimental Uncertainty
+of Heterogeneous Public Ki Data. J. Med. Chem. 2012;55:5165–5173. doi: 10.1021/jm300131x.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/jm300131x"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="22643060"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Med. Chem.&amp;title=The Experimental Uncertainty of Heterogeneous Public Ki Data&amp;author=C. Kramer&amp;author=T. Kalliokoski&amp;author=P. Gedeck&amp;author=A. Vulpetti&amp;volume=55&amp;publication_year=2012&amp;pages=5165-5173&amp;pmid=22643060&amp;doi=10.1021/jm300131x&amp;"/></mixed-citation></ref><ref id="ref33"><mixed-citation id="cit33"><named-content content-type="citation-string">Davies S. P., Reddy H., Caivano M., Cohen P.. Specificity and mechanism
+of action of some commonly used protein kinase inhibitors. Biochem. J. 2000;351:95–105. doi: 10.1042/bj3510095.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1042/bj3510095"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC1221339"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="10998351"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Biochem. J.&amp;title=Specificity and mechanism of action of some commonly used protein kinase inhibitors&amp;author=S. P. Davies&amp;author=H. Reddy&amp;author=M. Caivano&amp;author=P. Cohen&amp;volume=351&amp;publication_year=2000&amp;pages=95-105&amp;pmid=10998351&amp;doi=10.1042/bj3510095&amp;"/></mixed-citation></ref></ref-list></sec></sec><sec id="_ad93_" xml:lang="en" sec-type="associated-data" disp-level="1"><title>Associated Data</title><sec id="_adc93_" xml:lang="en" sec-type="data-citations" disp-level="2"><title>Data Citations</title><ref-list><ref id="_dbx_ref_cit9"><mixed-citation><named-content content-type="citation-string">
+
+Pentina, A.
+; 
+Clevert, D.-A.
+. 
+Multi-task
+proteochemometric modelling. ChemRxiv
+2022. 10.26434/chemrxiv-2022-d5tzd
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.26434/chemrxiv-2022-d5tzd"/></mixed-citation></ref><ref id="_dbx_ref_cit10"><mixed-citation><named-content content-type="citation-string">
+
+Seidl, P.
+; 
+Vall, A.
+; 
+Hochreiter, S.
+; 
+Klambauer, G.
+. 
+Enhancing activity
+prediction
+models in drug discovery with the ability to understand human language. arXiv
+2023. 10.48550/arXiv.2303.03363
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2303.03363"/></mixed-citation></ref><ref id="_dbx_ref_cit12"><mixed-citation><named-content content-type="citation-string">
+
+Vinogradova, E.
+; 
+Pats, K.
+; 
+Molnár, F.
+; 
+Fazli, S.
+. 
+MLT-LE: predicting
+drug-target
+binding affinity with multi-task residual neural networks. arXiv
+2022. 10.48550/arXiv.2209.06274
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2209.06274"/></mixed-citation></ref><ref id="_dbx_ref_cit13"><mixed-citation><named-content content-type="citation-string">
+
+Chan, L.
+; 
+Verdonk, M.
+; 
+Poelking, C.
+. 
+Embracing
+assay
+heterogeneity with neural processes for markedly improved bioactivity
+predictions. arXiv
+2023. 10.48550/ARXIV.2308.09086.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/ARXIV.2308.09086"/></mixed-citation></ref><ref id="_dbx_ref_cit15"><mixed-citation><named-content content-type="citation-string">
+
+Enevoldsen, K.
+; et al. 
+MMTEB: Massive multilingual text embedding benchmark.arXiv
+2025. 10.48550/arXiv.2502.13595
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2502.13595"/></mixed-citation></ref><ref id="_dbx_ref_cit16"><mixed-citation><named-content content-type="citation-string">
+
+Grootendorst, M.
+
+BERTopic:
+Neural topic modeling with a class-based TF-IDF procedure. arXiv
+2022. 10.48550/arXiv.2203.05794
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2203.05794"/></mixed-citation></ref><ref id="_dbx_ref_cit23"><mixed-citation><named-content content-type="citation-string">
+
+Li, Z.
+; et al. 
+Towards general text embeddings with multi-stage
+contrastive learning. arXiv
+2023. 10.48550/arXiv.2308.03281
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2308.03281"/></mixed-citation></ref><ref id="_dbx_ref_cit24"><mixed-citation><named-content content-type="citation-string">
+
+McInnes, L.
+, 
+Healy, J.
+; 
+Melville, J.
+. 
+UMAP: Uniform manifold approximation
+and projection for dimension reduction. arXiv
+2018. 10.48550/arXiv.1802.03426
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.1802.03426"/></mixed-citation></ref><ref id="_dbx_ref_cit31"><mixed-citation><named-content content-type="citation-string">
+
+Zhang, D.
+; et al. 
+ChemLLM: A chemical large language model. arXiv
+2024. 10.48550/arXiv.2402.06852
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2402.06852"/></mixed-citation></ref></ref-list></sec><sec id="_adsm93_" xml:lang="en" sec-type="supplementary-materials" disp-level="2"><title>Supplementary Materials</title><supplementary-material id="db_ds_supplementary-material1_reqid_" position="float"><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ci5c00603_si_001.pdf" mimetype="application" mime-subtype="pdf"><?cloudpmc-path ee3c/12264928/2fc9d41a13de/ci5c00603_si_001.pdf?><?cloudpmc-bucket app?><?size 937398?></media></supplementary-material></sec><sec id="_adda93_" xml:lang="en" sec-type="data-availability-statement" disp-level="2"><title>Data Availability Statement</title><p>The data and
+code required to recreate the results of this paper are available
+in the following GitHub repository: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/CDDLeiden/AssayCTX" ext-link-type="uri">https://github.com/CDDLeiden/AssayCTX</ext-link>.</p></sec></sec></body></article>

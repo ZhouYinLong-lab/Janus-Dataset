@@ -1,0 +1,176 @@
+{
+  "retrieved_utc": "2026-10-19T16:55:12.782940+00:00",
+  "sources": [
+    {
+      "name": "NpaBGS2012.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3403894/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3403894/fullTextXML",
+      "bytes": 106945,
+      "sha256": "23f0a05392600d43db85727dd54ffd036d2377b322152e5422c89b87b786c8d8",
+      "status": "ok"
+    },
+    {
+      "name": "HiBgl2016.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4897640/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4897640/fullTextXML",
+      "bytes": 131892,
+      "sha256": "06af7ccc4724b2a98b94037f14e002da449021a10823526ee0ba41dd7af23d9f",
+      "status": "ok"
+    },
+    {
+      "name": "LpBgl52025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11978721/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11978721/fullTextXML",
+      "bytes": 104152,
+      "sha256": "c67978094a789417fe0f78f968367125531955a7f247b29edef7c852f532a351",
+      "status": "ok"
+    },
+    {
+      "name": "PROTAC_DB3.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11701630/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11701630/fullTextXML",
+      "bytes": 56551,
+      "sha256": "b57476a106a07d8b84d095f03a7a632a519be5e2cd252a82bc70610d1d9a7814",
+      "status": "ok"
+    },
+    {
+      "name": "TPDExtraction2026.html",
+      "url": "https://arxiv.org/html/2605.11221v1",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/html/2605.11221v1",
+      "bytes": 533406,
+      "sha256": "3225926337f228d2ce3986c07ec5e353e75f91762637956e803cebe20453884a",
+      "status": "ok"
+    },
+    {
+      "name": "BRENDA_fields.html",
+      "url": "https://www.brenda.dsmz.de/datafields.php",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.brenda.dsmz.de/datafields.php",
+      "bytes": 47648,
+      "sha256": "d3171cc6d2221bd7526e6fe4a6e22c80fba02c062f0d293bb8e7d3a6b0671079",
+      "status": "ok"
+    },
+    {
+      "name": "AssayCTX2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12264928/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12264928/fullTextXML",
+      "bytes": 109817,
+      "sha256": "948b4db03e93a47823b0c3b3dc7fa4cc18a92bfa6c4a5554e59b58bc2aa4af1f",
+      "status": "ok"
+    },
+    {
+      "name": "Negatome2014.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3965096/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3965096/fullTextXML",
+      "bytes": 56122,
+      "sha256": "43cf02106a634b99e1cce7d9956e061c4c5b9aaf3f721bc9ce51a4ab3399c10b",
+      "status": "ok"
+    },
+    {
+      "name": "TPD_README.md",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/README.md",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/README.md",
+      "bytes": 9877,
+      "sha256": "9cc74a58f94debf77c34fa80a87e56ae4f4fc5dc5433d3f24c2433a628249667",
+      "status": "ok"
+    },
+    {
+      "name": "TPD_LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/LICENSE",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/LICENSE",
+      "bytes": 1068,
+      "sha256": "9673587d534dd446e0656f6a637a2d3505585b8f597cf2c1511998467ec5f179",
+      "status": "ok"
+    },
+    {
+      "name": "TPD_GT_Glues.csv",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/data/molecular_glues/ground_truth/GT_Glues.csv",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/data/molecular_glues/ground_truth/GT_Glues.csv",
+      "bytes": 33808,
+      "sha256": "d45c2fa559a42c8552ef82e3308d822c5ec16e9f60da9e3e4ca02547be065995",
+      "status": "ok"
+    },
+    {
+      "name": "TPD_GT_PROTAC.csv",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/data/protacs/ground_truth/PROTAC-GT.csv",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/under_review/data/protacs/ground_truth/PROTAC-GT.csv",
+      "bytes": 115888,
+      "sha256": "3e3382771952be996f3d99e72aeda7abae53f685544c1c0fdb9bc8db14f5f41a",
+      "status": "ok"
+    },
+    {
+      "name": "TPD_example2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12046021/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12046021/fullTextXML",
+      "bytes": 182334,
+      "sha256": "90720b8c3b8eb2407f565c23f6e3871ac0088428bc216898e385b10347dca35a",
+      "status": "ok"
+    },
+    {
+      "name": "DBAASP2021.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7778994/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7778994/fullTextXML",
+      "bytes": 109277,
+      "sha256": "23b86e191d69e236b61c88d8943a4961f0df3f708b3bbff3432a276f6b87abec",
+      "status": "ok"
+    },
+    {
+      "name": "AMP_BP100_2021.html",
+      "url": "https://www.frontiersin.org/journals/cellular-and-infection-microbiology/articles/10.3389/fcimb.2021.609542/full",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.frontiersin.org/journals/cellular-and-infection-microbiology/articles/10.3389/fcimb.2021.609542/full",
+      "bytes": 1170491,
+      "sha256": "b87e3ed4f5732585f7f94d42b20adc173a65314d874f7fcce870f16517b888bb",
+      "status": "ok"
+    },
+    {
+      "name": "LNP_Storage2020.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7078456/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7078456/fullTextXML",
+      "bytes": 68148,
+      "sha256": "73a45d99197bc7371e39ab30eb42e8a94decdda1ace25515fd942763207d33f7",
+      "status": "ok"
+    },
+    {
+      "name": "LNP_Drying2023.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10062427/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10062427/fullTextXML",
+      "bytes": 136030,
+      "sha256": "036dbe014c1d074205f09ebf50cd0f0ce844287dc15c89e5e87538473a6dd3b6",
+      "status": "ok"
+    },
+    {
+      "name": "LNP_Atlas2025.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12858976/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12858976/fullTextXML",
+      "bytes": 92322,
+      "sha256": "2f5dbfcc2f0c2ebe2b62ff3915a0f9c86ae630e4eaebb72ee1d86a94153e3027",
+      "status": "ok"
+    },
+    {
+      "name": "LipoAgent2026.html",
+      "url": "https://arxiv.org/html/2605.25250v1",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/html/2605.25250v1",
+      "bytes": 224163,
+      "sha256": "40c20dca9da0b74c64e09dfaca291576f2ad08d4f79d491c7a36561a7bf32af8",
+      "status": "ok"
+    }
+  ]
+}

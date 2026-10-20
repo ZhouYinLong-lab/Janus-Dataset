@@ -1,0 +1,2726 @@
+Beyond Manual Curation: Augmenting Targeted Protein Degradation Databases via Agentic Literature Extraction Workflows
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+License: CC BY 4.0
+arXiv:2605.11221v1 [q-bio.QM] 11 May 2026
+Beyond Manual Curation: Augmenting Targeted Protein Degradation Databases via Agentic Literature Extraction Workflows
+Yaochen Rao
+Affiliation:
+Department of Computer Science and Engineering
+Affiliation:
+Chalmers University of Technology and University of Gothenburg
+Affiliation:
+Gothenburg, SE
+Email:
+yaochenr@chalmers.se
+Farzaneh Jalalypour
+Affiliation:
+Department of Computer Science and Engineering
+Affiliation:
+Chalmers University of Technology and University of Gothenburg
+Affiliation:
+Gothenburg, SE
+Email:
+farjal@chalmers.se
+N. M. Anoop Krishnan
+Affiliation:
+Yardi School of Artificial Intelligence
+Affiliation:
+Indian Institute of Technology Delhi
+Affiliation:
+New Delhi, IN
+Email:
+krishnan@iitd.ac.in
+Rocío Mercado
+Affiliation:
+Department of Computer Science and Engineering
+Affiliation:
+Chalmers University of Technology and University of Gothenburg
+Affiliation:
+Gothenburg, SE
+Email:
+rocio.mercado@chalmers.se
+Abstract
+Predictive models in biomedicine depend on structured assay data locked in the text, tables, and supplements of primary publications. This bottleneck is especially acute in targeted protein degradation (TPD), where each assay record must combine compound identity, degradation target, recruiter, assay context, and endpoint values reported across sections, tables, and supplementary files. Inconsistent compound identifiers and incomplete or implicit assay context further demand domain-specific logic that generic LLM pipelines do not provide. Existing molecular glue and PROTAC databases are manually curated and often lack the experimental context required for downstream modeling. We formulate TPD database extraction as a domain-specific curation task and present an expert-in-the-loop LLM workflow, evaluated through a triangular comparison among LLM predictions, standardized baseline records, and expert-annotated ground truth. A lightweight cross-validated prompt-refinement module adapts extraction instructions from scarce expert annotations. With only seven annotated molecular glue publications, the workflow achieved record-level
+F
+1
+=
+0.98
+F_{1}=0.98
+and transferred to PROTACs by terminology substitution alone, maintaining record-level
+F
+1
+>
+0.93
+F_{1}>0.93
+. Applied at scale, it expanded molecular glue and PROTAC databases by 81% and 92% records, respectively, with 92% and 82.5% of newly recovered records validated as correct upon expert review. The workflow also recovered kinetic and assay-context information essential for cross-study potency comparison and condition-aware degradation modeling. We release the workflow, prompts, evaluation code, and extracted datasets as resources for TPD data curation and AI-assisted scientific curation more broadly.
+1
+Introduction
+The biomedical literature is growing at an unprecedented rate, with
+>
+>
+1.5M articles published annually in PubMed alone
+González-Márquez et al. (2024)
+. For data-driven drug discovery, the bottleneck is no longer a lack of information but the difficulty of turning published results into structured, machine-readable data
+Bender and Cortes-Ciriano (2021)
+. This problem is particularly evident in targeted protein degradation (TPD), a rapidly expanding class of therapeutic modalities in which small molecules, including PROTACs and molecular glues (MGs), redirect the cell’s protein disposal machinery to selectively eliminate disease-causing proteins, thereby extending drug discovery beyond conventional inhibition
+Zhong et al. (2024)
+;
+Gharbi and Mercado (2024)
+. The TPD literature contains thousands of degradation assay measurements scattered across hundreds of publications, but the leading public resources all rely on manual curation and cannot keep pace: PROTAC-DB
+Ge et al. (2025)
+and MolGlueDB
+Wang et al. (2026)
+compile assay data from primary publications, while TPDdb
+Qin et al. (2026)
+and PROTAC-PatentDB
+Cai et al. (2025)
+extend coverage to patent-derived compounds.
+Across all four resources, manual curation prioritizes prominent potency measurements such as DC
+50
+and D
+max
+, while contextual details such as assay, cell lines, timepoints, and concentrations are often missed. They also skew toward representative or highly active compounds, leaving weak or inactive examples under-reported despite their importance for machine learning (ML)
+Ribes et al. (2024)
+. LLM-based extraction is a natural alternative, but TPD assay records pose challenges beyond generic extraction pipelines. Each record must combine compound identity, degradation target, recruiter, assay context, and endpoint values, even when these fields are reported in different sections, tables, or supplementary files. Extraction is further complicated by inconsistent compound identifiers (internal numbers, common names, IUPAC names) and by assay context that is incomplete, implicit, or separated from the reported potency values. To our knowledge, no systematic LLM-based extraction effort exists for the TPD literature.
+We close this gap with four contributions.
+First, we formulate TPD database extraction as a domain-specific curation task and develop an evaluation framework tailored to chemical identifiers, quantitative endpoints, and experimental context, using a triangular comparison among LLM predictions, standardized database records, and expert-annotated ground truth. Second, we build an end-to-end expert-in-the-loop workflow that combines source-grounded extraction, supplementary-material integration, domain-specific post-processing, and a lightweight prompt-refinement module, CAPO, for adapting extraction instructions from scarce annotations. Third, we show that the workflow achieves high record-level accuracy across MGs and PROTACs, expands existing databases by 81% and 92%, and recovers contextual fields such as timepoints, concentrations, and cell lines that are essential for condition-aware modeling. Fourth, we release the framework, optimized prompts, and extracted datasets as open resources for the TPD community and broader work on AI-assisted scientific curation.
+2
+Related work
+Automated extraction from scientific literature has progressed from rule-based and NER pipelines (e.g., ChemDataExtractor and successors
+(
+Mavracic et al., 2021
+;
+Isazawa and Cole, 2022
+)
+) and OCSR systems for chemical structure depictions
+(
+Rajan et al., 2023
+)
+, to LLM-based methods that operate on full-text papers without task-specific fine-tuning
+(
+Dagdelen et al., 2024
+;
+Polak and Morgan, 2024
+)
+. Recent work has scaled this paradigm in materials science, including domain-adapted foundation models
+(
+Gupta et al., 2022
+)
+, polymer-specific pipelines
+(
+Circi et al., 2024
+;
+Gupta et al., 2024
+)
+, large multi-modal toolboxes such as LeMat-Synth that combine LLMs with VLMs for figure digitization
+(
+Lederbauer et al., 2025
+)
+, and a recent comprehensive review framing the field
+(
+Schilling-Wilhelmi et al., 2025
+)
+. In contrast, despite the rapid growth of TPD as a therapeutic modality and the corresponding rise of DL methods for PROTAC and MG design
+(
+Gharbi and Mercado, 2024
+;
+Dunlop et al., 2025
+;
+Ribes et al., 2026
+)
+, no systematic LLM-based extraction effort exists to our knowledge for this literature. Existing degrader databases
+(
+Wang et al., 2026
+;
+Ge et al., 2025
+;
+Qin et al., 2026
+;
+Cai et al., 2025
+)
+are manually curated and lag behind primary publications.
+Recent work has also used automated extraction to help scientific databases keep pace with the literature, as in PERLA for perovskite photovoltaics
+(
+Shabih et al., 2026
+)
+. Our work similarly supports scientific database curation, but focuses on TPD assay records, where each record must connect compound identity, degradation target, recruiter, assay context, and quantitative endpoints. This setting poses challenges beyond generic extraction: a single assay record may combine fields reported in different parts of a paper, entities may appear under different names or chemical identifiers, and quantitative endpoints require domain-specific matching rules. Prompt-refinement and LLM-based evaluation methods such as GEPA
+(
+Agrawal et al., 2025
+)
+, DSPy
+(
+Khattab et al., 2024
+)
+, and an LLM-as-judge/LLM-as-optimizer framework for organic data extraction
+(
+Ríos-García and Jablonka, 2025
+)
+are related to the lightweight refinement module used in our workflow. Our empirical focus, however, is whether an LLM-assisted workflow can support TPD database curation by matching expert annotations, auditing existing resources, and recovering additional ML-relevant assay records.
+3
+Methods
+Figure 1
+:
+Overview of the agentic literature extraction workflow. Source DOIs from PROTAC-DB and MolGlueDB are resolved to PMC full text and supplementary materials, then parsed into main-text, table, and supplementary inputs. CAPO optimizes the extraction prompt through leave-one-out Assess–Diagnose–Refine loops and selects a Champion Prompt based on held-out performance. The frozen prompt is applied at scale through multi-round extraction, followed by post-processing and comparison with standardized baseline databases and ground truth.
+3.1
+Data acquisition and pre-processing
+Our pipeline takes as input full-text scientific articles and their supplementary materials. For evaluation, we constructed three datasets that support a triangular comparison: a
+baseline
+of standardized records from existing manually curated databases, a
+prediction
+set produced by the LLM pipeline, and an independent
+ground truth
+from expert annotation. Comparing predictions against ground truth measures extraction accuracy; comparing the baseline against ground truth audits the coverage of existing databases; and comparing predictions against the baseline quantifies how much curated data the pipeline rediscovers and how many additional valid records it recovers that were missed in existing databases. We describe the construction of the baseline and ground-truth datasets below.
+3.1.1
+Baseline dataset construction and standardization
+We sourced our study cohorts from two established TPD databases: PROTAC-DB 3.0 (released February 2025) and MolGlueDB (released July 2025), both accessed in August 2025
+(
+Ge et al., 2025
+;
+Wang et al., 2026
+)
+. Using the listed endpoint-source DOIs, we retrieved the full-text articles from PubMed Central (PMC), retaining those with accessible open-access content (
+N
+=
+141
+N=141
+PROTAC and
+N
+=
+70
+N=70
+MG papers; retrieval and parsing details in App.
+E
+). Because both databases store DC
+50
+and
+D
+max
+D_{\max}
+values in free-text fields, often with mixed units and multiple assays in a single entry, we standardized the records by parsing free-text values, normalizing units, and splitting merged entries into one degradation assay record per row; entries lacking both DC
+50
+and
+D
+max
+D_{\max}
+were excluded. We treat the resulting records as the
+baseline
+dataset against which the pipeline is compared, while a stratified subset of the original papers was independently re-annotated to produce ground truth (Sec.
+3.1.2
+).
+3.1.2
+Expert ground truth annotation
+We constructed an independent ground-truth dataset for evaluation by stratified random sampling of approximately 10% of papers from each cohort (PROTAC: 15 papers; MolGlue: 7 papers), drawing from multiple journals to span variation in article structure and reporting style. Details are provided in App.
+A
+. Each record was independently reviewed by two annotators using the full text and supplementary materials, restricted to textual and tabular content to match the scope of the LLM pipeline. Annotations followed a conservative policy: a value was recorded only when explicitly supported by the source document, and values that could be inferred but were not directly stated were omitted. During comparison against pipeline predictions, we identified a number of cases in which the LLM extraction disagreed with our initial annotations and, on manual re-inspection of the source articles, found the pipeline to be correct; we used these flagged disagreements to systematically audit the ground-truth set, and revised the annotations in a second pass. Reported ground-truth metrics use this revised version.
+3.2
+LLM extraction workflow
+We developed an expert-in-the-loop LLM workflow to extract structured TPD assay records from full-text articles and supplementary materials without model fine-tuning or large-scale annotated corpora. The workflow first uses a lightweight cross-validated prompt-refinement module, CAPO (Cross-validated Agentic Prompt Optimization), to adapt extraction instructions from a small set of expert-annotated papers. The selected prompt is then frozen and applied at scale to the full MG and PROTAC cohorts, followed by domain-specific post-processing and evaluation.
+As shown in Fig.
+1
+, the prompt-refinement module operates as an automated dual-loop system. The inner loop performs paper-level extraction, where the Extractor agent processes each article through multi-stage reasoning (detailed in Sec.
+3.2.2
+). The outer loop iteratively refines the extraction prompt through an Assess–Diagnose–Refine cycle. In each round, the current prompt is applied to the optimization batch and evaluated against ground truth. If the batch-averaged precision and recall meet the acceptance threshold (
+τ
+=
+0.9
+\tau=0.9
+), refinement converges and the prompt is finalized for that fold. Otherwise, the Analyst agent diagnoses general patterns in below-threshold papers, and the Refiner agent generates an updated prompt for the next round.
+3.2.1
+Iterative prompt optimization logic
+The optimization runs as
+J
+J
+independent LOOCV folds: in each,
+J
+−
+1
+J-1
+annotated papers form the optimization batch and one paper is held out for validation, yielding one candidate prompt per fold and exposing the Refiner agent to 85–90% of available annotations in every fold. Each fold is initialized from the same seed prompt
+P
+0
+P_{0}
+, which uses a four-section template (Goal, Required Fields, Extraction Principles, Output Format) but leaves Extraction Principles empty so that the optimization process must discover the relevant extraction rules from observed validation failures rather than from manual trial-and-error. Within a fold, papers in the batch that fall below the local acceptance threshold
+τ
+\tau
+are routed to the Analyst agent for error diagnosis; the resulting paper-level diagnoses are aggregated across the optimization set into a diagnostic summary used by the Refiner to update the prompt for the next round (App.
+H.1
+). After all
+J
+J
+folds converge, we obtain a set of candidate prompts
+𝒫
+cand
+=
+{
+P
+1
+,
+…
+,
+P
+J
+}
+\mathcal{P}_{\mathrm{cand}}=\{P_{1},\dots,P_{J}\}
+and select the final prompt
+P
+∗
+P^{*}
+(also referred to as the Champion Prompt) as the one achieving the highest
+F
+1
+F_{1}
+-score on its held-out paper,
+P
+∗
+=
+arg
+⁡
+max
+P
+i
+∈
+𝒫
+cand
+​
+F
+1
+​
+(
+P
+i
+)
+P^{*}=\arg\max_{P_{i}\in\mathcal{P}_{\mathrm{cand}}}F_{1}(P_{i})
+. We use
+F
+1
+F_{1}
+rather than precision or recall alone because precision-only selection produces over-conservative prompts that miss valid records, while recall-only selection inflates FPs.
+3.2.2
+Agentic architecture configuration
+The workflow uses three GPT-5 agents (OpenRouter identifier:
+openai/gpt-5
+): an Extractor, an Analyst, and a Refiner, together with a separate semantic matching module. The Extractor runs at temperature 0.0 for deterministic outputs; the Analyst and Refiner run at 0.7 to encourage diverse reasoning during prompt optimization. Prompt templates are provided in App.
+G
+. Each extraction pass requested a pass-specific JSON response using prompt-level schema instructions and was parsed post hoc. The
+Extractor
+processes each paper in four phases: initial extraction from the main text; sentence-level source verification; integration of supplementary materials; and a final main-text review to complete missing chemical identifiers without changing assay measurements. Conversation state persists within a paper and is reset between papers. The
+Analyst
+performs root-cause analysis on the papers that fall below the acceptance threshold, receiving the source document, categorized false negatives and false positives, the ground truth, and prior semantic-matching decisions (which prevent valid synonym matches from being misdiagnosed as errors). It emits a concise diagnostic summary per failed document. The
+Refiner
+aggregates the per-paper diagnoses into a batch-level update, constrained to extraction principles only (output schema and required fields are frozen). This focuses each refinement on common error patterns rather than paper-specific fixes. The
+Semantic Matching Module
+performs constrained yes/no entity matching. Results are cached across documents, and new entries are expert-reviewed and corrected before final evaluation. The module does not participate in extraction or prompt optimization (details in App.
+I
+).
+3.2.3
+Full-scale extraction and post-processing
+Full-scale extraction used the Extractor agent described in Sec.
+3.2.2
+, applying the frozen Champion Prompt to the main text and supplementary materials of each paper. Before evaluation, LLM outputs were post-processed for unit normalization, duplicate resolution, chemical-identifier enrichment, and record standardization. Full details are provided in App.
+G.5
+.
+3.3
+Evaluation framework and metrics for TPD extraction
+Each predicted record is compared against the reference using evaluation modes that differ in the granularity at which a record
+R
+R
+is defined. The two primary modes are
+Experimental
+mode, which uses the full 5-element key
+R
+=
+⟨
+C
+,
+T
+,
+E
+,
+A
+,
+L
+⟩
+R=\langle C,T,E,A,L\rangle
+, where
+C
+C
+denotes the compound,
+T
+T
+the degradation target,
+E
+E
+the recruiter,
+A
+A
+the assay type, and
+L
+L
+the cell line; and
+Mechanistic
+mode, which uses the 3-element key
+R
+=
+⟨
+C
+,
+T
+,
+E
+⟩
+R=\langle C,T,E\rangle
+and treats
+A
+A
+and
+L
+L
+as field-level quantities. For large-scale LLM–baseline discrepancy analysis, we additionally use a coarser
+Phenotypic
+mode,
+R
+=
+⟨
+C
+,
+T
+⟩
+R=\langle C,T\rangle
+, to measure compound–target overlap independent of recruiter or experimental context.
+Within each mode, evaluation is hierarchical.
+Record-level
+evaluation determines whether the pipeline correctly identifies a degradation assay, using compound-name matching with a Standard InChIKey fallback and two-round conflict resolution (App.
+F.2
+).
+Field-level
+evaluation, applied only to record-level true positives (TPs), assesses whether the quantitative columns within a matched row are correct under operator-aware comparisons that handle unit equivalences (e.g., nmol/L vs. nM), inequalities (
+<
+<
+,
+>
+>
+), and numerical ranges (App.
+F.3
+). At both levels we report precision, recall, and
+F
+1
+F_{1}
+, computed under standard TP/FP/FN definitions; true negatives are excluded from metric calculations. Per-paper micro-averaged
+F
+1
+F_{1}
+serves as the primary indicator of extraction performance (App.
+F
+).
+3.4
+Comparative analysis framework
+We evaluated the pipeline using a triangular comparison of standardized baseline records (
+D
+base
+D_{\mathrm{base}}
+), LLM predictions (
+D
+pred
+D_{\mathrm{pred}}
+), and our independently annotated ground truth (
+D
+gt
+D_{\mathrm{gt}}
+). The three edges measure complementary quantities:
+D
+pred
+D_{\mathrm{pred}}
+vs.
+D
+gt
+D_{\mathrm{gt}}
+measures extraction accuracy,
+D
+base
+D_{\mathrm{base}}
+vs.
+D
+gt
+D_{\mathrm{gt}}
+audits baseline coverage, and
+D
+pred
+D_{\mathrm{pred}}
+vs.
+D
+base
+D_{\mathrm{base}}
+quantifies database augmentation. For the last analysis, records were grouped as rediscovered, baseline-only, or LLM-only; discrepancies were manually reviewed, and field-level information gain was measured as the increase in non-null values per field.
+4
+Results
+4.1
+Dataset overview and publication analysis
+Figure 2
+:
+Dataset construction and publication-level summaries. (a) Cohort composition in source DOIs, PMC articles, PMC full-text processed papers (‘Proc.’), and expert-annotated ground-truth subsets (‘GT’). (b) Unique processed character counts per paper for each cohort. (c) Publication-year distribution from 2014 onward; only one pre-2014 paper falls outside the range (2010). (d) Baseline standardization from original entries to assay-level and endpoint records.
+Of the source DOIs, 303 & 108 were indexed in PMC, and 141 & 70 had accessible open-access full text that could be successfully processed for PROTACs and MGs, respectively. Document length was measured using unique processed character count, excluding prompt text and repeated review passes. The processed papers varied widely in length and covered publication years 2010–2025. Standardization of existing databases (
+baseline
+) yielded 376 PROTAC endpoints and 136 MG endpoints for downstream evaluation. Fig.
+2
+summarizes cohort construction and publication characteristics. Further publication statistics are provided in App.
+C
+.
+4.2
+Prompt optimization and convergence
+We optimized the extraction prompt with CAPO on the 7-paper MG ground-truth set using 7-fold LOOCV (Sec.
+3.2
+). The same prompt was then transferred to PROTACs by replacing “molecular glue” with “PROTAC”. Fig.
+6
+in App.
+H
+shows that optimization converged within three rounds. The largest gains occurred at the record level: average precision improved from 0.83 to 0.98, while average recall rose from 0.81 to nearly 1.00, both exceeding the acceptance threshold (
+τ
+=
+0.9
+\tau=0.9
+). Field-level metrics started above threshold at Round 1 (precision
+≈
+\approx
+0.92, recall
+≈
+\approx
+0.95) and remained stable through convergence, reaching approximately 0.98 and 0.95, respectively, by Round 3. This indicates that CAPO mainly corrected assay-record identification errors, while quantitative value extraction required only minor refinement. The optimized prompt added general rules rather than paper-specific fixes, such as matching table values to the compound and cell line in the same row and preserving qualifiers such as ~, <, and >. The narrowing variability across folds further suggests more stable performance after optimization.
+4.3
+Extraction accuracy vs ground truth
+Figure 3
+:
+Extraction accuracy against ground truth. (a) Record-level precision, recall, and
+F
+1
+F_{1}
+for LLM extraction (bars) and baselines (dashed line) under Mechanistic (solid) and Experimental (hatched) modes. Error bars denote standard deviations across seven molecular-glue LOOCV folds or three independent PROTAC runs. (b) Field-level
+F
+1
+F_{1}
+under Mechanistic matching, with filled points for LLM extraction and open points for baselines; lines connect matched scores within each cohort.
+Tab.
+1
+summarizes extraction performance against ground truth annotations for both cohorts, with LLM results reported as mean (std. dev.) over three independent runs; the same comparisons are visualized in Fig.
+3
+, which contrasts LLM extraction with the corresponding baseline databases at both record and field levels. On the MG cohort, the workflow achieved record-level
+F
+1
+=
+0.98
+F_{1}=0.98
+under both Experimental and Mechanistic modes, with field-level
+F
+1
+F_{1}
+of
+0.98
+±
+0.01
+0.98\pm 0.01
+and
+0.99
+±
+0.00
+0.99\pm 0.00
+, respectively. The same extraction prompt transferred to PROTACs by terminology substitution alone, maintaining high record-level performance with
+F
+1
+=
+0.93
+±
+0.02
+F_{1}=0.93\pm 0.02
+in Experimental mode and
+0.96
+±
+0.02
+0.96\pm 0.02
+in Mechanistic mode.
+The two baseline databases, evaluated against ground truth, performed worse. Both failed under Experimental mode (
+F
+1
+=
+0.00
+F_{1}=0.00
+), as many MolGlueDB and PROTAC-DB entries lack the assay-type or cell-line detail required for the 5-key match. Under Mechanistic mode, MolGlueDB and PROTAC-DB recovered only 32% and 62% of ground-truth records respectively, yielding record-level
+F
+1
+F_{1}
+scores of 0.43 and 0.69. MolGlueDB precision reduction was driven by recruiter mismatches, where database records used “Unknown” while expert annotations specified “SIAH1.” These discrepancies are further analyzed in App.
+D
+.
+The trend holds at the field level (Tab.
+2
+). The pipeline extracted the core degradation measurements DC
+50
+and
+D
+max
+D_{\max}
+with high accuracy in both cohorts (
+F
+1
+≥
+0.96
+F_{1}\geq 0.96
+). The baselines, when their records did match, were accurate (MolGlueDB precision 0.96 under Mechanistic mode; PROTAC-DB 0.92), but their recall was low (0.46 and 0.78), indicating that curated values are reliable when present but incomplete in coverage. Most remaining pipeline errors involved contextual fields such as timepoints or concentration annotations rather than the core degradation values, a pattern analyzed in Sec.
+5
+.
+Table 1:
+Extraction performance evaluated against ground truth on the MG and PROTAC cohorts. LLM values are mean (std. dev.) over 3 independent runs for both cohorts. Experimental mode uses the 5-field key (
+C
+,
+T
+,
+E
+,
+A
+,
+L
+C,T,E,A,L
+), whereas Mechanistic mode uses the 3-field key (
+C
+,
+T
+,
+E
+C,T,E
+), with assay and cell line scored as fields. P: precision; R: recall; F
+1
+: F
+1
+score. Dashes indicate no record-level matches for field-level scoring.
+Record-Level
+Field-Level
+Cohort
+Source
+Mode
+P
+R
+F
+1
+P
+R
+F
+1
+MGs
+LLM
+Exp.
+0.98 (0.01)
+0.98 (0.03)
+0.98 (0.02)
+0.99 (0.02)
+0.98 (0.01)
+0.98 (0.01)
+Mec.
+0.98 (0.01)
+0.98 (0.03)
+0.98 (0.02)
+0.99 (0.01)
+0.99 (0.01)
+0.99 (0.00)
+MolGlueDB
+Exp.
+0.00
+0.00
+0.00
+—
+—
+—
+Mec.
+0.71
+0.32
+0.43
+0.96
+0.46
+0.62
+PROTACs
+LLM
+Exp.
+0.93 (0.02)
+0.95 (0.02)
+0.93 (0.02)
+0.96 (0.03)
+0.93 (0.01)
+0.93 (0.01)
+Mec.
+0.96 (0.02)
+0.97 (0.01)
+0.96 (0.02)
+0.97 (0.02)
+0.95 (0.01)
+0.95 (0.01)
+PROTAC-DB
+Exp.
+0.00
+0.00
+0.00
+—
+—
+—
+Mec.
+0.90
+0.62
+0.69
+0.92
+0.78
+0.84
+Table 2:
+Per-field extraction accuracy under Experimental mode. LLM values are mean (std. dev.) over 3 independent runs for both cohorts. Full field-level results are provided in App.
+B
+. P: precision; R: recall; F
+1
+: F
+1
+score. Bold values indicate the maximum possible score achieved for that metric.
+Field
+MG
+PROTAC
+P
+R
+F
+1
+P
+R
+F
+1
+DC
+50
+1.00 (0.01)
+1.00 (0.00)
+1.00 (0.00)
+0.94 (0.01)
+1.00 (0.00)
+0.97 (0.00)
+DC
+50
+units
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+DC
+50
+hours
+0.96 (0.07)
+0.95 (0.03)
+0.96 (0.02)
+0.99 (0.01)
+0.91 (0.01)
+0.95 (0.01)
+D
+max
+D_{\mathrm{max}}
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+0.93 (0.05)
+1.00 (0.00)
+0.96 (0.02)
+D
+max
+D_{\mathrm{max}}
+hours
+1.00 (0.00)
+0.98 (0.03)
+0.99 (0.01)
+0.91 (0.07)
+0.65 (0.02)
+0.76 (0.03)
+D
+max
+D_{\mathrm{max}}
+conc.
+1.00 (0.00)
+1.00 (0.00)
+1.00 (0.00)
+0.62 (0.22)
+1.00 (0.00)
+0.77 (0.17)
+4.4
+Augmenting existing databases
+Figure 4
+:
+Database augmentation relative to MolGlueDB and PROTAC-DB.
+(a) Baseline–LLM overlap under Experimental, Mechanistic, and Phenotypic matching (top: MGs; bottom: PROTACs). (b,c) Correlation between matched baseline and LLM values for DC
+50
+and
+D
+max
+D_{\max}
+, with Pearson’s
+r
+r
+reported per cohort. (d) Non-null field coverage in core endpoints and experimental context.
+We next evaluated database augmentation by comparing the workflow with MolGlueDB and PROTAC-DB across the full processed cohorts (70 MG papers and 141 PROTAC papers). We used the run with the highest average record- and field-level
+F
+1
+F_{1}
+as the final extracted dataset for publication. The workflow increased MG records from 136 to 246 (+81%) and PROTAC records from 372 to 714 (+92%), including 180 and 420 LLM-only records, respectively (Fig.
+4
+a).
+Stratified overlap analysis showed that baseline–LLM overlap increased as matching criteria were relaxed from experimental (5 fields) to mechanistic (3 fields) and phenotypic (2 fields) modes in both cohorts (Fig.
+4
+a), reflecting the limited assay-type and cell-line context recorded in the original databases. Matched records showed strong agreement in both cohorts, with Pearson correlations
+r
+=
+0.81
+−
+0.99
+r=0.81-0.99
+for DC
+50
+and
+r
+≥
+0.99
+r\geq 0.99
+for D
+max
+(Fig.
+4
+b & c).
+Manual review confirmed the reliability of LLM-only records in both cohorts: 92% were valid for MGs (n=100) and 82.5% for PROTACs (n=40). Conversely, baseline-only records were dominated by figure-based evidence outside our text extraction scope (93% and 65% respectively), with the remaining PROTAC cases split between missed SI tables and name mismatches. Field-level gains were substantial in both cohorts, with DC
+50
+coverage increased by 66–68% and D
+max
+coverage by 89–100%, while assay and cell-line coverage increased by 498% and 513% in MGs and by 7010% and 98% in PROTACs, respectively (Fig.
+4
+d). These gains show that the workflow augments existing TPD databases with additional reliable records and richer experimental context.
+5
+Discussion
+The shift from manual to AI-assisted curation.
+Our results suggest that the main bottleneck of manually curated TPD databases is coverage rather than accuracy: baselines were reliable when present but recovered only 32% (MolGlueDB) and 62% (PROTAC-DB) of ground-truth assays. The LLM-only records were validated as reliable additions on manual review (92% for MGs, 82.5% for PROTACs), while many baseline-only records relied on figure-based evidence outside our text-extraction scope. These patterns support a shift from exhaustive manual transcription toward AI-assisted curation, where domain experts provide targeted annotations and validate pipeline outputs.
+Because our goal is TPD database curation rather than general prompt optimization, we benchmark the extraction workflow against existing TPD databases and expert annotations rather than against generic prompt-optimization frameworks such as DSPy or GEPA
+(
+Khattab et al., 2024
+;
+Agrawal et al., 2025
+)
+. For TPD data users, the central question is whether automated extraction can recover degradation assay records at quality comparable to the curated resources currently in use. Answering this required the domain-specific evaluation framework introduced in Sec.
+3.3
+, which combines semantic and chemical-identifier matching, operator-aware endpoint comparison, and triangular comparison among LLM predictions, standardized database records, and expert-annotated ground truth. Together, these components encode curator-like judgments about entity synonyms, chemical identifiers, quantitative formats, and experimental context, providing a reusable benchmark for future TPD extraction systems.
+Edge cases and error analysis.
+Remaining errors were concentrated in contextual metadata and endpoint interpretation rather than the core DC
+50
+and D
+max
+values. Timepoint attribution was the most common challenge: our ground truth conservatively recorded timepoints only when explicitly linked to a specific measurement, whereas the pipeline sometimes inferred plausible timepoints from context. These inferences appeared reasonable on manual inspection but were counted as errors under strict matching, explaining the lower scores for DC
+50
+hours in MGs and D
+max
+hours in PROTACs.
+Differences reflected annotation scope, reporting conventions, and entity matching. For pDC
+50
+-derived DC
+50
+values in PROTAC papers, the LLM, ground truth, and PROTAC-DB sometimes retained different decimal precision after conversion, creating small mismatches despite referring to the same measurement. For D
+max
+, our ground truth recorded D
+max
+only when it was explicitly reported as such, whereas the pipeline sometimes extracted related quantities such as maximum degradation percentages or single-concentration degradation values into the D
+max
+field. This was the dominant error during manual review of PROTAC LLM-only records, reflecting reporting ambiguity in the literature and the difficulty of manual curation at the scale of PROTAC-DB. Less frequent errors included EC
+50
+–DC
+50
+confusion, where related potency metrics were reported in similar contexts, and compound-identity mismatches caused by inconsistent names or stereochemical identifiers.
+Implications for accelerating drug discovery.
+The value of LLM-assisted data extraction for dataset creation is not only their increased size (+81% MG records, +92% PROTAC records) but the richer assay context they carry: timepoints, concentrations, assay type, and cell line, frequently missing from manually-extracted databases, are recovered alongside the core DC
+50
+and
+D
+max
+D_{\max}
+endpoints. These fields matter because degradation activity is not a context-free compound property; comparing potency across studies and training condition-aware models both depend on the assay configuration under which each value was measured. The workflow also recovers compounds more exhaustively than manual curation, which tends to prioritize representative or highly active examples; extracting all reported compounds regardless of activity provides the balanced active/inactive examples needed to train generalizable degradation models. Because the workflow requires limited expert annotation and transfers across TPD modalities, it offers a practical route for keeping structured TPD resources aligned with the pace of publication and for extending similar curation workflows to other domains where structured data remain scattered across the literature.
+Limitations and future work.
+The main limitation of the workflow is its restriction to text and table modalities. Because many baseline-only records were figure-supported (93% for MGs, 65% for PROTACs), the expansion reflects augmentation of text/table-accessible evidence rather than complete literature coverage; vision-language extraction from plots, blots, and other figures is the most direct path to improving coverage. Additional scope constraints remain: evaluation with a single foundation model (GPT-5), a small but audited ground-truth set (7 MG and 15 PROTAC papers), and restriction to open-access PMC full text and degradation endpoints. Future work should test workflow portability across models, expand expert annotations to tighten confidence intervals, and extend extraction to ubiquitination, permeability, metabolism, and TPD-relevant measurements. The workflow is intended to support, not replace, expert curation, since unverified extractions may propagate downstream errors. The evaluation framework and ground-truth annotations introduced here can support comparisons across foundation models, multi-modal extraction systems, and prompt-refinement strategies.
+6
+Conclusion
+We presented a domain-specific LLM workflow for systematic literature extraction in targeted protein degradation, together with an evaluation framework for comparing automated extraction with expert annotations and existing manually curated TPD databases. The workflow recovers structured degradation assay records from full-text articles and supplementary materials, using a lightweight cross-validated prompt-refinement module, CAPO, to adapt extraction instructions from scarce expert annotations without model fine-tuning. With only seven annotated MG publications, the workflow achieved record-level
+F
+1
+=
+0.98
+F_{1}=0.98
+against ground truth and transferred to PROTACs by terminology substitution alone, maintaining record-level
+F
+1
+>
+0.93
+F_{1}>0.93
+. Applied at scale, it expanded MolGlueDB and PROTAC-DB by 81% and 92%, respectively, with 82.5–92% of newly recovered records validated as correct on manual review. The largest gains came from recovering kinetic and assay-context information that is underrepresented in manual curation but essential for cross-study comparison and condition-aware modeling. Together, these results support a shift from exhaustive manual transcription toward expert-in-the-loop curation, where domain experts provide targeted annotations and validate pipeline outputs. We release the workflow, prompts, evaluation framework, and extracted databases as resources for the TPD community and as a template for AI-assisted curation in scientific domains where structured data remain scattered across the literature.
+7
+Code and data availability
+The workflow, extracted databases, and evaluation code are publicly available at:
+LLM-TPD-Extraction
+. For each cohort, we release the extracted database corresponding to the independent run with the highest average of record-level and field-level
+F
+1
+F_{1}
+on the ground-truth evaluation.
+Acknowledgments and Disclosure of Funding
+The authors thank Dr. Richard Beckmann, Nils Dunlop, Sofia Larsson, Pablo Martínez Crespo, and Stefano Ribes, together with co-authors FJ, RM, and YR, for their work on the manual annotation and audit of the ground-truth dataset. We are also grateful to Dr. Kevin Maik Jablonka and Mara Schilling-Wilhelmi for valuable feedback on this work. YR acknowledges funding from the Swedish Research Council (VR); FJ and RM acknowledge funding and support provided by the Wallenberg AI, Autonomous Systems, and Software Program (WASP), supported by the Knut and Alice Wallenberg Foundation. The computations and data storage were enabled by resources provided by Chalmers e-Commons and by the National Academic Infrastructure for Supercomputing in Sweden (NAISS), partially funded by the Swedish Research Council through grant agreement no. 2022-06725. The authors declare no competing interests.
+References
+Agrawal
+et al.
+(2025)
+L. A. Agrawal, S. Tan, D. Soylu, N. Ziems, R. Khare, K. Opsahl-Ong, A. Singhvi, H. Shandilya, M. J. Ryan, M. Jiang, C. Potts, K. Sen, A. G. Dimakis, I. Stoica, D. Klein, M. Zaharia, and O. Khattab
+GEPA: Reflective prompt evolution can outperform reinforcement learning
+.
+External Links:
+2507.19457
+,
+Link
+Cited by:
+§2
+,
+§5
+.
+Bender and Cortes-Ciriano (2021)
+A. Bender and I. Cortes-Ciriano
+Artificial intelligence in drug discovery: what is realistic, what are illusions? part 2: a discussion of chemical and biological data
+.
+Drug Discovery Today
+26
+(
+4
+),
+pp. 1040–1052
+.
+Cited by:
+§1
+.
+Cai
+et al.
+(2025)
+H. Cai, G. Yao, Y. Shi, T. Zhang, and Y. Hu
+PROTAC-PatentDB: A PROTAC patent compound dataset
+.
+Scientific Data
+12
+(
+1
+),
+pp. 1840
+.
+Cited by:
+§1
+,
+§2
+.
+Canny (2026)
+S. Canny
+Python-docx
+.
+Note:
+https://python-docx.readthedocs.io/
+Cited by:
+§E.1
+.
+Circi
+et al.
+(2024)
+D. Circi, G. Khalighinejad, A. Chen, B. Dhingra, and L. C. Brinson
+How well do large language models understand tables in materials science?
+.
+Integrating Materials and Manufacturing Innovation
+13
+(
+3
+),
+pp. 669–687
+.
+Cited by:
+§2
+.
+Dagdelen
+et al.
+(2024)
+J. Dagdelen, A. Dunn, S. Lee, N. Walker, A. S. Rosen, G. Ceder, K. A. Persson, and A. Jain
+Structured information extraction from scientific text with large language models
+.
+Nature Communications
+15
+(
+1
+),
+pp. 1418
+.
+Cited by:
+§2
+.
+Dunlop
+et al.
+(2025)
+N. Dunlop, F. Erazo, F. Jalalypour, and R. Mercado
+Predicting PROTAC-mediated ternary complexes with AlphaFold3 and Boltz-1
+.
+Digital Discovery
+4
+(
+12
+),
+pp. 3782–3809
+.
+Cited by:
+§2
+.
+Ge
+et al.
+(2025)
+J. Ge, S. Li, G. Weng, H. Wang, M. Fang, H. Sun, Y. Deng, C. Hsieh, D. Li, and T. Hou
+PROTAC-DB 3.0: an updated database of PROTACs with extended pharmacokinetic parameters
+.
+Nucleic Acids Research
+53
+(
+D1
+),
+pp. D1510–D1515
+.
+Cited by:
+§1
+,
+§2
+,
+§3.1.1
+.
+Gharbi and Mercado (2024)
+Y. Gharbi and R. Mercado
+A comprehensive review of emerging approaches in machine learning for de novo PROTAC design
+.
+Digital Discovery
+3
+(
+11
+),
+pp. 2158–2176
+.
+Cited by:
+§1
+,
+§2
+.
+González-Márquez
+et al.
+(2024)
+R. González-Márquez, L. Schmidt, B. M. Schmidt, P. Berens, and D. Kobak
+The landscape of biomedical research
+.
+Patterns
+5
+(
+6
+).
+Cited by:
+§1
+.
+Gupta
+et al.
+(2024)
+S. Gupta, A. Mahmood, P. Shetty, A. Adeboye, and R. Ramprasad
+Data extraction from polymer literature using large language models
+.
+Communications Materials
+5
+(
+1
+),
+pp. 269
+.
+Cited by:
+§2
+.
+Gupta
+et al.
+(2022)
+T. Gupta, M. Zaki, N. A. Krishnan, and Mausam
+MatSciBERT: A materials domain language model for text mining and information extraction
+.
+npj Computational Materials
+8
+(
+1
+),
+pp. 102
+.
+Cited by:
+§2
+.
+Isazawa and Cole (2022)
+T. Isazawa and J. M. Cole
+Single model for organic and inorganic chemical named entity recognition in ChemDataExtractor
+.
+Journal of Chemical Information and Modeling
+62
+(
+5
+),
+pp. 1207–1213
+.
+Cited by:
+§2
+.
+Khattab
+et al.
+(2024)
+O. Khattab, A. Singhvi, P. Maheshwari, Z. Zhang, K. Santhanam, S. Vardhamanan, S. Haq, A. Sharma, T. T. Joshi, H. Moazam, H. Miller, M. Zaharia, and C. Potts
+DSPy: Compiling declarative language model calls into self-improving pipelines
+.
+Cited by:
+§2
+,
+§5
+.
+Kim
+et al.
+(2025)
+S. Kim, J. Chen, T. Cheng, A. Gindulyte, J. He, S. He, Q. Li, B. A. Shoemaker, P. A. Thiessen, B. Yu,
+et al.
+PubChem 2025 update
+.
+Nucleic Acids Research
+53
+(
+D1
+),
+pp. D1516–D1525
+.
+Cited by:
+§E.2
+.
+Lederbauer
+et al.
+(2025)
+M. Lederbauer, S. Betala, X. Li, A. Jain, A. Sehaba, G. Channing, G. Germain, A. Leonescu, F. Flaifil, A. Amayuelas,
+et al.
+LeMat-Synth: A multi-modal toolbox to curate broad synthesis procedure databases from scientific literature
+.
+arXiv preprint arXiv:2510.26824
+.
+Cited by:
+§2
+.
+Lowe
+et al.
+(2011)
+D. M. Lowe, P. T. Corbett, P. Murray-Rust, and R. C. Glen
+Chemical name to structure: OPSIN, an open source solution
+.
+ACS Publications
+.
+Cited by:
+§E.2
+.
+Mavracic
+et al.
+(2021)
+J. Mavracic, C. J. Court, T. Isazawa, S. R. Elliott, and J. M. Cole
+ChemDataExtractor 2.0: Autopopulated ontologies for materials science
+.
+Journal of Chemical Information and Modeling
+61
+(
+9
+),
+pp. 4280–4289
+.
+Cited by:
+§2
+.
+Nishiguchi
+et al.
+(2021)
+G. Nishiguchi, F. Keramatnia, J. Min, Y. Chang, B. Jonchere, S. Das, M. Actis, J. Price, D. Chepyala, B. Young,
+et al.
+Identification of potent, selective, and orally bioavailable small-molecule GSPT1/2 degraders from a focused library of cereblon modulators
+.
+Journal of Medicinal Chemistry
+64
+(
+11
+),
+pp. 7296–7311
+.
+Cited by:
+Appendix A
+,
+Table 5
+,
+Table 5
+.
+Paruchuri (2026)
+V. Paruchuri
+Marker
+.
+External Links:
+Link
+Cited by:
+§E.1
+.
+Polak and Morgan (2024)
+M. P. Polak and D. Morgan
+Extracting accurate materials data from research papers with conversational language models and prompt engineering
+.
+Nature Communications
+15
+(
+1
+),
+pp. 1569
+.
+Cited by:
+§2
+.
+Qin
+et al.
+(2026)
+X. Qin, Y. Zhang, Y. Wang, Y. Zhang, J. Jing, Y. Zhang, G. Xu, H. Teng, T. Wang, L. Fu,
+et al.
+TPDdb: the comprehensive database of targeted protein degrader
+.
+Nucleic Acids Research
+54
+(
+D1
+),
+pp. D1683–D1691
+.
+Cited by:
+§1
+,
+§2
+.
+Rajan
+et al.
+(2023)
+K. Rajan, H. O. Brinkhaus, M. I. Agea, A. Zielesny, and C. Steinbeck
+DECIMER.ai: An open platform for automated optical chemical structure identification, segmentation and recognition in scientific publications
+.
+Nature Communications
+14
+(
+1
+),
+pp. 5045
+.
+Cited by:
+§2
+.
+Ribes
+et al.
+(2024)
+S. Ribes, E. Nittinger, C. Tyrchan, and R. Mercado
+Modeling PROTAC degradation activity with machine learning
+.
+Artificial Intelligence in the Life Sciences
+6
+,
+pp. 100114
+.
+Cited by:
+§1
+.
+Ribes
+et al.
+(2026)
+S. Ribes, R. Zhang, T. Cropsal, A. Källberg, C. Tyrchan, E. Nittinger, and R. Mercado
+PROTAC-Splitter: a machine learning framework for automated identification of PROTAC substructures
+.
+Journal of Cheminformatics
+18
+(
+1
+),
+pp. 30
+.
+Cited by:
+§2
+.
+Ríos-García and Jablonka (2025)
+M. Ríos-García and K. M. Jablonka
+LLM-as-Judge meets LLM-as-Optimizer: enhancing organic data extraction evaluations through dual LLM approaches
+.
+In
+AI4Mat-ICLR-2025: AI for Accelerated Materials Design Workshop, ICLR 2025
+,
+External Links:
+Link
+Cited by:
+§2
+.
+Schilling-Wilhelmi
+et al.
+(2025)
+M. Schilling-Wilhelmi, M. Ríos-García, S. Shabih, M. V. Gil, S. Miret, C. T. Koch, J. A. Márquez, and K. M. Jablonka
+From text to insight: large language models for chemical data extraction
+.
+Chemical Society Reviews
+54
+(
+3
+),
+pp. 1125–1150
+.
+Cited by:
+§2
+.
+Shabih
+et al.
+(2026)
+S. Shabih, H. Näsström, S. Patil, A. Askin, K. Dodd-Clements, J. H. H. Rossato, H. G. de Lemos, Y. Liu, F. Mathies, N. Maticiuc,
+et al.
+An autonomous living database for perovskite photovoltaics
+.
+arXiv preprint arXiv:2601.17807
+.
+Cited by:
+§2
+.
+Swain (2017)
+PubChemPy
+External Links:
+Document
+,
+Link
+Cited by:
+§E.2
+.
+Wang
+et al.
+(2026)
+X. Wang, Z. Zhuang, C. Zhang, B. Zhang, W. Zhan, Y. Wang, Z. Liu, S. Yuan, W. Niu, Q. He,
+et al.
+MolGlueDB: an online database of molecular glues
+.
+Nucleic Acids Research
+54
+(
+D1
+),
+pp. D1510–D1518
+.
+Cited by:
+§1
+,
+§2
+,
+§3.1.1
+.
+Zhong
+et al.
+(2024)
+G. Zhong, X. Chang, W. Xie, and X. Zhou
+Targeted protein degradation: advances in drug discovery and clinical practice
+.
+Signal transduction and targeted therapy
+9
+(
+1
+),
+pp. 308
+.
+Cited by:
+§1
+.
+Appendix A
+Ground truth expert paper annotation
+Selected publications.
+This section lists the publications used for expert ground-truth annotation from the processed MG and PROTAC cohorts (Tabs.
+3
+&
+4
+). Ground-truth annotations were created by expert PhD and postdoc chemists & machine learning researchers (details below). Publications were randomly sampled from each cohort using a fixed random seed for reproducibility. The MG ground-truth set contains seven publications, whereas the PROTAC ground-truth set contains fifteen publications. For each publication, we report the DOI, journal, publisher and title.
+Table 3
+:
+Molecular glue publications used for expert ground-truth annotation.
+DOI
+Publication details
+10.1038/s41467-025-58431-z
+Nature Communications
+. Springer Nature. Development of PVTX-405 as a potent and highly selective molecular glue degrader of IKZF2 for cancer immunotherapy.
+10.1021/acs.jmedchem.1c02175
+Journal of Medicinal Chemistry
+. ACS. Improved Binding Affinity and Pharmacokinetics Enable Sustained Degradation of BCL6 In Vivo.
+10.1021/acs.jmedchem.0c01313
+Journal of Medicinal Chemistry
+. ACS. Identification of Potent, Selective, and Orally Bioavailable Small-Molecule GSPT1/2 Degraders from a Focused Library of Cereblon Modulators.
+10.1016/j.ejmech.2024.116904
+European Journal of Medicinal Chemistry
+. Elsevier. Exploration of the tunability of BRD4 degradation by DCAF16 trans-labelling covalent glues.
+10.1186/s13045-024-01592-z
+Journal of Hematology & Oncology
+. BMC/Springer Nature. Novel potent molecular glue degraders against broad range of hematological cancer cell lines via multiple neosubstrates degradation.
+10.1021/jacs.3c08307
+Journal of the American Chemical Society
+. ACS. Rational Screening for Cooperativity in Small-Molecule Inducers of Protein–Protein Associations.
+10.1126/science.adk4422
+Science
+. AAAS. Continuous evolution of compact protein degradation tags regulated by selective molecular glues.
+Table 4
+:
+PROTAC publications used for expert ground-truth annotation.
+DOI
+Publication details
+10.1021/acs.jmedchem.6b01912
+Journal of Medicinal Chemistry
+. ACS. Impact of Target Warhead and Linkage Vector on Inducing Protein Degradation: Comparison of Bromodomain and Extra-Terminal (BET) Degraders Derived from Triazolodiazepine (JQ1) and Tetrahydroquinoline (I-BET726) BET Inhibitor Scaffolds.
+10.1038/s41467-021-21159-7
+Nature Communications
+. Springer Nature. Mutant-selective degradation by BRAF-targeting PROTACs.
+10.1021/acscentsci.2c01369
+ACS Central Science
+. ACS. Chemical Knockdown of Phosphorylated p38 Mitogen-Activated Protein Kinase (MAPK) as a Novel Approach for the Treatment of Alzheimer’s Disease.
+10.1021/acs.jmedchem.2c01149
+Journal of Medicinal Chemistry
+. ACS. Developing HDAC4-Selective Protein Degraders To Investigate the Role of HDAC4 in Huntington’s Disease Pathology.
+10.1038/s41467-023-44237-4
+Nature Communications
+. Springer Nature. DCAF1-based PROTACs with activity against clinically validated targets overcoming intrinsic- and acquired-degrader resistance.
+10.1021/acs.jmedchem.2c01817
+Journal of Medicinal Chemistry
+. ACS. Heterobifunctional Ligase Recruiters Enable pan-Degradation of Inhibitor of Apoptosis Proteins.
+10.1002/anie.201914396
+Angewandte Chemie International Edition
+. Wiley. Structure-Based Design of a Macrocyclic PROTAC.
+10.1038/s41467-022-33430-6
+Nature Communications
+. Springer Nature. A selective and orally bioavailable VHL-recruiting PROTAC achieves SMARCA2 degradation in vivo.
+10.1021/jacs.9b13907
+Journal of the American Chemical Society
+. ACS. Efficient Targeted Degradation via Reversible and Irreversible Covalent PROTACs.
+10.1016/j.apsb.2023.01.014
+Acta Pharmaceutica Sinica B
+. Elsevier. Discovery of novel exceptionally potent and orally active c-MET PROTACs for the treatment of tumors with MET alteration.
+10.1002/anie.202101864
+Angewandte Chemie International Edition
+. Wiley. Proteolysis Targeting Chimera (PROTAC) for Macrophage Migration Inhibitory Factor (MIF) Has Anti-Proliferative Activity in Lung Cancer Cells.
+10.1126/scitranslmed.abj1578
+Science Translational Medicine
+. AAAS. A selective WDR5 degrader inhibits acute myeloid leukemia in patient-derived mouse models.
+10.1038/s41467-021-27210-x
+Nature Communications
+. Springer Nature. Development of a BCL-xL and BCL-2 dual degrader with improved anti-leukemic activity.
+10.1038/s41589-019-0294-6
+Nature Chemical Biology
+. Springer Nature. BAF complex vulnerabilities in cancer demonstrated via structure-based PROTAC design.
+10.1021/acs.jmedchem.3c00851
+Journal of Medicinal Chemistry
+. ACS. Leveraging Ligand Affinity and Properties: Discovery of Novel Benzamide-Type Cereblon Binders for the Design of PROTAC.
+Annotators.
+Annotation was carried out by eight PhD-level researchers (PhD students, postdoctoral researchers, and faculty) at the authors’ institution, with backgrounds spanning computational chemistry, machine learning, generative models for molecules, and medicinal chemistry. Each paper was annotated independently by two annotators. After independent annotation, the two record sets for each paper were compared and any disagreements were resolved by the lead paper authors through joint discussion with reference to the source document. Approximate annotation effort was 2–3 hours per paper per annotator, with an additional
+∼
+\sim
+1 hour per paper for post hoc disagreement resolution, yielding a total annotation cost on the order of 4 person-hours per publication
+×
+\times
+22 publications
+≈
+\approx
+88 person-hours across the combined MG and PROTAC sets.
+During comparison against pipeline predictions, we identified disagreements between the LLM extraction and our initial annotations that, on manual re-inspection of the source articles, turned out to favor the pipeline. We used these flagged disagreements to systematically audit the ground-truth set in a second pass, which revised approximately 5% of the original records. All ground-truth metrics reported in the main text use the audited version.
+Annotation schema and instructions.
+Annotators recorded one row per degradation assay measurement, populating a 14-field schema covering compound identity (
+DOI
+,
+Source
+,
+Compound_Name
+,
+IUPAC_Name
+,
+SMILES
+), assay context (
+Degradation_Target
+,
+Recruiter
+,
+Assay
+,
+Cell_Line
+), and quantitative endpoints (
+DC50
+,
+DC50_units
+,
+DC50_h
+,
+Dmax
+,
+Dmax_h
+,
+Dmax_conc
+). The annotation instructions originally also included EC
+50
+, EC
+50
+units, and EC
+50
+hours as target fields; these were dropped from the evaluation because EC
+50
+values were reported inconsistently across the literature (sometimes from degradation readouts, sometimes from binding or ternary-complex assays), and a clean separation between degradation- and non-degradation-derived EC
+50
+values could not be enforced reliably enough to support a like-for-like comparison against the LLM pipeline.
+A per-record
+Confidence Level
+tag (High/Medium/Low) and a
+Source
+tag (main text or SI) were also recorded; we use these as quality-control aids and do not propagate them into the reported metrics.
+Annotations were entered into a shared spreadsheet template with one column per field and one row per assay record. Annotators consulted the full text of each article together with all available textual and tabular supplementary materials, but were explicitly instructed not to extract values from images, to match the input scope of the LLM pipeline. They were also reminded that some apparent “tables” in published articles are typeset or embedded as figures and are therefore out of scope.
+Table 5
+:
+Example ground-truth annotation record for compound
+SJ6986
+from
+Nishiguchi et al. (2021)
+(DOI: 10.1021/acs.jmedchem.0c01313), illustrating the 14-field schema. Note that DC
+50
+hours is blank despite
+D
+max
+D_{\max}
+hours being recorded as 4: per the conservative annotation policy, timepoints are recorded only when the paper explicitly ties a specific timepoint to the corresponding measurement.
+Field
+Value
+DOI
+10.1021/acs.jmedchem.0c01313
+Source
+main text
+Compound_Name
+SJ6986
+IUPAC_Name
+N
+-(2-(2,6-Dioxopiperidin-3-yl)-1,3-dioxoisoindolin-
+5-yl)-2-(trifluoromethoxy)benzenesulfonamide
+SMILES
+O=C1NC(C(N2C(C(C=CC(NS(C3=CC=CC=C3OC(F)(F)F)
+(=O)=O)=C4)=C4C2=O)=O)CC1)=O
+Degradation_Target
+GSPT1
+Recruiter
+CRBN
+Assay
+Immunoblot (Western blot)
+Cell_Line
+MV4-11
+DC50
+9.7
+DC50_units
+nM
+DC50_h
+—
+Dmax
+90
+Dmax_h
+4
+Dmax_conc
+100 nM
+Confidence Level
+High
+Annotation followed a conservative policy: a value was recorded only when explicitly supported by the document, and values that could be inferred from context but were not directly stated were left blank rather than guessed. This applied in particular to timepoints (DC
+50
+hours,
+D
+max
+D_{\max}
+hours), which were recorded only when the paper explicitly tied a specific timepoint to the corresponding measurement. Records describing non-degradation measurements (e.g., ternary-complex formation assays) were excluded.
+When a single compound was characterized through multiple assays—for example, a Western blot for DC
+50
+/
+D
+max
+D_{\max}
+and a HiBiT reporter for a separate readout—each assay was recorded as a separate row. In Tab.
+5
+we show an example annotation row (here visualized as a column) from the annotation spreadsheet for compound SJ6986, a MG reported in Nishiguchi et al.
+Nishiguchi et al. (2021)
+, illustrating the one-record-per-assay convention.
+Appendix B
+Field-level details
+This section reports per-field extraction accuracy for the MG and PROTAC ground-truth cohorts under Experimental and Mechanistic mode matching. Values are micro-averaged across three independent replicates; parentheses indicate standard deviations across replicates. In Experimental mode, assay and cell line are included in the record-matching key and are therefore not scored as separate fields. In Mechanistic mode, assay and cell line are excluded from the record-matching key and are scored at the field level. Per-field counts and metrics are reported for the MG cohort in Tabs.
+6
+(Experimental) &
+7
+(Mechanistic), and for the PROTAC cohort in Tabs.
+8
+&
+9
+, respectively.
+Table 6:
+Per-field extraction accuracy for the MG cohort under Experimental mode matching.
+Field
+TP
+FP
+FN
+Precision
+Recall
+F
+1
+DC
+50
+267
+1
+0
+0.996 (0.007)
+1.000 (0.000)
+0.998 (0.003)
+DC
+50
+units
+268
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+DC
+50
+hours
+184
+8
+9
+0.958 (0.066)
+0.953 (0.031)
+0.956 (0.022)
+D
+max
+D_{\mathrm{max}}
+255
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+D
+max
+D_{\mathrm{max}}
+hours
+189
+0
+3
+1.000 (0.000)
+0.984 (0.027)
+0.992 (0.014)
+D
+max
+D_{\mathrm{max}}
+conc.
+15
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+Table 7:
+Per-field extraction accuracy for the MG cohort under Mechanistic mode matching.
+Field
+TP
+FP
+FN
+Precision
+Recall
+F
+1
+Cell line
+292
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+Assay
+292
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+DC
+50
+267
+1
+0
+0.996 (0.007)
+1.000 (0.000)
+0.998 (0.003)
+DC
+50
+units
+268
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+DC
+50
+hours
+184
+8
+9
+0.958 (0.066)
+0.953 (0.031)
+0.956 (0.022)
+D
+max
+D_{\mathrm{max}}
+255
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+D
+max
+D_{\mathrm{max}}
+hours
+189
+0
+3
+1.000 (0.000)
+0.984 (0.027)
+0.992 (0.014)
+D
+max
+D_{\mathrm{max}}
+conc.
+15
+0
+0
+1.000 (0.000)
+1.000 (0.000)
+1.000 (0.000)
+Table 8:
+Per-field extraction accuracy for the PROTAC cohort under Experimental mode matching.
+Field
+TP
+FP
+FN
+Precision
+Recall
+F
+1
+DC
+50
+481
+29
+2
+0.943 (0.012)
+0.996 (0.004)
+0.969 (0.005)
+DC
+50
+units
+510
+0
+2
+1.000 (0.000)
+0.996 (0.003)
+0.998 (0.002)
+DC
+50
+hours
+416
+6
+42
+0.986 (0.007)
+0.908 (0.008)
+0.946 (0.007)
+D
+max
+D_{\mathrm{max}}
+384
+27
+1
+0.934 (0.047)
+0.997 (0.004)
+0.965 (0.024)
+D
+max
+D_{\mathrm{max}}
+hours
+230
+24
+122
+0.906 (0.074)
+0.653 (0.019)
+0.759 (0.030)
+D
+max
+D_{\mathrm{max}}
+conc.
+18
+11
+0
+0.621 (0.223)
+1.000 (0.000)
+0.766 (0.171)
+Table 9:
+Per-field extraction accuracy for the PROTAC cohort under Mechanistic mode matching.
+Field
+TP
+FP
+FN
+Precision
+Recall
+F
+1
+Cell line
+540
+1
+0
+0.998 (0.003)
+1.000 (0.000)
+0.999 (0.002)
+Assay
+525
+5
+11
+0.991 (0.008)
+0.980 (0.024)
+0.985 (0.008)
+DC
+50
+495
+30
+2
+0.943 (0.002)
+0.996 (0.003)
+0.969 (0.001)
+DC
+50
+units
+525
+0
+2
+1.000 (0.000)
+0.996 (0.003)
+0.998 (0.002)
+DC
+50
+hours
+431
+6
+42
+0.986 (0.007)
+0.911 (0.008)
+0.947 (0.008)
+D
+max
+D_{\mathrm{max}}
+388
+29
+1
+0.931 (0.041)
+0.997 (0.004)
+0.963 (0.021)
+D
+max
+D_{\mathrm{max}}
+hours
+234
+26
+122
+0.900 (0.061)
+0.657 (0.015)
+0.760 (0.019)
+D
+max
+D_{\mathrm{max}}
+conc.
+18
+11
+0
+0.621 (0.223)
+1.000 (0.000)
+0.766 (0.171)
+Appendix C
+Additional dataset characterization
+Journal distribution.
+We characterized the processed literature cohorts by journal source (Fig.
+5
+). The retained papers are concentrated in medicinal chemistry, chemical biology, and multidisciplinary chemistry journals, with lower-frequency journals grouped as Other for readability.
+Figure 5
+:
+Journal distribution of processed papers by cohort. The eight most frequent journals are shown individually, with remaining journals grouped as Other; numbers indicate total processed papers per journal group.
+Baseline missingness.
+We quantified missing values in baseline records associated with PMC full-text available processed papers used for extraction and database comparison (Tabs.
+10
+&
+11
+). Missingness was highest for assay-context and time fields, with the MG reference data (baseline) showing
+>
+>
+95% missingness on D
+max
+hours and concentration and the PROTAC reference data (baseline) showing
+>
+>
+99% missingness on assay type.
+Table 10:
+Missing value statistics for MolGlueDB-derived baseline records associated with PMC full-text available processed papers in the MG cohort.
+Feature
+Missing count
+Missing (%)
+DC
+50
+hours
+700
+98.45
+D
+max
+D_{\mathrm{max}}
+hours
+678
+95.36
+D
+max
+D_{\mathrm{max}}
+concentration
+677
+95.22
+D
+max
+D_{\mathrm{max}}
+630
+88.61
+Cell line
+614
+86.36
+DC
+50
+units
+583
+82.00
+DC
+50
+583
+82.00
+Assay
+537
+75.53
+Degradation target
+195
+27.43
+Recruiter
+0
+0.00
+StdInChIKey
+0
+0.00
+StdInChI
+0
+0.00
+SMILES
+0
+0.00
+Compound name
+0
+0.00
+DOI
+0
+0.00
+Table 11:
+Missing value statistics for PROTAC-DB-derived baseline records associated with PMC full-text available processed papers in the PROTAC cohort.
+Feature
+Missing count
+Missing (%)
+Assay
+2173
+99.50
+DC
+50
+hours
+1873
+85.76
+DC
+50
+1843
+84.39
+DC
+50
+units
+1841
+84.29
+D
+max
+D_{\mathrm{max}}
+concentration
+1751
+80.17
+D
+max
+D_{\mathrm{max}}
+hours
+1612
+73.81
+Compound name
+1587
+72.66
+D
+max
+D_{\mathrm{max}}
+1403
+64.24
+Cell line
+1229
+56.27
+Degradation target
+8
+0.37
+Recruiter
+0
+0.00
+InChIKey
+0
+0.00
+InChI
+0
+0.00
+SMILES
+0
+0.00
+DOI
+0
+0.00
+Appendix D
+Baseline error analysis
+We further inspected baseline-ground-truth discrepancies to better understand the sources of reduced baseline performance. Because neither baseline database produced record-level matches under Experimental mode matching, we focus here on Mechanistic mode matching, where records are matched by compound, degradation target, and recruiter.
+For the MG ground-truth set, MolGlueDB yielded 25 record-level true positives, 11 false positives, and 73 false negatives under Mechanistic mode matching. The 11 record-level false positives were all from one BCL6 publication and reflected the same record-key mismatch: the baseline included records for these compounds and targets, but listed the recruiter as “Unknown” although the expert annotation assigned “SIAH1.” Because the records were present but had an incorrect matching key, they were counted as false positives rather than omissions. Thus, the precision loss mainly reflects incorrect or underspecified recruiter annotation, rather than unsupported quantitative assay values.
+For the PROTAC ground-truth set, PROTAC-DB yielded 101 record-level true positives (TPs), 16 false positives (FPs), and 108 false negatives (FNs) under Mechanistic mode matching. This indicates that matched baseline records were reliable, but coverage of the expert-curated records remained incomplete. Record-level false positives showed a broader range of causes than in the MG set, including baseline records without a corresponding expert-curated DC
+50
+or D
+max
+degradation assay record under the matching criteria, as well as mismatches in record-defining fields such as degradation target. In addition, record alignment was less straightforward for PROTACs because compound-name annotations were frequently unavailable or incomplete in PROTAC-DB entries (as shown in Tab.
+11
+), making compound-level matching more dependent on normalized identifiers or structural information. At the field level, agreement was higher among matched records (504 TP, 43 FP, 112 FN; precision = 0.92, recall = 0.78), with most false negatives driven by missing assay annotations.
+Appendix E
+PMC retrieval details
+We restricted extraction to publications available in PMC as open-access full-text XML articles. Of the 560 PROTAC-DB 3.0 publications, 141 met this criterion; 257 were not indexed in PMC and 162 were access restricted. Of the 193 MolGlueDB publications, 70 were available as full text, 85 were not indexed, and 28 were access restricted. These PMC full-text articles defined the final processed cohorts used for extraction and database comparison (MG,
+N
+=
+70
+N=70
+; PROTAC,
+N
+=
+141
+N=141
+), as summarized in Fig.
+2
+.
+We also retrieved supplementary information (SI) files from each paper, where provided, because key assay details are often reported outside the main text. For each cohort article, we downloaded the corresponding
+.tar.gz
+archive through the PMC Open Access Web Service, extracted files by format (e.g.,
+.pdf
+,
+.xlsx
+,
+.csv
+), and linked them to the main article using XML metadata. Supplement retrieval was confirmed by manual check.
+E.1
+Structured parsing and data standardization
+We converted retrieved documents into structured, machine-readable inputs for LLM extraction while preserving article context. Main-text PMC XML files were parsed into hierarchical JSONs containing article metadata, ordered section text, tables, table and figure captions, and table footnotes. Section headers, table footnotes, and captions were retained because they often contain assay context or experimental conditions; raw figure images, non-essential metadata, and generic non-experimental sections (e.g., author contributions and acknowledgments) were excluded to reduce context length.
+Supplementary materials were processed by format. PDF supplements were converted to Markdown with
+marker-pdf
+to preserve text and table structure
+(
+Paruchuri, 2026
+)
+. Text-centric files (
+.md
+,
+.docx
+) were retained in full, with
+.docx
+parsed using
+python-docx
+to capture chemical identity information such as IUPAC names
+(
+Canny, 2026
+)
+. Spreadsheet supplements (
+.xlsx
+,
+.xls
+,
+.csv
+) were filtered for assay-relevant keywords such as “DC50” and “Dmax” at the sheet level for Excel files and at the file level for CSV files. Retained tables were cleaned by flattening multi-level headers, removing empty or duplicated columns, and normalizing numeric fields.
+E.2
+JSON schema for parsed PMC XML
+PMC XML articles were converted to JSON for downstream LLM extraction. Parsing focused on the XML
+<body>
+element, preserving main-text content and section hierarchy while excluding most
+<back>
+matter.
+Below is a truncated JSON example from a representative article (PMC9234961), showing the information provided to the Extractor agent. Long text fields are shortened for brevity.
+{
+"pmcid": "PMC9234961",
+"title": "Improved Binding Affinity and Pharmacokinetics...",
+"abstract": "The transcriptional repressor BCL6 is an oncogenic...",
+"body_text": "Introduction The formation of germinal centers (GCs)...",
+"figures": [
+{
+"id": "sch1",
+"title": "Scheme 1",
+"caption": "Synthesis of 2-Substituted Pyrimidine Benzimidazolones..."
+}
+],
+"tables": [
+{
+"id": "tbl1",
+"caption": "Structure-Activity Relationships of Benzimidazolone...",
+"content": ""
+}
+],
+"sections": {
+"Introduction": "The formation of germinal centers (GCs) is required...",
+"Results": "Chemistry\nFinal compounds were obtained by a single-step...",
+"Conclusions": "The goal of our work was to discover a BCL6 degrader..."
+},
+"xml_metadata": {
+"doi": "10.1021/acs.jmedchem.1c02175",
+"pmid": "35653645",
+"journal": "Journal of Medicinal Chemistry",
+"pubdate": "2022-06-02"
+},
+"supplementary_info": {
+"has_supplements": true,
+"external_links": [
+{
+"text": "Tables S1 and S2",
+"url": "https://..."
+}
+]
+}
+}
+Chemical identity resolution and quality filtering.
+To support robust compound-level alignment across datasets, we next standardized chemical identifiers. This step was important when the extracted record and the baseline referred to the same compound using different names, such as an internal compound label in one source and a common name in the other. For compounds with available IUPAC names, we used the OPSIN web service to use IUPAC names derive SMILES and standard InChIKeys
+(
+Lowe et al., 2011
+)
+. For compounds lacking IUPAC name, we queried PubChem by compound name using PubChemPy
+(
+Kim et al., 2025
+;
+Swain, 2017
+)
+. All IUPAC names, SMILES and standard InChIKey entries were annotated with their source (paper-extracted, OPSIN-converted, or PubChem-matched) to maintain traceability.
+When standard InChIKeys were available, compound-level matching during evaluation used the first 14 characters rather than the full key. This allowed records to be aligned even when the source paper and the baseline database differed in their stereochemical specification of the same compound, for example when one source reported a specific stereoisomer and the other did not.
+Finally, we removed rows lacking both DC
+50
+and D
+max
+values so that the cleaned extraction output matched the scope of the baseline dataset. The resulting table was used for downstream evaluation and database-level comparison.
+Appendix F
+Details on hierarchical evaluation framework
+We employed a hierarchical evaluation framework consisting of two complementary levels: record-level and field-level. Record-level evaluation determines whether the workflow correctly identifies individual degradation assays, while field-level evaluation assesses the accuracy of the quantitative values extracted for each matched record. By separating these two aspects, the framework distinguishes failures in assay identification from inaccuracies in value extraction.
+We used unified definitions of classification outcomes across both levels. A
+true positive
+(TP) is counted when both the prediction and the reference contain an item and they correctly match. A
+false positive
+(FP) is recorded when an item is predicted but does not correspond to the reference, either because the reference lacks the item or because the two do not match. A
+false negative
+(FN) indicates a reference item that was missed by the prediction.
+True negatives
+(TN) represent the non-existent items correctly ignored by the model, they are not included in metric calculations because the absence of a field in both prediction and reference does not provide useful evaluative information. Based on these definitions, we compute precision, recall, and F1 score.
+Precision measures the fraction of predicted items that are correct, reflecting the trustworthiness of the extracted results and the pipeline’s ability to avoid incorrect predictions. Recall quantifies the fraction of reference items successfully recovered, capturing the pipeline’s ability to rediscover relevant information reported in the literature.
+F.1
+Evaluation modes
+We used three evaluation modes that defined a record at different levels of biological and experimental specificity. Experimental mode defined a record by the full 5-element key
+R
+=
+⟨
+C
+,
+T
+,
+E
+,
+A
+,
+L
+⟩
+R=\langle C,T,E,A,L\rangle
+where
+C
+C
+denotes the compound,
+T
+T
+the degradation target,
+E
+E
+the recruiter,
+A
+A
+the assay type, and
+L
+L
+the cell line. Under this mode, a record corresponded to a specific degradation assay measured under a defined experimental context.
+Mechanistic mode defined a record by the 3-element key
+R
+=
+⟨
+C
+,
+T
+,
+E
+⟩
+R=\langle C,T,E\rangle
+which represents the core ternary-complex interaction between compound, target, and recruiter. Under this mode, assay type and cell line were not used as matching keys and were instead evaluated at the field level.
+Phenotypic mode defined a record by the 2-element key
+R
+=
+⟨
+C
+,
+T
+⟩
+R=\langle C,T\rangle
+matching only on compound and degradation target. This mode captured whether the pipeline identified the correct compound–target degradation relationship, regardless of recruiter identity or experimental context.
+For evaluation against ground truth (LLM vs. GT and baseline vs. GT), we report Experimental and Mechanistic modes. For large-scale discrepancy analysis between the LLM pipeline and existing databases (LLM vs. baseline), we report all three modes, because their stratified overlap helps show where differences arise from experimental annotation, mechanistic annotation, or broader phenotypic coverage.
+F.2
+Record identification
+Record-level evaluation determines whether the pipeline successfully identifies individual degradation assays reported in a publication. All matching was performed independently within each publication (DOI) using two-stage strategy: candidate collection followed by conflict resolution.
+F.2.1
+Compound matching and candidate collection
+For each predicted record, we first identified candidate reference records by matching the compound field within the same publication. Compound matching proceeded in two steps: (1) exact string comparison of compound names after normalization; and (2) If no name match was found, we then compared the first 14 characters of the Standard InChIKey. This allowed matching when the same compound was reported under different names or with different levels of stereochemical detail. Predictions with no compound match were immediately counted as false positives.
+Each reference record with a compound match was then checked against the remaining record fields according to the active evaluation mode. Degradation target and recruiter had to match semantically (see App.
+I
+); a predicted value of “Unknown” was not accepted when the reference provided a specific value. In Experimental mode, assay type and cell line also had to match semantically. If the reference assay or cell-line field was missing or marked as unknown, this check was relaxed. Reference records that passed these checks were kept as candidates for that prediction.
+F.2.2
+Conflict resolution
+Conflicts were resolved in two rounds. First, we handled cases in which multiple predictions matched the same reference record. Competing predictions were scored by agreement with quantitative assay fields: DC
+50
+,
+D
+max
+D_{\mathrm{max}}
+,
+D
+max
+D_{\mathrm{max}}
+hours, and
+D
+max
+D_{\mathrm{max}}
+concentration. In Experimental mode, assay type and cell line had already been used during candidate filtering and were not scored; in Mechanistic mode, they were used only as tie-breaking fields. The highest-scoring prediction was assigned to the contested reference, and the remaining predictions were retained for the second round.
+The second round processed unmatched predictions while excluding reference records already assigned. Predictions with no remaining candidates were counted as false positives; predictions with one candidate were accepted as true positives, except when relaxed assay or cell-line matching made an additional quantitative-field agreement check necessary. When multiple candidates remained, InChIKey-connectivity matches were treated as possible stereoisomer conflicts and resolved using a score weighted toward DC
+50
+and
+D
+max
+D_{\mathrm{max}}
+agreement, with unresolved cases flagged for manual review and excluded from TP/FP/FN counts. Other multi-candidate cases, typically different assay records for the same compound, were resolved by selecting the candidate with the highest assay-field agreement. After both rounds, unmatched predictions were counted as false positives and unmatched reference records as false negatives.
+F.3
+Field extraction accuracy
+Field-level evaluation assesses the correctness of individual fields within degradation assay records that were matched at the record level. The set of scored fields depends on the evaluation mode. In Experimental mode, records are matched using the 5-field key
+(
+C
+,
+T
+,
+E
+,
+A
+,
+L
+)
+(C,T,E,A,L)
+, where
+C
+C
+,
+T
+T
+,
+E
+E
+,
+A
+A
+, and
+L
+L
+denote compound, degradation target, recruiter, assay type, and cell line, respectively. Because assay type and cell line are already part of the record key, field-level scoring is restricted to quantitative endpoint fields: DC
+50
+, DC
+50
+units, DC
+50
+hours, D
+max
+, D
+max
+hours, and D
+max
+concentration. In Mechanistic mode, records are matched using the 3-field key
+(
+C
+,
+T
+,
+E
+)
+(C,T,E)
+; assay type and cell line are therefore scored as additional fields alongside the quantitative endpoint fields.
+For quantitative fields, a predicted value is considered correct when it matches the reference after unit and numeric-format standardization. When values are reported using comparative operators or numerical ranges, comparison rules are extended accordingly. Inequality values must agree in both operator direction and magnitude. For interval expressions, a match is recorded when the predicted value falls within the reference interval or when a reference single-point value lies within a predicted interval. Values outside the relevant interval, inconsistencies in operator direction, or predicted values present when the reference field is null are treated as false positives (FPs). Conversely, when a reference value is present but the prediction is missing that field, the field is counted as a false negative (FN). For assay type and cell line in Mechanistic mode, matching is based on the semantic matching procedure described in App.
+I
+.
+Fields absent from both prediction and reference are considered true negatives (TNs), but TNs are not included in precision, recall, or F
+1
+calculations because mutual absence does not provide useful evidence of extraction correctness. Precision, recall, and F
+1
+are computed separately for each field type and micro-averaged across matched records within each cohort and evaluation mode.
+Appendix G
+Prompt templates for LLM agents and modules
+This appendix reports the prompt templates used for the Extractor, Analyst, Refiner, and semantic matching module, shown for the MG task. For PROTAC extraction, MG terminology was replaced with PROTAC terminology while preserving the same schema and workflow. Curly-brace placeholders were replaced with paper-specific content at runtime.
+G.1
+Extractor prompt
+Round 1: Initial extraction.
+# Goal
+You will be given a paper about molecular glues. The paper is delimited by triple backticks (``` ... ```). Your goal is to extract measurements of molecular glue degradation assays, specifically focusing on DC50 and Dmax assay values.
+# Required Fields
+Extract the following 13 fields:
+- Compound_Name: Name of the molecular glue compound.
+- IUPAC_Name: IUPAC chemical name of the compound.
+- SMILES: SMILES string of the compound.
+- Degradation_Target: The target protein to be degraded.
+- Recruiter: E3 ligase (or E3 ligase-recruiting protein) involved in the degradation process.
+- Assay: The assay method used to measure degradation
+- Cell_Line: The specific cell line used for the assay; if a cell-free assay is used, denote this as ’cell-free’
+- DC50: The compound concentration required to achieve 50% degradation of the target protein.
+- DC50_units: Units for DC50 measurement.
+- DC50_h: Timepoint for DC50 measurement.
+- Dmax: The maximal degradation observed (out of 100%).
+- Dmax_h: Timepoint for Dmax measurement.
+- Dmax_concentration: Concentration at which Dmax was measured.
+# Extraction Principles
+Do not infer timepoints: only populate DC50_h (and Dmax_h) when the paper explicitly ties that time to the specific metric; otherwise leave blank; preserve reported qualifiers (˜, <, >) exactly for DC50/Dmax and concentrations—do not coerce or round.
+For Compound_Name, use the paper’s exact compound identifier by stripping generic prefixes (e.g., "Compound"), preserving suffixes (e.g., a/b), and normalizing whitespace/case; when parsing tables, link each numeric value to its row’s compound ID and cell line to avoid mislabeling or duplication.
+# Output Format
+- Output a single JSON array of objects, with no added commentary or explanation.
+- Each object corresponds to a single experiment and only contains the fields listed under ’Required Fields’.
+Example: [{"Compound_Name": "...", "IUPAC_Name": "...", ...}]
+Round 2: Source verification.
+For each extracted data point, find the exact source sentence (verbatim) where you found that data.
+Return JSON ONLY as an array of objects with keys "data_point" and "source_sentence". Do not paraphrase the sentence.
+Example:
+[
+{
+"data_point": {
+"Compound_Name": "...",
+"IUPAC_Name": "...",
+"SMILES": "...",
+"Degradation_Target": "...",
+"Recruiter": "...",
+"Assay": "...",
+"Cell_Line": "...",
+"DC50": "...",
+"DC50_units": "...",
+"DC50_h": "...",
+"Dmax": "...",
+"Dmax_h": "...",
+"Dmax_conc": "..."
+},
+"source_sentence": "..."
+}
+]
+Round 3: Supplementary integration.
+For Markdown and DOCX supplements, the prompt emphasized chemical identity completion.
+Review your previous extraction and check this supplementary {file_type_display} file #{idx} ({filename}):
+Primary Task: Find IUPAC Names and SMILES for Previously Extracted Compounds
+Please carefully examine this supplementary file and:
+1. Look for IUPAC names, SMILES strings, or full chemical names for compounds you previously extracted (e.g., if you extracted "compound 5", look for its IUPAC name, SMILES string, or chemical structure name).
+2. For each compound where you find an IUPAC name or SMILES:
+- Keep all other fields (Compound_Name, Degradation_Target, DC50, Dmax, etc.) EXACTLY the same as your previous extraction.
+- ONLY fill in or update the IUPAC_Name and SMILES fields.
+- This helps match compounds across different parts of the paper.
+Secondary Task: Extract Any New Compound Data
+3. If you find any NEW molecular glue degradation data that was NOT in your previous extraction, extract it completely.
+4. Include any additional compounds, assays, or cell lines found in this file.
+Important Notes:
+- When updating existing compounds with IUPAC names or SMILES, preserve all original data.
+- If a compound already has an IUPAC name or SMILES, only update if you find a more complete or accurate one.
+- Return all data points (both updated and new) in the same JSON format as before.
+- Output a single JSON array of objects, with no added commentary or explanation.
+If no additional data or IUPAC names are found in this file, return an empty array
+For tabular supplements, including Excel and CSV files, the prompt emphasized missing assay-record extraction.
+Review your previous extraction and check this supplementary file #{idx} ({filename}):
+Question: Are there any data points you missed in the first extraction?
+Please carefully examine this supplementary file and:
+1. Identify any molecular glue degradation data that was NOT in your previous extraction.
+2. Extract any missing fields (DC50, Dmax, Cell_Line, Assay, etc.) that can now be filled.
+3. Look for IUPAC names, SMILES strings, or full chemical names for compounds you previously extracted.
+4. Include any new compounds, assays, or cell lines found in this file.
+Important for IUPAC Names and SMILES:
+- If you find IUPAC names or SMILES strings for compounds you already extracted, fill in the IUPAC_Name and SMILES fields while keeping other
+fields the same.
+Return all data points (both updated and new) in the same JSON format as before. Output a single JSON array of objects, with no added commentary or explanation.
+If no additional data is found in this file, return an empty array
+Round 4: Final review.
+Review all the compounds you’ve extracted so far from both the main text and supplementary files.
+**Task: Find Missing IUPAC Names and SMILES in Main Text**
+Please carefully examine the main text below and:
+1. Identify any compounds you extracted that are still missing IUPAC names or SMILES strings
+2. Search the main text for IUPAC names, SMILES strings, or full chemical names for these compounds
+3. For each compound where you find an IUPAC name or SMILES:
+- Keep all other fields (Compound_Name, Degradation_Target, DC50, Dmax, etc.) EXACTLY the same as your previous extraction
+- ONLY fill in or update the IUPAC_Name and SMILES fields
+- Match the compound by its name (e.g., "compound 5", "molecule A") or by its degradation data
+**Important:**
+- Focus on compounds extracted from supplementary files that might have IUPAC names or SMILES in the main text
+- Preserve all existing data for each compound
+- Only update the IUPAC_Name and SMILES fields; do not modify any other fields
+- Return all data points (both updated and unchanged) in the same JSON format
+If no additional IUPAC names or SMILES are found, return an empty array: []
+G.2
+Analyst prompt
+I’m extracting molecular glue degradation assay measurements from a molecular glue paper using an LLM, specifically focusing on DC50 and Dmax values. The paper is delimited by triple backticks (``` ... ```). There are some errors (FP and FN) in the extraction results, I need you to analyze these errors to help me improve future extraction performance.
+Here is the main text of the paper:
+```
+{paper_main_text}
+```
+**EXTRACTION ERROR CLASSIFICATION**:
+The extraction errors have been classified into 2 groups:
+"""
+# ===== GROUP 1: Data Omission (FN) =====
+prompt += f"""
+## GROUP 1: DATA OMISSION (False Negatives)
+**Definition**: Data that exist in ground truth but were missing from the extraction.
+"""
+if group1[’count’] > 0:
+import json
+prompt += "**Ground Truth Records that were MISSED**:\n"
+for idx, error_ctx in enumerate(group1[’errors’], 1):
+gt_record = error_ctx.get(’gt_full_record’, {})
+# Create complete 11-field data point
+gt_data = {
+’Compound_Name’: gt_record.get(’Compound_Name’, ’’),
+’Degradation_Target’: gt_record.get(’Degradation_Target’, ’’),
+’Recruiter’: gt_record.get(’Recruiter’, ’’),
+’Assay’: gt_record.get(’Assay’, ’’),
+’Cell_Line’: gt_record.get(’Cell_Line’, ’’),
+’DC50’: gt_record.get(’DC50’, ’’),
+’DC50_units’: gt_record.get(’DC50_units’, ’’),
+’DC50_h’: gt_record.get(’DC50_h’, ’’),
+’Dmax’: gt_record.get(’Dmax’, ’’),
+’Dmax_h’: gt_record.get(’Dmax_h’, ’’),
+’Dmax_conc’: gt_record.get(’Dmax_conc’, ’’)
+}
+prompt += f"\nMissed Record #{idx}:\n"
+prompt += "```json\n"
+prompt += json.dumps(gt_data, indent=2, ensure_ascii=False)
+prompt += "\n```\n"
+else:
+prompt += "No data omissions.\n"
+# ===== GROUP 2: UNMATCHED / EXTRA DATA =====
+prompt += f"""
+## GROUP 2: UNMATCHED / EXTRA DATA (False Positives)
+**Definition**: Data that were extracted but do not match ground truth. This includes:
+- Data not in ground truth.
+- Data with correct record level match but wrong measurement field values
+"""
+if group2[’count’] > 0:
+import json
+prompt += "**Unmatched / Extra Data Details**:\n\n"
+for idx, error_ctx in enumerate(group2[’errors’], 1):
+error_type = error_ctx.get(’error_type’, ’unknown’)
+extracted = error_ctx.get(’extracted’, {})
+# Use proper JSON formatting with escaping
+extracted_json = json.dumps(extracted, indent=4, ensure_ascii=False)
+prompt += f"Error #{idx} ({error_type}):\n"
+prompt += "```json\n"
+prompt += "{\n"
+prompt += f’  "extracted": {extracted_json}’
+# Only add reason for record_level_fp, not for field_level_mismatch
+if error_type == ’record_level_fp’:
+reason = error_ctx.get(’reason’, ’No reason provided’)
+reason_json = json.dumps(reason, ensure_ascii=False)
+prompt += f’,\n  "reason": {reason_json}’
+prompt += "\n}\n"
+prompt += "```\n\n"
+else:
+prompt += "No unmatched or extra data.\n"
+# ===== GROUND TRUTH =====
+prompt += f"""
+## GROUND TRUTH FOR THIS PAPER
+**Reference**: The complete ground truth data for this paper:
+"""
+if all_ground_truth:
+import json
+for idx, gt_record in enumerate(all_ground_truth, 1):
+gt_data = {
+’Compound_Name’: gt_record.get(’Compound_Name’, ’’),
+’Degradation_Target’: gt_record.get(’Degradation_Target’, ’’),
+’Recruiter’: gt_record.get(’Recruiter’, ’’),
+’Assay’: gt_record.get(’Assay’, ’’),
+’Cell_Line’: gt_record.get(’Cell_Line’, ’’),
+’DC50’: gt_record.get(’DC50’, ’’),
+’DC50_units’: gt_record.get(’DC50_units’, ’’),
+’DC50_h’: gt_record.get(’DC50_h’, ’’),
+’Dmax’: gt_record.get(’Dmax’, ’’),
+’Dmax_h’: gt_record.get(’Dmax_h’, ’’),
+’Dmax_conc’: gt_record.get(’Dmax_conc’, ’’)
+}
+prompt += f"\nRecord #{idx}:\n"
+prompt += "```json\n"
+prompt += json.dumps(gt_data, indent=2, ensure_ascii=False)
+prompt += "\n```\n"
+else:
+prompt += "No ground truth data available.\n"
+# ===== SEMANTIC MATCHES =====
+prompt += f"""
+## SEMANTIC MATCHES FOR THIS PAPER
+**Reference**: Semantic matching decisions made during evaluation (showing how predicted values were compared to ground truth values):
+"""
+if semantic_matches:
+for idx, match in enumerate(semantic_matches, 1):
+pred_val = match.get(’pred_value’, ’N/A’)
+label_val = match.get(’labeled_value’, ’N/A’)
+feature = match.get(’feature’, ’N/A’)
+result = match.get(’result’, ’N/A’)
+prompt += f"- {feature}: ’{pred_val}’ vs ’{label_val}’ → {result}\n"
+else:
+prompt += "No semantic matches recorded for this paper.\n"
+# ===== Final Instructions =====
+prompt += """
+---
+**TASK**:
+According to above information, analyze the root causes of the errors. Summarize your findings in 2 sentences to improve the next extraction round. Let’s think step by step.
+G.3
+Refiner prompt
+You are an expert Prompt Engineer tasked with optimizing a prompt for an LLM to extract molecular glue degradation assay measurement data from scientific papers.
+Your goal is to fine-tune the existing prompt to fix extraction errors while keeping changes minimal based on the provided error analysis.
+### Context
+The summary of error reports for rejected {num_papers} papers is as follows:
+{error_summary}
+The current prompt is as follows ({current_word_count} words):
+{current_prompt}
+### Instructions
+Analyze the general error patterns from the summary. Update the current prompt to prevent these errors using simple, clear language. Let’s think step by step.
+# Constraints
+1. **Target Sections**: You are ONLY allowed to modify `# Goal` and `# Extraction Principles`.
+2. **Frozen Sections**: Do **NOT** modify `# Required Fields` or `# Output Format` under any circumstances.
+3. **Generalization**: Avoid overfitting. Identify the root cause of the errors and fix the prompt generally. Do not hardcode details about specific compounds, targets, recruiters, or cell lines found in the error report.
+4. **Strict Conciseness**: You may only update or add **maximum 2 sentences** in total. Prioritize the most critical fix. The total added/modified text should be approximately \leq {char_limit} characters.
+# Output Format
+Return **only** a valid, raw JSON object (no markdown code blocks, no pre-text):
+{{
+"updated_prompt": "The complete updated prompt string"
+}}
+Your response:
+G.4
+Semantic matching prompt
+Please determine whether {pred_value} and {labeled_value} refer to the same {feature}.
+Please only answer "yes" or "no". If they are referring to the same thing, respond ’yes’; otherwise, respond ’no’, don’t add any extra words.
+G.5
+Post-processing details
+Extracted data were post-processed to facilitate comparison to both the baseline and ground-truth records by standardizing units and resolving duplicates.
+Unit standardization.
+Concentration-based fields, including DC
+50
+and D
+max
+concentration, were standardized to nanomolar (nM) units using a predefined conversion table covering common pharmacological units and notations, including nM,
+μ
+\mu
+M, M, and
+μ
+\mu
+mol/L. Values and units were parsed whether reported separately or in the same field. Numeric fields, including DC
+50
+, D
+max
+, timepoints, and concentrations, were normalized while preserving operators, ranges, approximate values, and uncertainty expressions; for example, “approximately 90” was converted to “
+∼
+\sim
+90”, and “between 20 and 150” to “20–150”. D
+max
+values were further standardized by removing percent symbols and cleaning formatting. Note that this same unit standardization procedure was also applied to the baseline and ground-truth records.
+Duplicate resolution.
+Because the Extractor agent processed main text and supplementary materials in separate rounds, the same assay record could be extracted more than once. We therefore applied a two-stage deduplication strategy. In the first stage, exact duplicates were identified using a composite key defined by compound name, degradation target, recruiter, assay, cell line, DC
+50
+, and D
+max
+. When multiple rows shared the same key, we kept only one record using a fixed priority rule. Records with more complete chemical identity information were prioritized, and among otherwise similar records, entries from the final review stage were preferred over those from earlier extraction stages. In the second stage, we removed partial duplicates among records that described the same assay measurement context. If two records described the same assay and one contained all the same reported values plus additional non-empty fields, the less complete record was removed.
+G.6
+Compute and API cost estimate
+All LLM experiments used API-based inference with GPT-5 through OpenRouter; no model fine-tuning or GPU training was performed. Local computations were limited to document parsing, post-processing, and evaluation, which can be run on CPU. Full-cohort extraction for MG paper cost approximately 12 USD per iteration (3 iterations total). Extracting records from the full-cohort of PROTACs papers cost approximately 25 USD per iteration (3 iterations total). Total API costs across all prompt-optimization, extraction, and evaluation experiments ran up to approximately 100 USD in total.
+Appendix H
+CAPO optimization results
+This section summarizes the prompt optimization results using CAPO on the MG ground-truth set to arrive at the Champion Prompt. We report convergence of record- and field-level precision and recall across optimization rounds (Fig.
+6
+), summary statistics for held-out LOOCV performance (Tab.
+12
+), and the seed prompt and final selected Champion Prompt used for downstream extraction.
+H.1
+Error diagnosis and prompt refinement procedure
+When a document has at least one local metric below the acceptance threshold
+τ
+\tau
+, a structured diagnostic process identifies failure patterns to guide prompt refinement. First, extraction errors are classified into two groups: (1) data omissions, where ground truth records were missed entirely, and (2) unmatched/extra data, comprising hallucinated records or matched records with incorrect field values. Second, the Analyst agent examines these errors in the context of the source document, ground truth, and semantic matching details, producing a concise summary identifying dominant failure patterns. Paper-level diagnoses are then aggregated into a batch-level report for prompt refinement.
+Based on the batch-level diagnostic report, the Refiner agent generates an updated prompt (
+P
+N
++
+1
+P_{N+1}
+) through gradient-free optimization in the discrete instruction space. The refinement process was guided by a meta-prompt with four constraints: (1) only the
+# Goal
+and
+# Extraction Principles
+sections could be modified; (2) the
+# Required Fields
+and
+# Output Format
+sections were frozen; (3) revisions had to address general error patterns rather than adding paper-specific details such as particular compounds, targets, recruiters, or cell lines; and (4) each refinement step was limited to at most two added or modified sentences, so that updates remained concise and focused on the most critical errors. These constraints prevent overfitting to individual documents while allowing sufficient flexibility for iterative exploration.
+Figure 6
+:
+CAPO convergence on the MG extraction task across three optimization rounds.
+Panels show (a) record-level precision, (b) record-level recall, (c) field-level precision, and (d) field-level recall. Green lines and shaded regions denote the mean
+±
+\pm
+1 standard deviation across seven leave-one-out splits; the blue dashed line marks the acceptance threshold (
+τ
+=
+0.9
+\tau=0.9
+). Orange diamonds show average held-out performance using the final prompt from each fold.
+Table 12:
+Held-out LOOCV performance of CAPO-optimized prompts on the MG ground-truth set. Values are mean (standard deviation) across seven leave-one-out folds. Field-level metrics are computed on matched records.
+Part
+Metric
+Experimental
+Mechanistic
+Record-Level
+Precision
+0.981 (0.034)
+0.981 (0.034)
+Recall
+1.000 (0.000)
+1.000 (0.000)
+F
+1
+0.990 (0.018)
+0.990 (0.018)
+Field-Level
+Precision
+0.919 (0.142)
+0.948 (0.090)
+Recall
+0.933 (0.124)
+0.960 (0.075)
+F
+1
+0.923 (0.123)
+0.952 (0.075)
+H.2
+Prompts before and after optimization
+The initial prompt before optimization
+# Goal
+You will be given a paper about molecular glues. The paper is delimited by triple backticks (``` ... ```). Your goal is to extract measurements of molecular glue degradation assays, specifically focusing on DC50 and Dmax assay values.
+# Required Fields
+Extract the following 13 fields:
+- Compound_Name: Name of the molecular glue compound.
+- IUPAC_Name: IUPAC chemical name of the compound.
+- SMILES: SMILES string of the compound.
+- Degradation_Target: The target protein to be degraded.
+- Recruiter: E3 ligase (or E3 ligase-recruiting protein) involved in the degradation process.
+- Assay: The assay method used to measure degradation
+- Cell_Line: The specific cell line used for the assay; if a cell-free assay is used, denote this as ’cell-free’
+- DC50: The compound concentration required to achieve 50% degradation of the target protein.
+- DC50_units: Units for DC50 measurement.
+- DC50_h: Timepoint for DC50 measurement.
+- Dmax: The maximal degradation observed (out of 100%).
+- Dmax_h: Timepoint for Dmax measurement.
+- Dmax_concentration: Concentration at which Dmax was measured.
+# Extraction Principles
+# Output Format
+- Output a single JSON array of objects, with no added commentary or explanation.
+- Each object corresponds to a single experiment and only contains the fields listed under ’Required Fields’.
+Example: [{"Compound_Name": "...", "IUPAC_Name": "...", ...}]
+Final prompt after optimization (aka the “Champion Prompt”)
+# Goal
+You will be given a paper about molecular glues. The paper is delimited by triple backticks (``` ... ```). Your goal is to extract measurements of molecular glue degradation assays, specifically focusing on DC50 and Dmax assay values.
+# Required Fields
+Extract the following 13 fields:
+- Compound_Name: Name of the molecular glue compound.
+- IUPAC_Name: IUPAC chemical name of the compound.
+- SMILES: SMILES string of the compound.
+- Degradation_Target: The target protein to be degraded.
+- Recruiter: E3 ligase (or E3 ligase-recruiting protein) involved in the degradation process.
+- Assay: The assay method used to measure degradation
+- Cell_Line: The specific cell line used for the assay; if a cell-free assay is used, denote this as ’cell-free’
+- DC50: The compound concentration required to achieve 50% degradation of the target protein.
+- DC50_units: Units for DC50 measurement.
+- DC50_h: Timepoint for DC50 measurement.
+- Dmax: The maximal degradation observed (out of 100%).
+- Dmax_h: Timepoint for Dmax measurement.
+- Dmax_concentration: Concentration at which Dmax was measured.
+# Extraction Principles
+Do not infer timepoints: only populate DC50_h (and Dmax_h) when the paper explicitly ties that time to the specific metric; otherwise leave blank; preserve reported qualifiers (˜, <, >) exactly for DC50/Dmax and concentrations—do not coerce or round.
+For Compound_Name, use the paper’s exact compound identifier by stripping generic prefixes (e.g., "Compound"), preserving suffixes (e.g., a/b), and normalizing whitespace/case; when parsing tables, link each numeric value to its row’s compound ID and cell line to avoid mislabeling or duplication.
+# Output Format
+- Output a single JSON array of objects, with no added commentary or explanation.
+- Each object corresponds to a single experiment and only contains the fields listed under ’Required Fields’.
+Example: [{"Compound_Name": "...", "IUPAC_Name": "...", ...}]
+Appendix I
+Semantic matching
+Biomedical entities are often reported with different surface forms, such as abbreviated versus full protein names (e.g., “CRBN” vs. “Cereblon”), assay descriptions, or cell-line spellings. To avoid penalizing such superficial differences, we used a semantic matching module for four fields where synonymy is common: degradation target, recruiter, assay, and cell line.
+For each value pair, the workflow first applied exact matching. Non-identical pairs were then checked against a symmetric semantic cache containing previously resolved comparisons. If no cached decision was available, a secondary LLM determined whether the two values referred to the same entity using a constrained yes/no prompt. The decision was added to the cache for consistent reuse in later evaluations.
+Two safeguards reduced the effect of semantic-matching errors. If the API call failed or returned an invalid response, the pipeline fell back to exact matching. In addition, new cache entries from each evaluation run were manually reviewed; corrected entries were written back to the cache and evaluation was rerun without changing model predictions or reference annotations. Thus, the cache captured task-specific synonym relationships encountered during evaluation, improving consistency without requiring a comprehensive hand-built dictionary.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from
+        our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+Major funding support from
