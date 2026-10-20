@@ -1175,3 +1175,47 @@
 - **Limitations:** Documentation-level inspection only; no released parquet rows, repository code, label prevalence, feature leakage, or reported task metrics were independently audited. No peer-reviewed paper was located in the targeted search, which is not evidence that none exists.
 - **Relevance:** 2/3 to cross-domain schema and ontology design; 1/3 to bioactivity literature mining/model-utility claims.
 - **Confidence:** High for the documented definitions and stated unknown handling; low-to-moderate for implementation fidelity and model-evaluation validity pending row/code audit.
+
+### E129 — EnzEngDB is direct prior art for enzyme-engineering literature curation with human validation
+
+- **Checked:** 2026-10-18; formally published online in December 2025, in the 2026 NAR database issue.
+- **Claim:** EnzEngDB collects sequence, reaction and performance data from enzyme-engineering papers and supplements, explicitly including negative variants. Its paper describes a manual reference collection and an LLM-assisted expansion requiring substantial manual review. The reported sequence/reaction matching and intervention rates are not negative-outcome classification accuracy.
+- **Sources:** [primary paper](https://doi.org/10.1093/nar/gkaf1142); [retained full-text XML](2026-10-18-gap-trial/sources/EnzEngDB-2026.xml); [bounded extraction review](2026-10-18-gap-trial/抽取相关工作核查.md).
+- **Interpretation:** Generic enzyme literature extraction or merely including negative variants is not a sufficient novelty claim. Negative semantics, full-observation alignment, database increment and useful downstream differences require their own checks.
+- **Limitations:** No independent annotation study or row-by-row audit of the released database/supplement; author-reported curation performance cannot be transferred to GH1 or used as evidence of Janus model benefit.
+- **Relevance:** 3/3. **Confidence:** High for the described scope and need for manual validation; not evaluated for negative-specific precision/recall.
+
+### E130 — AssayCTX reports task-dependent context gains with nonidentical measurement aggregation
+
+- **Checked:** 2026-10-18; peer-reviewed 2025 JCIM article.
+- **Claim:** Assay-context descriptors improve selected bioactivity models, including the GPCR task under scaffold splitting, but do not consistently improve the other target families or representations. Methods aggregate repeated compound-protein measurements differently for the control, multitask and descriptor conditions.
+- **Sources:** [primary paper](https://doi.org/10.1021/acs.jcim.5c00603); [retained full-text XML](2026-10-18-gap-trial/sources/AssayCTX-2025.xml); [model-value review](2026-10-18-gap-trial/模型价值相关工作核查.md).
+- **Interpretation:** Context utility is an existing, task-dependent research question. Author-described use of the same source datasets is not sufficient to claim identical per-observation inputs and labels across all conditions.
+- **Limitations:** No independent reproduction or code audit; censored values and binary classes were excluded, so these results do not establish the value of recovered literature negatives. Publication/assay/time isolation was not confirmed in this bounded check.
+- **Relevance:** 3/3 to context utility, 2/3 to negative-evidence recovery. **Confidence:** High for the checked method/result scope; no general causal or field-wide conclusion.
+
+### E131 — A source-linked extraction pilot recovers three reported negatives and withholds conflicting or undefined labels
+
+- **Checked:** 2026-10-18. The fixed candidate list has13 papers; three full-text XMLs were obtained through the selected official route, of which two report eligible new catalytic substrate comparisons. Three original PDFs were retained.
+- **Claim:** Hu et al.2022 report no conversion/activity for BaBgl3B with Rb1/Rd and BaBgl3A with Rd. Methods and Figure6 link these observations to37°C,2h,0.1mg/mL enzyme and5mg/mL substrate. The assay uses optimal-pH buffer; the pH6.5 assignment is a documented cross-section mapping, not a direct per-row measurement. These are qualitative source reports, not numerical zeros.
+- **Counter-evidence/withheld labels:** The same article's prose says BaBgl1A lacks gentiobiose activity while Table3 reports9.65% relative activity. Two BaBgl3B table dashes lack a defined meaning. All three observations are withheld from the negative subset rather than automatically labeled0. The PDF and publisher page both preserve the text/table discrepancy; no author-error diagnosis is made.
+- **Sources:** [Hu et al.primary article](https://doi.org/10.3389/fmicb.2022.860014); [local source PDF](2026-10-18-extraction-pilot/sources/35464910.pdf); [extracted observations](2026-10-18-extraction-pilot/extracted_observations.csv); [report and method](2026-10-18-extraction-pilot/本轮抽取汇报.md).
+- **Validation:** All32 candidate locations were reviewed; a separate AI reader supplied71 broader evidence/reference items without reading the candidates or extraction answers. Every reference was given a disposition. Source IDs, all120 body-table rows, document hashes and CSV consistency were mechanically checked. Key PDF pages and Figure6 were visually inspected.
+- **Limitations:** Two AI readings are not independent expert gold annotations. Raw replicate values, operational LODs and all original graph readings were not available/fully digitized. The three reported negative pairs share one paper and protocol; exact database overlap and downstream utility were not tested. No automatic extraction precision or complete-text recall is claimed.
+- **Relevance:** 3/3 to how negative evidence can be recovered and checked. **Confidence:** High that the paper makes these reports and contains the stated text/table inconsistency; not an independent biological validation.
+
+### E132 — Candidate-domain feasibility depends on assay-level evidence and existing context resources
+
+- **Checked:** 2026-10-20. Purposeful selection across six candidates, with different reading depths; two bounded branches for antimicrobial peptides and LNP delivery. Not a systematic review or a domain-wide missingness estimate.
+- **Evidence:** NpaBGS Table2 reports zeros and weak positives with conditions in a footnote; HiBgl Table2 explicitly defines ND and retains positive activity of the same enzyme on another substrate. AMP Table2 reports TAT—E.coli DSM498 MIC >500uM with a no-effect-at-highest-tested-concentration footnote. DBAASP already supports inactive records and experimental conditions. Two LNP storage studies show condition-dependent decline rather than verified absolute-zero effects; Atlas already uses a general LLM to recover literature fields.
+- **Sources:** [NpaBGS](https://doi.org/10.1186/1754-6834-5-24), [HiBgl](https://doi.org/10.1038/srep27062), [AMP experiment](https://doi.org/10.3389/fcimb.2021.609542), [DBAASP](https://pmc.ncbi.nlm.nih.gov/articles/PMC7778994/), [LNP storage](https://doi.org/10.1016/j.bioactmat.2020.03.001), [drying](https://doi.org/10.1016/j.jconrel.2023.03.039), [Atlas](https://doi.org/10.1038/s41597-025-06456-w); reading-depth and row-level limits in [dated evidence](2026-10-20-domain-selection/README.md).
+- **Interpretation:** These domains provide concrete extraction or field-linkage examples. Domain priority here concerns a first checkable trial; data availability alone does not prove incremental information or downstream benefit.
+- **Limitations:** Enzyme seven-row manual demonstration is not expert gold or automatic performance. AMP database/source matching not completed. LNP supplementary files not read, figures not digitized, normalized negative scores not biological negatives. No new training or inference.
+
+### E133 — Protein-degradation literature provides a directly reusable field-completion reference, not demonstrated RAG benefit
+
+- **Checked:** 2026-10-20. Preprint methods/results/limitations, author repository README/license and actual released expert CSVs; original experimental Table1, selectivity results and HiBiT Methods.
+- **Evidence:** The LLM-TPD release provides104 molecular-glue rows from7DOIs and209PROTAC rows from15DOIs, with19columns. One original compound5—GSPT1 record has DC50 >10uM and reported Dmax0percent, alongside IKZF2 activity; assay/cell/time can be linked to HiBiT, HEK293 and6h. That record already exists in the expert table.
+- **Sources:** [preprint fixed version](https://arxiv.org/abs/2605.11221v1), [author repository](https://github.com/yaochenr/LLM-TPD-Extraction), [original experiment](https://doi.org/10.1038/s41467-025-58431-z), [retained expert tables and source comparison](2026-10-20-domain-selection/TPD原文对照.md).
+- **Interpretation:** A suitable first replication/field-completion domain under the advisor-provided general-LLM API route. Existing expert labels lower the initial evaluation burden; they do not establish novelty, scalability or language-model utility.
+- **Limitations:** No extraction reproduction, full independent label audit, RAG evaluation or small-model training. Preprint release uses the best of independent runs for its final dataset. Table records are not all biological negatives;313rows do not prove sufficient training volume. GithubAPI403 did not imply missing release: HTML and raw downloads succeeded. README specifies MIT code and CC BY4 derived structured data, with upstream rights separate.

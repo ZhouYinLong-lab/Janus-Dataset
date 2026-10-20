@@ -1,9 +1,14 @@
 # Research files
 
-This directory contains the working materials for Stage 2 of Janus-Dataset: literature landscape mapping and structured comparison.
+This directory contains Janus-Dataset research materials. The latest scope is general-LLM recovery of literature evidence and missing experimental context, followed by separate RAG and small-language-model use; earlier landscape reviews and experiments remain as dated records.
 
 ## Files
 
+- [`2026-10-20-domain-selection/`](2026-10-20-domain-selection/README.md): latest advisor-aligned domain selection for general-LLM extraction and field completion, followed by RAG or small-language-model use; start with [垂域建议](2026-10-20-domain-selection/先看垂域建议.md). Actual expert-reference CSVs and source articles retained; no inference or training run.
+- [`2026-10-18-direction-options/`](2026-10-18-direction-options/README.md): concrete alternatives to the broad mining project, with six route decisions, 23 explicitly scoped work/resource entries (including reused papers), retained sources, and read-only public-data audits. Start with [方向判断](2026-10-18-direction-options/先看方向判断.md); no training or inference was run.
+- [`2026-10-18-literature-judgment/`](2026-10-18-literature-judgment/README.md): source-based assessment without new experiments; 50 work/lead entries (33 initial + 17 follow-up), with explicit reading depth and retained sources. Start with the updated [two judgments in Chinese](2026-10-18-literature-judgment/followup/两个判断.md); the initial assessment is retained separately.
+- [`2026-10-18-extraction-pilot/`](2026-10-18-extraction-pilot/README.md): actual source-linked negative-evidence extraction from a fixed 13-paper candidate list, three retrieved full texts, 32 reviewed candidate locations, and three reported qualitative negative pairs; see the [plain-language report](2026-10-18-extraction-pilot/本轮抽取汇报.md).
+- [`2026-10-18-gap-trial/`](2026-10-18-gap-trial/README.md): bounded follow-up with six evidence gaps, two newly included close papers, three unsuccessful full-text retrieval attempts, and a completed source-linked GH1 assay-context comparison; start with the [Chinese report](2026-10-18-gap-trial/这轮调查与试做汇报.md).
 - [`research_protocol.md`](research_protocol.md): scope, definitions, inclusion criteria, and evidence levels.
 - [`search_queries.md`](search_queries.md): query families and database-specific search notes.
 - [`search_log.csv`](search_log.csv): record of the first-pass searches.

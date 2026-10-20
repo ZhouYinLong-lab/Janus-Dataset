@@ -1,6 +1,6 @@
 # 主课题研究总追踪表
 
-**最后更新：2026-10-03**  
+**最后更新：2026-10-18**
 **主课题工作表述：** 在分子科学中，研究实验阴性及未成功结果的证据如何被记录、遗漏或误标；评估这些差异对机器学习训练与泛化的影响，并检验能否从文献和数据库补回带有来源与实验语境的可信观察。
 
 这张表横跨研究活动、论文/资源证据和下一步工作；论文细节仍以 [`literature_matrix.csv`](literature_matrix.csv) 及证据台账为准。它不是穷尽性系统综述，也不将“未检索到”写成“没人做过”。
@@ -36,7 +36,7 @@
 | T016 | 2026-09-30 竞争工作方法审查 | NegBioDB 标签和评测可复核性 | 已形成逐项对照审查，分开“数据库阈值 inactive”“零证据/推断关系”“临床试验失败”“文献文本恢复”和模型收益主张；指出公开可见证据无法支撑把约 64M 视作同质实测阴性，也不能独立复现其模型结论 | 3 | 可见数据卡、YAML 与公开 safety 说明已核；完整逐行数据及 parent benchmark 未取得。详见专题审查文件 | [`2026-09-30-negbiodb-competition-audit.md`](2026-09-30-negbiodb-competition-audit.md) |
 | T017 | 2026-09-30 数据来源/标签对应审计 | LIT-PCBA MAPK1 与 PubChem AID 995 全量 SID/outcome 及未收录 full-row 核验 | 官方 concise 返回 72,004 个唯一 SID（711 Active、66,078 Inactive、5,215 Inconclusive）；官方 Full package 与本地完全一致：308 active、62,629 inactive，62,937个SID全命中AID且标签匹配。其余9,067 SID的full assay-data行数/唯一SID均为9,067，Outcome为403/3,449/5,215 | 3 | 5,215条inconclusive不应二值化；403 Active、3,449 Inactive未进入Full package，逐条筛除原因仍未知。另1,062个Full inactive未进入AVE split，是split membership而非未测。维护页/原文的61,567正好等于AVE inactive_T 46,317 + inactive_V 15,250；官方Full成员与本地文件字节级一致。AID 995是细胞ERK pathway assay，不是MAPK1直接结合 | [`2026-09-30-litpcba-provenance-audit.md`](2026-09-30-litpcba-provenance-audit.md)、[`2026-09-30-litpcba-integrity-counterreview.md`](2026-09-30-litpcba-integrity-counterreview.md)、[PubChem PUG REST 文档](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest) |
 | T018 | 2026-09-30 最新工作监测 | Assay-Aware BindingDB（arXiv:2609.34001） | v1 报告 74,425 个定量 affinity pair、四类 assay 的上下文抽取，并以 PMID split、10 runs、no-context/context-only 对照报告 affinity 提升；宽泛“文献上下文+模型”新颖性已显著削弱 | 3 | 预印本作者报告、未独立复现；与 binary/typed negative extraction 有区别；论文未列数据/代码链接，补充工件需单独验证 | [`2026-09-30-assay-aware-bindingdb-competition-audit.md`](2026-09-30-assay-aware-bindingdb-competition-audit.md) |
-| T019 | 2026-09-30 公开工件与删失标签审计 | 匿名 HF Assay-aware-BindingDB 数据库 | 同名公开库包含原始论文段落、结构化 assay context 和 Kd/Ki/IC50 关系值；页面 default/full 269,023 行，论文模型 seed0 测试集分 assay 样本数之和 65,169 与 paper Table 3 精确一致，强烈支持其为配套工件；`<`/`>` 记录保留在 full 数据但排除模型训练 | 3 | 仓库匿名发布且论文未显式链接；full 行数与论文报告的 74,425 retained 不同，需厘清。删失观测不能未判定 assay 阈值就等同 inactive；模型没有用其检验预测增益 | [`2026-09-30-assay-aware-bindingdb-competition-audit.md`](2026-09-30-assay-aware-bindingdb-competition-audit.md) |
+| T019 | 2026-09-30 公开工件与删失标签审计；2026-10-18更正计数口径 | 匿名 HF Assay-aware-BindingDB 数据库 | 同名公开库包含原始论文段落、结构化 assay context 和 Kd/Ki/IC50 关系值；旧核查页面 default/full 269,023 行，seed0各assay的train+validation+test合计65,169与Table 3合并建模队列一致，不是单次测试集；`<`/`>`保留在full但排除所述模型训练 | 3 | 仓库匿名发布且论文未显式链接；full 行数与论文报告的 74,425 retained 不同，需厘清。本轮未重新下载工件；删失观测不能直接等同 inactive，模型没有用其检验预测增益 | [`2026-09-30-assay-aware-bindingdb-competition-audit.md`](2026-09-30-assay-aware-bindingdb-competition-audit.md) |
 | T020 | 2026-09-30 删失标签价值与方法先例核查 | Lind (2010) 与 Svensson 等 (2025) | 已有 QSAR 回归处理检测限截断值的早期方法；2025 年工作在 15 个内部 assay 上用 Tobit/单侧损失学习删失标签，作者报告多数模型的 epistemic uncertainty NLL 改善/持平，且开源 UQ4DD 可在 TDC 示例上运行 | 2 | 直接支撑“阈值型部分信息可用于分子模型”，但不是显式阴性文献挖掘；企业核心数据不可公开，无法独立复现。删失值不可不经 assay 语义判断转成 inactive | [`2026-09-30-censored-labels-drug-discovery-audit.md`](2026-09-30-censored-labels-drug-discovery-audit.md) |
 | T021 | 2026-09-30 数据库标签字段语义核查 | ChEMBL 官方提交规范与 PubChem 导入说明 | ChEMBL 模式分开存数值、`<`/`>` 关系、文本结果及解释性 comment；PubChem Activity Summary 可进入 comment；pChEMBL 仅对 `standard_relation = '='` 精确值计算 | 3 | 显示原始记录与常用标准化 potency 字段存在信息保留差异，但尚未测其记录数及对 benchmark 的影响；规范/FAQ 是官方说明而非 record-level 抽样审计 | [ChEMBL ACTIVITY 字段规范](https://chembl.gitbook.io/chembl-data-deposition-guide/file-structure/field-names-and-data-types-minimal-data-submission/activity.tsv)、[Activity/PubChem FAQ](https://chembl.gitbook.io/chembl-interface-documentation/frequently-asked-questions/chembl-data-questions) |
 | T022 | 2026-09-30 强先例复核 | Mayr 等 2018 ChEMBL20 大规模靶点预测 benchmark | 论文直接用 ChEMBL `activity_comment` 的 `Active`/`inactive`/`Not Active`（含单浓度未达阈值文本）及按数值关系符设定的阈值标签构建训练 benchmark，最终 1,310 assays、4,743,712 条测量、456,331 化合物；比较九种方法 | 3 | 直接反驳“首次将结构化显式阴性/删失观察用于分子模型”；但工作不是全文本挖掘，无库外增量覆盖比较、无证据类型消融，也无同数据去掉阴性的对照，故不能证明测量阴性的独立因果收益 | [Mayr et al. 2018 DOI](https://doi.org/10.1039/C8SC00148K)、[补充材料标签规则](https://www.rsc.org/suppdata/c8/sc/c8sc00148k/c8sc00148k1.pdf)、[作者代码/数据仓库](https://github.com/ml-jku/lsc) |
@@ -273,10 +273,72 @@
 
 **主线关联性复核（截至T149）：** 宽泛主张已显著收窄：PAYN在反应科学演示模拟报告偏倚与PU推断负例；Assay-Aware BindingDB做了阳性亲和力语境抽取+模型收益；ChEMBL inactive+decoy用于分子模型；Negatome 2.0以文本挖掘辅助人工恢复PPI非互作；ECBD保存筛选全流程的active/inactive/inconclusive结果、endpoint和protocol context。新增NegBioDB进一步压缩“没有跨域资源/benchmark”的主张，但其跨域标签异质、来源和计数待逐行审计；Scandium的unknown-aware negative schema来自计算筛选proxy，不能与实测失败混为一谈。T141–T143对14条pilot完成有限多库检索并区分source document、protein entity、assay linkage和exact observation四层。T144–T147建立80篇候选池并连续筛了25/80，12篇进入全文候选队列，1篇全文确认符合、11篇窄范围排除、1篇待判断；该比例不能视作总体相关率或阴性出现率。接下来继续完成余下55条候选筛选，同时从跨领域工作中只保留能检验证据对象、exact coverage或模型独立效用的内容。
 
+## 本轮有限调研与试做（2026-10-18）
+
+| ID | 日期 | 工作 | 本轮结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | --- | ---: | --- | --- |
+| T150 | 2026-10-18 | 抽取与模型价值近邻核查 | 两组有界检索分别核查5项、6项工作，含1项重复；新纳入EnzEngDB和AssayCTX，保留原文及对照限制 | 3 | 其余主要为复核；不把缺少专门阴性评价解释为数据中没有阴性；并非系统综述 | [抽取核查](2026-10-18-gap-trial/抽取相关工作核查.md)、[模型核查](2026-10-18-gap-trial/模型价值相关工作核查.md)，J074–J075/E129–E130 |
+| T151 | 2026-10-18 | 三篇待读论文按既有顺序尝试取证 | 32207174、33166469、33347927在限定路径内未取得完整正文；留存摘要XML，区分计算负对照、负自由能和相对活性 | 3 | 本轮没有新增正文确认阴性；三篇是旧摘要筛选的复核；不能估计领域阴性率或全文可得率 | [逐篇记录](2026-10-18-gap-trial/三篇正文取证试做.md)、[证据表](2026-10-18-gap-trial/正文证据试做.csv) |
+| T152 | 2026-10-18 | 同一GH1源表保留条件的四组模型试验 | 86蛋白2057条实测条件结果；真实条件Brier0.1669→0.1507、AUC0.7293→0.7942；打乱条件无类似改善；只看底物和条件Brier更低0.1472 | 3 | 固定样本及蛋白分组划分，5×5折；单篇结构化表、简单序列特征，近缘序列未分簇；非新增文献阴性的独立收益实验 | [汇报](2026-10-18-gap-trial/这轮调查与试做汇报.md)、[指标](2026-10-18-gap-trial/metrics_summary.csv)、[运行清单](2026-10-18-gap-trial/run_manifest.json) |
+| T153 | 2026-10-18 | 六个问题与本轮结果归档，纠正旧口径 | 逐项分清项目证据缺口与文献新颖性；原BindingDB的65,169更正为合并建模队列，非单次测试集 | 3 | 这轮完成即收口；数据库新增量、自动抽取性能和新增阴性收益仍未验证，不自动扩跑 | [gap跟踪表](2026-10-18-gap-trial/gap跟踪表.csv)、[本轮入口](2026-10-18-gap-trial/README.md) |
+
+## 实际正文抽取小试验（2026-10-18，续T153）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T154 | 按既有顺序获取13篇候选并筛全文资格 | 官方XML途径取得3篇，3篇原PDF均留存；2篇有本研究催化底物面板，结构论文33471829排除出此训练池 | 3 | 一篇为旧BGL-1例子复核、两篇为新全文核查；10篇未在XML路径取得，不等于全球全文不可得；不估领域比例 | [获取表](2026-10-18-extraction-pilot/paper_access.csv)、[全文资格](2026-10-18-extraction-pilot/fulltext_eligibility.csv) |
+| T155 | 实际运行候选查找并逐条绑定结果和条件 | 修正嵌套表解析后共32处候选、247个文本块、7张表120行；保留9项证据，3条作者报告的条件性阴性来自Hu2022同一研究 | 3 | 1项正文表格冲突、2项未定义符号暂缓；2项弱活性、1项面板级结论不作阴性；不按0或破折号批量造标签 | [操作例子](2026-10-18-extraction-pilot/一次抽取是怎么完成的.md)、[3条记录](2026-10-18-extraction-pilot/negative_records.csv)，J076/E131 |
+| T156 | 对照盲读参照并回看原始PDF及相关补充说明 | 71项含正值和排除项的AI取证参照全部给出处理；3项催化阴性均被候选流程涵盖；保存正文表格冲突、非活性表破折号、范围外漏项和证据位置 | 3 | 两次AI阅读不是独立专家金标准；未完整数字化所有图像，不报自动精确率或全文召回率；本轮不训练模型、不核验数据库增量 | [本轮汇报](2026-10-18-extraction-pilot/本轮抽取汇报.md)、[对照裁定](2026-10-18-extraction-pilot/reference_adjudication.csv)、[当前gap表](2026-10-18-extraction-pilot/gap跟踪表.csv) |
+
+## 不开展新实验的文献判断（2026-10-18，续T156）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T157 | 检索并定向阅读非前沿模型和低费用抽取先例 | EnzChemRED明确包含Non_conversion且使用PubMedBERT/BioREx；EnzyExtract使用微调mini模型；规则与BERT否定识别已有先例 | 3 | EnzChemRED不转化提及20、带酶不转化三元组0；总体高分不是阴性专属成绩，便宜API也不等于本机部署 | [抽取核查](2026-10-18-literature-judgment/抽取方法读后核查.md) |
+| T158 | 复核阴性收益与不改善的对照并补酶领域先例 | InertDB替换已有实测阴性不普遍改善；PD-L1中构造负例也有效；VIPER/EZSpecificity已有文献实测面板用于训练 | 3 | 数据、样本量、化学空间和架构可能一起变；无新实验，不把已有泛化失效全归于缺阴性 | [训练价值核查](2026-10-18-literature-judgment/训练价值读后核查.md) |
+| T159 | 核查文献到数据到训练的连接及高分口径 | 宽泛连接已有BioMiner、EnzyExtract与酶面板模型先例；保存开发集调提示词、排除Unresolved、PDF人工切分等评价限制 | 3 | 本轮未审完所有补充和代码；对EnzyExtract表格数值只标待澄清；对灰色Nullary报告降权，DOI再次404 | [连接先例](2026-10-18-literature-judgment/文献到模型的连接先例.md)、[阅读记录](2026-10-18-literature-judgment/检索与阅读记录.md) |
+| T160 | 汇总33项工作和线索并留存证据、区分旧文献 | 形成一张带阅读深度的33项证据表、短判断与来源清单；38个原始文件约81.7MB；所有本地引用及哈希核验通过 | 3 | 不是33篇全读完或全新发现；13项按相同URL/DOI直接对应旧矩阵，其他20项未匹配不等于新文献；2项未留完整原文，3个并行助手限额未完成，无推理实验或训练 | [本轮入口](2026-10-18-literature-judgment/README.md)、[证据表](2026-10-18-literature-judgment/证据总表.csv)、[完整性核查](2026-10-18-literature-judgment/verification.json) |
+
+## 第二轮定向补读与判断（2026-10-18，续T160）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T161 | 定向核查实测负例与便宜替代品的对照 | 补入SNA去实测阴性再随机补回、九靶点PADIF来源比较、数量与测试分布研究；回查旧J034与J041 | 3 | 随机负例有效不等于实测数据无价值；抑制剂监督不等于实测非底物；没有新训练 | [第二轮逐篇核查](2026-10-18-literature-judgment/followup/逐篇核查.md) |
+| T162 | 核查非前沿模型的阴性关系及实验记录恢复 | FNU正则、BioContext、DeepEventMine、全文四槽实验框架与多阅读器错误实例，分清局部自动化和完整训练记录 | 3 | 小样本与非酶任务不可直接迁移；历史低分不是当前技术上限，不能以单字段分数替代整记录成绩 | [两个判断](2026-10-18-literature-judgment/followup/两个判断.md) |
+| T163 | 补查17项并合并至50项总表及留存来源 | 本轮15份全文原件与2份摘要元数据；核对Cáceres Table1和Assay Frames Table4原页；总计55个原始文件及哈希检查通过 | 3 | 非17篇全部精读或全新发现；L39/J034、L49/J041是明确旧文复核；下载失败与有限阅读均标注，不声明独立复现 | [总表](2026-10-18-literature-judgment/证据总表.csv)、[本轮完整性](2026-10-18-literature-judgment/followup/verification.json) |
+
+## 指定判断的报告整理（2026-10-18，续T163）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T164 | 原样保留选题判断并补齐文献与领域位置 | 将指定原文独立保留，逐句对应14项核心工作；补核SNA的BigBind后续采用、LIT-PCBA多项基准用途、Rhea的EnzChemRED官方说明，区分事实与策略判断 | 3 | 不把发表平台代替影响力，不编造引用数；没有新模型实验、全项目成本测算或引文网络调查；领域少人做不等于无价值，有组件也不等于新组合无贡献；该版本后续留档，当前意见见T168 | [修改前报告留档](2026-10-18-literature-judgment/followup/研究路线评估报告_修改前留档.md) |
+
+## 可能方向的比较与资源核查（2026-10-18，续T164）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T165 | 比较定向阴性获取、有限自动抽取、边界学习与条件/难例评价 | 主线10项工作资源与两支路13项证据；补读DeltaClassifier、跨实验策展后续及HTS选择对照，形成六方向取舍 | 3 | 含旧文重读与一个软件资源，不是23篇新增精读；Hesse阴性欠采样未胜随机且用验证集；普通组件可行不等于完整酶记录已可自动生产 | [方向判断](2026-10-18-direction-options/先看方向判断.md)、[证据与阅读深度](2026-10-18-direction-options/本轮证据与资源核查.md) |
+| T166 | 实际下载并静态审计公开数据与标注包 | hERG汇总11370行含3453边界；1/10μM演示阈值分别235/322行信息不足；EnzChemRED1210XML含20条阴性二元关系；酯酶14016与腈水解酶684配对可访问 | 3 | 无模型运行；汇总行不等于单次实验；未完成原始酶表的未测/缺失→0资格核验；EnzChemRED没有阴性酶三元组。核实资源不是核实模型收益或数据库外新增量 | [数据访问审计](2026-10-18-direction-options/public_artifact_audit.json)、[边界逻辑](2026-10-18-direction-options/interval_label_audit.json)、[标注包检查](2026-10-18-direction-options/branches/extraction/本地证据核查.md) |
+| T167 | 收束候选及归档可复用证据 | 推荐先以现成面板审计哪类失败值得获取；有限自动抽取作候补；边界学习作学习性复现。保留70个来源文件34850882字节并核验CSV与本地链接 | 3 | 方向不是已证首创或有效；不改原文评估报告；无新训练、推理调用、安装、提交、推送或Zotero写入；归档核查不代替科学复现 | [六方向表](2026-10-18-direction-options/方向比较表.csv)、[完整性核查](2026-10-18-direction-options/verification.json)、[来源指纹](2026-10-18-direction-options/source_inventory.csv) |
+
+## 按原始交流任务修订报告（2026-10-18，续T167）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T168 | 将评估收回非结构化阴性证据提取与使用 | 重写报告，保留自动提取与使用价值两个判断；文献用正文括号链接，不用编号与表格；展开支持、反证与结论边界；原版独立留档 | 3 | 仅整理已有证据与试做，不新增训练或推理；支持限定范围探索而不直接承诺规模化；旁支模型实验不替代文献提取任务 | [修订报告](2026-10-18-literature-judgment/followup/研究路线评估报告_原文与文献依据.md)、[旧版](2026-10-18-literature-judgment/followup/研究路线评估报告_修改前留档.md) |
+
+## 新一轮交流后的尝试垂域选择（2026-10-20，续T168）
+
+| ID | 工作 | 实际结果 | 关联度 | 边界 | 文件 |
+| --- | --- | --- | ---: | --- | --- |
+| T169 | 固定通用大模型提取及字段补全、RAG与小语言模型两种利用目标 | 按用户转述记录导师提供API与两条利用路线；区分实验阴性和字段缺失，训练方式未定 | 3 | 不是导师逐字记录；尚无API配置或预算核算；旧普通模型抽取目标不再作为当前前提 | [交流起点](2026-10-20-domain-selection/交流起点.md) |
+| T170 | 比较六个候选垂域并核查实际原文与可读参照 | 两分支分别检查抗菌肽及递送；主线回查酶、降解、药物活性和非互作；首选分子胶实验记录，酶底物及单菌株MIC备选；J077–J088新增12项来源并含旧文复核 | 3 | 非系统综述且各域深度不同；不是12项模型复现；PPI未新核原始实验；数据库能力和少量原文不证明全域缺口或训练收益 | [垂域建议](2026-10-20-domain-selection/先看垂域建议.md)、[主线证据](2026-10-20-domain-selection/主线证据.csv)、[分支报告](2026-10-20-domain-selection/README.md) |
+| T171 | 下载并核查蛋白降解专家表与原文、试填酶实验字段 | 实际解析分子胶104行7DOI及PROTAC209行15DOI；回查compound5—GSPT1条件性阴性与IKZF2阳性；三篇酶论文七行字段试填保留未知 | 3 | 313行是公开专家参照不是本项目新增阴性或训练规模证明；七行人工试填不是自动准确率；无老师API调用、训练、RAG效果实验、提交、推送或Zotero写入 | [TPD原文对照](2026-10-20-domain-selection/TPD原文对照.md)、[酶试填](2026-10-20-domain-selection/酶文献字段试填.csv)、[下载记录](2026-10-20-domain-selection/source_manifest.json) |
+
 ## 维护规则
 
 - 新工作先判断是否直接回答主问题，再分配关联度；关联度 0–1 的工作只留作背景或明确停止扩展。
 - 新论文同步加入 `literature_matrix.csv`；新主张同步加入 `evidence_ledger.md` 或带日期的证据矩阵，并保留稳定 URL/DOI。
 - 区分作者报告、我们复现、我们的解释；预印本与数据库文档标清证据类型。
 - 每完成一个实质任务，更新此表的日期、结果、边界和下一步；每轮重问：这项工作是否减少了“阴性证据能否找回、能否用、是否带来独立收益”的不确定性？
-- **当前关联性检查（更新至T149）：** 连续酶学候选池仍只筛完25/80；跨域新资源拓宽了“已有资源”的审查边界，但没有直接回答源论文阴性观察是否可系统恢复、是否超出现有数据库或是否独立改善分子模型。下一步完成候选池筛查及有限全文抽取，再用可核验source-cell对照数据库和模型效用证据，避免继续堆叠仅自述的资源项目。
+- **当前关联性检查（更新至T171）：** 按2026-10-20交流更新为通用大模型提取与字段补全，下游分别考察大语言模型RAG和小语言模型训练；不再把“不用通用大模型抽取”当作前提，也不以传统活性分类收益替代语言模型利用效果。首选分子胶实验记录，原因是已确认原文、现成提取流程与可读专家参照，不代表已证新颖性或阴性训练收益。酶底物及单菌株MIC作备选；LNP需专业合作，不先扩到全领域。保留原文定位、未知与证据状态，分开统计漏记录、补字段、与既有资源重叠。旧工作、原25/80题录队列及本轮有目的取样分开，不重报新发现。无老师API调用、训练、RAG效果实验、提交、推送或Zotero写入。
