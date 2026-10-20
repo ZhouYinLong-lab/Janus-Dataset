@@ -1,0 +1,36 @@
+{
+  "title": "CensorADMET: research software and reproducibility package",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "publication_date": "2026-07-17",
+  "description": "CensorADMET implements controllable constraint-satisficing regression for censored ADMET measurements. This frozen release contains the source code, curated ChEMBL 36-derived benchmark inputs, fixed split assignments, experiment configuration, result artifacts, figure and table scripts, tests, provenance material, and result-verification tooling used for the accompanying manuscript.",
+  "creators": [
+    {
+      "name": "Mitropoulou, Evangelia",
+      "affiliation": "Foundation for Research and Technology Hellas (FORTH), Institute of Chemical Engineering Sciences (ICE-HT)"
+    },
+    {
+      "name": "Giannopoulos, Dimitris",
+      "affiliation": "University of Patras"
+    }
+  ],
+  "keywords": [
+    "censored regression",
+    "ADMET",
+    "ChEMBL",
+    "QSAR",
+    "constrained optimisation",
+    "uncertainty quantification",
+    "distribution shift"
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "10.6019/CHEMBL.database.36",
+      "relation": "isDerivedFrom",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    }
+  ]
+}

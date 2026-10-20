@@ -1,0 +1,605 @@
+=== PDF page 1 ===
+          Evidence Inference 2.0: More Data, Better Models
+
+    Jay DeYoung⋆Ψ, Eric Lehman⋆Ψ, Ben NyeΨ, Iain J. MarshallΦ, and Byron C. WallaceΨ
+
+                                 ⋆Equal contribution
+            ΨKhoury College of Computer Sciences, Northeastern University
+                             ΦKings College London
+        {deyoung.j,lehman.e,nye.b,b.wallace}@northeastern.edu, mail@ijmarshall.com
+
+
+                Abstract                            trials per day.1 Motivated by the rapid growth in
+                                                            clinical trial publications, there now exist a plethora
+   How do we most effectively treat a disease
+                                                     of tools to partially automate the systematic review
+    or condition?   Ideally, we could consult a
+                                                     task (Marshall and Wallace, 2019). However, ef-    database of evidence gleaned from clinical tri-
+     als to answer such questions.  Unfortunately,        forts at fully integrating the PICO framework into
+   no such database exists; clinical trial results         this process have been limited (Eriksen and Frand-
+    are instead disseminated primarily via lengthy        sen, 2018). What if we could build a database
+    natural language articles. Perusing all such ar-       of Participants,2 Interventions, Comparisons, and
+     ticles would be prohibitively time-consuming      Outcomes studied in these trials, and the ﬁndings
+    for healthcare practitioners; they instead tend                                                    reported concerning these? If done accurately, this
+    to depend on manually compiled systematic re-
+                                          would provide direct access to which treatments
+    views of medical literature to inform care.
+                                                     the evidence supports. In the near-term, such tech-
+   NLP may speed this process up, and eventu-
+                                                   nologies may mitigate the tedious work necessary
+     ally facilitate immediate consult of published
+                                                        for manual synthesis.    evidence.  The Evidence Inference dataset
+                                                  Recent efforts in this direction include the EBM-   (Lehman et al., 2019) was recently released
+    to facilitate research toward this end.  This     NLP project (Nye et al., 2018), and Evidence Infer-
+    task entails inferring the comparative perfor-       ence (Lehman et al., 2019), both of which comprise
+   mance of two treatments, with respect to a       annotations collected on reports of Randomized
+    given outcome, from a particular article (de-       Control Trials (RCTs) from PubMed.3 Here we
+    scribing a clinical trial) and identifying sup-                                                     build upon the latter, which tasks systems with in-
+    porting evidence. For instance: Does this ar-
+                                                      ferring ﬁndings in full-text reports of RCTs with
+     ticle report that chemotherapy performed bet-
+                                                    respect to particular interventions and outcomes,     ter than surgery for ﬁve-year survival rates of
+    operable cancers?  In this paper, we collect      and extracting evidence snippets supporting these.
+    additional annotations to expand the Evidence      We expand the Evidence Inference dataset and
+    Inference dataset by 25%, provide stronger        evaluate transformer-based models (Vaswani et al.,
+    baseline models, systematically inspect the er-      2017; Devlin et al., 2018) on the task. Concretely,
+    rors that these make, and probe dataset qual-                                           our contributions are:
+      ity. We also release an abstract only (as op-
+    posed to full-texts) version of the task for                                             • We describe the collection of an additional
+    rapid model prototyping.  The updated cor-
+                                                   2,503 unique ‘prompts’ (see Section 2) with
+    pus, documentation, and code for new base-
+                                                  matched full-text articles; this is a 25% expan-     lines and evaluations are available at http:
+   //evidence-inference.ebm-nlp.com/.             sion of the original evidence inference dataset
+                                                                that we will release. We additionally have col-
+1  Introduction                                         lected an abstract-only subset of data intended
+                                                           to facilitate rapid iterative design of models,As reports of clinical trials continue to amass at
+rapid pace, staying on top of all current literature to       1See https://ijmarshall.github.io/sote/.
+inform evidence-based practice is next to impossi-     2We omit Participants in this work as we focus on the
+ble. As of 2010, about seventy clinical trial reports    document level task of inferring study result directionality,
+                                                      and the Participants are inherent to the study, i.e., studies do
+were published daily, on average (Bastian et al.,    not typically consider multiple patient populations.
+2010). This has risen to over one hundred thirty      3https://pubmed.ncbi.nlm.nih.gov/
+
+                                        123
+
+                              Proceedings of the BioNLP 2020 workshop, pages 123–132
+                          Online, July 9, 2020 c⃝2020 Association for Computational Linguistics
+=== PDF page 2 ===
+     as working over full-texts can be prohibitively   over a variety of articles. This resulted in our col-
+     time-consuming.                                lecting 3.77 prompts per article, on average. We
+                                               asked doctors to derive at least 1 prompt from the
+  • We  introduce and  evaluate new models,                                          body (rather than the abstract) of the article. A
+     achieving SOTA performance for this task.                                                       large difﬁculty of the task stems from the wide va-
+                                                           riety of treatments and outcomes used in the trials:
+  • We ablate components of these models and
+                                           35.8% of interventions, 24.0% of comparators, and
+     characterize the types of errors that they tend
+                                          81.6% of outcomes are unique to one another.
+     to still make, pointing to potential directions
+                                                      In addition to these ICO prompts, doctors were
+     for further improving models.
+                                               asked to report the relationship between the inter-
+2  Annotation                                  vention and comparator with respect to the out-
+                                             come, and cite what span from the article supports
+In the Evidence Inference task (Lehman et al.,
+                                                            their reasoning. We ﬁnd that 48.4% of the collected
+2019), a model is provided with a full-text arti-                                             prompts can be answered using only the abstract.
+cle describing a randomized controlled trial (RCT)
+                                             However, 63.0% of the evidence spans supporting
+and a ‘prompt’ that speciﬁes an Intervention (e.g.,
+                                               judgments (provided by both the prompt generator
+aspirin), a Comparator (e.g., placebo), and an Out-
+                                             and prompt annotator), are from outside of the ab-
+come (e.g., duration of headache). We refer to these
+                                                                stract. Additionally, 13.6% of evidence spans cover
+as ICO prompts. The task then is to infer whether
+                                          more than one sentence in length.
+a given article reports that the Intervention resulted
+in a signiﬁcant increase, signiﬁcant decrease, or    2.2  Prompt Annotation
+produced no signiﬁcant difference in the Outcome,   Following the guidelines presented in Lehman et al.
+as compared to the Comparator.                     (2019), each prompt was assigned to a single doc-
+  Our annotation process largely follows that out-    tor. They were asked to report the difference be-
+lined in Lehman et al. (2019); we summarize this   tween the speciﬁed intervention and comparator,
+brieﬂy here. Data collection comprises three steps:   with respect to the given outcome. In particular,
+(1) prompt generation; (2) prompt and article anno-   options for this relationship were: “increase”, “de-
+tation; and (3) veriﬁcation. All steps are performed    crease”, “no difference” or “invalid prompt.” An-
+by Medical Doctors (MDs) hired through Upwork.4    notators were also asked to mark a span of text
+Annotators were divided into mutually exclusive    supporting their answers: a rationale. However,
+groups performing these tasks, described below.      unlike Lehman et al. (2019), here, annotators were
+  Combining this new data with the dataset intro-   not restricted via the annotation platform to only
+duced in Lehman et al. (2019) yields in total 12,616    look at the abstract at ﬁrst. They were free to search
+unique prompts stemming from 3,346 unique arti-   the article as necessary.
+cles, increasing the original dataset by 25%.5 To     Because trials tend to investigate multiple in-
+acquire the new annotations, we hired 11 doctors:   terventions and measure more than one outcome,
+1 for prompt generation, 6 for prompt annotation,    articles will usually correspond to multiple — po-
+and 4 for veriﬁcation.                                   tentially many — valid ICO prompts (with cor-
+2.1  Prompt Generation                         respondingly different ﬁndings). In the data we
+                                                       collected, 62.9% of articles comprise at least two
+In this collection phase, a single doctor is asked to
+                                     ICO prompts with different associated labels (for
+read an article and identify triplets of interventions,
+                                                     the same article).
+comparators, and outcomes; we refer to these as
+ICO prompts. Each doctor is assigned a unique ar-   2.3  Veriﬁcation
+ticle, so as to not overlap with one another. Doctors   Given both the answers and rationales of the
+were asked to ﬁnd a maximum of 5 prompts per                                            prompt generator and prompt annotator, a third
+article as a practical trade-off between the expense    doctor — the veriﬁer — was asked to determine
+of exhaustive annotation and acquiring annotations                                                      the validity of both of the previous stages.6 We esti-
+   4http://upwork.com.                        mate the accuracy of each task with respect to these
+   5We use the ﬁrst release of the data by Lehman et al., which    veriﬁcation labels. For prompt generation, answers
+included 10,137 prompts. A subsequent release contained
+10,113 prompts, as the authors removed prompts where the       6The veriﬁer can also discard low-quality or incorrect
+answer and rationale were produced by different doctors.        prompts.
+
+                                        124
+=== PDF page 3 ===
+                                              Evidence Identiﬁcation               ICO + Ev Inference
+                                              [BERT + MLP]                     [BERT + MLP]
+
+                                                    Supervised postive                           Fully supervised                         Training
+                                              Sample negatives
+                                                                                                                                                                I   C  O
+                                                                        Article                                                                                    Ev
+                         I  increased O   w.r.t. C            Background
+               Support:     Ev                                        voluptateDuis autevelitirureessedolorcillumin reprehenderitdolore eu fugiatin
+                                                                                                     nulla pariatur.
+                                                               Results                                                                             Lorem ipsum dolor sit amet,                                                                                                                                        Classify
+                                                                                           consectetur adipiscing elit, sed do
+                                                                               eiusmod tempor incididunt.
+                                                                                  Increased | Deceased | Same
+
+                        Testing               Rank sentences by p(evidence)           progesterone   placebo   mortality
+                                                                                                             mortality rate was signiﬁcantly lower                                                                    mortality rate was signiﬁcantly lower
+               Does progesterone aﬀect            adverse events were not found        argmax
+                     mortality   w.r.t. placebo ?                                                                       intracranial pressure values were lower                                                                                              Classify
+
+                                                                     results suggest further clinical trials
+                                                                                   Decreased
+
+
+Figure 1: BERT to BERT pipeline. Evidence identiﬁcation and classiﬁcation stages are trained separately. The
+identiﬁer is trained via negative samples against the positive instances, the classiﬁer via only those same positive
+evidence spans. Decoding assigns a score to every sentence in the document, and the sentence with the highest
+evidence score is passed to the classiﬁer.
+
+were 94.0% accurate, and rationales were 96.1%    scientiﬁc corpora,8 followed by a Softmax.
+accurate. For prompt annotation, the answers were      Speciﬁcally, we ﬁrst perform sentence segmenta-
+90.0% accurate, and accuracy of the rationales was    tion over full-text articles using ScispaCy (Neu-
+88.8%. The drop in accuracy between prompt gen-  mann et al., 2019). We use this segmentation to
+eration answers and prompt annotation answers is    recover evidence bearing sentences. We train an
+likely due to confusion with respect to the scope of   evidence identiﬁer by learning to discriminate be-
+the intervention, comparator, and outcome.         tween evidence bearing sentences and randomly
+  We additionally calculated agreement statistics   sampled non-evidence sentences.9 We then train an
+amongst the doctors across all stages, yielding a   evidence classiﬁer over the evidence bearing sen-
+Krippendorf’s α of α = 0.854. In contrast, the    tences to characterize the trial’s ﬁnding as report-
+agreement between prompt generator and annotator    ing that the Intervention signiﬁcantly decreased,
+(excluding veriﬁer) had a α = 0.784.                did not signiﬁcantly change, or signiﬁcantly in-
+                                                creased the Outcome compared to the Compara-
+2.4  Abstract Only Subset
+                                                         tor in an ICO. When making a prediction for an
+We subset the articles and their content, yielding   (ICO, document) pair we use the highest scoring
+9,680 of 24,686 annotations, or approximately 40%.   evidence sentence from the identiﬁer, feeding this
+This leaves 6375 prompts, 50.5% of the total.         to the evidence classiﬁer for a ﬁnal result. Note
+                                                         that the evidence classiﬁer is conditioned on the3  Models
+                                      ICO frame; we prepend the ICO embedding (from
+We consider a simple BERT-based (Devlin et al.,   Biomed RoBERTa) to the embedding of the identi-
+2018) pipeline comprising two independent mod-   ﬁed evidence snippet. Reassuringly, removing this
+els, as depicted in Figure 1. The ﬁrst identiﬁes    signal degrades performance (Table 1).
+evidence bearing sentences within an article for a                                                For all models we ﬁne-tuned the underlying
+given ICO. The second model then classiﬁes the                                  BERT parameters. We trained all models using
+reported ﬁndings for an ICO prompt using the ev-                                                    the Adam optimizer (Kingma and Ba, 2014) with
+idence extracted by this ﬁrst model. These mod-                                                a BERT learning rate 2e-5. We train these mod-
+els place a dense layer on top of representations                                                         els for 10 epochs, keeping the best performing
+yielded from (Gururangan et al., 2020), 7 a vari-                                                   version on a nested held-out set with respect to
+ant of RoBERTa (Liu et al., 2019) pre-trained over
+                                                 8We use the [CLS] representations.
+   7An earlier version of this work used SciBERT (Beltagy      9We train this via negative sampling because the vast ma-
+et al., 2019); we preserve these results in Appendix C.             jority of sentences are not evidence-bearing.
+
+                                        125
+=== PDF page 4 ===
+macro-averaged f-scores. When training the evi-     Model              Cond?   P    R    F
+                                         BR Pipeline       ✓     .784   .777   .780dence identiﬁer, we experiment with different num-
+                                         BR Pipeline                     .513   .510   .510bers of random samples per positive instance. We
+                                         BR Pipeline abs.     ✓     .776   .777   .776
+used Scikit-Learn (Pedregosa et al., 2011) for                                                                Baseline         ✓     .526   .516   .514
+evaluation and diagnostics, and implemented all                                                                Diagnostics:
+models in PyTorch (Paszke et al., 2019). We ad-    BR Pipeline 1.0     ✓     .762   .764   .763
+ditionally reproduce the end-to-end system from       Baseline 1.0       ✓     .531   .519   .520
+Lehman et al. (2019): a gated recurrent unit (Cho     BR ICO Only                   .522   .515   .511
+et al., 2014) to encode the document, attention     BR Oracle Spans     ✓     .851   .853   .851
+                                         BR Oracle Sentence   ✓     .845   .843   .843(Bahdanau et al., 2015) conditioned on the ICO,
+                                         BR Oracle Spans                .806   .812   .808
+with the resultant vector (plus the ICO) fed into an
+                                         BR Oracle Sentence             .802   .795   .797
+MLP for a ﬁnal signiﬁcance decision.                                         BR Oracle Spans abs.   ✓     .830   .823   .824
+4  Experiments and Results                          Baseline Oracle 1.0    ✓     .740   .739   .739
+                                                                Baseline Oracle      ✓     .760   .761   .759
+Our main results are reported in Table 1. We make a
+few key observations. First, the gains over the prior    Table 1: Classiﬁcation Scores. BR Pipeline: Biomed
+state-of-the-art model — which was not BERT   RoBERTa BERT Pipeline. abs: Abstracts only. Base-
+                                                                   line: model from Lehman et al. (2019).  Diagnosticbased — are substantial: 20+ absolute points in
+                                                   models:  Baseline scores Lehman et al. (2019), BR
+F-score, even beyond what one might expect to see                                                          Pipeline when trained using the Evidence Inference 1.0
+shifting to large pre-trained models.10 Second, con-                                                              data, BR classiﬁer when presented with only the ICO
+ditioning on the ICO prompt is key; failing to do so    element, an entire human selected evidence span, or
+results in substantial performance drops. Finally,    a human selected evidence sentence.  Full document
+we seem to have reached a plateau in terms of the   BR models are trained with four negative samples; ab-
+performance of the BERT pipeline model; adding     stracts are trained with sixteen; Baseline oracle span re-
+                                                                sults from Lehman et al. (2019). In all cases: ‘Cond?’the newly collected training data does not budge
+                                                            indicates whether or not the model had access to the
+performance (evaluated on the augmented test set).
+                                         ICO elements; P/R/F scores are macro-averaged.
+This suggests that to realize stronger performance
+here, we perhaps need a less naive architecture that    to be well-aligned with the existing release. This
+better models the domain. We next probe speciﬁc                                                     also suggests that the performance of the current
+aspects of our design and training decisions.         simple pipeline model may have plateaued; bet-
+  Impact of Negative Sampling As negative sam-    ter performance perhaps requires inductive biases
+pling is a crucial part of the pipeline, we vary the    via domain knowledge or improved strategies for
+number of samples and evaluate performance. We    evidence identiﬁcation.
+provide detailed results in Appendix A, but to sum-     Oracle Evidence We report two types of Ora-
+marize brieﬂy: we ﬁnd that two to four negative    cle evidence experiments - one using ground truth
+samples (per positive) performs the best for the    evidence spans “Oracle spans”, the other using sen-
+end-to-end task, with little change in both AUROC    tences for classiﬁcation. In the former experiment,
+and accuracy of the best ﬁt evidence sentence. This   we choose an arbitrary evidence span11 for each
+is likely because the model needs only to maximize   prompt for decoding. For the latter, we arbitrarily
+discriminative capability, rather than calibration.     choose a sentence contained within a span. Both
+  Distribution Shift In addition to comparable    experiments are trained to use a matching classiﬁer.
+Krippendorf-α values computed above, we mea-  We ﬁnd that using a span versus a sentence causes
+sure the impact of the new data on pipeline perfor-   a marginal change in score. Both diagnostics pro-
+mance. We compare performance of the pipeline   vide an upper bound on this model type, improve
+with all data “Biomed RoBERTa (BR) Pipeline”   over the original Oracle baseline by approximately
+vs.  just the old data “Biomed RoBERTA (BR)   10 points. Using Oracle evidence as opposed to
+BERT Pipeline 1.0” in Table 1. As performance   a trained evidence identiﬁer leaves an end-to-end
+stays relatively constant, we believe the new data   performance gap of approximately 0.08 F1 score.
+
+   10To verify the impact of architecture changes, we exper-      11Evidence classiﬁcation operates on a single sentence,
+iment with randomly initialized and ﬁne-tuned BERTs. We    but an annotator’s selection is span based. Furthermore, the
+ﬁnd that these perform worse than the original models in all    prompt annotation stage may produce different evidence spans
+instances and elide more detailed results.                       than prompt generation.
+
+                                        126
+=== PDF page 5 ===
+                                Predicted  Class          on the basis of these), achieving state of the art
+       Ev. Cls   ID Acc.   Sig ⊖   Sig ∼   Sig ⊕                                                          results on this task.
+       Sig ⊖     .667      .684    .153    .163
+                                              With this expanded dataset, we hope to support
+       Sig ∼     .674      .060    .840    .099
+                                                         further development of NLP for assisting Evidence       Sig ⊕     .652      .085    .107    .808
+                                             Based Medicine. Our results demonstrate promise
+Table  2:  Breakdown  of  the  conditioned Biomed    for the task of automatically inferring results from
+RoBERTa pipeline model mistakes and performance by   Randomized Control Trials, but still leave room
+evidence class. ID Acc. is the ”identiﬁcation accuracy”,    for improvement. In our future work, we intend to
+or percentage of . To the right is a confusion matrix for                                                         jointly automate the identiﬁcation of ICO triplets
+end-to-end predictions. ‘Sig ⊖’ indicates signiﬁcantly
+                                            and inference concerning these. We are also keendecreased, ‘Sig ∼’ indicates no signiﬁcant difference,
+                                                         to investigate whether pre-training on related scien-‘Sig ⊕’ indicates signiﬁcantly increased.
+                                                        tiﬁc ‘fact veriﬁcation’ tasks might improve perfor-
+  Conditioning As the pipeline can optionally   mance (Wadden et al., 2020).
+condition on the ICO, we ablate over both the ICO                                      Acknowledgments
+and the actual document text. We ﬁnd that using
+                                 We thank the anonymous BioNLP reviewers.the ICO alone performs about as effectively as an
+                                                  This work was supported by the National Sci-unconditioned end-to-end pipeline, 0.51 F1 score
+                                               ence Foundation, CAREER award 1750978.(Table 1). However, when fed Oracle sentences, the
+unconditioned pipeline performance jumps to 0.80
+F1. As shown in Table 3 (Appendix A), this large
+decrease in score can be attributed to the model
+losing the ability to identify the correct evidence
+sentence.
+  Mistake Breakdown We further perform an
+analysis of model mistakes in Table 2. We ﬁnd that
+the BERT-to-BERT model is somewhat better at
+identifying signiﬁcantly decreased spans than it is
+at identifying spans for the signiﬁcantly increased
+or no signiﬁcant difference evidence classes. Spans
+for the no signiﬁcant difference tend to be classiﬁed
+correctly, and spans for the signiﬁcantly increased
+category tend to be confused in a similar pattern to
+the signiﬁcantly decreased class. End-to-end mis-
+takes are relatively balanced between all possible
+confusion classes.
+  Abstract Only Results We report a full suite of
+experiments over the abstracts-only subset in Ap-
+pendix B. We ﬁnd that the pipeline models perform
+similarly on the abstract-only subset; differing in
+score by less than .01F1. Somewhat surprisingly,
+we ﬁnd that the abstracts oracle model falls behind
+the full document oracle model, perhaps due to a
+difference in language reporting general results vs.
+more detailed conclusions.
+
+5  Conclusions and Future Work
+
+We have introduced an expanded version of the
+Evidence Inference dataset. We have proposed
+and evaluated BERT-based models for the evidence
+inference task (which entails identifying snippets
+of evidence for particular ICO prompts in long
+documents and then classifying the reported ﬁnding
+
+                                        127
+=== PDF page 6 ===
+References                                            using machine learning tools in research synthesis.
+                                                          Systematic Reviews, 8(1):163.
+Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Ben-
+   gio. 2015.  Neural machine translation by jointly                                            Mark Neumann, Daniel King, Iz Beltagy, and Waleed
+   learning  to  align and  translate.    In 3rd  Inter-                                              Ammar. 2019. Scispacy: Fast and robust models for
+   national Conference on Learning Representations,                                                        biomedical natural language processing.
+  ICLR 2015, San Diego, CA, USA, May 7-9, 2015,
+  Conference Track Proceedings.                     Benjamin Nye, Junyi Jessy Li, Roma Patel, Yinfei
+                                                     Yang, Iain Marshall, Ani Nenkova, and Byron Wal-
+Hilda Bastian, Paul Glasziou, and Iain Chalmers. 2010.       lace. 2018. A corpus with multi-level annotations
+  Seventy-ﬁve trials and eleven systematic reviews a       of patients, interventions and outcomes to support
+   day: how will we ever keep up?   PLoS Med,      language processing for medical literature. In Pro-
+  7(9):e1000326.                                        ceedings of the 56th Annual Meeting of the Associa-
+                                                                tion for Computational Linguistics (Volume 1: Long
+Iz Beltagy, Arman Cohan, and Kyle Lo. 2019. Scibert:                                                           Papers), pages 197–207, Melbourne, Australia. As-
+   Pretrained contextualized embeddings for scientiﬁc                                                              sociation for Computational Linguistics.
+   text. arXiv preprint arXiv:1903.10676.
+                                       Adam Paszke, Sam Gross, Francisco Massa, Adam
+Kyunghyun Cho, Bart van Merri¨enboer, Caglar Gul-                                                              Lerer, James Bradbury, Gregory Chanan, Trevor
+   cehre, Dzmitry Bahdanau, Fethi Bougares, Holger                                                              Killeen, Zeming Lin,  Natalia Gimelshein, Luca
+  Schwenk, and Yoshua Bengio. 2014.   Learning                                                          Antiga, et al. 2019.  Pytorch: An imperative style,
+   phrase representations using RNN encoder–decoder                                                       high-performance deep learning  library.   In Ad-
+   for statistical machine translation. In Proceedings of                                                      vances in Neural Information Processing Systems,
+   the 2014 Conference on Empirical Methods in Nat-                                                      pages 8024–8035.
+   ural Language Processing (EMNLP), pages 1724–
+  1734, Doha, Qatar. Association for Computational     F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel,
+   Linguistics.                                         B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer,
+                                                      R. Weiss, V. Dubourg,  J. Vanderplas, A. Passos,
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and                                                   D. Cournapeau, M. Brucher, M. Perrot, and E. Duch-
+   Kristina Toutanova. 2018. Bert: Pre-training of deep                                                            esnay. 2011.   Scikit-learn:  Machine learning in
+   bidirectional transformers for language understand-                                                        Python.  Journal of Machine Learning Research,
+   ing. arXiv preprint arXiv:1810.04805.                                                     12:2825–2830.
+
+Mette Brandt Eriksen and Tove Faber Frandsen. 2018.                                                   Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob
+  The impact of patient, intervention, comparison, out-                                                            Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz
+  come (PICO) as a search strategy tool on literature                                                             Kaiser, and Illia Polosukhin. 2017. Attention is all
+   search quality: a systematic review. Journal of the                                                 you need.  In Advances in neural information pro-
+  Medical Library Association, 106(4).                                                           cessing systems, pages 5998–6008.
+
+Suchin   Gururangan,   Ana   Marasovi,  Swabha                                                 David Wadden, Kyle Lo, Lucy Lu Wang, Shanchuan
+  Swayamdipta, Kyle Lo, Iz Beltagy, Doug Downey,                                                            Lin, Madeleine van Zuylen, Arman Cohan, and Han-
+  and Noah A. Smith. 2020.  Don’t stop pretraining:                                                    naneh Hajishirzi. 2020.  Fact or ﬁction: Verifying
+  Adapt language models to domains and tasks.                                                              scientiﬁc claim.  In Association for Computational
+                                                              Linguistics (ACL).
+Diederik P. Kingma and Jimmy Ba. 2014.  Adam:
+ A method  for  stochastic  optimization.   CoRR,
+   abs/1412.6980.
+
+Eric Lehman, Jay DeYoung, Regina Barzilay, and By-
+  ron C. Wallace. 2019. Inferring which medical treat-
+  ments work from reports of clinical trials.  In Pro-
+   ceedings of the 2019 Conference of the North Amer-
+   ican Chapter of the Association for Computational
+   Linguistics: Human Language Technologies, Vol-
+  ume 1 (Long and Short Papers), pages 3705–3717,
+   Minneapolis, Minnesota. Association for Computa-
+   tional Linguistics.
+
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+   dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+  Luke  Zettlemoyer,  and  Veselin Stoyanov. 2019.
+   Roberta: A robustly optimized bert pretraining ap-
+   proach.
+
+Iain J. Marshall and Byron C. Wallace. 2019. Toward
+   systematic review automation: A practical guide to
+
+                                        128
+=== PDF page 7 ===
+             Appendix                         Model          Cond?   P    R    F
+                                           BR Pipeline     ✓     .776   .777   .776
+A  Negative Sampling Results                 BR Pipeline                .513   .510   .510
+                                                                  Diagnostics:
+We report negative sampling results for Biomed
+                                                  ICO Only                  .545   .543   .537
+RoBERTa pipelines in Table 3 and Figure 2.                                                                Oracle Spans    ✓     .830   .823   .824
+                                                                Oracle Sentence   ✓     .845   .843   .843
+                                                                Oracle Spans               .814   .809   .809
+                                                                Oracle Sentence            .802   .795   .797
+
+                                                      Table 4: Classiﬁcation Scores. Biomed RoBERTa Ab-
+                                                                  stract only version of Table 1. All evidence identiﬁca-
+                                                             tion models trained with sixteen negative samples.
+
+
+                                                            Neg. Samples   Cond?  AUROC   Top1 Acc
+                                                               1      ✓      0.983      0.647
+                                                               2      ✓      0.982      0.664
+                                                               4      ✓      0.981      0.680
+                                                               8      ✓      0.978      0.656
+                                                              16     ✓      0.980      0.673
+                                                               1                   0.944      0.351
+                                                               2                   0.953      0.373
+                                                               4                   0.947      0.334Figure 2: End to end pipeline scores for different nega-
+                                                               8                   0.938      0.273tive sampling strategies with Biomed RoBERTa.
+                                                              16                  0.947      0.308
+
+     Neg, samples   Cond?  AUROC   Top1 Acc         Table 5: Abstract only (v2.0) evidence identiﬁcation
+          1      ✓      0.973      0.682            validation scores varying across negative sampling
+          2      ✓      0.972      0.700             strategies using Biomed RoBERTa.
+          4      ✓      0.972      0.671
+          8      ✓      0.961      0.492
+                                                           at the time experiment conﬁgurations were deter-          16     ✓      0.590      0.027
+          1                  0.915      0.236          mined. Biomed RoBERTa experiments use the v2.0
+          2                  0.921      0.226            set for calibration. We ﬁnd that Biomed RoBERTa
+          4                  0.925      0.251          generally performs better, with a notable excep-
+          8                  0.899      0.165           tion in performance on abstracts-only Oracle span
+          16                  0.508      0.015           classiﬁcation.
+
+Table 3: Evidence Inference v2.0 evidence identiﬁca-   C.1  Negative Sampling Results
+tion validation scores varying across negative sampling
+                                We report SciBERT negative sampling results in
+strategies using Biomed RoBERTa in the pipeline.
+                                                 Table 9 and Figure 4.
+
+                                            C.2  Abstract Only Results
+B  Abstract Only Results
+                                We repeat the experiments described in Section 4
+We repeat the experiments described in Section                                              and report results in Tables 10, 11, 12 and Figure 5.
+4. Our primary ﬁndings are that the abstract-only                                           Our primary ﬁndings are that the abstract-only task
+task is easier and sixteen negative samples perform                                                                  is easier and eight negative samples perform better
+better than four. Otherwise results follow a similar                                                  than four. Otherwise results follow a similar trend
+trend to the full-document task. We document these                                                        to the full-document task.
+in Table 4, 5, 6 and Figure 3.
+
+C  SciBERT Results
+
+We report original SciBERT results in Tables 7, 8,
+9 and Figures 4, 5. Table 7 contains the Biomed
+RoBERTa numbers for comparison. Note that orig-
+inal SciBERT experiments use the evidence infer-
+ence v1.0 dataset as v2.0 collection was incomplete
+
+                                        129
+=== PDF page 8 ===
+                                                   Model              Cond?   P    R    F
+                                         BR Pipeline       ✓     .784   .777   .780
+                                             SB Pipeline       ✓     .750   .750   .749
+                                         BR Pipeline                     .513   .510   .510
+                                             SB Pipeline                     .489   .486   .486
+                                         BR Pipeline abs.     ✓     .776   .777   .776
+                                             SB Pipeline abs.     ✓     .803   .798   .799
+                                                                Baseline         ✓     .526   .516   .514
+                                                                Diagnostics:
+                                         BR Pipeline 1.0     ✓     .762   .764   .763
+                                             SB Pipeline 1.0      ✓     .749   .761   .753
+                                                                Baseline 1.0       ✓     .531   .519   .520
+                                         BR ICO Only                   .522   .515   .511
+                                             SB ICO Only                    .494   .501   .494
+                                         BR Oracle Spans     ✓     .851   .853   .851
+                                             SB Oracle Spans     ✓     .840   .840   .838
+                                         BR Oracle Sentence   ✓     .845   .843   .843
+Figure 3: End to end pipeline scores on the abstract-                                             SB Oracle Sentence    ✓     .829   .830   .829
+only subset for different negative sampling strategies                                         BR Oracle Spans                .806   .812   .808
+with Biomed RoBERTa.                                             SB Oracle Spans                 .786   .789   .787
+                                         BR Oracle Sentence             .802   .795   .797
+                                             SB Oracle Sentence              .780   .770   .773
+                                         BR Oracle Spans abs.   ✓     .830   .823   .824
+                                             SB Oracle Spans abs.   ✓     .866   .862   .863
+                                Conf.  Cls
+                                                                Baseline Oracle 1.0    ✓     .740   .739   .739
+      Ev. Cls   ID Acc.   Sig ⊖   Sig ∼   Sig ⊕
+                                                                Baseline Oracle      ✓     .760   .761   .759
+       Sig ⊖     .728      .761    .067    .172
+       Sig ∼     .691      .130    .802    .068                                                      Table  7:  Replica of Table 1 with both SciBERT
+       Sig ⊕     .573      .123    .109    .768                                                 and Biomed RoBERTa results. Classiﬁcation Scores.
+                                   BR Pipeline: Biomed RoBERTa BERT Pipeline, SB
+Table 6: Breakdown of the abstract-only conditioned
+                                                            Pipeline: SciBERT Pipeline. abs: Abstracts only. Base-
+Biomed RoBERTa pipeline model mistakes and perfor-
+                                                                   line: model from Lehman et al. (2019).  Diagnostic
+mance by evidence class. ID Acc.  is breakdown by
+                                                   models:  Baseline scores Lehman et al. (2019), BR
+ﬁnal evidence truth. To the right is a confusion matrix
+                                                          Pipeline when trained using the Evidence Inference 1.0
+for end-to-end predictions.
+                                                              data, BR classiﬁer when presented with only the ICO
+                                                       element, an entire human selected evidence span, or
+                                                     a human selected evidence sentence.  Full document
+                                   BR models are trained with four negative samples; ab-
+                                                                 stracts are trained with sixteen; Baseline oracle span re-
+                                                                sults from Lehman et al. (2019). In all cases: ‘Cond?’
+                                                            indicates whether or not the model had access to the
+                                         ICO elements; P/R/F scores are macro-averaged over
+                                                               classes.
+
+
+                                                                                               Predicted  Class
+                                                                   Ev. Cls   ID Acc.   Sig ⊖   Sig ∼   Sig ⊕
+                                                                  Sig ⊖     .711      .697    .143    .160
+                                                                  Sig ∼     .643      .076    .838    .086
+                                                                  Sig ⊕     .635      .146    .141    .713
+
+                                                      Table 8: Replica of Table 2 for SciBERT. Breakdown
+                                                         of the conditioned BERT pipeline model mistakes and
+                                                   performance by evidence class. ID Acc.  is the ”iden-
+                                                            tiﬁcation accuracy”, or percentage of . To the right is
+                                                     a confusion matrix for end-to-end predictions. ‘Sig ⊖’
+Figure 4: End to end pipeline scores for different nega-
+                                                            indicates signiﬁcantly decreased, ‘Sig ∼’ indicates no
+tive sampling strategies for SciBERT.
+                                                         signiﬁcant difference, ‘Sig ⊕’ indicates signiﬁcantly in-
+                                                          creased.
+
+                                        130
+=== PDF page 9 ===
+     Neg. Samples   Cond?  AUROC   Top1 Acc
+          1      ✓       .969       .663
+          2      ✓       .959       .673
+          4      ✓       .968       .659
+          8      ✓       .961       .627
+          16     ✓       .967       .593
+          1                    .894       .094
+          2                    .890       .181
+          4                    .843       .083
+          8                    .862       .170
+          16                   .403       .014
+
+Table 9: Evidence Inference v1.0 evidence identiﬁca-
+tion validation scores varying across negative sampling
+strategies for SciBERT.
+
+
+    Model          Cond?   P    R    F
+    BERT Pipeline   ✓     .803   .798   .799
+    BERT Pipeline             .528   .513   .510
+     Diagnostics:
+    ICO Only                  .480   .480   .479
+     Oracle Spans    ✓     .866   .862   .863
+     Oracle Sentence   ✓     .848   .842   .844
+     Oracle Spans               .804   .802   .801
+     Oracle Sentence            .817   .776   .783
+
+Table 10: Classiﬁcation Scores.  SciBERT/Abstract
+only version of Table 1.  All evidence identiﬁcation
+models trained with eight negative samples.
+
+
+     Neg. Samples   Cond?  AUROC   Top1 Acc
+          1      ✓      0.980      0.573
+          2      ✓      0.978      0.596
+          4      ✓      0.977      0.623
+          8      ✓      0.950      0.609
+          16     ✓      0.975      0.615           Figure 5: End to end pipeline scores on the abstract-
+          1                   0.946      0.340          only subset for different negative sampling strategies
+          2                   0.939      0.342            for SciBERT.
+          4                   0.912      0.286
+          8                   0.938      0.313
+          16                  0.940      0.282
+
+Table 11:  Abstract only (v1.0) evidence identiﬁca-
+tion validation scores varying across negative sampling
+strategies for SciBERT.
+
+
+                                Conf.  Cls
+      Ev. Cls   ID Acc.   Sig ⊖   Sig ∼   Sig ⊕
+       Sig ⊖     .767      .750    .044    .206
+       Sig ∼     .686      .092    .816    .092
+       Sig ⊕     .591      .109    .064    .827
+
+Table 12: Breakdown of the abstract-only conditioned
+SciBERT pipeline model mistakes and performance by
+evidence class. ID Acc. is breakdown by ﬁnal evidence
+truth. To the right is a confusion matrix for end-to-end
+predictions.
+
+
+                                        131
+=== PDF page 10 ===
+                                   Train            Dev              Test              Total
+        Number of prompts      10150             1238           1228           12616
+        Number of articles       2672              340            334            3346
+         Label counts (-1 / 0 / 1)   2465 / 4563 / 3122   299 / 544 / 395   295 / 516 / 417   3059 / 5623 / 3934
+
+Table 13: Corpus statistics. Labels -1, 0, 1 indicate signiﬁcantly decreased, no signiﬁcant difference and signiﬁ-
+cantly increased, respectively.
+
+
+
+
+
+                                        132

@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8"?><article xml:lang="en" article-type="research-article"><front><journal-meta><journal-id journal-id-type="pmc-domain-id">2967</journal-id><journal-id journal-id-type="pmc-domain">acscentsci</journal-id><journal-title-group><journal-title>ACS Central Science</journal-title><abbrev-journal-title>ACS Cent Sci</abbrev-journal-title></journal-title-group><publisher><publisher-name>American Chemical Society</publisher-name></publisher></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC11046457</article-id><article-id pub-id-type="pmcaid">11046457</article-id><article-id pub-id-type="pmcaiid">11046457</article-id><article-id pub-id-type="pmid">38680560</article-id><article-id pub-id-type="doi">10.1021/acscentsci.3c01517</article-id><title-group><article-title>Machine Learning
+Assisted Hit Prioritization for High
+Throughput Screening in Drug Discovery</article-title></title-group><contrib-group content-type="author"><contrib><name name-style="western"><surname>Boldini</surname><given-names initials="D">Davide</given-names></name><xref ref-type="aff" rid="aff1">†</xref></contrib><contrib><name name-style="western"><surname>Friedrich</surname><given-names initials="L">Lukas</given-names></name><xref ref-type="aff" rid="aff2">§</xref></contrib><contrib><name name-style="western"><surname>Kuhn</surname><given-names initials="D">Daniel</given-names></name><xref ref-type="aff" rid="aff2">§</xref></contrib><contrib><name name-style="western"><surname>Sieber</surname><given-names initials="SA">Stephan A</given-names></name><xref ref-type="aff" rid="aff1">†</xref><xref rid="cor1" ref-type="author-notes">*</xref></contrib></contrib-group><aff id="aff1"><label>†</label>TUM
+School of Natural Sciences, Department of Bioscience, Center for Functional
+Protein Assemblies (CPA), Technical University
+of Munich, 85748 Garching bei München, Germany</aff><aff id="aff2"><label>§</label>The
+Healthcare business of Merck KGaA, 64293 Darmstadt, Germany</aff><author-notes><fn id="cor1"><label>*</label><p>Email: <email>stephan.sieber@tum.de</email>.</p></fn></author-notes><pub-date><day>15</day><month>3</month><year>2024</year></pub-date><volume>10</volume><issue>4</issue><fpage>823</fpage><page-range>823–832</page-range><pub-history><event event-type="pmc-release"><date><day>27</day><month>4</month><year>2024</year></date></event></pub-history><permissions><copyright-statement>© 2024 The Authors. Published by American Chemical Society</copyright-statement><license><license-p>Permits the broadest form of re-use including for commercial purposes, provided that author attribution and integrity are maintained (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://creativecommons.org/licenses/by/4.0/" ext-link-type="uri">https://creativecommons.org/licenses/by/4.0/</ext-link>).</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="oc3c01517.pdf" content-type="pmc-pdf"><?cloudpmc-path e900/11046457/c29b13521945/oc3c01517.pdf?><?cloudpmc-bucket app?><?size 2540632?></self-uri><abstract id="abstract1"><title>Abstract</title><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="ab-tgr1" xlink:href="oc3c01517_0006.jpg"><?cloudpmc-path blobs/e900/11046457/cfab6c67f615/oc3c01517_0006.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 439?><?original-width 1000?><?scaled-height 292?><?scaled-width 666?></graphic><p>Efficient prioritization of bioactive compounds from
+high throughput
+screening campaigns is a fundamental challenge for accelerating drug
+development efforts. In this study, we present the first data-driven
+approach to simultaneously detect assay interferents and prioritize
+true bioactive compounds. By analyzing the learning dynamics during
+training of a gradient boosting model on noisy high throughput screening
+data using a novel formulation of sample influence, we are able to
+distinguish between compounds exhibiting the desired biological response
+and those producing assay artifacts. Therefore, our method enables
+false positive and true positive detection without relying on prior
+screens or assay interference mechanisms, making it applicable to
+any high throughput screening campaign. We demonstrate that our approach
+consistently excludes assay interferents with different mechanisms
+and prioritizes biologically relevant compounds more efficiently than
+all tested baselines, including a retrospective case study simulating
+its use in a real drug discovery campaign. Finally, our tool is extremely
+computationally efficient, requiring less than 30 s per assay on low-resource
+hardware. As such, our findings show that our method is an ideal addition
+to existing false positive detection tools and can be used to guide
+further pharmacological optimization after high throughput screening
+campaigns.</p></abstract><abstract id="abstract2" abstract-type="short"><title>Short abstract</title><p>Minimum variance sampling analysis (MVS-A)
+is a fast machine-learning
+approach enabling the identification of both true bioactive compounds
+and false positives in high throughput screening data.</p></abstract><custom-meta-group><custom-meta><meta-name>status</meta-name><meta-value>released</meta-value></custom-meta><custom-meta><meta-name>display-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>is-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-journal-matter</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-scanned</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>is-retracted</meta-name><meta-value>no</meta-value></custom-meta></custom-meta-group></article-meta><notes notes-type="article-notes"><sec id="historyarticle-meta1" sec-type="history" disp-level="2"><p>Received 2023 Dec 7; Accepted 2024 Mar 1; Revised 2024 Mar 1; Collection date 2024 Apr 24.</p></sec></notes></front><body><sec id="sec1" disp-level="1"><title>Introduction</title><p>High throughput screening (HTS) has significantly
+accelerated drug
+discovery efforts by allowing researchers to test large chemical libraries
+for bioactivity in a time and cost efficient manner, thus providing
+a crucial starting point for synthesizing small molecules with suitable
+pharmacological properties.<sup><xref rid="ref1" ref-type="bibr">1</xref>−<xref rid="ref4" ref-type="bibr">4</xref></sup></p><p>However, one fundamental issue with HTS is
+its tendency to provide
+false positive readouts, either because the experimental response
+for a given hit compound is not reproducible or because it is not
+correlated with the intended biological activity.<sup><xref rid="ref5" ref-type="bibr">5</xref>−<xref rid="ref9" ref-type="bibr">9</xref></sup> The underlying causes for the false positive readout
+can be extremely heterogeneous, including colloidal aggregation,<sup><xref rid="ref10" ref-type="bibr">10</xref></sup> autofluorescence,<sup><xref rid="ref11" ref-type="bibr">11</xref></sup> interference with assay technology,<sup><xref rid="ref5" ref-type="bibr">5</xref>,<xref rid="ref8" ref-type="bibr">8</xref></sup> chemical reactivity,<sup><xref rid="ref12" ref-type="bibr">12</xref></sup> metal impurities,<sup><xref rid="ref13" ref-type="bibr">13</xref></sup> and measurement uncertainty.<sup><xref rid="ref14" ref-type="bibr">14</xref></sup></p><p>For these reasons, choosing which active compounds to prioritize
+for further pharmacological development after an HTS campaign still
+relies on further experimental profiling,<sup><xref rid="ref15" ref-type="bibr">15</xref>−<xref rid="ref17" ref-type="bibr">17</xref></sup> thus increasing
+the time and resources necessary to identify true hits and subsequently
+deliver a drug to the market.</p><p>This issue has garnered significant
+attention in the cheminformatics
+community, leading to the development of several in-silico tools for
+false positive detection in HTS data.<sup><xref rid="ref6" ref-type="bibr">6</xref>,<xref rid="ref7" ref-type="bibr">7</xref>,<xref rid="ref18" ref-type="bibr">18</xref>−<xref rid="ref22" ref-type="bibr">22</xref></sup> These methods are generally based on expert rule based approaches,
+for example Pan-Assay Interferent (PAINS) substructure filters,<sup><xref rid="ref5" ref-type="bibr">5</xref>,<xref rid="ref8" ref-type="bibr">8</xref></sup> or machine learning models trained on historical HTS data.<sup><xref rid="ref7" ref-type="bibr">7</xref>,<xref rid="ref18" ref-type="bibr">18</xref>,<xref rid="ref19" ref-type="bibr">19</xref></sup> However, there are two main limitations
+to the use of these tools. First, they generally make assumptions
+concerning the assay interference mechanism, limiting their applicability
+to a narrow selection of false positives.<sup><xref rid="ref6" ref-type="bibr">6</xref>,<xref rid="ref18" ref-type="bibr">18</xref></sup> Furthermore,
+this aspect also limits their trustworthiness in identifying true
+positives since they can only prioritize compounds that are unlikely
+to be interferents according to that specific mechanism. For example,
+given an autofluorescence predictor for HTS interferent detection,
+even if it classifies a compound as nonfluorescent, that molecule
+might still be a false positive due to other phenomena, e.g., statistical
+fluctuations or colloidal aggregation. Second, these approaches depend
+on the chemical, biological, and technological space evaluated to
+generate them.<sup><xref rid="ref5" ref-type="bibr">5</xref>,<xref rid="ref7" ref-type="bibr">7</xref></sup> As such, their performance might
+be unreliable when evaluating compounds outside of the applicability
+domain of the model or when applied to HTS campaigns targeting unseen
+protein families, relying on new assay technologies and so forth.<sup><xref rid="ref7" ref-type="bibr">7</xref></sup></p><p>To speed up HTS hit triaging, we propose
+herein minimal variance
+sampling analysis (MVS-A), the first machine learning approach to
+simultaneously identify false positive compounds and prioritize true
+biologically active molecules in HTS data. Our approach is inspired
+by recent findings in gradient-based data valuation,<sup><xref rid="ref23" ref-type="bibr">23</xref>−<xref rid="ref25" ref-type="bibr">25</xref></sup> which showcase how tracing sample gradients during the training
+process can highlight mislabeled data in computer vision and natural
+language processing applications.<sup><xref rid="ref23" ref-type="bibr">23</xref>,<xref rid="ref26" ref-type="bibr">26</xref></sup> To make gradient-based
+data valuation more applicable out-of-the-box and reduce computational
+complexity, MVS-A is based on a novel formulation of sample influence
+for gradient boosting, thus enabling processing of large HTS data
+sets (e.g., above 300.000 compounds) in mere seconds. Because of this,
+MVS-A operates in an orthogonal fashion to prior false positive detection
+tools for HTS data: instead of requiring a preexisting library of
+assay interferents, it only requires training on the HTS itself, avoiding
+out-of-domain (OOD) applicability issues altogether. Additionally,
+since it does not make any assumptions about the interference mechanism,
+it can be used to successfully prioritize true positives.</p><p>To
+evaluate our approach, we curated a selection of 17 publicly
+available HTS data sets and 3 industrial ones with different sizes,
+class imbalance, biological targets, assay technology, and false positive
+rates. Our results show that MVS-A can outperform a variety of rule-based
+and data-driven baselines both at true positive and false positive
+identification.</p></sec><sec id="sec2" disp-level="1"><title>Results and Discussion</title><sec id="sec2.1" disp-level="2"><title>Using MVS-A to Prioritize Hits from HTS Campaigns</title><p>In
+recent years, analyzing sample gradient dynamics during supervised
+neural network training has attracted significant interest for modeling
+noisy data sets.<sup><xref rid="ref23" ref-type="bibr">23</xref>−<xref rid="ref28" ref-type="bibr">28</xref></sup> These methods enable quantification of the influence of each sample
+on the neural network weights once the model has been trained. When
+training on noisy data, such as HTS campaigns, it has been shown that
+sample influence correlates with the likelihood of being mislabeled,
+thus enabling the identification of both trustworthy and problematic
+samples. However, neural network based approaches are computationally
+expensive and sensitive to hyperparameters, especially for large,
+imbalanced molecular data sets such as HTS data,<sup><xref rid="ref29" ref-type="bibr">29</xref>,<xref rid="ref30" ref-type="bibr">30</xref></sup> making their use for nonexperts particularly challenging.</p><p>To tackle these limitations, we have developed minimum variance sampling
+analysis (MVS-A) to estimate sample influence in gradient boosting
+machines (GBM). GBM is a machine learning algorithm that fits an ensemble
+of decision trees in a sequence, each compensating for the mistakes
+of the previous tree. The advantages of using GBM instead of neural
+networks for computing sample influence are faster computation of
+importance scores, robust out-of-the-box performance, and classification
+performance on imbalanced HTS data, thus providing a good inductive
+bias for detecting false positive compounds.<sup><xref rid="ref31" ref-type="bibr">31</xref>,<xref rid="ref32" ref-type="bibr">32</xref></sup> In practice, the way MVS-A works is by quantifying how “unusual”
+a certain active compound is according to the GBM model when comparing
+it to the boundary it has learned to separate active and inactive
+molecules. If a compound is labeled as active in the training set,
+but the pattern learned by the GBM model contradicts that, it will
+have a high MVS-A score. Vice versa, if a bioactive molecule is easily
+identified as such by the classifier, it will have a low MVS-A score.
+These scores can be used accordingly to prioritize compounds for further
+testing, or a threshold can be set to label true positives and false
+positives depending on the hit validation budget. In this study, we
+consider for all data sets the bottom 10% of the hits as true positives
+and the top 10% as false positives, as done in another ranking evaluation
+study.<sup><xref rid="ref33" ref-type="bibr">33</xref></sup></p><p>As such, our proposed approach
+for ranking HTS hits goes as follows
+(<xref rid="fig1" ref-type="fig">Figure <xref rid="fig1" ref-type="fig">1</xref></xref>):</p><list list-type="label"><list-item><label>(1)</label><p>We train a GBM classifier on the HTS
+data set of interest to distinguish hits from inactive compounds.</p></list-item><list-item><label>(2)</label><p>We compute sample influence
+estimates
+for all hits via MVS-A.</p></list-item><list-item><label>(3)</label><p>We sort all HTS hits according to
+their MVS-A score. False positives are likely to have high MVS-A scores
+and vice versa for true positives.</p></list-item></list><fig id="fig1" position="float"><?disp-level 3?><label>Figure 1</label><caption><p>Illustration of our proposed approach. After an HTS campaign is
+carried out, the most active compounds in the primary screen are usually
+prioritized for further testing. However, this strategy often does
+not distinguish well between true positives (TP) and false positives
+(FP), leading to high false positive rates in the confirmatory screens.
+In our approach, we first fit a Gradient Boosting Machine classifier
+on the primary HTS screen data and compute MVS-A scores for each active
+compound. Problematic compounds according to the classifier will have
+high MVS-A scores and are likely false positives and vice versa for
+true hits. Selecting compounds according to their MVS-A score leads
+to reduced false positive rates in subsequent confirmatory screens
+and enables the identification of false positives in the primary HTS
+screen.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr1" xlink:href="oc3c01517_0001.jpg"><?cloudpmc-path blobs/e900/11046457/030df951ca88/oc3c01517_0001.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1034?><?original-width 1306?><?scaled-height 517?><?scaled-width 653?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="oc3c01517_0001.gif"><?cloudpmc-path blobs/e900/11046457/22cc41e4d418/oc3c01517_0001.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>Thanks to its computational efficiency, this pipeline
+takes only
+a few seconds on low-end hardware, even for large HTS data sets. Crucially,
+our approach relies exclusively on the HTS data set of interest. As
+such, it does not rely on historical information on which compounds
+tend to be false positives for that assay technology (like, e.g.,
+PAINS), nor on assumptions of which biophysical process is causing
+the interference (e.g., aggregation or autofluorescence predictors).
+This means that our method is inherently applicable to any assay technology
+and any region of the chemical space while being able to detect any
+type of interferent.</p><p>Finally, we provide a more in-depth discussion
+of the theory behind
+MVS-A in chapter 1 of the <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Supporting Information</ext-link>.</p></sec><sec id="sec2.2" disp-level="2"><title>Constructing a Benchmark for HTS Hit Prioritization</title><p>To evaluate our proposed approach, we curated a selection of 17 data
+sets from publicly available HTS data,<sup><xref rid="ref34" ref-type="bibr">34</xref>,<xref rid="ref35" ref-type="bibr">35</xref></sup> for a total
+of 471370 unique compounds measured against 10 different protein families,
+using a variety of readout measurements and activity thresholds (<xref rid="tbl1" ref-type="table">Table <xref rid="tbl1" ref-type="table">1</xref></xref>, <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S1, Table S2, Table S3, and Table S4</ext-link>). We focused on
+HTS data sets where more than 200 hits were investigated both in primary
+and confirmatory screens, excluding campaigns where the false positive
+rate was above 95% or below 5%. Where possible, we prioritized the
+selection of assays targeting different protein families and confirmatory
+screen protocols.</p><table-wrap id="tbl1" position="float"><?disp-level 3?><label>Table 1</label><caption><title>Summary Information for the Datasets
+Employed in This Study<xref rid="tbl1-fn1" ref-type="table-fn"><sup>a</sup></xref></title></caption><table frame="hsides" rules="groups" border="0"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th style="border:none;" align="center" colspan="1" rowspan="1">name</th><th style="border:none;" align="center" colspan="1" rowspan="1">source</th><th style="border:none;" align="center" colspan="1" rowspan="1">number of compounds</th><th style="border:none;" align="center" colspan="1" rowspan="1">false positive %</th><th style="border:none;" align="center" colspan="1" rowspan="1">number of
+hits</th></tr></thead><tbody><tr><td style="border:none;" align="left" colspan="1" rowspan="1">transporter</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">306252</td><td style="border:none;" align="left" colspan="1" rowspan="1">29%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2625</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">transcription</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">344724</td><td style="border:none;" align="left" colspan="1" rowspan="1">47%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2336</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">transcription_2</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">301125</td><td style="border:none;" align="left" colspan="1" rowspan="1">76%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2325</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">GPCR_2</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">196068</td><td style="border:none;" align="left" colspan="1" rowspan="1">79%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1980</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">GPCR_3</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">63643</td><td style="border:none;" align="left" colspan="1" rowspan="1">56%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2176</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">ion_channel</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">305411</td><td style="border:none;" align="left" colspan="1" rowspan="1">15%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2580</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">ion_channel_2</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">104663</td><td style="border:none;" align="left" colspan="1" rowspan="1">21%</td><td style="border:none;" align="left" colspan="1" rowspan="1">4227</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">ion_channel_3</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref33" ref-type="bibr">33</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">305401</td><td style="border:none;" align="left" colspan="1" rowspan="1">32%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1642</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">kinase</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">321563</td><td style="border:none;" align="left" colspan="1" rowspan="1">21%</td><td style="border:none;" align="left" colspan="1" rowspan="1">234</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">GPCR</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">325747</td><td style="border:none;" align="left" colspan="1" rowspan="1">51%</td><td style="border:none;" align="left" colspan="1" rowspan="1">5742</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">serine</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">214071</td><td style="border:none;" align="left" colspan="1" rowspan="1">91%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1262</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">transcription_3</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">363477</td><td style="border:none;" align="left" colspan="1" rowspan="1">81%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1790</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">ubiquitin</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">330197</td><td style="border:none;" align="left" colspan="1" rowspan="1">70%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1533</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">splicing</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">293183</td><td style="border:none;" align="left" colspan="1" rowspan="1">11%</td><td style="border:none;" align="left" colspan="1" rowspan="1">2189</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">channel_atp</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">343522</td><td style="border:none;" align="left" colspan="1" rowspan="1">48%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1229</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">cysteine_protease</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">344098</td><td style="border:none;" align="left" colspan="1" rowspan="1">48%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1842</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">zinc_finger</td><td style="border:none;" align="left" colspan="1" rowspan="1">ref (<xref rid="ref34" ref-type="bibr">34</xref>)</td><td style="border:none;" align="left" colspan="1" rowspan="1">301590</td><td style="border:none;" align="left" colspan="1" rowspan="1">48%</td><td style="border:none;" align="left" colspan="1" rowspan="1">1132</td></tr></tbody></table><table-wrap-foot><fn id="tbl1-fn1"><label>a</label><p>The number of hits defines the
+number of active compounds in the primary screen. The false positive
+percentage identifies the fraction of active compounds in the primary
+screen that were found to be inactive in the confirmatory screen.</p></fn></table-wrap-foot></table-wrap><p>As a result of this selection process, the false positive
+rates
+in our benchmark range from 11% to 91%, and the screened libraries
+evaluate different regions of the chemical space (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S1</ext-link>), thus covering a broad spectrum of HTS campaigns.</p><p>Each data set is generated from a primary screen, relying on single-dose
+measurements, and a confirmatory screen, which either adds replicates
+or assesses the dose–response activity against the same biological
+target. To define which molecules are considered bioactive in a given
+primary or confirmatory screen, we employed the original activity
+thresholds defined by the authors of the screening campaign. This
+ensures that our analysis accurately reflects real drug discovery
+campaigns as close as possible, where bioactivity criteria vary on
+a case-by-case basis, depending on the biological target and the purpose
+of the drug.</p><p>We define a compound as false positive if it was
+reported to be
+active in the primary screen but was found to be inactive or inconclusive
+in the confirmatory screen. Depending on the protocol employed for
+the confirmatory screen, different false positive types can be identified.
+When adding replicates, only errors associated with readout fluctuations
+or systematic errors (e.g., dust in the well plate) can be identified,
+while dose–response measurements enable detection of autofluorescence,
+colloidal aggregation, assay technology interference, and so forth.</p></sec><sec id="sec2.3" disp-level="2"><title>Defining a Protocol to Assess HTS Hit Prioritization Strategies</title><p>For a given HTS data set, we run the MVS-A pipeline exclusively
+on the primary screening data. Then, we measure how effective our
+approach is at separating true actives and false positives by comparing
+its compound ranking to the confirmatory screening data. To evaluate
+the sorting performance, we measure top-K Precision, Enrichment Factor,
+and Boltzmann-Enhanced Discrimination of Receiver Operating Characteristic
+(BEDROC).<sup><xref rid="ref33" ref-type="bibr">33</xref></sup> Since Precision is sensitive
+to the amount of noise in the data set, we scale it with respect to
+the false positive and true positive rate for each data set, making
+this metric more consistent across data sets. Therefore, a relative
+top-K precision score of 0.0 indicates that a given ranking is equal
+to random sorting, while values above 0.0 denote percent improvements
+over assay noise. We further discuss our metric selection in chapter
+4 of the <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Supporting Information</ext-link>.</p><p>To contextualize the performance of MVS-A, we provide the following
+baselines:</p><list list-type="bullet"><list-item><p>Detecting false positives according to REOS and GSK
+structural filters, two well-established rule-based approaches to
+detect false positives in HTS data.<sup><xref rid="ref36" ref-type="bibr">36</xref>,<xref rid="ref37" ref-type="bibr">37</xref></sup> We rank compounds
+in terms of the total number of flags according to both criteria.</p></list-item><list-item><p>Prioritizing compounds for further screening
+according
+to activity in the primary HTS assay, the defacto approach for ranking
+hits both in academia and in the industry.<sup><xref rid="ref15" ref-type="bibr">15</xref></sup> The underlying assumption here is that if a compound is very active
+in the primary screen, it is likely to have similar bioactivity in
+the confirmatory screen as well.</p></list-item><list-item><p>Ranking
+according to CatBoost object importance,<sup><xref rid="ref38" ref-type="bibr">38</xref></sup> another sample influence approach based on GBM
+relying on a different algorithm to compute importance scores. We
+discuss this method further in the <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Supporting Information</ext-link>.</p></list-item><list-item><p>Ranking according
+to Isolation Forest, a well-established
+anomaly detection algorithm based on decision tree ensembles.<sup><xref rid="ref39" ref-type="bibr">39</xref></sup> We use the default parameters from the Scikit-Learn
+package.<sup><xref rid="ref40" ref-type="bibr">40</xref></sup></p></list-item><list-item><p>Ranking according to the reconstruction error of a Variational
+Autoencoder (VAE), a popular deep learning approach for anomaly detection.<sup><xref rid="ref41" ref-type="bibr">41</xref>−<xref rid="ref43" ref-type="bibr">43</xref></sup> We implement a SMILES-based VAE using the architecture described
+by Gómez-Bombarelli et al.<sup><xref rid="ref44" ref-type="bibr">44</xref></sup></p></list-item></list><p>Additionally, to compare our approach with publicly
+available HTS
+interference predictors, we add the following baselines for false
+positive identification:</p><list list-type="bullet"><list-item><p>Hit Dexter 3 (HD) for frequent hitter prediction.<sup><xref rid="ref6" ref-type="bibr">6</xref>,<xref rid="ref18" ref-type="bibr">18</xref>,<xref rid="ref45" ref-type="bibr">45</xref></sup></p></list-item><list-item><p>SCAM Detective for colloidal aggregator identification.<sup><xref rid="ref46" ref-type="bibr">46</xref></sup></p></list-item><list-item><p>An in-house autofluorescence
+predictor based on the
+models used by InterPred.<sup><xref rid="ref22" ref-type="bibr">22</xref></sup> We discuss
+how we reproduced their featurization and optimization procedure in
+the <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Supporting Information</ext-link>.</p></list-item></list></sec><sec id="sec2.4" disp-level="2"><title>MVS-A Achieves Best Performance in HTS False Positive Detection</title><p>In terms of false positive detection, MVS-A matches or outperforms,
+on average, all alternative methods across all metrics (<xref rid="fig2" ref-type="fig">Figure <xref rid="fig2" ref-type="fig">2</xref></xref>). The performance of our approach
+is mostly consistent across different metrics, meaning that MVS-A
+provides the best performance both when considering the top 10% predictions,
+as indicated by relative precision and enrichment factor, and when
+evaluating the entire ranking, as measured by BEDROC. Crucially, MVS-A
+outperforms all baselines across all metrics and data sets on 12 out
+of 17 data sets, while achieving second best performance on the remaining
+5, making it an ideal option for out-of-the-box scenarios.</p><fig id="fig2" position="float"><?disp-level 3?><label>Figure 2</label><caption><p>False positive
+detection performance across all data sets. Asterisks
+denote significance according to one-tailed Wilcoxon Signed Rank tests
+with Bonferroni correct (one asterisk corresponds to α = 0.05,
+two asterisks to α = 0.01). <italic>P</italic>-values are reported
+in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S5</ext-link>. (a) Distribution of relative
+precision scores across all data sets. The dotted gray line denotes
+random performance. (b) Distribution of enrichment factor scores across
+all data sets. (c) Distribution of BEDROC scores across all data sets.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr2" xlink:href="oc3c01517_0002.jpg"><?cloudpmc-path blobs/e900/11046457/6a0f255c796a/oc3c01517_0002.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1149?><?original-width 1348?><?scaled-height 575?><?scaled-width 674?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="oc3c01517_0002.gif"><?cloudpmc-path blobs/e900/11046457/5920e90c8ff1/oc3c01517_0002.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>CatBoost object importance is the most competitive
+alternative;
+however, MVS-A still outperforms it on 16 out of 17 data sets across
+all metrics. Compared to this baseline, MVS-A provides an improvement
+of 29%, 6%, and 10% for relative precision, enrichment factor, and
+BEDROC respectively. Considering the differences in sample importance
+formulation between these methods, this result supports our method’s
+assumption that focusing on the splitting decisions provides a better
+inductive bias for discovering mislabeled data.</p><p>Both anomaly
+detection methods, namely, Isolation Forest and VAE,
+struggle on this benchmark. Specifically, MVS-A outperforms them across
+all metrics on 16/17 and 15/17 data sets, respectively. Concerning
+VAE, this is likely due to the fact that these algorithms require
+large data sets (e.g., 10<sup>6</sup> compounds) to be trained properly,<sup><xref rid="ref44" ref-type="bibr">44</xref></sup> while the number of hits per HTS is much lower.
+Regarding Isolation Forest, its performance is likely affected by
+the high dimensionality of the input molecular representations, rendering
+the use of random splits less effective.<sup><xref rid="ref39" ref-type="bibr">39</xref></sup> In contrast, data valuation approaches like MVS-A object importance
+select the subset of informative features by first fitting a supervised
+classifier to distinguish active and inactive compounds, thus mitigating
+the issue of high dimensionality.</p><p>In comparison to GSK and REOS
+structural filters, MVS-A outperforms
+them on 16/17 data sets across all metrics. However, these alerts
+do not only detect false positives, but also focus on chemical moieties
+associated with target promiscuity or other undesirable pharmacological
+properties.<sup><xref rid="ref36" ref-type="bibr">36</xref>,<xref rid="ref47" ref-type="bibr">47</xref>,<xref rid="ref48" ref-type="bibr">48</xref></sup> This mismatch then could explain the poor performance observed in
+identifying false positives in this benchmark.</p><p>Finally, Hit
+Dexter, SCAM Detective, and the autofluorescence predictor
+show subpar false positive detection performance when compared to
+MVS-A, with our approach outperforming them across all metrics on
+16/17, 17/17, and 15/17 data sets, respectively. This is likely because
+these approaches, unlike MVS-A, focus on specific interference mechanisms,
+while our benchmark makes no assumptions about the false positive
+origin. Furthermore, the performance of these baselines is likely
+degraded by applicability domain issues, while MVS-A is tailored to
+each specific screening campaign.</p></sec><sec id="sec2.5" disp-level="2"><title>MVS-A Provides the Most Efficient HTS True Hit Prioritization
+Strategy</title><p>In line with the false positive retrieval benchmark,
+MVS-A on average matches or outperforms all other approaches across
+all metrics in terms of true hit detection (<xref rid="fig3" ref-type="fig">Figure <xref rid="fig3" ref-type="fig">3</xref></xref>) Specifically, it achieves the best performance
+in 13 data sets out of 17 across all metrics, and it ranks second
+best in the remaining 4 data sets, further highlighting its potential
+as an optimal out-of-the-box solution.</p><fig id="fig3" position="float"><?disp-level 3?><label>Figure 3</label><caption><p>True positive detection
+performance across all data sets. Asterisks
+denote significance according to one-tailed Wilcoxon Signed Rank tests
+with Bonferroni correct (one asterisk corresponds to α = 0.05,
+two asterisks to α = 0.01). <italic>P</italic>-values are reported
+in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S6</ext-link>. (a) Distribution of relative
+precision scores across all data sets. The dotted gray line denotes
+random performance. (b) Distribution of enrichment factor scores across
+all data sets. (c) Distribution of BEDROC scores across all data sets.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr3" xlink:href="oc3c01517_0003.jpg"><?cloudpmc-path blobs/e900/11046457/930630df2feb/oc3c01517_0003.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1216?><?original-width 1000?><?scaled-height 810?><?scaled-width 666?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="oc3c01517_0003.gif"><?cloudpmc-path blobs/e900/11046457/e0b9b1016c4d/oc3c01517_0003.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>On average, the most competitive baseline is again
+CatBoost object
+importance; however, MVS-A still outperforms it on 16/17 data sets.
+This further highlights that MVS-A is more effective at assessing
+sample influence than the previous state-of-the-art GBM algorithms
+since it detects high fidelity data more efficiently.</p><p>As for
+the false positive detection benchmark, anomaly detection
+methods provide subpar performance for true positive identification,
+with VAE showing slightly better performance than Isolation Forest.
+This is likely a consequence of the low data available for training
+the VAE and the high dimensionality of the input in the case of the
+Isolation Forest.</p><p>Finally, in comparison to the primary readout
+ranking, MVS-A outperforms
+it on 15 data sets, with average improvements of 50%, 13%, and 14%
+in terms of relative precision, enrichment factor, and BEDROC. This
+is especially impressive considering that ranking compounds according
+to their primary HTS readout is the industry standard for hit triaging
+in HTS campaigns. The relatively low performance of this method could
+be due to the fact that assay interferents can be outliers in terms
+of primary readout, for example, by exhibiting very strong autofluorescence,
+causing them to be at the top of the primary readout ranking. As such,
+this benchmark shows that our data-driven approach is more efficient
+at finding true actives than the currently used criteria for HTS hit
+triaging</p></sec><sec id="sec2.6" disp-level="2"><title>MVS-A Identifies Structurally Diverse Interferents</title><p>While being able to correctly prioritize true positives and exclude
+false positives is a fundamental requirement for an HTS hit triaging
+strategy, retrieving a diverse set of compounds is also crucial. To
+assess this, we investigated the ability of our approach to identify
+heterogeneous true actives and assay interferents by measuring the
+fraction of unique Murcko scaffolds among the hits for both categories
+in each data set.</p><p>In terms of false positive variety, MVS-A
+selects the most diverse selection of interferents, peaking at around
+95% scaffold diversity, closely followed by Hit Dexter and CatBoost
+object importance (<xref rid="fig4" ref-type="fig">Figure <xref rid="fig4" ref-type="fig">4</xref></xref>a). In general, data valuation algorithms such as MVS-A naturally
+tend to identify more varied interferents since they do not rely on
+the presence of specific molecular motifs in the false positives but
+rather highlight any active that deviates from the pattern they learned
+while training on the primary screening data. This more flexible definition
+of what constitutes a false positive then leads to the identification
+of more structurally different interferents, outperforming even anomaly
+detection algorithms. On the contrary, structural filters and assumption-based
+predictors are inherently biased toward specific chemical scaffolds,
+thus flagging more homogeneous compounds. One exception to this seems
+to be frequent hitters, which likely encompass several different interference
+mechanisms in their definition and, as such, have more diverse chemical
+structures.</p><fig id="fig4" position="float"><?disp-level 3?><label>Figure 4</label><caption><p>Structural diversity distribution analysis. White diamonds indicate
+the median of the distribution. (a) Distribution of the scaffold diversity
+scores across all data sets for false positive detection. (b) Distribution
+of the scaffold diversity scores across all data sets for true positive
+detection.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr4" xlink:href="oc3c01517_0004.jpg"><?cloudpmc-path blobs/e900/11046457/09235448b855/oc3c01517_0004.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1270?><?original-width 1345?><?scaled-height 635?><?scaled-width 672?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="oc3c01517_0004.gif"><?cloudpmc-path blobs/e900/11046457/be84aaa7f06d/oc3c01517_0004.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>This trend is inverted for true positive discovery,
+where both
+data valuation approaches tend to yield less diverse selections of
+true hits, centered around 60% scaffold diversity (<xref rid="fig4" ref-type="fig">Figure <xref rid="fig4" ref-type="fig">4</xref></xref>b). In this case, the true
+positives identified by MVS-A and CatBoost are the ones that fit well
+the learned class boundary between actives and inactives in the primary
+data. The boundary in this case tends to include only a limited region
+of the chemical space, leading to more structurally similar true actives.
+In contrast, primary readout ranking has no chemical bias in its selection
+criteria, thus retrieving the most diverse true positives. Finally,
+the scaffold diversity rate distribution across all data sets for
+the anomaly detection baselines is comparable with the one observed
+to randomly picking hits from each HTS (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S4</ext-link>). This is because the true positives identified by these
+methods correspond to distribution inliers, thus approximating the
+distribution of chemical motifs present in the training data.</p></sec><sec id="sec2.7" disp-level="2"><title>MVS-A Identifies False Positives Belonging to Different Interferent
+Classes</title><p>By design, MVS-A makes no assumption concerning the
+interference mechanism of the false positive compounds in the primary
+screen; therefore, it should cover all types of interferents. To test
+this assumption, we measure across all data sets the fraction of compounds
+predicted to be false positives by our method that were also identified
+by the other assumption-based predictors (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S2</ext-link>).</p><p>MVS-A shows the highest overlap across all data
+sets with the autofluorescence predictor, with a median of 66%. This
+however is likely due to the nonselectivity of the autofluorescence
+predictor, which tends to flag the majority of compounds as fluorescent
+across all data sets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S7</ext-link>). These
+overconfident predictions could be due to applicability domain issues
+given that the training set used for this model originated from assays
+related to toxicological screening. Compared to the remaining in-silico
+predictors, MVS-A shows a median overlap of 51% with the colloidal
+aggregators identified by SCAM Detective, 33% with the structural
+filters from GSK and REOS and 8% with the frequent hitters detected
+by Hit Dexter.</p><p>Taken together, these results confirm the hypothesis
+that MVS-A
+can identify different classes of false positives while showing complementary
+performance with tools covering also compound promiscuity, such as
+frequent hitter predictors and general nuisance compound structural
+alerts.</p></sec><sec id="sec2.8" disp-level="2"><title>Case Study I: Choline Transporter Inhibitor Screen from Vanderbilt
+University</title><p>To assess how well MVS-A would perform in a real
+drug discovery campaign, we investigated whether the true actives
+identified by our method are biased toward chemical moieties that
+would make them unsuitable for further pharmacological optimization.
+To do so, we re-evaluated the data set with the codename “transporter”
+from the publicly available HTS assays evaluated in this work. This
+assay was conducted in order to identify novel inhibitors for the
+presynaptic choline transporter (CHT), a potential therapeutic target
+for Alzheimer’s disease and schizophrenia.<sup><xref rid="ref49" ref-type="bibr">49</xref></sup> We chose this data set from our collection as a case study
+because the hits from its primary HTS screen were extensively validated
+by additional counterscreens and confirmatory assays (PubChem AID
+488997). The goal of these experimental validation efforts was to
+identify potent selective CHT inhibitors eliciting the desired phenotypic
+response from primary HTS hits.</p><p>After 11 rounds of screening,
+only six compounds that were present in the primary HTS made it to
+the end of the pipeline, one of which, CHT4, was a false negative
+(<xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>a). Crucially,
+all five true positives were immediately flagged as more promising
+than most other hits from the HTS campaign by MVS-A (<xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>b), ranking within the top
+20 primary HTS according to our method. Notably, among these five
+compounds there was also ML352, the best inhibitor from the screening
+campaign, which also showed suitable ADME properties.<sup><xref rid="ref49" ref-type="bibr">49</xref></sup> In contrast, ranking by experimental readout from the primary
+screen is far less efficient, with ML352, CHT5, and CHT3 ranking between
+150th and 500th, CHT1 around 750th, and CHT2 around 2300th (<xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>b,d).</p><fig id="fig5" position="float"><?disp-level 3?><label>Figure 5</label><caption><p>(a) Structures of the
+most relevant true positive compounds from
+the choline transporter inhibitor screening campaign. (b) Rank percentiles
+for the lead compounds according to MVS-A and the experimental readout
+from the primary HTS. (c) Compound ranking for the primary hits according
+to MVS-A. (d) Compound ranking according to the experimental readout
+for the primary hits.</p></caption><alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="image" id="gr5" xlink:href="oc3c01517_0005.jpg"><?cloudpmc-path blobs/e900/11046457/4198c86d0b46/oc3c01517_0005.jpg?><?cloudpmc-bucket cdn?><?image-server-status LOAD_COMPLETED?><?original-height 1962?><?original-width 1500?><?scaled-height 981?><?scaled-width 750?></graphic><graphic xmlns:xlink="http://www.w3.org/1999/xlink" content-type="thumb" xlink:href="oc3c01517_0005.gif"><?cloudpmc-path blobs/e900/11046457/58a8b9c751a9/oc3c01517_0005.gif?><?cloudpmc-bucket cdn?></graphic></alternatives></fig><p>We then used MVS-A to rank primary inactive compounds
+in terms
+of false negative likelihood by sorting inactive compounds in terms
+of importance to the underlying GBM classifier according to our method.
+Crucially, our approach correctly identified CHT4 as the most likely
+false negative compound out of all primary inactives (<xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>b). This finding is especially
+relevant, since mining dark chemical matter in HTS data is a promising
+but largely unexplored starting point for drug discovery,<sup><xref rid="ref50" ref-type="bibr">50</xref></sup> given the lack of in-silico approaches to determine
+which samples to reinvestigate.</p><p>To summarize, in this case study
+MVS-A was able to identify the
+6 most biologically relevant compounds just by observing the primary
+HTS data, including a false negative, while prioritizing molecules
+according to their experimental readout in the primary screen was
+a less efficient selection strategy. Additionally, this finding shows
+that MVS-A is not biased toward undesirable chemical moieties in terms
+of further pharmacological development.</p></sec><sec id="sec2.9" disp-level="2"><title>Case Study II: Industrial HTS Campaigns from Merck KGaA</title><p>To further evaluate the applicability of MVS-A on real scenarios,
+we investigated three currently ongoing HTS campaigns from Merck KGaA,
+aimed at different biological targets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S8</ext-link>). Each of these data sets is larger than the largest publicly available
+data set we included in our study so far, thus providing a realistic
+benchmark for how our method would fare in industrial applications.
+Due to computational limitations, we could only test MVS-A, CatBoost
+and primary readout ranking on these data sets.</p><p>In terms of
+false positive detection, on average, MVS-A outperforms all baselines
+across all metrics (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S9</ext-link>). Regarding
+true positive detection, on average, CatBoost and MVS-A achieve similar
+performance, while primary readout ranking outperforms all alternatives
+in terms of precision and BEDROC (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S10</ext-link>). In general, primary readout ranking performs much better as a
+baseline in these data sets, likely due to less assay noise compared
+to publicly available data, making the initial HTS screen more predictive
+of a compound’s performance in further validation screens.</p></sec><sec id="sec2.10" disp-level="2"><title>Limitations and Practical Guidelines for the Use of MVS-A</title><p>While MVS-A achieved excellent performance in terms of false positive
+and true positive detection, it still requires careful deployment
+for real use cases.</p><p>First, the performance of MVS-A can fluctuate
+from data set to data set, and it can be difficult to forecast how
+effective it will be for a given HTS data set. While we investigated
+the relationship between its performance and the HTS of interest,
+such as the protein target family, structural diversity of the data
+set (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S3</ext-link>), and the cross-validation
+performance of the GBM classifier (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S4</ext-link>), we could not detect meaningful correlation between these factors.
+As such, although MVS-A never performs worse than random picking in
+our benchmarks, the bias toward specific scaffolds in terms of true
+positive prioritization can be problematic if it is not associated
+with an improved true hit rate. This issue can be tackled, however,
+by hybrid hit selection strategies aimed at selecting diverse chemical
+scaffolds according to the MVS-A true hit likelihood.</p><p>Another
+factor that can influence the performance is the choice
+of molecular representation for the analysis. However, we observed
+only a 3% performance variation when using different molecular fingerprints
+and molecular descriptors (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S5</ext-link>),
+consistently with the results observed for molecular property prediction
+tasks.</p><p>In terms of computational cost, unlike other false positive
+predictors,
+MVS-A requires to be retrained for each new HTS data set. However,
+our testing shows that the algorithm is extremely efficient and lightweight,
+taking less than 5 s per data set on a server with an AMD Ryzen Threadripper
+3970X 32-Core Processor and less than 30 s on a laptop with an AMD
+Ryzen 5 3600 6-Core Processor (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Figure S6</ext-link>).</p><p>Finally, while MVS-A accurately distinguishes between interferents
+and true positives, it does not account for other relevant factors
+for hit prioritization such as promiscuity. As such, the ideal application
+of our approach is not as a stand-alone tool, but in conjunction with
+other in-silico tools, e.g., structural alerts or frequent hitter
+predictors, to get a global view of the pharmacological potential
+of each primary HTS hit. To highlight this, we revisited the top 20
+ranked compounds from the CHT inhibitor screening campaign according
+to MVS-A, as discussed in Case Study I, focusing on the 15 compounds
+our approach incorrectly selected as the true hit. Six of those could
+be removed according to REOS and GSK filters, one according to Hit
+Dexter and one according to InterPred, while SCAM Detective flagged
+most compounds as potential colloidal aggregators (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">Table S10</ext-link>). As such, the synergistic combination of these
+approaches could have brought the true positive rate from 25% when
+using MVS-A on its own to 38%.</p></sec></sec><sec id="sec3" disp-level="1"><title>Conclusions</title><p>High throughput screening holds a key role
+in current drug discovery
+research, but its impact is limited by the presence of many false
+positive compounds, making further pharmacological development of
+bioactive compounds slower and more expensive. In this study, we introduced
+minimal variance sampling analysis, a novel approach inspired by data
+valuation methods to simultaneously prioritize true positive compounds
+and detect assay interferents in HTS data.</p><p>To test our proposed
+method, we have constructed a new benchmark
+consisting of 17 primary-confirmatory HTS data set pairs, encompassing
+a variety of biological targets, assay technologies, number of compounds,
+and false positive rates.</p><p>MVS-A consistently matches or outperforms
+the other baselines 
+in terms of both false positive and true positive detection. Crucially,
+it provides average improvements up to 50%, 13%, and 14% in terms
+of relative precision, enrichment factor, and BEDROC against primary
+readout sorting, a popular heuristic used in the pharmaceutical industry
+for HTS hit prioritization. Concerning false positive discovery, our
+method can identify a wide range of structurally diverse interferents
+with low overlap with the predictions of prior in-silico tools focusing
+on compound promiscuity, making our method an excellent addition to
+HTS false positive detection pipelines.</p><p>Regarding hit prioritization,
+MVS-A was able to identify the most
+biologically relevant hits from a primary HTS campaign in a retrospective
+case study on publicly available data. Interestingly, one of the hits
+correctly detected by MVS-A was a false positive, highlighting the
+potential of our approach to detect promising compounds from dark
+chemical matter.</p><p>On the three data sets provided by Merck KGaA,
+MVS-A performs competitively
+in terms of false positive detection and false positive retrieval,
+indicating that our approach is also reliable in the chemical space
+typically explored in industrial screening campaigns.</p><p>Finally,
+our method is extremely computationally efficient, allowing
+processing of HTS data on a laptop in under 30 s with minimal RAM
+usage. In light of these results, we are confident MVS-A will help
+accelerate HTS hit triaging and will stimulate further research into
+data valuation approaches for handling large chemical data sets. We
+provide this tool as an open source package at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/dahvida/AIC_Finder" ext-link-type="uri">https://github.com/dahvida/AIC_Finder</ext-link>.</p></sec><sec id="ack1" sec-type="ack" disp-level="1"><title>Acknowledgments</title><p>The authors
+thank Merck KGaA Darmstadt for their generous
+support with the Merck Future Insight Prize 2020. This project was
+also cofunded by the European Union (ERC, breakingBAC, 101096911).
+D.B. thanks Maximilian Schuh and Joshua Hesse for their help revising
+the draft and creating the pictures.</p></sec><sec id="notes-1" disp-level="1"><title>Data Availability Statement</title><p>All PubChem
+assays investigated in this study can be accessed from PubChem according
+to their AID, as shown in <xref rid="tbl1" ref-type="table">Table <xref rid="tbl1" ref-type="table">1</xref></xref>. The Python environment, data sets, performance of
+each method across all metrics, data sets and replicates, and code
+required to reproduce the results are available at the following GitHub
+repository: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/dahvida/AIC_Finder" ext-link-type="uri">https://github.com/dahvida/AIC_Finder</ext-link>.</p></sec><sec id="notes-2" disp-level="1"><title>Supporting Information Available</title><p>The Supporting
+Information
+is available free of charge at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/10.1021/acscentsci.3c01517?goto=supporting-info" ext-link-type="uri">https://pubs.acs.org/doi/10.1021/acscentsci.3c01517</ext-link>.</p><list list-type="simple" id="silist"><list-item><p>Technical explanation of the theoretical aspects of
+MVS-A, the Methods section detailing how each approach was implemented,
+training time measurements, chemical space diversity analysis, false
+positive identification performance for the alternative machine-learning
+approaches, overlap analysis between the predictions of MVS-A and
+alternative machine-learning approaches (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acscentsci.3c01517/suppl_file/oc3c01517_si_001.pdf" ext-link-type="uri">PDF</ext-link>)</p></list-item></list></sec><sec id="notes-3" disp-level="1"><title>Author Contributions</title><p>Conceptualization:
+D.B. Benchmarking: D.B. Software: D.B. Methodology: D.B. and L.F.
+Analysis of the results: all authors. Writing original draft: D.B.
+Writing review and editing: all authors. All authors have given approval
+to the final version of the manuscript.</p></sec><sec id="NOTES-d14e772-autogenerated" disp-level="1"><p>Views and opinions expressed are
+those of the author(s) only and do not necessarily reflect those of
+the European Union or the European Research Council. Neither the European
+Union nor the granting authority can be held responsible for them.</p></sec><sec id="NOTES-d14e774-autogenerated" disp-level="1"><p>The authors declare
+no
+competing financial interest.</p></sec><sec id="sec14" disp-level="1"><title>Supplementary Material</title><supplementary-material id="sifile1" position="float"><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="oc3c01517_si_001.pdf" mimetype="application" mime-subtype="pdf"><?cloudpmc-path e900/11046457/ed3249b3e71f/oc3c01517_si_001.pdf?><?cloudpmc-bucket app?><?size 1024247?><caption><p>oc3c01517_si_001.pdf</p></caption></media></supplementary-material></sec><sec id="ref-list1" sec-type="ref-list" disp-level="1"><title>References</title><sec id="ref-list1_sec2" disp-level="2"><ref-list><ref id="ref1"><mixed-citation id="cit1"><named-content content-type="citation-string">Blay V.; Tolani B.; Ho S. P.; Arkin M. R.
+High-Throughput
+Screening: Today’s Biochemical and Cell-Based Approaches. Drug Discovery Today
+2020, 25 (10), 1807–1821. 10.1016/j.drudis.2020.07.024.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.drudis.2020.07.024"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="32801051"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Drug Discovery Today&amp;title=High-Throughput Screening: Today’s Biochemical and Cell-Based Approaches&amp;author=V. Blay&amp;author=B. Tolani&amp;author=S. P. Ho&amp;author=M. R. Arkin&amp;volume=25&amp;issue=10&amp;publication_year=2020&amp;pages=1807-1821&amp;pmid=32801051&amp;doi=10.1016/j.drudis.2020.07.024&amp;"/></mixed-citation></ref><ref id="ref2"><mixed-citation id="cit2"><named-content content-type="citation-string">Kim S.; Chen J.; Cheng T.; Gindulyte A.; He J.; He S.; Li Q.; Shoemaker B. A.; Thiessen P. A.; Yu B.; Zaslavsky L.; Zhang J.; Bolton E. E.
+PubChem in 2021: New Data Content
+and Improved Web Interfaces. Nucleic Acids Res.
+2021, 49 (D1), D1388–D1395. 10.1093/nar/gkaa971.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/nar/gkaa971"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC7778930"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="33151290"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nucleic Acids Res.&amp;title=PubChem in 2021: New Data Content and Improved Web Interfaces&amp;author=S. Kim&amp;author=J. Chen&amp;author=T. Cheng&amp;author=A. Gindulyte&amp;author=J. He&amp;volume=49&amp;issue=D1&amp;publication_year=2021&amp;pages=D1388-D1395&amp;pmid=33151290&amp;doi=10.1093/nar/gkaa971&amp;"/></mixed-citation></ref><ref id="ref3"><mixed-citation id="cit3"><named-content content-type="citation-string">Macarron R.; Banks M. N.; Bojanic D.; Burns D. J.; Cirovic D. A.; Garyantes T.; Green D. V. S.; Hertzberg R. P.; Janzen W. P.; Paslay J. W.; Schopfer U.; Sittampalam G. S.
+Impact
+of High-Throughput Screening in Biomedical Research. Nat. Rev. Drug Discovery
+2011, 10 (3), 188–195. 10.1038/nrd3368.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/nrd3368"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="21358738"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Rev. Drug Discovery&amp;title=Impact of High-Throughput Screening in Biomedical Research&amp;author=R. Macarron&amp;author=M. N. Banks&amp;author=D. Bojanic&amp;author=D. J. Burns&amp;author=D. A. Cirovic&amp;volume=10&amp;issue=3&amp;publication_year=2011&amp;pages=188-195&amp;pmid=21358738&amp;doi=10.1038/nrd3368&amp;"/></mixed-citation></ref><ref id="ref4"><mixed-citation id="cit4"><named-content content-type="citation-string">Schneider P.; Walters W. P.; Plowright A. T.; Sieroka N.; Listgarten J.; Goodnow R. A.; Fisher J.; Jansen J. M.; Duca J. S.; Rush T. S.; Zentgraf M.; Hill J. E.; Krutoholow E.; Kohler M.; Blaney J.; Funatsu K.; Luebkemann C.; Schneider G.
+Rethinking
+Drug Design in the Artificial Intelligence
+Era. Nat. Rev. Drug Discovery
+2020, 19 (5), 353–364. 10.1038/s41573-019-0050-3.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/s41573-019-0050-3"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="31801986"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Rev. Drug Discovery&amp;title=Rethinking Drug Design in the Artificial Intelligence Era&amp;author=P. Schneider&amp;author=W. P. Walters&amp;author=A. T. Plowright&amp;author=N. Sieroka&amp;author=J. Listgarten&amp;volume=19&amp;issue=5&amp;publication_year=2020&amp;pages=353-364&amp;pmid=31801986&amp;doi=10.1038/s41573-019-0050-3&amp;"/></mixed-citation></ref><ref id="ref5"><mixed-citation id="cit5"><named-content content-type="citation-string">Dahlin J. L.; Nissink J. W. M.; Strasser J. M.; Francis S.; Higgins L.; Zhou H.; Zhang Z.; Walters M. A.
+PAINS in the Assay:
+Chemical Mechanisms of Assay Interference and Promiscuous Enzymatic
+Inhibition Observed during a Sulfhydryl-Scavenging HTS. J. Med. Chem.
+2015, 58 (5), 2091–2113. 10.1021/jm5019093.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/jm5019093"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC4360378"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="25634295"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Med. Chem.&amp;title=PAINS in the Assay: Chemical Mechanisms of Assay Interference and Promiscuous Enzymatic Inhibition Observed during a Sulfhydryl-Scavenging HTS&amp;author=J. L. Dahlin&amp;author=J. W. M. Nissink&amp;author=J. M. Strasser&amp;author=S. Francis&amp;author=L. Higgins&amp;volume=58&amp;issue=5&amp;publication_year=2015&amp;pages=2091-2113&amp;pmid=25634295&amp;doi=10.1021/jm5019093&amp;"/></mixed-citation></ref><ref id="ref6"><mixed-citation id="cit6"><named-content content-type="citation-string">Stork C.; Chen Y.; Šícho M.; Kirchmair J.
+Hit Dexter
+2.0: Machine-Learning Models for the Prediction of Frequent Hitters. J. Chem. Inf. Model.
+2019, 59 (3), 1030–1043. 10.1021/acs.jcim.8b00677.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.8b00677"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="30624935"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Hit Dexter 2.0: Machine-Learning Models for the Prediction of Frequent Hitters&amp;author=C. Stork&amp;author=Y. Chen&amp;author=M. Šícho&amp;author=J. Kirchmair&amp;volume=59&amp;issue=3&amp;publication_year=2019&amp;pages=1030-1043&amp;pmid=30624935&amp;doi=10.1021/acs.jcim.8b00677&amp;"/></mixed-citation></ref><ref id="ref7"><mixed-citation id="cit7"><named-content content-type="citation-string">David L.; Walsh J.; Sturm N.; Feierberg I.; Nissink J. W. M.; Chen H.; Bajorath J.; Engkvist O.
+Identification
+of Compounds That Interfere with High-Throughput Screening Assay Technologies. ChemMedChem.
+2019, 14 (20), 1795–1802. 10.1002/cmdc.201900395.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1002/cmdc.201900395"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC6856845"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="31479198"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=ChemMedChem.&amp;title=Identification of Compounds That Interfere with High-Throughput Screening Assay Technologies&amp;author=L. David&amp;author=J. Walsh&amp;author=N. Sturm&amp;author=I. Feierberg&amp;author=J. W. M. Nissink&amp;volume=14&amp;issue=20&amp;publication_year=2019&amp;pages=1795-1802&amp;pmid=31479198&amp;doi=10.1002/cmdc.201900395&amp;"/></mixed-citation></ref><ref id="ref8"><mixed-citation id="cit8"><named-content content-type="citation-string">Baell J. B.; Nissink J. W. M.
+Seven Year Itch:
+Pan-Assay Interference Compounds (PAINS)
+in 2017—Utility and Limitations. ACS
+Chem. Biol.
+2018, 13 (1), 36–44. 10.1021/acschembio.7b00903.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acschembio.7b00903"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC5778390"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29202222"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=ACS Chem. Biol.&amp;title=Seven Year Itch: Pan-Assay Interference Compounds (PAINS) in 2017—Utility and Limitations&amp;author=J. B. Baell&amp;author=J. W. M. Nissink&amp;volume=13&amp;issue=1&amp;publication_year=2018&amp;pages=36-44&amp;pmid=29202222&amp;doi=10.1021/acschembio.7b00903&amp;"/></mixed-citation></ref><ref id="ref9"><mixed-citation id="cit9"><named-content content-type="citation-string">Sink R.; Gobec S.; Pečar S.; Zega A.
+False Positives in
+the Early Stages of Drug Discovery. Curr. Med.
+Chem.
+2010, 17 (34), 4231–4255. 10.2174/092986710793348545.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.2174/092986710793348545"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="20939815"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Curr. Med. Chem.&amp;title=False Positives in the Early Stages of Drug Discovery&amp;author=R. Sink&amp;author=S. Gobec&amp;author=S. Pečar&amp;author=A. Zega&amp;volume=17&amp;issue=34&amp;publication_year=2010&amp;pages=4231-4255&amp;pmid=20939815&amp;doi=10.2174/092986710793348545&amp;"/></mixed-citation></ref><ref id="ref10"><mixed-citation id="cit10"><named-content content-type="citation-string">Auld D. S.; Inglese J.; Dahlin J. L.. Assay Interference
+by Aggregation. In Assay Guidance Manual; Markossian S., Grossman A., Brimacombe K., Arkin M., Auld D., Austin C., Baell J., Chung T. D. Y., Coussens N. P., Dahlin J. L., Devanarayan V., Foley T. L., Glicksman M., Gorshkov K., Haas J. V., Hall M. D., Hoare S., Inglese J., Iversen P. W., Kales S. C., Lal-Nag M., Li Z., McGee J., McManus O., Riss T., Saradjian P., Sittampalam G. S., Tarselli M., Trask O.
+J., Wang Y., Weidner J. R., Wildey M. J., Wilson K., Xia M., Xu X., Eds.; Eli Lilly &amp; Company and the National
+Center for Advancing Translational Sciences: Bethesda (MD), 2004.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="28749639"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="title=Assay Guidance Manual&amp;publication_year=2004&amp;"/></mixed-citation></ref><ref id="ref11"><mixed-citation id="cit11"><named-content content-type="citation-string">Hall M. D.; Simeonov A.; Davis M. I.
+Avoiding Fluorescence Assay Interference—The
+Case for Diaphorase. Assay Drug Dev. Technol.
+2016, 14 (3), 175–179. 10.1089/adt.2016.707.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1089/adt.2016.707"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC4840916"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="27078679"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Assay Drug Dev. Technol.&amp;title=Avoiding Fluorescence Assay Interference—The Case for Diaphorase&amp;author=M. D. Hall&amp;author=A. Simeonov&amp;author=M. I. Davis&amp;volume=14&amp;issue=3&amp;publication_year=2016&amp;pages=175-179&amp;pmid=27078679&amp;doi=10.1089/adt.2016.707&amp;"/></mixed-citation></ref><ref id="ref12"><mixed-citation id="cit12"><named-content content-type="citation-string">Huth J. R.; Mendoza R.; Olejniczak E. T.; Johnson R. W.; Cothron D. A.; Liu Y.; Lerner C. G.; Chen J.; Hajduk P. J.
+ALARM NMR: A Rapid
+and Robust Experimental Method To Detect Reactive False Positives
+in Biochemical Screens. J. Am. Chem. Soc.
+2005, 127 (1), 217–224. 10.1021/ja0455547.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/ja0455547"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="15631471"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Am. Chem. Soc.&amp;title=ALARM NMR: A Rapid and Robust Experimental Method To Detect Reactive False Positives in Biochemical Screens&amp;author=J. R. Huth&amp;author=R. Mendoza&amp;author=E. T. Olejniczak&amp;author=R. W. Johnson&amp;author=D. A. Cothron&amp;volume=127&amp;issue=1&amp;publication_year=2005&amp;pages=217-224&amp;pmid=15631471&amp;doi=10.1021/ja0455547&amp;"/></mixed-citation></ref><ref id="ref13"><mixed-citation id="cit13"><named-content content-type="citation-string">Hermann J.
+C.; Chen Y.; Wartchow C.; Menke J.; Gao L.; Gleason S. K.; Haynes N.-E.; Scott N.; Petersen A.; Gabriel S.; Vu B.; George K. M.; Narayanan A.; Li S. H.; Qian H.; Beatini N.; Niu L.; Gan Q.-F.
+Metal Impurities
+Cause False Positives in High-Throughput
+Screening Campaigns. ACS Med. Chem. Lett.
+2013, 4 (2), 197–200. 10.1021/ml3003296.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/ml3003296"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC4027514"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="24900642"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=ACS Med. Chem. Lett.&amp;title=Metal Impurities Cause False Positives in High-Throughput Screening Campaigns&amp;author=J. C. Hermann&amp;author=Y. Chen&amp;author=C. Wartchow&amp;author=J. Menke&amp;author=L. Gao&amp;volume=4&amp;issue=2&amp;publication_year=2013&amp;pages=197-200&amp;pmid=24900642&amp;doi=10.1021/ml3003296&amp;"/></mixed-citation></ref><ref id="ref14"><mixed-citation id="cit14"><named-content content-type="citation-string">Dragiev P.; Nadon R.; Makarenkov V.
+Systematic
+Error Detection in Experimental
+High-Throughput Screening. BMC Bioinformatics
+2011, 12 (1), 25. 10.1186/1471-2105-12-25.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/1471-2105-12-25"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC3034671"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="21247425"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=BMC Bioinformatics&amp;title=Systematic Error Detection in Experimental High-Throughput Screening&amp;author=P. Dragiev&amp;author=R. Nadon&amp;author=V. Makarenkov&amp;volume=12&amp;issue=1&amp;publication_year=2011&amp;pages=25&amp;pmid=21247425&amp;doi=10.1186/1471-2105-12-25&amp;"/></mixed-citation></ref><ref id="ref15"><mixed-citation id="cit15"><named-content content-type="citation-string">Vincent F.; Loria P. M.; Weston A. D.; Steppan C. M.; Doyonnas R.; Wang Y.-M.; Rockwell K. L.; Peakman M.-C.
+Hit Triage and Validation
+in Phenotypic Screening: Considerations and Strategies. Cell Chem. Biol.
+2020, 27 (11), 1332–1346. 10.1016/j.chembiol.2020.08.009.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.chembiol.2020.08.009"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="32888500"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Cell Chem. Biol.&amp;title=Hit Triage and Validation in Phenotypic Screening: Considerations and Strategies&amp;author=F. Vincent&amp;author=P. M. Loria&amp;author=A. D. Weston&amp;author=C. M. Steppan&amp;author=R. Doyonnas&amp;volume=27&amp;issue=11&amp;publication_year=2020&amp;pages=1332-1346&amp;pmid=32888500&amp;doi=10.1016/j.chembiol.2020.08.009&amp;"/></mixed-citation></ref><ref id="ref16"><mixed-citation id="cit16"><named-content content-type="citation-string">Hughes J.; Rees S.; Kalindjian S.; Philpott K.
+Principles of Early
+Drug Discovery. Br. J. Pharmacol.
+2011, 162 (6), 1239–1249. 10.1111/j.1476-5381.2010.01127.x.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1111/j.1476-5381.2010.01127.x"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC3058157"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="21091654"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Br. J. Pharmacol.&amp;title=Principles of Early Drug Discovery&amp;author=J. Hughes&amp;author=S. Rees&amp;author=S. Kalindjian&amp;author=K. Philpott&amp;volume=162&amp;issue=6&amp;publication_year=2011&amp;pages=1239-1249&amp;pmid=21091654&amp;doi=10.1111/j.1476-5381.2010.01127.x&amp;"/></mixed-citation></ref><ref id="ref17"><mixed-citation id="cit17"><named-content content-type="citation-string">Hevener K. E.; Pesavento R.; Ren J.; Lee H.; Ratia K.; Johnson M. E.. Chapter Twelve - Hit-to-Lead: Hit Validation and
+Assessment. In Methods in Enzymology; Lesburg C. A., Ed.; Modern Approaches
+in Drug Discovery; Academic Press, 2018; Vol. 610, pp 265–309. 10.1016/bs.mie.2018.09.022.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/bs.mie.2018.09.022"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="30390802"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="title=Methods in Enzymology&amp;publication_year=2018&amp;"/></mixed-citation></ref><ref id="ref18"><mixed-citation id="cit18"><named-content content-type="citation-string">Stork C.; Wagner J.; Friedrich N.-O.; de Bruyn Kops C.; Šícho M.; Kirchmair J.
+Hit Dexter:
+A Machine-Learning Model
+for the Prediction of Frequent Hitters. ChemMedChem.
+2018, 13 (6), 564–571. 10.1002/cmdc.201700673.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1002/cmdc.201700673"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29285887"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=ChemMedChem.&amp;title=Hit Dexter: A Machine-Learning Model for the Prediction of Frequent Hitters&amp;author=C. Stork&amp;author=J. Wagner&amp;author=N.-O. Friedrich&amp;author=C. de Bruyn Kops&amp;author=M. Šícho&amp;volume=13&amp;issue=6&amp;publication_year=2018&amp;pages=564-571&amp;pmid=29285887&amp;doi=10.1002/cmdc.201700673&amp;"/></mixed-citation></ref><ref id="ref19"><mixed-citation id="cit19"><named-content content-type="citation-string">Yang Z.-Y.; Yang Z.-J.; Dong J.; Wang L.-L.; Zhang L.-X.; Ding J.-J.; Ding X.-Q.; Lu A.-P.; Hou T.-J.; Cao D.-S.
+Structural Analysis and Identification of Colloidal
+Aggregators in Drug Discovery. J. Chem. Inf.
+Model.
+2019, 59 (9), 3714–3726. 10.1021/acs.jcim.9b00541.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.9b00541"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="31430151"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Structural Analysis and Identification of Colloidal Aggregators in Drug Discovery&amp;author=Z.-Y. Yang&amp;author=Z.-J. Yang&amp;author=J. Dong&amp;author=L.-L. Wang&amp;author=L.-X. Zhang&amp;volume=59&amp;issue=9&amp;publication_year=2019&amp;pages=3714-3726&amp;pmid=31430151&amp;doi=10.1021/acs.jcim.9b00541&amp;"/></mixed-citation></ref><ref id="ref20"><mixed-citation id="cit20"><named-content content-type="citation-string">Irwin J. J.; Duan D.; Torosyan H.; Doak A. K.; Ziebart K. T.; Sterling T.; Tumanian G.; Shoichet B. K.
+An Aggregation
+Advisor
+for Ligand Discovery. J. Med. Chem.
+2015, 58 (17), 7076–7087. 10.1021/acs.jmedchem.5b01105.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jmedchem.5b01105"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC4646424"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="26295373"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Med. Chem.&amp;title=An Aggregation Advisor for Ligand Discovery&amp;author=J. J. Irwin&amp;author=D. Duan&amp;author=H. Torosyan&amp;author=A. K. Doak&amp;author=K. T. Ziebart&amp;volume=58&amp;issue=17&amp;publication_year=2015&amp;pages=7076-7087&amp;pmid=26295373&amp;doi=10.1021/acs.jmedchem.5b01105&amp;"/></mixed-citation></ref><ref id="ref21"><mixed-citation id="cit21"><named-content content-type="citation-string">Lee K.; Yang A.; Lin Y.-C.; Reker D.; Bernardes G. J. L.; Rodrigues T.
+Combating Small-Molecule Aggregation with Machine Learning. Cell Rep. Phys. Sci.
+2021, 2 (9), 100573 10.1016/j.xcrp.2021.100573.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.xcrp.2021.100573"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Cell Rep. Phys. Sci.&amp;title=Combating Small-Molecule Aggregation with Machine Learning&amp;author=K. Lee&amp;author=A. Yang&amp;author=Y.-C. Lin&amp;author=D. Reker&amp;author=G. J. L. Bernardes&amp;volume=2&amp;issue=9&amp;publication_year=2021&amp;pages=100573&amp;doi=10.1016/j.xcrp.2021.100573&amp;"/></mixed-citation></ref><ref id="ref22"><mixed-citation id="cit22"><named-content content-type="citation-string">Borrel A.; Mansouri K.; Nolte S.; Saddler T.; Conway M.; Schmitt C.; Kleinstreuer N. C.
+InterPred:
+A Webtool to Predict Chemical
+Autofluorescence and Luminescence Interference. Nucleic Acids Res.
+2020, 48 (W1), W586–W590. 10.1093/nar/gkaa378.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1093/nar/gkaa378"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC7319558"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="32421835"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nucleic Acids Res.&amp;title=InterPred: A Webtool to Predict Chemical Autofluorescence and Luminescence Interference&amp;author=A. Borrel&amp;author=K. Mansouri&amp;author=S. Nolte&amp;author=T. Saddler&amp;author=M. Conway&amp;volume=48&amp;issue=W1&amp;publication_year=2020&amp;pages=W586-W590&amp;pmid=32421835&amp;doi=10.1093/nar/gkaa378&amp;"/></mixed-citation></ref><ref id="ref23"><mixed-citation id="cit23"><named-content content-type="citation-string">Pruthi G.; Liu F.; Sundararajan M.; Kale S.. Estimating Training
+Data Influence
+by Tracing Gradient Descent. arXiv, November 14, 2020. 10.48550/arXiv.2002.08484 (accessed 2022-08-31).</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2002.08484"/></mixed-citation></ref><ref id="ref24"><mixed-citation id="cit24"><named-content content-type="citation-string">Feng Y.; Tu Y.
+Phases of Learning
+Dynamics in Artificial Neural Networks in the
+Absence or Presence of Mislabeled Data. Mach.
+Learn. Sci. Technol.
+2021, 2 (4), 043001 10.1088/2632-2153/abf5b9.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1088/2632-2153/abf5b9"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Mach. Learn. Sci. Technol.&amp;title=Phases of Learning Dynamics in Artificial Neural Networks in the Absence or Presence of Mislabeled Data&amp;author=Y. Feng&amp;author=Y. Tu&amp;volume=2&amp;issue=4&amp;publication_year=2021&amp;pages=043001&amp;doi=10.1088/2632-2153/abf5b9&amp;"/></mixed-citation></ref><ref id="ref25"><mixed-citation id="cit25"><named-content content-type="citation-string">Pleiss G.; Zhang T.; Weinberger K. Q.; Elenberg E.. Identifying Mislabeled
+Data
+Using the Area Under the Margin Ranking arXiv, 2020. 10.48550/arXiv.2001.10528.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2001.10528"/></mixed-citation></ref><ref id="ref26"><mixed-citation id="cit26"><named-content content-type="citation-string">Akyurek E.; Bolukbasi T.; Liu F.; Xiong B.; Tenney I.; Andreas J.; Guu K.. Towards Tracing Knowledge in Language Models Back
+to the Training Data. In Findings of the Association
+for Computational Linguistics: EMNLP 2022; Association for Computational Linguistics: Abu Dhabi, United Arab Emirates, 2022; pp 2429–2446.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="title=Findings of the Association for Computational Linguistics: EMNLP 2022&amp;publication_year=2022&amp;"/></mixed-citation></ref><ref id="ref27"><mixed-citation id="cit27"><named-content content-type="citation-string">Lu Y.; Bo Y.; He W.
+Noise Attention Learning: Enhancing Noise Robustness
+by Gradient Scaling. Adv. Neural Inf. Process.
+Syst.
+2022, 35, 23164–23177.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Adv. Neural Inf. Process. Syst.&amp;title=Noise Attention Learning: Enhancing Noise Robustness by Gradient Scaling&amp;author=Y. Lu&amp;author=Y. Bo&amp;author=W. He&amp;volume=35&amp;publication_year=2022&amp;pages=23164-23177&amp;"/></mixed-citation></ref><ref id="ref28"><mixed-citation id="cit28"><named-content content-type="citation-string">Toniato A.; Schwaller P.; Cardinale A.; Geluykens J.; Laino T.
+Unassisted Noise Reduction
+of Chemical Reaction Datasets. Nat. Mach. Intell.
+2021, 3 (6), 485–494. 10.1038/s42256-021-00319-w.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/s42256-021-00319-w"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Mach. Intell.&amp;title=Unassisted Noise Reduction of Chemical Reaction Datasets&amp;author=A. Toniato&amp;author=P. Schwaller&amp;author=A. Cardinale&amp;author=J. Geluykens&amp;author=T. Laino&amp;volume=3&amp;issue=6&amp;publication_year=2021&amp;pages=485-494&amp;doi=10.1038/s42256-021-00319-w&amp;"/></mixed-citation></ref><ref id="ref29"><mixed-citation id="cit29"><named-content content-type="citation-string">Keshavarzi
+Arshadi A.; Salem M.; Firouzbakht A.; Yuan J. S.
+MolData, a Molecular Benchmark for Disease and Target
+Based Machine Learning. J. Cheminformatics
+2022, 14 (1), 10. 10.1186/s13321-022-00590-y.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-022-00590-y"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC8899453"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="35255958"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=MolData, a Molecular Benchmark for Disease and Target Based Machine Learning&amp;author=A. Keshavarzi Arshadi&amp;author=M. Salem&amp;author=A. Firouzbakht&amp;author=J. S. Yuan&amp;volume=14&amp;issue=1&amp;publication_year=2022&amp;pages=10&amp;pmid=35255958&amp;doi=10.1186/s13321-022-00590-y&amp;"/></mixed-citation></ref><ref id="ref30"><mixed-citation id="cit30"><named-content content-type="citation-string">Korkmaz S.
+Deep Learning-Based
+Imbalanced Data Classification for Drug Discovery. J. Chem. Inf. Model.
+2020, 60 (9), 4180–4190. 10.1021/acs.jcim.9b01162.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.9b01162"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="32573225"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=Deep Learning-Based Imbalanced Data Classification for Drug Discovery&amp;author=S. Korkmaz&amp;volume=60&amp;issue=9&amp;publication_year=2020&amp;pages=4180-4190&amp;pmid=32573225&amp;doi=10.1021/acs.jcim.9b01162&amp;"/></mixed-citation></ref><ref id="ref31"><mixed-citation id="cit31"><named-content content-type="citation-string">Boldini D.; Friedrich L.; Kuhn D.; Sieber S. A.
+Tuning Gradient
+Boosting for Imbalanced Bioassay Modelling with Custom Loss Functions. J. Cheminformatics
+2022, 14 (1), 80. 10.1186/s13321-022-00657-w.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-022-00657-w"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC9650867"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="36357942"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=Tuning Gradient Boosting for Imbalanced Bioassay Modelling with Custom Loss Functions&amp;author=D. Boldini&amp;author=L. Friedrich&amp;author=D. Kuhn&amp;author=S. A. Sieber&amp;volume=14&amp;issue=1&amp;publication_year=2022&amp;pages=80&amp;pmid=36357942&amp;doi=10.1186/s13321-022-00657-w&amp;"/></mixed-citation></ref><ref id="ref32"><mixed-citation id="cit32"><named-content content-type="citation-string">Jiang D.; Wu Z.; Hsieh C.-Y.; Chen G.; Liao B.; Wang Z.; Shen C.; Cao D.; Wu J.; Hou T.
+Could Graph
+Neural Networks Learn Better Molecular Representation for Drug Discovery?
+A Comparison Study of Descriptor-Based and Graph-Based Models. J. Cheminformatics
+2021, 13 (1), 12. 10.1186/s13321-020-00479-8.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/s13321-020-00479-8"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC7888189"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="33597034"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Cheminformatics&amp;title=Could Graph Neural Networks Learn Better Molecular Representation for Drug Discovery? A Comparison Study of Descriptor-Based and Graph-Based Models&amp;author=D. Jiang&amp;author=Z. Wu&amp;author=C.-Y. Hsieh&amp;author=G. Chen&amp;author=B. Liao&amp;volume=13&amp;issue=1&amp;publication_year=2021&amp;pages=12&amp;pmid=33597034&amp;doi=10.1186/s13321-020-00479-8&amp;"/></mixed-citation></ref><ref id="ref33"><mixed-citation id="cit33"><named-content content-type="citation-string">Zhao W.; Hevener K. E.; White S. W.; Lee R. E.; Boyett J. M.
+A Statistical
+Framework to Evaluate Virtual Screening. BMC
+Bioinformatics
+2009, 10 (1), 225. 10.1186/1471-2105-10-225.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1186/1471-2105-10-225"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC2722655"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="19619306"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=BMC Bioinformatics&amp;title=A Statistical Framework to Evaluate Virtual Screening&amp;author=W. Zhao&amp;author=K. E. Hevener&amp;author=S. W. White&amp;author=R. E. Lee&amp;author=J. M. Boyett&amp;volume=10&amp;issue=1&amp;publication_year=2009&amp;pages=225&amp;pmid=19619306&amp;doi=10.1186/1471-2105-10-225&amp;"/></mixed-citation></ref><ref id="ref34"><mixed-citation id="cit34"><named-content content-type="citation-string">Butkiewicz M.; Wang Y.; Bryant S. H.; Lowe E. W. Jr.; Weaver D. C.; Meiler J.
+High-Throughput Screening
+Assay Datasets
+from the PubChem Database. Chem. Inf. (Wilmington,
+Del)
+2017, 3 (1), 1. 10.21767/2470-6973.100022.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.21767/2470-6973.100022"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC5962024"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29795804"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Chem. Inf. (Wilmington, Del)&amp;title=High-Throughput Screening Assay Datasets from the PubChem Database&amp;author=M. Butkiewicz&amp;author=Y. Wang&amp;author=S. H. Bryant&amp;author=E. W. Lowe&amp;author=D. C. Weaver&amp;volume=3&amp;issue=1&amp;publication_year=2017&amp;pages=1&amp;pmid=29795804&amp;doi=10.21767/2470-6973.100022&amp;"/></mixed-citation></ref><ref id="ref35"><mixed-citation id="cit35"><named-content content-type="citation-string">Buterez D.; Janet J. P.; Kiddle S. J.; Liò P.
+MF-PCBA: Multifidelity
+High-Throughput Screening Benchmarks for Drug Discovery and Machine
+Learning. J. Chem. Inf. Model.
+2023, 63 (9), 2667–2678. 10.1021/acs.jcim.2c01569.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.2c01569"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC10170507"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="37058588"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=MF-PCBA: Multifidelity High-Throughput Screening Benchmarks for Drug Discovery and Machine Learning&amp;author=D. Buterez&amp;author=J. P. Janet&amp;author=S. J. Kiddle&amp;author=P. Liò&amp;volume=63&amp;issue=9&amp;publication_year=2023&amp;pages=2667-2678&amp;pmid=37058588&amp;doi=10.1021/acs.jcim.2c01569&amp;"/></mixed-citation></ref><ref id="ref36"><mixed-citation id="cit36"><named-content content-type="citation-string">Chakravorty S. J.; Chan J.; Greenwood M. N.; Popa-Burke I.; Remlinger K. S.; Pickett S. D.; Green D. V. S.; Fillmore M. C.; Dean T. W.; Luengo J. I.; Macarrón R.
+Nuisance Compounds,
+PAINS Filters, and Dark Chemical Matter in the GSK HTS Collection. SLAS Discovery
+2018, 23 (6), 532–544. 10.1177/2472555218768497.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1177/2472555218768497"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29699447"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=SLAS Discovery&amp;title=Nuisance Compounds, PAINS Filters, and Dark Chemical Matter in the GSK HTS Collection&amp;author=S. J. Chakravorty&amp;author=J. Chan&amp;author=M. N. Greenwood&amp;author=I. Popa-Burke&amp;author=K. S. Remlinger&amp;volume=23&amp;issue=6&amp;publication_year=2018&amp;pages=532-544&amp;pmid=29699447&amp;doi=10.1177/2472555218768497&amp;"/></mixed-citation></ref><ref id="ref37"><mixed-citation id="cit37"><named-content content-type="citation-string">Walters W. P.; Namchuk M.
+Designing Screens:
+How to Make Your Hits a Hit. Nat. Rev. Drug
+Discovery
+2003, 2 (4), 259–266. 10.1038/nrd1063.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/nrd1063"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="12669025"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Rev. Drug Discovery&amp;title=Designing Screens: How to Make Your Hits a Hit&amp;author=W. P. Walters&amp;author=M. Namchuk&amp;volume=2&amp;issue=4&amp;publication_year=2003&amp;pages=259-266&amp;pmid=12669025&amp;doi=10.1038/nrd1063&amp;"/></mixed-citation></ref><ref id="ref38"><mixed-citation id="cit38"><named-content content-type="citation-string">Sharchilev B.; Ustinovsky Y.; Serdyukov P.; de Rijke M.. Finding
+Influential Training Samples for Gradient Boosted Decision Trees. arXiv, March 12, 2018. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://arxiv.org/abs/1802.06640" ext-link-type="uri">http://arxiv.org/abs/1802.06640</ext-link> (accessed 2022-07-29).</named-content></mixed-citation></ref><ref id="ref39"><mixed-citation id="cit39"><named-content content-type="citation-string">Liu F. T.; Ting K. M.; Zhou Z.-H.. Isolation Forest. In 2008Eighth IEEE International Conference
+on Data Mining; IEEE: Pisa, Italy, 2008; pp 413–422. 10.1109/ICDM.2008.17.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1109/ICDM.2008.17"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="title=Eighth IEEE International Conference on Data Mining&amp;publication_year=2008&amp;"/></mixed-citation></ref><ref id="ref40"><mixed-citation id="cit40"><named-content content-type="citation-string">Pedregosa F.et al. Scikit-Learn:
+Machine Learning in Python. J. Machine Learning
+Res. 201112</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Machine Learning Res.&amp;title=Scikit-Learn: Machine Learning in Python&amp;volume=12&amp;publication_year=2011&amp;"/></mixed-citation></ref><ref id="ref41"><mixed-citation id="cit41"><named-content content-type="citation-string">Albuquerque
+Filho J. E. D.; Brandao L. C. P.; Fernandes B. J. T.; Maciel A. M. A.
+A Review of Neural Networks for Anomaly Detection. IEEE Access
+2022, 10, 112342–112367. 10.1109/ACCESS.2022.3216007.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1109/ACCESS.2022.3216007"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=IEEE Access&amp;title=A Review of Neural Networks for Anomaly Detection&amp;author=J. E. D. Albuquerque Filho&amp;author=L. C. P. Brandao&amp;author=B. J. T. Fernandes&amp;author=A. M. A. Maciel&amp;volume=10&amp;publication_year=2022&amp;pages=112342-112367&amp;doi=10.1109/ACCESS.2022.3216007&amp;"/></mixed-citation></ref><ref id="ref42"><mixed-citation id="cit42"><named-content content-type="citation-string">Kingma D. P.; Welling M.. Auto-Encoding
+Variational Bayes. arXiv December
+10, 2022. 10.48550/arXiv.1312.6114.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.1312.6114"/></mixed-citation></ref><ref id="ref43"><mixed-citation id="cit43"><named-content content-type="citation-string">Ruff L.; Kauffmann J. R.; Vandermeulen R. A.; Montavon G.; Samek W.; Kloft M.; Dietterich T. G.; Muller K.-R.
+A Unifying Review
+of Deep and Shallow Anomaly Detection. Proc.
+IEEE
+2021, 109 (5), 756–795. 10.1109/JPROC.2021.3052449.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1109/JPROC.2021.3052449"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Proc. IEEE&amp;title=A Unifying Review of Deep and Shallow Anomaly Detection&amp;author=L. Ruff&amp;author=J. R. Kauffmann&amp;author=R. A. Vandermeulen&amp;author=G. Montavon&amp;author=W. Samek&amp;volume=109&amp;issue=5&amp;publication_year=2021&amp;pages=756-795&amp;doi=10.1109/JPROC.2021.3052449&amp;"/></mixed-citation></ref><ref id="ref44"><mixed-citation id="cit44"><named-content content-type="citation-string">Gómez-Bombarelli R.; Wei J. N.; Duvenaud D.; Hernández-Lobato J. M.; Sánchez-Lengeling B.; Sheberla D.; Aguilera-Iparraguirre J.; Hirzel T. D.; Adams R. P.; Aspuru-Guzik A.
+Automatic
+Chemical Design Using a Data-Driven Continuous Representation of Molecules. ACS Cent. Sci.
+2018, 4 (2), 268–276. 10.1021/acscentsci.7b00572.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acscentsci.7b00572"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC5833007"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29532027"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=ACS Cent. Sci.&amp;title=Automatic Chemical Design Using a Data-Driven Continuous Representation of Molecules&amp;author=R. Gómez-Bombarelli&amp;author=J. N. Wei&amp;author=D. Duvenaud&amp;author=J. M. Hernández-Lobato&amp;author=B. Sánchez-Lengeling&amp;volume=4&amp;issue=2&amp;publication_year=2018&amp;pages=268-276&amp;pmid=29532027&amp;doi=10.1021/acscentsci.7b00572&amp;"/></mixed-citation></ref><ref id="ref45"><mixed-citation id="cit45"><named-content content-type="citation-string">Stork C.; Mathai N.; Kirchmair J.
+Computational
+Prediction of Frequent
+Hitters in Target-Based and Cell-Based Assays. Artif. Intell. Life Sci.
+2021, 1, 100007 10.1016/j.ailsci.2021.100007.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.ailsci.2021.100007"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Artif. Intell. Life Sci.&amp;title=Computational Prediction of Frequent Hitters in Target-Based and Cell-Based Assays&amp;author=C. Stork&amp;author=N. Mathai&amp;author=J. Kirchmair&amp;volume=1&amp;publication_year=2021&amp;pages=100007&amp;doi=10.1016/j.ailsci.2021.100007&amp;"/></mixed-citation></ref><ref id="ref46"><mixed-citation id="cit46"><named-content content-type="citation-string">Alves V. M.; Capuzzi S. J.; Braga R. C.; Korn D.; Hochuli J. E.; Bowler K. H.; Yasgar A.; Rai G.; Simeonov A.; Muratov E. N.; Zakharov A. V.; Tropsha A.
+SCAM Detective:
+Accurate
+Predictor of Small, Colloidally Aggregating Molecules. J. Chem. Inf. Model.
+2020, 60 (8), 4056–4063. 10.1021/acs.jcim.0c00415.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1021/acs.jcim.0c00415"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="32678597"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=J. Chem. Inf. Model.&amp;title=SCAM Detective: Accurate Predictor of Small, Colloidally Aggregating Molecules&amp;author=V. M. Alves&amp;author=S. J. Capuzzi&amp;author=R. C. Braga&amp;author=D. Korn&amp;author=J. E. Hochuli&amp;volume=60&amp;issue=8&amp;publication_year=2020&amp;pages=4056-4063&amp;pmid=32678597&amp;doi=10.1021/acs.jcim.0c00415&amp;"/></mixed-citation></ref><ref id="ref47"><mixed-citation id="cit47"><named-content content-type="citation-string">Senger M. R.; Fraga C. A. M.; Dantas R. F.; Silva F. P.
+Filtering Promiscuous
+Compounds in Early Drug Discovery: Is It a Good Idea?. Drug Discovery Today
+2016, 21 (6), 868–872. 10.1016/j.drudis.2016.02.004.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.drudis.2016.02.004"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="26880580"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Drug Discovery Today&amp;title=Filtering Promiscuous Compounds in Early Drug Discovery: Is It a Good Idea?&amp;author=M. R. Senger&amp;author=C. A. M. Fraga&amp;author=R. F. Dantas&amp;author=F. P. Silva&amp;volume=21&amp;issue=6&amp;publication_year=2016&amp;pages=868-872&amp;pmid=26880580&amp;doi=10.1016/j.drudis.2016.02.004&amp;"/></mixed-citation></ref><ref id="ref48"><mixed-citation id="cit48"><named-content content-type="citation-string">Dantas R. F.; Evangelista T. C. S.; Neves B. J.; Senger M. R.; Andrade C. H.; Ferreira S. B.; Silva-Junior F. P.
+Dealing with Frequent Hitters in
+Drug Discovery: A Multidisciplinary View on the Issue of Filtering
+Compounds on Biological Screenings. Expert Opin.
+Drug Discovery
+2019, 14 (12), 1269–1282. 10.1080/17460441.2019.1654453.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1080/17460441.2019.1654453"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="31416369"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Expert Opin. Drug Discovery&amp;title=Dealing with Frequent Hitters in Drug Discovery: A Multidisciplinary View on the Issue of Filtering Compounds on Biological Screenings&amp;author=R. F. Dantas&amp;author=T. C. S. Evangelista&amp;author=B. J. Neves&amp;author=M. R. Senger&amp;author=C. H. Andrade&amp;volume=14&amp;issue=12&amp;publication_year=2019&amp;pages=1269-1282&amp;pmid=31416369&amp;doi=10.1080/17460441.2019.1654453&amp;"/></mixed-citation></ref><ref id="ref49"><mixed-citation id="cit49"><named-content content-type="citation-string">Bollinger S. R.; Engers D. W.; Ennis E. A.; Wright J.; Locuson C. W.; Lindsley C. W.; Blakely R. D.; Hopkins C. R.
+Synthesis and Structure-Activity
+Relationships of a Series of 4-Methoxy-3-(Piperidin-4-Yl)Oxy Benzamides
+as Novel Inhibitors of the Presynaptic Choline Transporter. Bioorg. Med. Chem. Lett.
+2015, 25 (8), 1757–1760. 10.1016/j.bmcl.2015.02.058.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1016/j.bmcl.2015.02.058"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmcid" xlink:href="PMC4385452"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="25801932"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Bioorg. Med. Chem. Lett.&amp;title=Synthesis and Structure-Activity Relationships of a Series of 4-Methoxy-3-(Piperidin-4-Yl)Oxy Benzamides as Novel Inhibitors of the Presynaptic Choline Transporter&amp;author=S. R. Bollinger&amp;author=D. W. Engers&amp;author=E. A. Ennis&amp;author=J. Wright&amp;author=C. W. Locuson&amp;volume=25&amp;issue=8&amp;publication_year=2015&amp;pages=1757-1760&amp;pmid=25801932&amp;doi=10.1016/j.bmcl.2015.02.058&amp;"/></mixed-citation></ref><ref id="ref50"><mixed-citation id="cit50"><named-content content-type="citation-string">Wassermann A. M.; Lounkine E.; Hoepfner D.; Le Goff G.; King F. J; Studer C.; Peltier J. M; Grippo M. L; Prindle V.; Tao J.; Schuffenhauer A.; Wallace I. M; Chen S.; Krastel P.; Cobos-Correa A.; Parker C. N; Davies J. W; Glick M.
+Dark chemical matter
+as a promising starting point for drug lead
+discovery. Nat. Chem. Biol.
+2015, 11, 958–966. 10.1038/nchembio.1936.
+</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.1038/nchembio.1936"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="26479441"/><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="google-scholar" xlink:href="journal=Nat. Chem. Biol.&amp;title=Dark chemical matter as a promising starting point for drug lead discovery&amp;author=A. M. Wassermann&amp;author=E. Lounkine&amp;author=D. Hoepfner&amp;author=G. Le Goff&amp;author=F. J King&amp;volume=11&amp;publication_year=2015&amp;pages=958-966&amp;pmid=26479441&amp;doi=10.1038/nchembio.1936&amp;"/></mixed-citation></ref></ref-list></sec></sec><sec id="_ad93_" xml:lang="en" sec-type="associated-data" disp-level="1"><title>Associated Data</title><sec id="_adc93_" xml:lang="en" sec-type="data-citations" disp-level="2"><title>Data Citations</title><ref-list><ref id="_dbx_ref_cit23"><mixed-citation><named-content content-type="citation-string">Pruthi G.; Liu F.; Sundararajan M.; Kale S.. Estimating Training
+Data Influence
+by Tracing Gradient Descent. arXiv, November 14, 2020. 10.48550/arXiv.2002.08484 (accessed 2022-08-31).</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2002.08484"/></mixed-citation></ref><ref id="_dbx_ref_cit25"><mixed-citation><named-content content-type="citation-string">Pleiss G.; Zhang T.; Weinberger K. Q.; Elenberg E.. Identifying Mislabeled
+Data
+Using the Area Under the Margin Ranking arXiv, 2020. 10.48550/arXiv.2001.10528.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.2001.10528"/></mixed-citation></ref><ref id="_dbx_ref_cit38"><mixed-citation><named-content content-type="citation-string">Sharchilev B.; Ustinovsky Y.; Serdyukov P.; de Rijke M.. Finding
+Influential Training Samples for Gradient Boosted Decision Trees. arXiv, March 12, 2018. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://arxiv.org/abs/1802.06640" ext-link-type="uri">http://arxiv.org/abs/1802.06640</ext-link> (accessed 2022-07-29).</named-content></mixed-citation></ref><ref id="_dbx_ref_cit42"><mixed-citation><named-content content-type="citation-string">Kingma D. P.; Welling M.. Auto-Encoding
+Variational Bayes. arXiv December
+10, 2022. 10.48550/arXiv.1312.6114.</named-content><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="doi" xlink:href="10.48550/arXiv.1312.6114"/></mixed-citation></ref></ref-list></sec><sec id="_adsm93_" xml:lang="en" sec-type="supplementary-materials" disp-level="2"><title>Supplementary Materials</title><supplementary-material id="db_ds_supplementary-material1_reqid_" position="float"><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="oc3c01517_si_001.pdf" mimetype="application" mime-subtype="pdf"><?cloudpmc-path e900/11046457/ed3249b3e71f/oc3c01517_si_001.pdf?><?cloudpmc-bucket app?><?size 1024247?><caption><p>oc3c01517_si_001.pdf</p></caption></media></supplementary-material></sec><sec id="_adda93_" xml:lang="en" sec-type="data-availability-statement" disp-level="2"><title>Data Availability Statement</title><p>All PubChem
+assays investigated in this study can be accessed from PubChem according
+to their AID, as shown in <xref rid="tbl1" ref-type="table">Table <xref rid="tbl1" ref-type="table">1</xref></xref>. The Python environment, data sets, performance of
+each method across all metrics, data sets and replicates, and code
+required to reproduce the results are available at the following GitHub
+repository: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/dahvida/AIC_Finder" ext-link-type="uri">https://github.com/dahvida/AIC_Finder</ext-link>.</p></sec></sec></body></article>

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use CensorADMET, please cite this software release. The article DOI will be added after publication."
+title: "CensorADMET: Controllable Constraint-Satisficing Regression for Censored ADMET Data"
+doi: 10.5281/zenodo.21417709
+authors:
+  - family-names: Mitropoulou
+    given-names: Evangelia
+    affiliation: "Foundation for Research and Technology Hellas (FORTH), Institute of Chemical Engineering Sciences (ICE-HT)"
+  - family-names: Giannopoulos
+    given-names: Dimitris
+    affiliation: "University of Patras"
+version: 1.0.0
+date-released: 2026-07-17
+repository-code: "https://github.com/eva-mitropoulou/censorADMET"
+license: MIT
+preferred-citation:
+  type: software
+  title: "CensorADMET: Controllable Constraint-Satisficing Regression for Censored ADMET Data"
+  version: 1.0.0
+  doi: 10.5281/zenodo.21417709
+  authors:
+    - family-names: Mitropoulou
+      given-names: Evangelia
+    - family-names: Giannopoulos
+      given-names: Dimitris
+  year: 2026

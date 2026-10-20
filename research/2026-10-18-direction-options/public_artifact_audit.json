@@ -1,0 +1,127 @@
+{
+  "checked_utc": "2026-10-18T04:29:13.362159+00:00",
+  "doi_probes": [
+    {
+      "id": "software_doi",
+      "url": "https://doi.org/10.5281/zenodo.21417709",
+      "http_status": 200,
+      "resolved_url": "https://zenodo.org/records/21417709",
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 73489
+    },
+    {
+      "id": "software_datacite",
+      "url": "https://api.datacite.org/dois/10.5281/zenodo.21417709",
+      "http_status": 200,
+      "resolved_url": "https://api.datacite.org/dois/10.5281/zenodo.21417709",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 6900,
+      "registered_doi": "10.5281/zenodo.21417709",
+      "registered_titles": [
+        {
+          "title": "CensorADMET: research software and reproducibility package"
+        }
+      ]
+    },
+    {
+      "id": "software_zenodo_record",
+      "url": "https://zenodo.org/api/records/21417709",
+      "http_status": 200,
+      "resolved_url": "https://zenodo.org/api/records/21417709",
+      "content_type": "application/json",
+      "bytes": 4468,
+      "registered_doi": null,
+      "registered_titles": null
+    },
+    {
+      "id": "claimed_manuscript_doi",
+      "url": "https://doi.org/10.26434/chemrxiv.15006239/v1",
+      "http_status": 403,
+      "resolved_url": "https://chemrxiv.org/doi/full/10.26434/chemrxiv.15006239/v1",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 5570
+    }
+  ],
+  "data_files": [
+    {
+      "name": "CensorADMET_hERG_IC50_B.parquet",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/data/endpoints/hERG_IC50_B.parquet",
+      "limit_bytes": 8388608,
+      "state": "downloaded",
+      "bytes": 3175848,
+      "sha256": "30bd9d9a51fe48a4fc4b992b1fca5461843a702ddb88ed8a31af8063f3fdec54",
+      "rows": 11370,
+      "columns": [
+        "row_id",
+        "endpoint_id",
+        "target_key",
+        "target_chembl_id",
+        "standard_type",
+        "assay_type",
+        "parent_molecule_chembl_id",
+        "representative_molecule_chembl_id",
+        "compound_id",
+        "smiles",
+        "standardized_smiles",
+        "standard_inchikey",
+        "connectivity_inchikey",
+        "murcko_scaffold_smiles",
+        "relation_p",
+        "value_p",
+        "lower_bound_p",
+        "upper_bound_p",
+        "lower_bound_is_infinite",
+        "upper_bound_is_infinite",
+        "censoring_class",
+        "n_measurements",
+        "n_exact",
+        "n_left_censored_p",
+        "n_right_censored_p",
+        "n_assays",
+        "n_documents",
+        "assay_chembl_ids",
+        "document_chembl_ids",
+        "min_document_year",
+        "max_document_year",
+        "quality_flag",
+        "split_group_parent_id",
+        "split_group_inchikey",
+        "split_group_connectivity_inchikey",
+        "split_group_scaffold",
+        "split_group_year",
+        "split_group_ids_available"
+      ],
+      "censoring_class_counts": {
+        "exact": 7917,
+        "left_censored_p": 3199,
+        "right_censored_p": 254
+      },
+      "assay_type_counts": {
+        "B": 11370
+      },
+      "target_key_counts": {
+        "hERG": 11370
+      },
+      "provenance_fields": [
+        "assay_type",
+        "n_assays",
+        "n_documents",
+        "assay_chembl_ids",
+        "document_chembl_ids",
+        "min_document_year",
+        "max_document_year",
+        "split_group_year"
+      ],
+      "caution": "Available columns and row counts are not validation of experimental labels or paper results."
+    },
+    {
+      "name": "CensorADMET_measurements.parquet",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/data/measurement_records.parquet",
+      "limit_bytes": 8388608,
+      "error": "Bounded retrieval stopped: size or elapsed-time cap"
+    }
+  ],
+  "training_or_model_inference_run": false,
+  "downloaded_code_executed": false,
+  "paper_findings_independently_reproduced": false
+}

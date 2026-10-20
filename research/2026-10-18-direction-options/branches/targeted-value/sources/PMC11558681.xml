@@ -1,0 +1,797 @@
+
+<!DOCTYPE article
+  PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD with MathML3 v1.4 20241031//EN" "JATS-archivearticle1-4-mathml3.dtd">
+<article xml:lang="EN" article-type="research-article" dtd-version="1.4"><processing-meta base-tagset="archiving" mathml-version="3.0" table-model="xhtml" tagset-family="jats"><restricted-by>pmc</restricted-by></processing-meta><front><journal-meta><journal-id journal-id-type="nlm-ta">J Chem Inf Model</journal-id><journal-id journal-id-type="iso-abbrev">J Chem Inf Model</journal-id><journal-id journal-id-type="pmc-domain-id">822</journal-id><journal-id journal-id-type="pmc-domain">acssd</journal-id><journal-id journal-id-type="nlm-id">101230060</journal-id><journal-id journal-id-type="publisher-id">ci</journal-id><journal-title-group><journal-title>Journal of Chemical Information and Modeling</journal-title></journal-title-group><issn pub-type="ppub">1549-9596</issn><issn pub-type="epub">1549-960X</issn><?publisher_abbrev acs?><custom-meta-group><custom-meta><meta-name>pmc-is-collection-domain</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-collection-title</meta-name><meta-value>ACS AuthorChoice</meta-value></custom-meta></custom-meta-group></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC11558681</article-id><article-id pub-id-type="pmcid-ver">PMC11558681.1</article-id><article-id pub-id-type="pmcaid">11558681</article-id><article-id pub-id-type="pmcaiid">11558681</article-id><article-id pub-id-type="pmid">39440790</article-id><article-id pub-id-type="doi">10.1021/acs.jcim.4c01547</article-id><article-version article-version-type="pmc-version">1</article-version><article-categories><subj-group><subject>Article</subject></subj-group></article-categories><title-group><article-title>Machine Learning-Driven
+Data Valuation for Optimizing
+High-Throughput Screening Pipelines</article-title></title-group><contrib-group><contrib contrib-type="author" id="ath1"><contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0009-0004-1819-7726</contrib-id><name name-style="western"><surname>Hesse</surname><given-names initials="J">Joshua</given-names></name></contrib><contrib contrib-type="author" corresp="yes" id="ath2"><name name-style="western"><surname>Boldini</surname><given-names initials="D">Davide</given-names></name><xref rid="cor1" ref-type="other">*</xref></contrib><contrib contrib-type="author" corresp="yes" id="ath3"><contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0002-9400-906X</contrib-id><name name-style="western"><surname>Sieber</surname><given-names initials="SA">Stephan A.</given-names></name><xref rid="cor2" ref-type="other">*</xref></contrib><aff id="aff1"><institution>Technical University of
+Munich, TUM School of Natural Sciences</institution>, Department of Bioscience, Center for Functional Protein Assemblies
+(CPA), 85748 Garching bei München, <country>Germany</country></aff></contrib-group><author-notes><corresp id="cor1"><label>*</label>Email: <email>davide.boldini@tum.de</email>.</corresp><corresp id="cor2"><label>*</label>Email: <email>stephan.sieber@tum.de</email>.</corresp></author-notes><pub-date pub-type="epub"><day>23</day><month>10</month><year>2024</year></pub-date><pub-date pub-type="collection"><day>11</day><month>11</month><year>2024</year></pub-date><volume>64</volume><issue>21</issue><issue-id pub-id-type="pmc-issue-id">474906</issue-id><fpage>8142</fpage><lpage>8152</lpage><history><date date-type="received"><day>27</day><month>08</month><year>2024</year></date><date date-type="accepted"><day>15</day><month>10</month><year>2024</year></date><date date-type="rev-recd"><day>14</day><month>10</month><year>2024</year></date></history><pub-history><event event-type="pmc-release"><date><day>13</day><month>11</month><year>2024</year></date></event><event event-type="pmc-live"><date><day>14</day><month>11</month><year>2024</year></date></event><event event-type="pmc-last-change"><date iso-8601-date="2026-02-24 22:25:14.730"><day>24</day><month>02</month><year>2026</year></date></event></pub-history><permissions><copyright-statement>© 2024 The Authors. Published by American Chemical Society</copyright-statement><copyright-year>2024</copyright-year><copyright-holder>The Authors</copyright-holder><license><ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/" specific-use="textmining" content-type="ccbylicense">https://creativecommons.org/licenses/by/4.0/</ali:license_ref><license-p>Permits the broadest form of re-use including for commercial purposes, provided that author attribution and integrity are maintained (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</ext-link>).</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" content-type="pmc-pdf" xlink:href="ci4c01547.pdf"><?pdf-name ci4c01547.pdf?><?pdf-size 3948448?><?pdf-md5 09485aeec2da1aeef21c062a251de51a?><?pdf-image-server-status NEVER_LOAD?><?pdf-cloudpmc-urn urn:app:2ddf/11558681/09485aeec2da/ci4c01547.pdf?></self-uri><abstract><p content-type="toc-graphic"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="ab-tgr1" position="float" orientation="portrait" xlink:href="ci4c01547_0007.jpg"><?image-name ci4c01547_0007.jpg?><?image-size 59759?><?image-md5 29b11edcbff384469da8c31cc78fbb35?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 1163?><?image-original-width 2400?><?image-scaled-height 376?><?image-scaled-width 776?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/29b11edcbff3/ci4c01547_0007.jpg?><?thumb-name ci4c01547_0007.gif?><?thumb-size 4665?><?thumb-md5 7474cf6b217e695a3ccb236f53363bd3?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 79?><?thumb-scaled-width 164?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/7474cf6b217e/ci4c01547_0007.gif?></graphic></p><p>In the rapidly evolving field of drug discovery, high-throughput
+screening (HTS) is essential for identifying bioactive compounds.
+This study introduces a novel application of data valuation, a concept
+for evaluating the importance of data points based on their impact,
+to enhance drug discovery pipelines. Our approach improves active
+learning for compound library screening, robustly identifies true
+and false positives in HTS data, and identifies important inactive
+samples in an imbalanced HTS training, all while accounting for computational
+efficiency. We demonstrate that importance-based methods enable more
+effective batch screening, reducing the need for extensive HTS. Machine
+learning models accurately differentiate true biological activity
+from assay artifacts, streamlining the drug discovery process. Additionally,
+importance undersampling aids in HTS data set balancing, improving
+machine learning performance without omitting crucial inactive samples.
+These advancements could significantly enhance the efficiency and
+accuracy of drug development.</p></abstract><funding-group><award-group><funding-source><institution-wrap><institution>Merck KGaA</institution><institution-id institution-id-type="doi">10.13039/100009945</institution-id></institution-wrap></funding-source><award-id>Future Insight Prize 2020</award-id></award-group></funding-group><funding-group><award-group><funding-source><institution-wrap><institution>European Research Council</institution><institution-id institution-id-type="doi">10.13039/501100000781</institution-id></institution-wrap></funding-source><award-id>breakingBAC, 101096911</award-id></award-group></funding-group><custom-meta-group><custom-meta><meta-name>pmc-status-qastatus</meta-name><meta-value>0</meta-value></custom-meta><custom-meta><meta-name>pmc-status-live</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-status-embargo</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-status-released</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-access</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-legally-suppressed</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-supplement</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-pdf-only</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-suppress-copyright</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-real-version</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-scanned-article</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-in-epmc</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-license-ref</meta-name><meta-value>CC BY</meta-value></custom-meta><custom-meta><meta-name>document-id-old-9</meta-name><meta-value>ci4c01547</meta-value></custom-meta><custom-meta><meta-name>document-id-new-14</meta-name><meta-value>ci4c01547</meta-value></custom-meta><custom-meta><meta-name>ccc-price</meta-name><meta-value/></custom-meta></custom-meta-group></article-meta></front><body><sec id="sec1"><title>Introduction</title><p>High-throughput screening (HTS) is a cornerstone
+in drug discovery,
+enabling the rapid testing of large chemical libraries for potential
+bioactivity.<sup><xref ref-type="bibr" rid="ref1">1</xref>,<xref ref-type="bibr" rid="ref2">2</xref></sup> However, the efficiency of screening
+large numbers of molecules also introduces drawbacks during both laboratory
+procedures and subsequent data analysis.<sup><xref ref-type="bibr" rid="ref3">3</xref></sup> While HTS allows for the screening of large libraries without prior
+filtering, it often results in wasted resources and time, as most
+screened samples turn out to be inactive.<sup><xref ref-type="bibr" rid="ref4">4</xref>−<xref ref-type="bibr" rid="ref6">6</xref></sup></p><p>Moreover,
+even among the samples identified as active during primary
+HTS, many are later found to be false positives. These problematic
+compounds can be detected due to various factors, including colloidal
+aggregation,<sup><xref ref-type="bibr" rid="ref7">7</xref></sup> autofluorescence,<sup><xref ref-type="bibr" rid="ref8">8</xref></sup> assay interference,<sup><xref ref-type="bibr" rid="ref9">9</xref>,<xref ref-type="bibr" rid="ref10">10</xref></sup> chemical reactivity,<sup><xref ref-type="bibr" rid="ref11">11</xref></sup> measurement uncertainty,<sup><xref ref-type="bibr" rid="ref12">12</xref></sup> or instrument malfunction.<sup><xref ref-type="bibr" rid="ref9">9</xref>,<xref ref-type="bibr" rid="ref13">13</xref>,<xref ref-type="bibr" rid="ref14">14</xref></sup> Developing methods to identify false positives in
+primary HTS data is crucial to avoid unnecessary follow-up experiments
+on these compounds.<sup><xref ref-type="bibr" rid="ref6">6</xref>,<xref ref-type="bibr" rid="ref10">10</xref>,<xref ref-type="bibr" rid="ref13">13</xref></sup></p><p>To address these limitations in HTS pipelines, we introduce
+a variety
+of and machine learning (ML) and deep learning (DL) data valuation
+approaches to the field of drug development. Data valuation involves
+assigning a value or importance score to each piece of data based
+on its utility within a specific framework.<sup><xref ref-type="bibr" rid="ref15">15</xref></sup> This concept has gained prominence in recent years within machine
+learning, particularly in areas like federated learning, where it
+helps determine the significance of different data sets or data points
+in improving model performance.<sup><xref ref-type="bibr" rid="ref16">16</xref>,<xref ref-type="bibr" rid="ref17">17</xref></sup> These methods enable
+the identification of valuable data sources and guide strategies for
+data selection and acquisition.<sup><xref ref-type="bibr" rid="ref15">15</xref></sup></p><p>Within the context of machine learning, data valuation methods
+estimate each training instance’s impact on the optimal performance
+of a ML or DL model.<sup><xref ref-type="bibr" rid="ref18">18</xref></sup> Some samples carry
+significant information that is beneficial to the model, while others
+provide little to no useful information, and some may even degrade
+model performance.<sup><xref ref-type="bibr" rid="ref18">18</xref>,<xref ref-type="bibr" rid="ref19">19</xref></sup> Data valuation methods can compute
+these importance scores in a variety of ways, both algorithm-dependent
+and algorithm-agnostic. Some methods calculate the impact of a training
+sample on the prediction of a separate test set, while others score
+a training sample’s importance based on its own prediction.<sup><xref ref-type="bibr" rid="ref19">19</xref>−<xref ref-type="bibr" rid="ref21">21</xref></sup> These importance scores have already been used for domain adaptation
+and to identify mislabeled training samples in other domains, such
+as tabular data, text, and image classification.<sup><xref ref-type="bibr" rid="ref19">19</xref>,<xref ref-type="bibr" rid="ref20">20</xref>,<xref ref-type="bibr" rid="ref22">22</xref></sup></p><p>However, they have rarely been applied
+to chemical applications.
+Here, these compound-specific importance scores can be utilized to
+guide screening efforts, identify false positives, and remove uninformative
+compounds, thereby addressing significant challenges in current HTS
+pipelines. Within this study, we apply data valuation to the following
+applications within the drug development pipeline:<list list-type="bullet"><list-item><p><bold>Active Learning:</bold> Active learning is a ML
+approach to screen large libraries stepwise and efficiently accumulate
+targets. Data valuation can aid in identifying interesting targets
+in large chemical compound collections, avoiding the need to screen
+the entire library.<sup><xref ref-type="bibr" rid="ref23">23</xref></sup></p></list-item><list-item><p><bold>False and True Positive Identification:</bold> After an initial HTS, data valuation methods can be applied to identify
+false and true positive samples without the need of predefined structural
+filters, reducing unnecessary time and costs in followup validation
+efforts.<sup><xref ref-type="bibr" rid="ref13">13</xref></sup></p></list-item><list-item><p><bold>Importance Undersampling:</bold> When using HTS
+data for followup ML applications, undersampling is often applied, as HTS results are usually highly
+imbalanced.<sup><xref ref-type="bibr" rid="ref24">24</xref></sup> Data valuation methods can
+aid in identifying important and unimportant samples within the majority
+class, allowing more targeted undersampling.</p></list-item></list></p><p>In this study, we benchmarked gradient boosting-based
+data valuation
+methods such as Minimal Variance Sampling Analysis (MVS-A) and CatBoost’s
+object importance, the Deep Neural Network (DNN)-based approach Tracing
+Gradient Descent (TracIn), Data Valuation using Reinforcement Learning
+(DVRL), and a K-nearest neighbor (KNN) approximation of Shapley Values
+(SVs).<sup><xref ref-type="bibr" rid="ref13">13</xref>,<xref ref-type="bibr" rid="ref19">19</xref>−<xref ref-type="bibr" rid="ref22">22</xref></sup></p><p>To evaluate these data
+valuation approaches for applications in
+active learning and false positive detection, we curated a selection
+of 25 HTS data sets varying in size, class imbalance, biological targets,
+assay technology, and false positive rates based on the Multifidelity
+PubChem Bioassay (MF-PCBA) benchmark.<sup><xref ref-type="bibr" rid="ref25">25</xref></sup> Additionally, to analyze the data valuation approach for undersampling,
+we utilized the MolData repository.<sup><xref ref-type="bibr" rid="ref26">26</xref></sup></p></sec><sec id="sec2"><title>Results and Discussion</title><sec id="sec2.1"><title>Data Valuation Concepts</title><p>Data valuation assesses the
+impact of individual data points within a training data set.<sup><xref ref-type="bibr" rid="ref27">27</xref></sup> Not all data contribute equally to ML model
+performance; some significantly enhance accuracy, while others may
+introduce noise or biases.<sup><xref ref-type="bibr" rid="ref19">19</xref>,<xref ref-type="bibr" rid="ref28">28</xref></sup> Identifying informative
+data points optimizes the training process, particularly when data
+acquisition is costly, and improves model robustness by mitigating
+the impact of harmful data.<sup><xref ref-type="bibr" rid="ref20">20</xref>,<xref ref-type="bibr" rid="ref27">27</xref></sup></p><sec id="sec2.1.1"><title>KNN Shapley Values</title><p>The first data valuation method
+is an approximation of the cooperative game theory concept of SVs.
+In ML, SVs are typically used to attribute the contribution of individual
+features to a model’s predictions.<sup><xref ref-type="bibr" rid="ref29">29</xref></sup> However, in the context of data valuation, SVs are calculated by
+determining the utility of a ML model for every possible subset of
+the training set with and without a sample of interest, then averaging
+the difference over all subsets.<sup><xref ref-type="bibr" rid="ref30">30</xref></sup> This
+shift from feature-based to data-based SVs allows for the assessment
+of each data point’s importance in the training set. However,
+this calculation is impractical for large data sets due to the exponential
+scaling of subset calculations. KNN SV applies the concept of SVs
+within the neighborhood of a validation set sample, reducing computational
+complexity by ignoring many subsets.<sup><xref ref-type="bibr" rid="ref21">21</xref>,<xref ref-type="bibr" rid="ref30">30</xref></sup> In binary
+classification problems, minority class samples typically receive
+higher SVs, reflecting their greater impact on subset predictions.
+This is especially relevant for HTS data due to the high class imbalance.
+True positives within the active class tend to be more important than
+false positives, as their absence degrades test set predictions, while
+the absence of false positives does not.<sup><xref ref-type="bibr" rid="ref21">21</xref></sup></p></sec><sec id="sec2.1.2"><title>CatBoost Object Importance</title><p>The developers of Catboost
+implemented CatBoost Object Importance for calculating importance
+for test sample predictions called FastLeafInfluence. Based on the
+LeafInfluence method, it leverages a custom Leave-One-Out (LOO) retraining
+procedure to assess the importance of the excluded training sample.
+The algorithm approximates full model retraining by only adjusting
+the leaf weights of the model trained on the full data set, while
+keeping the tree splits unchanged.<sup><xref ref-type="bibr" rid="ref22">22</xref>,<xref ref-type="bibr" rid="ref31">31</xref></sup> FastLeafInfluence
+scores for HTS data can be interpreted similarly to KNN SVs.</p></sec><sec id="sec2.1.3"><title>DVRL</title><p>By leveraging the reinforcement learning (RL)
+framework, DVRL computes importance values for training data.<sup><xref ref-type="bibr" rid="ref32">32</xref></sup> The data value estimator (agent) assigns sampling
+probabilities to training samples, which are then used by a predictor
+trained on these samples. The reward function evaluates the predictor
+on a separate validation set and provides feedback to the agent based
+on performance changes. Over time, the data value estimator prioritizes
+samples that maximize the reward, resulting in optimal importance
+scores.<sup><xref ref-type="bibr" rid="ref19">19</xref></sup> These scores can be interpreted
+analogously to the previous approaches.</p></sec><sec id="sec2.1.4"><title>TracIn</title><p>As a DL approach, TracIn tracks the importance
+of training samples on the loss change of a test sample during DNNs
+training.<sup><xref ref-type="bibr" rid="ref20">20</xref></sup> Ideally, TracIn would quantify
+the change in test sample loss when updating the weights for a single
+training sample. However, this is impractical, as gradient descent
+typically updates weights for groups of training samples. To address
+this, TracIn saves the model’s state at checkpoints and calculates
+importance scores as the dot product of loss gradients from training
+and test samples, weighted by the learning rate, and summed across
+all checkpoints.<sup><xref ref-type="bibr" rid="ref20">20</xref></sup> TracIn can also compute
+self-importance, measuring a training sample’s impact on its
+own prediction. In HTS data, active samples often have higher importance
+values than inactive ones due to their low prevalence. However, unlike
+previous methods, TracIn assigns higher importance values to false
+positives than to true positives. This occurs because false positives
+have large gradients on their own predictions, as their absence from
+the training set would likely lead them to be classified as inactive.<sup><xref ref-type="bibr" rid="ref20">20</xref></sup></p></sec><sec id="sec2.1.5"><title>MVS-A</title><p>Another Gradient Boosting Machine (GBM)-based
+data valuation method, MVS-A, calculates importance scores during
+training, similar to TracIn.<sup><xref ref-type="bibr" rid="ref13">13</xref></sup> Unlike TracIn,
+which traces gradient changes, MVS-A tracks changes in the decision
+tree structure. Each tree in a gradient boosting model serves as a
+checkpoint, with importance scores calculated by evaluating the loss
+function gradients and Hessians for each sample. The scores are similar
+to TracIn’s self-importance approach, where the loss function
+gradient and Hessian of each sample are multiplied by themselves,
+quantifying their impact on their own prediction. MVS-A importance
+scores can be interpreted analogously to those of TracIn.</p></sec></sec><sec id="sec2.2"><title>Active Learning</title><p>Our study adopts an active learning
+approach for screening compound libraries, focusing on more efficiently
+identifying active compounds.<sup><xref ref-type="bibr" rid="ref33">33</xref></sup> Traditionally,
+active learning involves iteratively validating small batches and
+using a ML model to predict actives in the remaining library (<xref rid="fig1" ref-type="fig">Figure <xref rid="fig1" ref-type="fig">1</xref></xref>, upper panel).<sup><xref ref-type="bibr" rid="ref23">23</xref>,<xref ref-type="bibr" rid="ref34">34</xref></sup> However, this method typically favors samples likely to be active,
+which can skew the model’s learning. To address this, we integrate
+data valuation techniques to identify important samples in each batch
+and employ a regression model to estimate the importance of the remaining
+library samples (<xref rid="fig1" ref-type="fig">Figure <xref rid="fig1" ref-type="fig">1</xref></xref>, lower panel). This strategy ensures the selection of both critical
+active and inactive samples for subsequent batches, fostering a balanced
+data set that enhances the model’s accuracy and understanding
+of class boundaries. This refined approach streamlines the discovery
+of active compounds and strengthens the overall learning process.</p><fig id="fig1" position="float" orientation="portrait"><label>Figure 1</label><caption><p>Active
+learning workflow. Greedy active learning: screen an initial
+batch of compounds, use activity scores to train an ML model, predict
+and validate promising candidates, and repeat to identify actives
+efficiently. Importance active learning: use initial batch to calculate
+importance scores, train an ML model to predict important samples,
+validate promising candidates, and repeat to identify actives through
+informative sampling.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr1" position="float" orientation="portrait" xlink:href="ci4c01547_0001.jpg"><?image-name ci4c01547_0001.jpg?><?image-size 1299401?><?image-md5 f9f6f5331cbaf01ff0b73238b5065639?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 527?><?image-original-width 922?><?image-scaled-height 2194?><?image-scaled-width 3837?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/f9f6f5331cba/ci4c01547_0001.jpg?><?thumb-name ci4c01547_0001.gif?><?thumb-size 6502?><?thumb-md5 a0bfa1d619f441d8097e9c6cb11a8aee?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 79?><?thumb-scaled-width 139?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/a0bfa1d619f4/ci4c01547_0001.gif?></graphic></fig><p>To evaluate the potential of this pipeline, we
+compared its ability
+to identify active samples against the state-of-the-art greedy approach,
+implemented using a GBM classifier. This comparison and subsequent
+optimization were performed on the <italic toggle="yes">cysteine_protease</italic> data set, which represents a mean across all data sets in terms
+of size and imbalance.</p><p>All active learning approaches significantly
+outperform the random
+sampling approach, confirming the advantage of ML-aided target selection
+(<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S5A</ext-link>). Among them, MVS-A and greedy
+sampling significantly outperformed the other approaches, as seen
+in <xref rid="fig2" ref-type="fig">Figure <xref rid="fig2" ref-type="fig">2</xref></xref>.</p><fig id="fig2" position="float" orientation="portrait"><label>Figure 2</label><caption><p>Active learning
+performance using data valuation methods: all calculations
+were done on the <italic toggle="yes">cysteine_protease</italic> data set, with
+10 replicates per method. Each step size, including the initial random
+sampling, is 1.5% of the entire data set. A GBM was used for regression.
+(A) Percentage of actives found after each step. A Friedman test,
+a nonparametric test used to detect differences in performance across
+multiple methods, shows a highly significant difference (<italic toggle="yes">P</italic>-value = 1.07e–14), indicating that the methods do not perform
+equally. (B) Average time per replicate in seconds.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr2" position="float" orientation="portrait" xlink:href="ci4c01547_0002.jpg"><?image-name ci4c01547_0002.jpg?><?image-size 662414?><?image-md5 9c29d7900fcd7dad7762cb54b31c022f?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 483?><?image-original-width 1006?><?image-scaled-height 2012?><?image-scaled-width 4192?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/9c29d7900fcd/ci4c01547_0002.jpg?><?thumb-name ci4c01547_0002.gif?><?thumb-size 4250?><?thumb-md5 15eb4ccc0645f15185f8c2c86510d43e?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 166?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/15eb4ccc0645/ci4c01547_0002.gif?></graphic></fig><p>Among them, DVRL came closest to random sampling.
+This result could
+be attributed to the small training set size or suboptimal model tuning,
+as DVRL involves two separate ML models with many parameters that
+require careful tuning. However, in practical applications, parameter
+tuning may not be feasible, as no clean training set would be available.
+Therefore, importance methods must perform well with minimal optimization
+to be applicable to any HTS data.</p><p>KNN SVs also performed similarly
+to DVRL, likely due to the limitations
+of the KNN algorithm when working with a small subset of the compound
+library, as KNN algorithms generally perform poorly at predictions
+outside their training domain.</p><p>TracIn performed slightly better
+than KNN SV, but was still significantly
+outperformed by MVS-A and CatBoost <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S5A</ext-link>). This is likely due to differences in the underlying ML models.
+While TracIn uses DNNs to identify important samples, MVS-A and CatBoost
+use gradient boosting algorithms, which tend to perform better with
+smaller initial training sets. The discrepancy between MVS-A and CatBoost
+likely arises from differences in how they compute importance within
+gradient boosted trees. These results suggest that analyzing splitting
+decisions provides more accurate importance scores compared to leaf
+weight analysis.</p><p>While MVS-A performed on par with greedy sampling,
+we hypothesized
+that the bottleneck for MVS-A could be the importance score prediction
+of the regression model.</p><p>Consequently, we tested various regression
+models in the importance
+active learning pipeline on the same data set, consistently using
+MVS-A for importance calculation. Among these models, the sklearn
+implementation of Gaussian process regressor (GPR) showed the best
+active learning performance, improving the overall pipeline (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S3</ext-link>).</p><p>Finally, we benchmarked the
+optimized pipeline against the state-of-the-art
+greedy method on the remaining 24 data sets. As shown in <xref rid="fig3" ref-type="fig">Figure <xref rid="fig3" ref-type="fig">3</xref></xref>, the importance-based
+active learning approach significantly outperformed the greedy benchmark
+at all steps across the data set group.</p><fig id="fig3" position="float" orientation="portrait"><label>Figure 3</label><caption><p>Importance-based active
+learning performance across all data sets.
+(A) Distribution of retrieved actives across all data sets. Each step
+size, including the initial random sampling, is 1.5% of the entire
+data set. Asterisks indicate that MVSA GPR greedy significantly outperformed
+the greedy benchmark (α = 0.05, 24 data sets) according to a
+Wilcoxon two-tailed single-rank test. (B) Average time taken per method
+across all 24 data sets.<sup><xref ref-type="bibr" rid="ref35">35</xref></sup></p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr3" position="float" orientation="portrait" xlink:href="ci4c01547_0003.jpg"><?image-name ci4c01547_0003.jpg?><?image-size 468348?><?image-md5 bf6123c51bb9671392fb036fd5ab4fad?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 477?><?image-original-width 922?><?image-scaled-height 1985?><?image-scaled-width 3838?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/bf6123c51bb9/ci4c01547_0003.jpg?><?thumb-name ci4c01547_0003.gif?><?thumb-size 3406?><?thumb-md5 7f751a917dc56c1061d47c22b7624a1e?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 154?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/7f751a917dc5/ci4c01547_0003.gif?></graphic></fig><p>This performance gain is likely due to the importance-based
+method
+sampling a more diverse set of compounds, including important inactive
+samples, thereby improving the model’s generalization. However,
+it is noteworthy that the state-of-the-art approach surpasses the
+importance-based method in computational speed, primarily due to the
+use of GPR. As shown in <xref rid="fig2" ref-type="fig">Figure <xref rid="fig2" ref-type="fig">2</xref></xref>, when coupled with a faster regression model like LightGBM,
+the importance-based approach performs comparably to the greedy approach.</p><p>These results are highly promising, showcasing the potential of
+importance-based methods to enhance active learning strategies. They
+offer a valuable pathway for researchers aiming to streamline their
+drug discovery pipelines.</p></sec><sec id="sec2.3"><title>False Positive Identification</title><p>Next, we applied the
+data valuation methods to the challenge of distinguishing between
+false and true positives. Using an HTS data set, each data valuation
+method was trained exclusively on the primary screening data (<xref rid="fig4" ref-type="fig">Figure <xref rid="fig4" ref-type="fig">4</xref></xref>). To evaluate their
+effectiveness in separating true from false positives, we compared
+the resulting importance rankings against the confirmatory screen
+data. Performance was measured using relative top-10 precision, enrichment
+factor, and Boltzmann-Enhanced Discrimination of the Receiver Operating
+Characteristic (BEDROC) scores. We performed a Friedman test across
+all data sets for each metric, with the resulting <italic toggle="yes">P</italic>-values displayed in <xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>.</p><fig id="fig4" position="float" orientation="portrait"><label>Figure 4</label><caption><p>False and true positive detection workflow: a compound library
+is screened via HTS, resulting in activity scores. The activity scores
+can be used to train a ML model and calculate importance scores for
+each compound. Selecting compounds from the initial library based
+on their HTS activity often results in many false positives. In contrast,
+selecting samples according to their importance scores allows for
+more accurate sampling of true positives.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr4" position="float" orientation="portrait" xlink:href="ci4c01547_0004.jpg"><?image-name ci4c01547_0004.jpg?><?image-size 1186941?><?image-md5 8f62a198f661f475c11230b7610b5672?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 658?><?image-original-width 922?><?image-scaled-height 2737?><?image-scaled-width 3835?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/8f62a198f661/ci4c01547_0004.jpg?><?thumb-name ci4c01547_0004.gif?><?thumb-size 5015?><?thumb-md5 723d5fc612fc1a140a9333faefb44ac8?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 112?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/723d5fc612fc/ci4c01547_0004.gif?></graphic></fig><fig id="fig5" position="float" orientation="portrait"><label>Figure 5</label><caption><p>False and true positive detection performance across all
+data sets.
+(A–C) False positive performance metrics distributed over 25
+data sets; asterisks indicate that the results are significantly different
+from MVS-A (α &lt; 0.05, <italic toggle="yes">n</italic> = 10) according
+to a Wilcoxon two-tailed single-rank test with Benjamini Hochberg
+correction.<sup><xref ref-type="bibr" rid="ref35">35</xref>,<xref ref-type="bibr" rid="ref37">37</xref>,<xref ref-type="bibr" rid="ref38">38</xref></sup> (D–F) True positive performance metrics distributed over
+25 data sets; asterisks indicate that the results are significantly
+different from MVS-A (α &lt; 0.05, <italic toggle="yes">n</italic> = 10)
+according to a Wilcoxon two-tailed single-rank test with Benjamini
+Hochberg correction.<sup><xref ref-type="bibr" rid="ref35">35</xref>,<xref ref-type="bibr" rid="ref37">37</xref>,<xref ref-type="bibr" rid="ref38">38</xref></sup> (A) Relative false positive precision across all data sets; dotted
+line represents random sorting performance. (B) Mean false positive
+enrichment factor across all data sets. (C) Mean false positive BEDROC
+across all data sets. (D) Relative true positive precision across
+all data sets; dotted line represents random sorting performance.
+(E) Mean true positive enrichment factor across all data sets. (F)
+Mean true positive BEDROC across all data sets. <italic toggle="yes">P</italic>-values in the titles refer to Friedman test on all methods and data
+sets.<sup><xref ref-type="bibr" rid="ref35">35</xref></sup> All <italic toggle="yes">P</italic>-values are
+highly significant, indicating the methods do not perform equally
+according to all metrics presented.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr5" position="float" orientation="portrait" xlink:href="ci4c01547_0005.jpg"><?image-name ci4c01547_0005.jpg?><?image-size 1014259?><?image-md5 6f0dce2583b027f41b6ed326cf3ee552?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 662?><?image-original-width 1008?><?image-scaled-height 2753?><?image-scaled-width 4193?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/6f0dce2583b0/ci4c01547_0005.jpg?><?thumb-name ci4c01547_0005.gif?><?thumb-size 4599?><?thumb-md5 06d29e4a6ebdf90e7fc22692fb35c710?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 79?><?thumb-scaled-width 121?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/06d29e4a6ebd/ci4c01547_0005.gif?></graphic></fig><p>MVS-A significantly outperformed all other methods
+in false positive
+detection across two out of three metrics, with TracIn self and TracIn
+pos matching MVS-A’s performance on the enrichment factor score
+(<xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>, <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S13</ext-link>).</p><p>GSK and REOS structural filters
+performed significantly lower than
+all data valuation approaches in predicting false positives in two
+out of three metrics (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S13</ext-link>). However,
+it is important to note that GSK and REOS structural filters target
+not only false positives but also promiscuous compounds and those
+with undesirable pharmacological properties.<sup><xref ref-type="bibr" rid="ref13">13</xref>,<xref ref-type="bibr" rid="ref36">36</xref></sup> These compounds may still show initial bioactivity, leading to lower
+performance in confirmatory screens. GSK and REOS structural filters
+also partially rely on a predefined set of fragments, which limits
+their identification of structurally diverse false positives. This
+can also be seen in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S6A</ext-link>, where the
+filters approach shows the lowest distribution of structural diversity
+in false positive detection. These two factors might explain the poor
+performance on this benchmark focused on primary assay false positives
+in a diverse chemical space.</p><p>KNN SV demonstrated a slight improvement
+in relative precision
+over random sorting. Notably, KNN SV performed best in relative precision
+for 6 out of 25 data sets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S7</ext-link>).</p><p>KNN SV is the only data valuation method that outperforms random
+sorting in relative precision using only the validation set for importance
+prediction. This is likely due to the small number of neighbors in
+this approach. False positives generally have a negative impact on
+the prediction of inactive samples, as they might wrongly suggest
+activity for a given structure. For methods that use a large number
+of samples, such as DVRL or CatBoost, the impact of a single false
+positive on inactive sample prediction is minimal. However, with KNN,
+a false positive significantly influences the classification due to
+the small number of neighbors, making it more impactful. This effect
+is especially pronounced in highly imbalanced data sets, where the
+presence of even one active sample in a neighborhood can suggest activity
+for a new sample. Removing the false positive from that neighborhood
+positively impacts the prediction of inactive samples, giving it a
+larger negative importance than in models where the impact is diluted
+by many correctly labeled inactives. Additionally, KNN SV outperforms
+most other methods in terms of computation time (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S12</ext-link>).</p><p>TracIn-based methods performed well, being
+the only methods that
+matched MVS-A in one metric. Although TracIn methods excelled in only
+three data sets regarding relative precision, they consistently ranked
+near the top across all metrics. Interestingly, the performance between
+all three TracIn approaches was very similar. This was expected for
+TracIn and TracIn pos, as their only difference is the exclusion of
+inactive samples from the validation set. However, it was surprising
+that TracIn self performed equally well. This result likely stems
+from the fact that all TracIn approaches use self-prediction gradients,
+with TracIn self squaring these gradients, while the other approaches
+multiply them with gradients from the validation set. If most of the
+importance score is derived from the self-gradients, both methods
+yield similar outcomes.</p><p>TracIn self is particularly effective
+because it examines the effect
+of removing a training sample on its own prediction. As previously
+discussed, false positive sample gradients on their own prediction
+are very high, which explains why all TracIn methods perform similarly,
+with self-importance gradients dominating the importance scores.</p><p>This finding is especially promising, as it enables importance
+calculation—and, thus, false positive prediction—without
+needing a validation set. In practical applications, this allows for
+false positive detection directly on primary HTS data without first
+validating a subset in the laboratory.</p><p>CatBoost, unlike TracIn,
+showed a substantial difference in performance
+between CatBoost-self and CatBoost-test across all metrics. Notably,
+CatBoost-test performed worse than random sorting in almost half of
+the data sets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S7A</ext-link>), while CatBoost-self
+almost always scored above 0.0. This poor performance of CatBoost-test
+is likely due to the same issues affecting KNN SV and DVRL, where
+the importance for inactive prediction is too small to detect. However,
+CatBoost-self allows for false positive prediction with similar performance
+to KNN SV, but without needing a validation set. This may be because
+removing false positives near activity cliffs enhances prediction
+performance for correctly labeled active samples, resulting in low
+importance scores for false positives in the CatBoost-self approach.
+This effect may be lost in noise when calculating the importance of
+a false positive on all samples, which is why it is only detectable
+via CatBoost-self and not with CatBoost-test. While CatBoost-self
+has a longer computational time than KNN SV (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S12</ext-link>), it significantly outperforms TracIn due to its use of
+gradient boosting instead of Feedforward Neural Networks (FNNs).</p><p>MVS-A also identifies the most diverse set of false positives,
+as shown in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S6A</ext-link>, followed by the
+TracIn methods. These results further confirm that self-importance
+based methods identify false positives by their uniqueness, rather
+than any common features.</p><p>MVS-A shows the best overall false
+positive prediction performance
+across all metrics, particularly in relative precision, where it outperforms
+all other methods in 13 out of 25 data sets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S7</ext-link>). However, TracIn and MVS-A generally perform similarly,
+as they conceptually measure the same effect using different implementations.
+Both methods assess the impact of a given training sample on its own
+prediction, which is effective for false positive detection for reasons
+previously explained. MVS-A has a slight edge over TracIn in performance,
+likely because detecting changes in tree structure allows for more
+accurate importance score assignments compared to gradient changes
+in the last two layers of an FNN.</p><p>The results shown in <xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref> were calculated
+using Extended-Connectivity Fingerprints
+(ECFPs) as the molecular representation. Experiments were also repeated
+using RDKit descriptors and, for TracIn, SMILES strings as chemical
+representations (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figures S8–S11</ext-link>).</p><p>Overall, most methods significantly outperformed the state-of-the-art
+fragment filter approach and showed substantial improvements in false
+positive prediction over random sorting, with MVS-A delivering the
+best overall performance.</p></sec><sec id="sec2.4"><title>True Positive Identification</title><p>While false positives
+were identified by their high self-importance or low importance for
+the predictions of other samples, true positives can be detected using
+the opposite approach. True positives typically have a strong importance
+for the prediction of other samples because the ML model relies on
+them to recognize patterns. However, their self-importance is lower
+than that of false positives, as their activity can often be inferred
+from other true positives, reducing the dependency on their own presence
+in the training set.</p><p>Ranking actives according to their PubChem
+activity score is used as a benchmark method for true positive detection.
+Similar to false positive precision, the true positive precision is
+displayed as relative precision, where the true positive rates were
+subtracted from the precision scores prior to plotting.</p><p>The
+Score method performs slightly better than random sorting in
+regards to relative precision across all data sets as seen in <xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>D. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S7D</ext-link> shows that the Score method actually outperforms
+all other methods on 5 out of 25 data sets, suggesting that the approach
+is viable given certain assay setups. The Score method actually performs
+best regarding structural diversity as seen in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S6B</ext-link>, which makes sense given the method is structure-agnostic
+and only uses the activity scores.</p><p>KNN SV significantly outperforms
+the Score method and comes close
+to TracIn, CatBoost, and MVS-A. This might be due to true positive
+samples having a large positive importance for the prediction of other
+true positive samples due to the strong imbalance in the data set.
+Additionally, within the active class, false positive samples should
+be ranked at the bottom according to importance, resulting in the
+top 10 percentile containing true positives.</p><p>DVRL, as with false
+positives, does not achieve significant performance
+above random sorting. Unlike in false positive detection, DVRL does
+not perform similarly to the CatBoost method, indicating that its
+complexity limits its applicability to this problem.</p><p>TracIn-self
+performs best out of the three TracIn approaches, with
+a more considerable difference to the other two TracIn versions compared
+to false positive prediction, showing the best relative precision
+performance for 5 out of 25 data sets (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S7D</ext-link>). These results are likely caused by the fact that the
+minority class will have larger self-importance values than the majority
+class, as removing one sample from the minority class will have a
+much bigger effect due to the lower number of remaining active samples
+used for classification. This leads to all actives having larger importance
+scores than inactives. Within the active class, the false positives
+cluster toward the largest self-importance scores for reasons explained
+previously. As a result, the low-importance actives tend to be true
+positives. This effect, that true positive detection is more of an
+indirect identification via the exclusion of false positives, might
+also be the reason why the overall performance of all data valuation
+methods decreases with regard to enrichment factor and BEDROC score,
+as can be seen when comparing <xref rid="fig5" ref-type="fig">Figure <xref rid="fig5" ref-type="fig">5</xref></xref>B,C and E,F. Remarkably, both approaches utilizing
+CatBoost exhibit similar levels of performance, which are on par with
+TracIn. This observation is especially interesting for CatBoost-test,
+which underperformed for false positive relative precision. This is
+likely because the importance of true positives on predicting other
+true positives is more easily detectable than the effect of false
+positives on the classification of inactives due to the strong imbalance
+of HTS data sets.</p><p>MVS-A once again outperforms all other methods
+on average across
+all data sets, showing the best relative precision in 13 out of 25
+data sets. This success is likely due to its effectiveness in identifying
+false positives, which indirectly aids in identifying true positives.
+However, MVS-A performs worst regarding structural diversity in true
+positive predictions. This is expected, as MVS-A basically identifies
+highly unique compounds as false positives, and thereby indirectly
+identifies actives with similar structures are true positives.</p></sec><sec id="sec3"><title>Importance Undersampling</title><p>To assess the impact of importance-based
+undersampling, we used the aging subset of the MolData benchmark for
+prediction performance measurements, ensuring comparability with existing
+benchmarks in the field. A LightGBM (LGBM) classifier was trained
+on each training set and validated on the respective validation set,
+with the process repeated iteratively as the training set was gradually
+reduced.</p><p>At each iteration, 5% of the original training set
+was removed, either randomly or by removing inactive samples based
+on their importance scores. This iterative process continued until
+95% of the training set was removed. Given MVS-A’s superior
+performance in previous experiments, it was selected as the data valuation
+method. Samples were ranked by importance, and at each step, either
+the most or least important inactive samples were removed. Although
+the aging data set group contains 10 data sets, <xref rid="fig6" ref-type="fig">Figure <xref rid="fig6" ref-type="fig">6</xref></xref> focuses on the <italic toggle="yes">vitamin_receptor</italic>, <italic toggle="yes">TNAP</italic>, <italic toggle="yes">TNAP_phosp</italic>, and <italic toggle="yes">HTRA</italic> data sets. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S16</ext-link> provides
+the difference in normalized precision scores across all 10 data sets.
+The remaining 6 data sets had low base prediction performance, resulting
+in uninformative importance scores, so we concentrated on data sets
+where the base predictor scored above 10% precision to generate meaningful
+results (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Table S5</ext-link>).</p><fig id="fig6" position="float" orientation="portrait"><label>Figure 6</label><caption><p>Undersampling performance
+of importance-based and random undersampling.
+(A) Average precision score performance of an LGBM classifier dependent
+on the undersampling strategy, averaged across aging data sets <italic toggle="yes">vitamin_receptor</italic>, <italic toggle="yes">TNAP</italic>, <italic toggle="yes">TNAP_phosp</italic>, and <italic toggle="yes">HTRA</italic>, with 10 replicates each; random and
+importance-based undersampling performance measured after every 5%
+step of undersampling. (B) Distribution of normalized precision scores
+across all data sets and all time points for each undersampling strategy.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" id="gr6" position="float" orientation="portrait" xlink:href="ci4c01547_0006.jpg"><?image-name ci4c01547_0006.jpg?><?image-size 578838?><?image-md5 1b60e9a18ad34baf3e61d49fe4efd9ee?><?image-image-server-status LOAD_COMPLETED?><?image-original-height 589?><?image-original-width 842?><?image-scaled-height 2451?><?image-scaled-width 3502?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/1b60e9a18ad3/ci4c01547_0006.jpg?><?thumb-name ci4c01547_0006.gif?><?thumb-size 3371?><?thumb-md5 874efc23cbaa944b6921227a6b702e05?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 80?><?thumb-scaled-width 114?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/874efc23cbaa/ci4c01547_0006.gif?></graphic></fig><p>Removing highly important inactives causes the
+model’s performance
+to deteriorate quickly, as seen in <xref rid="fig6" ref-type="fig">Figure <xref rid="fig6" ref-type="fig">6</xref></xref>A. As the most important samples are removed
+from the training set, the model loses the samples it learned most
+from, resulting in decreased performance. <xref rid="fig6" ref-type="fig">Figure <xref rid="fig6" ref-type="fig">6</xref></xref>B shows a clear shift in performance across
+all data sets and time points based on the undersampling method.</p><p>Removing low importance samples, on the other hand, does not decrease
+performance but instead increases it until a certain point, similar
+to random undersampling. This is due by the fact that removing unimportant
+samples reduces the imbalance of the data set, thereby lowering its
+bias to the majority class, without worsening its prediction performance,
+as these samples did not help the model learn its task.</p><p>To summarize,
+MVS-A was able to identify important inactive samples
+within the training sets, with their removal resulting in a strong
+decrease in classification performance. Interestingly, removing unimportant
+samples did not outperform random undersampling contrary to initial
+expectations. These results imply that MVS-A cannot differentiate
+between moderately important and irrelevant samples. However, importance
+undersampling could still be used to ensure the presence of important
+samples by augmenting random undersampling. Furthermore, exploring
+the concept of important inactive samples could provide deeper insights
+into class boundaries, potentially shedding light on activity cliffs
+within the chemical landscape of the given data set.</p></sec></sec><sec id="sec4"><title>Conclusions</title><p>This study introduced data valuation methods
+to various stages
+of the drug development pipeline, aiming to enhance current practices.
+The applications included improving active learning for more efficient
+chemical library screening, identifying false and true positive hits
+in primary HTS data, and optimizing HTS data for machine learning
+through importance undersampling.</p><p>The active learning results
+demonstrated that data valuation methods
+enable more efficient batch screening of large chemical libraries,
+reducing the need for extensive HTS screens to identify most actives.
+These findings, along with the importance undersampling results, suggest
+that sampling both actives and key inactives enhances machine learning
+models, leading to more efficient library screening. Although the
+importance-based method requires more computational time than the
+state-of-the-art approach, it identifies more actives with the same
+laboratory effort and resources, justifying the extra computation
+time.</p><p>In false positive detection, data valuation methods like
+MVS-A
+and TracIn significantly outperformed the current state-of-the-art
+fragment filter approach and random sorting, offering promising alternatives.
+Similarly, these methods competed with or outperformed the benchmark
+for true positive prediction, which sorts samples by activity.</p><p>The undersampling section demonstrated that data valuation methods
+can effectively identify important inactive samples in a highly imbalanced
+data set. These methods could enhance random undersampling by ensuring
+that crucial samples are retained in the reduced training set. Furthermore,
+analyzing these important inactive samples alongside the active class
+could provide valuable insights into the class boundaries, potentially
+highlighting the activity cliffs associated with the respective assay.</p><p>Overall, this study provided a first exploration of data valuation
+methods applied to chemical data, yielding encouraging results across
+all applications. These findings should inspire future research to
+further explore data valuation methods for optimizing HTS pipelines.
+To support this endeavor, we developed a toolkit for applying data
+valuation methods to HTS data, which can be accessed and expanded
+upon through our GitHub repository (<uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/JoshuaHesse/DataValuationPlatform">https://github.com/JoshuaHesse/DataValuationPlatform</uri>).</p></sec><sec id="sec5"><title>Methods</title><sec id="sec15"><title>Data Curation</title><p>Two groups of data sets are used. A curated
+set of 25 publicly available data sets is utilized for false positive
+detection and active learning, primarily based on the MF-PCBA benchmark.
+All 25 data sets consist of a primary high-throughput screen and a
+confirmatory screen on a subsection of the primary actives (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Tables S1–S3</ext-link>). As some data valuation
+functions need a separate validation set to calculate importance values,
+ten percent with the highest primary screen PubChem activity scores
+were used as a separate validation set. To benchmark importance-driven
+undersampling, a subset of the MolData benchmark, a group of 10 data
+sets associated with the disease aging, was used (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Table S4</ext-link>). Here, the train-test-val splits suggested by the
+MolData paper were kept. For all data sets, the SMILES strings were
+imported from the PubChem data sets, sanitized, and standardized into
+their canonical form using RDKit.<sup><xref ref-type="bibr" rid="ref39">39</xref></sup></p></sec><sec id="sec16"><title>Molecular Representation</title><p>When used as input for LSTM
+calculations, SMILES were tokenized and vectorized using one-hot encoding,
+with the maximum length of each vector set to 120. RDKit was used
+to calculate the ECFPs for each molecule, with the radius set to two
+and the number of bits set to 1024.<sup><xref ref-type="bibr" rid="ref39">39</xref></sup> RDKit
+was also used to calculate a collection of 208 RDKit descriptors for
+each molecule.<sup><xref ref-type="bibr" rid="ref39">39</xref></sup></p></sec><sec id="sec17"><title>Experimental Setup</title><sec id="sec18"><title>Active Learning</title><p>In this experiment, data sets were
+iteratively screened to identify actives. The data valuation approaches
+use activity prediction followed by importance calculation on the
+training set and subsequent importance prediction on the remaining
+data set with a secondary regression model, a Gaussian process regressor.
+The remaining data set samples predicted to be most important by the
+regressor are sampled for the next iteration. For each data set, an
+initial training set comprising 1.5% of the entire data set was created
+using a stratified sampling approach from Scikit-learn’s train-test
+split function, ensuring that the ratio of active to inactive samples
+was preserved.<sup><xref ref-type="bibr" rid="ref40">40</xref></sup> This initial training
+set was then used to predict the next 1.5% of the data set for sampling.
+These newly sampled instances were added to the training set using
+their primary screen labels, and the next iteration of prediction
+was trained on the updated training set. After each iteration, the
+number of active samples identified was counted for each method to
+calculate the percentage of total actives found per step.</p><p>The
+benchmark method, called “greedy method”, uses direct
+activity prediction of the remaining library using an LGBM classifier.
+The classifier is trained on the training set and used to predict
+the remaining data set. The 1.5% of samples with the highest predicted
+probability were sampled.</p><p>Random sampling was used as a baseline
+method. At each step, the
+indices of the remaining data set were shuffled, and the first 1.5%
+were sampled</p></sec><sec id="sec19"><title>False and True Positive Prediction</title><p>For each data set,
+the data valuation approaches were trained on all samples minus the
+separate validation set. The importance scores were calculated and
+ranked, and the top and bottom 10% of all actives were identified
+as true and false positives, or vice versa depending on the method
+used. For all compounds within these top and bottom 10% that also
+have a confirmatory label, their prediction was analyzed using the
+precision score, enrichment factor, and BEDROC score.</p><p>For false
+positive prediction the GSK REOS filters were used as a benchmark
+using RDKit, ranking samples according to the number of applicable
+filters, with more filters indicating a higher likelihood of being
+a false positive.<sup><xref ref-type="bibr" rid="ref39">39</xref></sup> For true positive prediction,
+the Score method was used as a benchmark, ranking the samples according
+to their primary assay PubChem activity score. The PubChem activity
+score is a normalized score between 0 and 100, where the most active
+results of a bioassay are set close to 100 and the most inactive results
+close to 0. Some bioassays did not report PubChem activity scores
+in this manner. For these, alternative reported bioassay metrics were
+used and normalized to values between 0 and 100 to allow continuous
+ranking by the bioassay score. The Pubchem bioassay metrics used for
+the Score method are reported in <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">Figure S2</ext-link>.</p><p>Random sorting was used as a baseline for both experiments
+regarding
+top-10 precision. Random sorting was defined as the false positive
+rate of each respective data set for false positive identification,
+and conversely, the true positive rate for true positive identification.</p></sec><sec id="sec20"><title>Importance Undersampling</title><p>Initially, for each MolData
+data set the importance scores were calculated for all training set
+samples. Then, an LGBM classifier was trained on the training set
+and validated on the validation set. The training set was then reduced
+by 5% of the original training set size by sorting according to the
+MVS-A importance scores and removing the highest or lowest 5% of inactives.
+The LGBM classifier was then trained and evaluated on the reduced
+training sets and the performance was calculated using Scikit-learn’s
+average precision score.<sup><xref ref-type="bibr" rid="ref40">40</xref></sup></p><p>As a baseline,
+random undersampling was applied instead of importance undersampling.
+Here, the indices of all inactives where randomly shuffled instead
+of sorted by importance. The first 5% of inactive sample indices were
+removed in each iteration.</p></sec></sec><sec id="sec21"><title>Model Development</title><sec id="sec22"><title>KNN SVs</title><p>KNN SVs was implemented using the Datascope
+package.<sup><xref ref-type="bibr" rid="ref21">21</xref></sup> As this implementation uses
+K-nearest neighbor models to approximate Shapley values, which do
+not scale well with large and high dimensional data sets, a RandomUnderSampler
+from the imbalanced-learn package was used for undersampling, with
+a sampling strategy of 0.2, and a random seed according to the current
+replicate number.</p></sec><sec id="sec23"><title>CatBoost Object Importance</title><p>CatBoost Object Importance
+was implemented using a CatBoost model with 100 iterations and a random
+seed according to the current replicate was used. The model was trained
+on the training set. The training sample importance for the external
+validation set called test-importance, was calculated, as well as
+the importance for all active training samples, which will be called
+self-importance.</p></sec><sec id="sec24"><title>DVRL</title><p>DVRL was implemented using the codebase from Yoon
+et al.<sup><xref ref-type="bibr" rid="ref19">19</xref></sup> The DVRL approach contains two
+prediction models: the data value estimator and the predictor. As
+the predictor, an LGBMClassifier with default parameters and a random
+seed according to the index of the current replicate was used. The
+data value estimator is implemented as a deep neural network, which
+depends on the parameters of the DVRL object. The DVRL object was
+initialized by setting the hidden dimensions to 100, the combined
+dimensions to 10, and the iterations to 1000. A Rectified Linear Unit
+(ReLU) function was used for activation, the learning rate was set
+to 0.01, and the batch size was set to 5000. The DVRL object was trained
+using the ROC-AUC-score as the performance measurement for the predictor,
+which was measured on the external validation set.</p></sec><sec id="sec25"><title>TracIn</title><p>TracIn was implemented by adapting the code
+from Pruthi et al.<sup><xref ref-type="bibr" rid="ref20">20</xref></sup> TracIn is applied
+to a FNN implemented using tensorflow.<sup><xref ref-type="bibr" rid="ref41">41</xref></sup> A one-hidden-layer TensorFlow Long Short-Term Memory (LSTM) model
+was used instead when using SMILES strings as input (<xref rid="tbl1" ref-type="other">Table <xref rid="tbl1" ref-type="other">1</xref></xref>). Self-importance was implemented
+by squaring the loss gradients resulting from the change in the last
+two layers’ weights of the model checkpoint at 30, 60, and
+90 epochs during training and summing over all 3 checkpoints. Test-importance
+was implemented by multiplying the loss gradients with all validation
+set gradients, averaging over all validation samples for each training
+sample and summing over all three checkpoints.</p><table-wrap id="tbl1" position="float" orientation="portrait"><label>Table 1</label><caption><title>Summary of TracIn Model Architectures</title></caption><table frame="hsides" rules="groups" border="0"><colgroup span="1"><col align="left" span="1"/><col align="left" span="1"/><col align="left" span="1"/></colgroup><thead><tr><th style="border:none;" align="center" colspan="1" rowspan="1">component</th><th style="border:none;" align="center" colspan="1" rowspan="1">FNN model</th><th style="border:none;" align="center" colspan="1" rowspan="1">LSTM model</th></tr></thead><tbody><tr><td style="border:none;" align="left" colspan="1" rowspan="1">input layer</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 512 neurons</td><td style="border:none;" align="left" colspan="1" rowspan="1">LSTM, 64 units</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">input shape</td><td style="border:none;" align="left" colspan="1" rowspan="1">(features)</td><td style="border:none;" align="left" colspan="1" rowspan="1">(max_token_length, charset_length)</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">activation (input layer)</td><td style="border:none;" align="left" colspan="1" rowspan="1">ELU</td><td style="border:none;" align="left" colspan="1" rowspan="1">tanh</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">dropout (input layer)</td><td style="border:none;" align="left" colspan="1" rowspan="1"> </td><td style="border:none;" align="left" colspan="1" rowspan="1">0.2</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">hidden layer 1</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense,
+512 neurons, ELU, Dropout 0.5</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 512 neurons, ELU,
+Dropout 0.5</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">hidden layer 2</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 512 neurons, ELU, Dropout 0.5</td><td style="border:none;" align="left" colspan="1" rowspan="1"> </td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">hidden layer 3</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 512 neurons, ELU, Dropout
+0.5</td><td style="border:none;" align="left" colspan="1" rowspan="1"> </td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">output layer</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 1 neuron, Sigmoid activation</td><td style="border:none;" align="left" colspan="1" rowspan="1">dense, 1 neuron,
+Sigmoid activation</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">regularization</td><td style="border:none;" align="left" colspan="1" rowspan="1">L2 regularization (0.0001) on each Dense layer</td><td style="border:none;" align="left" colspan="1" rowspan="1">none</td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">optimizer</td><td style="border:none;" align="left" colspan="1" rowspan="1">Adam, learning
+rate: 10<sup>–3</sup></td><td style="border:none;" align="left" colspan="1" rowspan="1">Adam, learning rate: 10<sup>–4</sup></td></tr><tr><td style="border:none;" align="left" colspan="1" rowspan="1">loss function</td><td style="border:none;" align="left" colspan="1" rowspan="1">binary cross-entropy</td><td style="border:none;" align="left" colspan="1" rowspan="1">binary cross-entropy</td></tr></tbody></table></table-wrap></sec><sec id="sec26"><title>MVS-A</title><p>MVS-A was implemented using the MVS-A codebase.<sup><xref ref-type="bibr" rid="ref13">13</xref></sup> MVS-A uses an LGBMClassifier with 100 boosting
+iterations, lambda regularization of 1.0, column subsampling of 0.95,
+and a seed according to the current replicate number. The model was
+trained on the training set, and the self-importance scores were calculated
+using the following formula:<disp-formula id="eq1"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="anchor" orientation="portrait" xlink:href="ci4c01547_m001.jpg"><?image-name ci4c01547_m001.jpg?><?image-size 2523?><?image-md5 c4ea288eee9f1aa323b42d94bcf97c68?><?image-image-server-status NEVER_LOAD?><?image-original-height 37?><?image-original-width 177?><?image-scaled-height 37?><?image-scaled-width 177?><?image-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/c4ea288eee9f/ci4c01547_m001.jpg?><?thumb-name ci4c01547_m001.gif?><?thumb-size 1034?><?thumb-md5 dd40af41958f8ce7adc53241cd75e1a7?><?thumb-image-server-status NEVER_LOAD?><?thumb-scaled-height 37?><?thumb-scaled-width 177?><?thumb-cloudpmc-urn urn:cdn:blobs/2ddf/11558681/dd40af41958f/ci4c01547_m001.gif?></graphic><label>1</label></disp-formula>with <italic toggle="yes">g</italic><sub><italic toggle="yes">ij</italic></sub> is the loss function gradient at checkpoint <italic toggle="yes">i</italic> for training sample <italic toggle="yes">j</italic> and <italic toggle="yes">h</italic><sub><italic toggle="yes">ij</italic></sub> is the Hessian at checkpoint <italic toggle="yes">i</italic> for training sample <italic toggle="yes">j</italic>.<sup><xref ref-type="bibr" rid="ref13">13</xref></sup></p></sec></sec><sec id="sec27"><title>Performance Metrics</title><p>In this study, we employed a suite
+of performance metrics to assess the effectiveness of our methods.
+The metrics used include top-<italic toggle="yes">k</italic> precision with <italic toggle="yes">k</italic> = 10, enrichment factor score at 10%, BEDROC score with
+an α parameter of 20,<sup><xref ref-type="bibr" rid="ref42">42</xref></sup> and average
+precision score. For statistical analysis, we applied the Wilcoxon
+signed-rank test with a significance level of α<sub>W</sub> =
+0.05,<sup><xref ref-type="bibr" rid="ref35">35</xref></sup> using the Benjamini–Hochberg
+correction for multiple method comparisons.<sup><xref ref-type="bibr" rid="ref37">37</xref>,<xref ref-type="bibr" rid="ref38">38</xref></sup> For active learning and false and true positive prediction, a Friedman
+test was performed before data analysis to check for significant changes
+in distributions.<sup><xref ref-type="bibr" rid="ref35">35</xref>,<xref ref-type="bibr" rid="ref43">43</xref></sup></p></sec></sec></body><back><notes notes-type="data-availability" id="notes1"><title>Data Availability Statement</title><p>The code, the
+curated data set list, and the results published here are available
+on GitHub (<uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://github.com/JoshuaHesse/DataValuationPlatform">https://github.com/JoshuaHesse/DataValuationPlatform</uri>). The system used for this study was configured with 256 GB of DDR4
+3200 MHz RAM, an AMD Ryzen Threadripper 3970X 32-Core CPU, and two
+NVIDIA GTX 3070 GPUs.</p></notes><notes id="notes2" notes-type="si"><title>Supporting Information Available</title><p>The Supporting Information
+is
+available free of charge at <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/10.1021/acs.jcim.4c01547?goto=supporting-info">https://pubs.acs.org/doi/10.1021/acs.jcim.4c01547</ext-link>.<list id="silist" list-type="simple"><list-item><p>Data curation section, statistical analyses, and additional
+experiments and discussion (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://pubs.acs.org/doi/suppl/10.1021/acs.jcim.4c01547/suppl_file/ci4c01547_si_001.pdf">PDF</ext-link>)</p></list-item></list></p></notes><sec sec-type="supplementary-material"><title>Supplementary Material</title><supplementary-material content-type="local-data" id="sifile1" position="float" orientation="portrait"><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ci4c01547_si_001.pdf" position="float" orientation="portrait"><?suppdata-name ci4c01547_si_001.pdf?><?suppdata-size 1245949?><?suppdata-md5 988301b959b53223c160e3c8b4050a31?><?suppdata-image-server-status NEVER_LOAD?><?suppdata-mime-type application?><?suppdata-mime-sub-type pdf?><?suppdata-cloudpmc-urn urn:app:2ddf/11558681/988301b959b5/ci4c01547_si_001.pdf?><caption><p>ci4c01547_si_001.pdf</p></caption></media></supplementary-material></sec><notes notes-type="COI-statement" id="notes3"><p>The authors
+declare no competing financial interest.</p></notes><ack><title>Acknowledgments</title><p>The authors thank
+Merck KGaA Darmstadt for their
+generous support with the Merck Future Insight Prize 2020. This project
+was also cofunded by the European Union (ERC, breakingBAC, 101096911).
+Views and opinions expressed are however those of the author(s) only
+and do not necessarily reflect those of the European Union or the
+European Research Council. Neither the European Union nor the granting
+authority can be held responsible for them. J.H. thanks Maximilian
+G. Schuh for his help revising the draft and creating the figures.</p></ack><ref-list><title>References</title><ref id="ref1"><mixed-citation publication-type="journal" id="cit1"><name name-style="western"><surname>Liu</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Li</surname><given-names>X.</given-names></name>; <name name-style="western"><surname>Lam</surname><given-names>K. S.</given-names></name>
+<article-title>Combinatorial chemistry in drug discovery</article-title>. <source>Curr. Opin. Chem. Biol.</source>
+<year>2017</year>, <volume>38</volume>, <fpage>117</fpage>–<lpage>126</lpage>. <pub-id pub-id-type="doi">10.1016/j.cbpa.2017.03.017</pub-id>.<pub-id pub-id-type="pmid">28494316</pub-id>
+<pub-id pub-id-type="pmcid">PMC5645069</pub-id></mixed-citation></ref><ref id="ref2"><mixed-citation publication-type="journal" id="cit2"><name name-style="western"><surname>Carnero</surname><given-names>A.</given-names></name>
+<article-title>High throughput
+screening in drug discovery</article-title>. <source>Clinical and Translational
+Oncology</source>
+<year>2006</year>, <volume>8</volume>, <fpage>482</fpage>–<lpage>490</lpage>. <pub-id pub-id-type="doi">10.1007/s12094-006-0048-2</pub-id>.<pub-id pub-id-type="pmid">16870538</pub-id>
+</mixed-citation></ref><ref id="ref3"><mixed-citation publication-type="journal" id="cit3"><name name-style="western"><surname>MacArron</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Banks</surname><given-names>M. N.</given-names></name>; <name name-style="western"><surname>Bojanic</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Burns</surname><given-names>D. J.</given-names></name>; <name name-style="western"><surname>Cirovic</surname><given-names>D. A.</given-names></name>; <name name-style="western"><surname>Garyantes</surname><given-names>T.</given-names></name>; <name name-style="western"><surname>Green</surname><given-names>D. V.</given-names></name>; <name name-style="western"><surname>Hertzberg</surname><given-names>R. P.</given-names></name>; <name name-style="western"><surname>Janzen</surname><given-names>W. P.</given-names></name>; <name name-style="western"><surname>Paslay</surname><given-names>J. W.</given-names></name>; et al. <article-title>Impact of high-throughput
+screening in biomedical research</article-title>. <source>Nat. Rev.
+Drug Discovery</source>
+<year>2011</year>, <volume>10</volume>, <fpage>188</fpage>–<lpage>195</lpage>. <pub-id pub-id-type="doi">10.1038/nrd3368</pub-id>.<pub-id pub-id-type="pmid">21358738</pub-id>
+</mixed-citation></ref><ref id="ref4"><mixed-citation publication-type="journal" id="cit4"><name name-style="western"><surname>Stork</surname><given-names>C.</given-names></name>; <name name-style="western"><surname>Chen</surname><given-names>Y.</given-names></name>; <name name-style="western"><surname>Šícho</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Kirchmair</surname><given-names>J.</given-names></name>
+<article-title>Hit Dexter
+2.0: Machine-Learning Models for the Prediction of Frequent Hitters</article-title>. <source>J. Chem. Inf. Model.</source>
+<year>2019</year>, <volume>59</volume>, <fpage>1030</fpage>–<lpage>1043</lpage>. <pub-id pub-id-type="doi">10.1021/acs.jcim.8b00677</pub-id>.<pub-id pub-id-type="pmid">30624935</pub-id>
+</mixed-citation></ref><ref id="ref5"><mixed-citation publication-type="journal" id="cit5"><name name-style="western"><surname>David</surname><given-names>L.</given-names></name>; <name name-style="western"><surname>Walsh</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Sturm</surname><given-names>N.</given-names></name>; <name name-style="western"><surname>Feierberg</surname><given-names>I.</given-names></name>; <name name-style="western"><surname>Nissink</surname><given-names>J. W. M.</given-names></name>; <name name-style="western"><surname>Chen</surname><given-names>H.</given-names></name>; <name name-style="western"><surname>Bajorath</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Engkvist</surname><given-names>O.</given-names></name>
+<article-title>Identification
+of Compounds That Interfere with High-Throughput Screening Assay Technologies</article-title>. <source>ChemMedChem.</source>
+<year>2019</year>, <volume>14</volume>, <fpage>1795</fpage>–<lpage>1802</lpage>. <pub-id pub-id-type="doi">10.1002/cmdc.201900395</pub-id>.<pub-id pub-id-type="pmid">31479198</pub-id>
+<pub-id pub-id-type="pmcid">PMC6856845</pub-id></mixed-citation></ref><ref id="ref6"><mixed-citation publication-type="journal" id="cit6"><name name-style="western"><surname>Sink</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Gobec</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Pečar</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Zega</surname><given-names>A.</given-names></name>
+<article-title>False positives in
+the early stages of drug discovery</article-title>. <source>Curr. Med.
+Chem.</source>
+<year>2010</year>, <volume>17</volume>, <fpage>4231</fpage>–<lpage>4255</lpage>. <pub-id pub-id-type="doi">10.2174/092986710793348545</pub-id>.<pub-id pub-id-type="pmid">20939815</pub-id>
+</mixed-citation></ref><ref id="ref7"><mixed-citation publication-type="book" id="cit7"><person-group person-group-type="allauthors"><name name-style="western"><surname>Auld</surname><given-names>D. S.</given-names></name>; <name name-style="western"><surname>Inglese</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Dahlin</surname><given-names>J. L.</given-names></name></person-group> In <source>Assay Guidance
+Manual</source>; <person-group person-group-type="editor"><name name-style="western"><surname>Markossian</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Grossman</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Arkin</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Auld</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Austin</surname><given-names>C.</given-names></name>; <name name-style="western"><surname>Baell</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Brimacombe</surname><given-names>K.</given-names></name>; <name name-style="western"><surname>Chung</surname><given-names>T.</given-names></name>; <name name-style="western"><surname>Coussens</surname><given-names>N.</given-names></name>; <name name-style="western"><surname>Dahlin</surname><given-names>J.</given-names></name></person-group>, Eds.; <publisher-name>Eli Lilly &amp; Company
+and the National Center for Advancing Translational Sciences</publisher-name>: <publisher-loc>Bethesda, MD</publisher-loc>, <year>2017</year>.<pub-id pub-id-type="pmid">22553861</pub-id></mixed-citation></ref><ref id="ref8"><mixed-citation publication-type="journal" id="cit8"><name name-style="western"><surname>Hall</surname><given-names>M. D.</given-names></name>; <name name-style="western"><surname>Simeonov</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Davis</surname><given-names>M. I.</given-names></name>
+<article-title>Avoiding Fluorescence
+Assay Interference-The
+Case for Diaphorase</article-title>. <source>Assay and drug development
+technologies</source>
+<year>2016</year>, <volume>14</volume>, <fpage>175</fpage>–<lpage>179</lpage>. <pub-id pub-id-type="doi">10.1089/adt.2016.707</pub-id>.<pub-id pub-id-type="pmid">27078679</pub-id>
+<pub-id pub-id-type="pmcid">PMC4840916</pub-id></mixed-citation></ref><ref id="ref9"><mixed-citation publication-type="journal" id="cit9"><name name-style="western"><surname>Dahlin</surname><given-names>J. L.</given-names></name>; <name name-style="western"><surname>Nissink</surname><given-names>J. W. M.</given-names></name>; <name name-style="western"><surname>Strasser</surname><given-names>J. M.</given-names></name>; <name name-style="western"><surname>Francis</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Higgins</surname><given-names>L.</given-names></name>; <name name-style="western"><surname>Zhou</surname><given-names>H.</given-names></name>; <name name-style="western"><surname>Zhang</surname><given-names>Z.</given-names></name>; <name name-style="western"><surname>Walters</surname><given-names>M. A.</given-names></name>
+<article-title>PAINS in the Assay:
+Chemical Mechanisms of Assay Interference and Promiscuous Enzymatic
+Inhibition Observed during a Sulfhydryl-Scavenging HTS</article-title>. <source>J. Med. Chem.</source>
+<year>2015</year>, <volume>58</volume>, <fpage>2091</fpage>–<lpage>2113</lpage>. <pub-id pub-id-type="doi">10.1021/jm5019093</pub-id>.<pub-id pub-id-type="pmid">25634295</pub-id>
+<pub-id pub-id-type="pmcid">PMC4360378</pub-id></mixed-citation></ref><ref id="ref10"><mixed-citation publication-type="journal" id="cit10"><name name-style="western"><surname>Baell</surname><given-names>J. B.</given-names></name>; <name name-style="western"><surname>Holloway</surname><given-names>G. A.</given-names></name>
+<article-title>New Substructure Filters for Removal of Pan Assay Interference
+Compounds (PAINS) from Screening Libraries and for Their Exclusion
+in Bioassays</article-title>. <source>J. Med. Chem.</source>
+<year>2010</year>, <volume>53</volume>, <fpage>2719</fpage>–<lpage>2740</lpage>. <pub-id pub-id-type="doi">10.1021/jm901137j</pub-id>.<pub-id pub-id-type="pmid">20131845</pub-id>
+</mixed-citation></ref><ref id="ref11"><mixed-citation publication-type="journal" id="cit11"><name name-style="western"><surname>Huth</surname><given-names>J. R.</given-names></name>; <name name-style="western"><surname>Mendoza</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Olejniczak</surname><given-names>E. T.</given-names></name>; <name name-style="western"><surname>Johnson</surname><given-names>R. W.</given-names></name>; <name name-style="western"><surname>Cothron</surname><given-names>D. A.</given-names></name>; <name name-style="western"><surname>Liu</surname><given-names>Y.</given-names></name>; <name name-style="western"><surname>Lerner</surname><given-names>C. G.</given-names></name>; <name name-style="western"><surname>Chen</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Hajduk</surname><given-names>P. J.</given-names></name>
+<article-title>ALARM NMR: a rapid
+and robust experimental method to detect reactive false positives
+in biochemical screens</article-title>. <source>J. Am. Chem. Soc.</source>
+<year>2005</year>, <volume>127</volume>, <fpage>217</fpage>–<lpage>224</lpage>. <pub-id pub-id-type="doi">10.1021/ja0455547</pub-id>.<pub-id pub-id-type="pmid">15631471</pub-id>
+</mixed-citation></ref><ref id="ref12"><mixed-citation publication-type="journal" id="cit12"><name name-style="western"><surname>Dragiev</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Nadon</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Makarenkov</surname><given-names>V.</given-names></name>
+<article-title>Systematic
+error detection in experimental
+high-throughput screening</article-title>. <source>BMC Bioinform.</source>
+<year>2011</year>, <volume>12</volume>, <fpage>25</fpage><pub-id pub-id-type="doi">10.1186/1471-2105-12-25</pub-id>.<pub-id pub-id-type="pmcid">PMC3034671</pub-id><pub-id pub-id-type="pmid">21247425</pub-id></mixed-citation></ref><ref id="ref13"><mixed-citation publication-type="journal" id="cit13"><name name-style="western"><surname>Boldini</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Friedrich</surname><given-names>L.</given-names></name>; <name name-style="western"><surname>Kuhn</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Sieber</surname><given-names>S. A.</given-names></name>
+<article-title>Machine Learning
+Assisted Hit Prioritization for High Throughput Screening in Drug
+Discovery</article-title>. <source>ACS Cent. Sci.</source>
+<year>2024</year>, <volume>10</volume>, <fpage>823</fpage>–<lpage>832</lpage>. <pub-id pub-id-type="doi">10.1021/acscentsci.3c01517</pub-id>.<pub-id pub-id-type="pmid">38680560</pub-id>
+<pub-id pub-id-type="pmcid">PMC11046457</pub-id></mixed-citation></ref><ref id="ref14"><mixed-citation publication-type="journal" id="cit14"><name name-style="western"><surname>Yang</surname><given-names>Z.-Y.</given-names></name>; <name name-style="western"><surname>He</surname><given-names>J.-H.</given-names></name>; <name name-style="western"><surname>Lu</surname><given-names>A.-P.</given-names></name>; <name name-style="western"><surname>Hou</surname><given-names>T.-J.</given-names></name>; <name name-style="western"><surname>Cao</surname><given-names>D.-S.</given-names></name>
+<article-title>Frequent
+hitters: nuisance artifacts in high-throughput screening</article-title>. <source>Drug Discovery Today</source>
+<year>2020</year>, <volume>25</volume>, <fpage>657</fpage>–<lpage>667</lpage>. <pub-id pub-id-type="doi">10.1016/j.drudis.2020.01.014</pub-id>.<pub-id pub-id-type="pmid">31987936</pub-id>
+</mixed-citation></ref><ref id="ref15"><mixed-citation publication-type="undeclared" id="cit15"><person-group person-group-type="allauthors"><name name-style="western"><surname>Fleckenstein</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Obaidi</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Tryfona</surname><given-names>N.</given-names></name></person-group><source>Data Valuation:
+Use Cases, Desiderata, and Approaches</source>. In <series>ACM International
+Conference Proceeding Series</series>, <year>2023</year>; pp <fpage>48</fpage>–<lpage>52</lpage>.</mixed-citation></ref><ref id="ref16"><mixed-citation publication-type="undeclared" id="cit16"><person-group person-group-type="allauthors"><name name-style="western"><surname>Li</surname><given-names>W.</given-names></name>; <name name-style="western"><surname>Fu</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Zhang</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Pang</surname><given-names>Y.</given-names></name></person-group><source>Data Valuation
+and Detections in Federated Learning</source>. In <series>2024 IEEE/CVF
+Conference on Computer Vision and Pattern
+Recognition (CVPR). Los Alamitos, CA, USA</series>, <year>2024</year>; pp <fpage>12027</fpage>–<lpage>12036</lpage>.</mixed-citation></ref><ref id="ref17"><mixed-citation publication-type="undeclared" id="cit17"><person-group person-group-type="allauthors"><name name-style="western"><surname>Kumar</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Lakshminarayanan</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Chang</surname><given-names>K.</given-names></name>; <name name-style="western"><surname>Guretno</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Mien</surname><given-names>I. H.</given-names></name>; <name name-style="western"><surname>Kalpathy-Cramer</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Krishnaswamy</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Singh</surname><given-names>P.</given-names></name></person-group><source>Towards More Efficient Data Valuation in Healthcare
+Federated Learning Using Ensembling</source>. In <series>Distributed,
+Collaborative, and Federated Learning, and Affordable AI and Healthcare
+for Resource Diverse Global Health</series>, <year>2022</year>; pp <fpage>119</fpage>–<lpage>129</lpage><pub-id pub-id-type="doi">10.1007/978-3-031-18523-6_12</pub-id>.<pub-id pub-id-type="pmcid">PMC9890952</pub-id><pub-id pub-id-type="pmid">36745141</pub-id></mixed-citation></ref><ref id="ref18"><mixed-citation publication-type="undeclared" id="cit18"><person-group person-group-type="allauthors"><name name-style="western"><surname>Sim</surname><given-names>R. H. L.</given-names></name>; <name name-style="western"><surname>Xu</surname><given-names>X.</given-names></name>; <name name-style="western"><surname>Low</surname><given-names>B.
+K. H.</given-names></name></person-group><source>Data Valuation in Machine
+Learning: “Ingredients”, Strategies, and Open Challenges</source>. In <series>IJCAI International Joint Conference on Artificial Intelligence</series>, <year>2022</year>; pp <fpage>5607</fpage>–<lpage>5614</lpage>.</mixed-citation></ref><ref id="ref19"><mixed-citation publication-type="undeclared" id="cit19"><person-group person-group-type="allauthors"><name name-style="western"><surname>Yoon</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Arik</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Pfister</surname><given-names>T.</given-names></name></person-group><source>Data Valuation using Reinforcement
+Learning</source>. In <series>37th International Conference on Machine
+Learning, ICML 2020</series>, <year>2020</year>; pp <fpage>10773</fpage>–<lpage>10782</lpage>.</mixed-citation></ref><ref id="ref20"><mixed-citation publication-type="undeclared" id="cit20"><person-group person-group-type="allauthors"><name name-style="western"><surname>Pruthi</surname><given-names>G.</given-names></name>; <name name-style="western"><surname>Liu</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Kale</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Sundararajan</surname><given-names>M.</given-names></name></person-group><source>Estimating
+Training Data Influence by Tracing
+Gradient Descent</source>. In <series>Proceedings of the 34th International
+Conference on Neural Information Processing Systems</series>. Red
+Hook, NY, USA, <year>2020</year><pub-id pub-id-type="doi">10.48550/arXiv.2002.08484</pub-id>.</mixed-citation></ref><ref id="ref21"><mixed-citation publication-type="undeclared" id="cit21"><person-group person-group-type="allauthors"><name name-style="western"><surname>Karlaš</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Dao</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Interlandi</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Schelter</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Wu</surname><given-names>W.</given-names></name>; <name name-style="western"><surname>Zhang</surname><given-names>C.</given-names></name></person-group><source>Data Debugging with Shapley Importance over
+Machine Learning Pipelines</source>. In <series>The Twelfth International
+Conference on Learning Representations</series>, <year>2024</year>.</mixed-citation></ref><ref id="ref22"><mixed-citation publication-type="undeclared" id="cit22"><person-group person-group-type="allauthors"><name name-style="western"><surname>Sharchilev</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Ustinovsky</surname><given-names>Y.</given-names></name>; <name name-style="western"><surname>Serdyukov</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>De Rijke</surname><given-names>M.</given-names></name></person-group><source>Finding Influential
+Training Samples for Gradient Boosted Decision Trees</source>. In <series>35th International Conference on Machine Learning, ICML 2018</series>. <year>2018</year>; pp <fpage>7287</fpage>–<lpage>7296</lpage>.</mixed-citation></ref><ref id="ref23"><mixed-citation publication-type="journal" id="cit23"><name name-style="western"><surname>Svensson</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Norinder</surname><given-names>U.</given-names></name>; <name name-style="western"><surname>Bender</surname><given-names>A.</given-names></name>
+<article-title>Improving
+Screening Efficiency through
+Iterative Screening Using Docking and Conformal Prediction</article-title>. <source>J. Chem. Inf. Model.</source>
+<year>2017</year>, <volume>57</volume>, <fpage>439</fpage>–<lpage>444</lpage>. <pub-id pub-id-type="doi">10.1021/acs.jcim.6b00532</pub-id>.<pub-id pub-id-type="pmid">28195474</pub-id>
+</mixed-citation></ref><ref id="ref24"><mixed-citation publication-type="journal" id="cit24"><name name-style="western"><surname>Zakharov</surname><given-names>A. V.</given-names></name>; <name name-style="western"><surname>Peach</surname><given-names>M. L.</given-names></name>; <name name-style="western"><surname>Sitzmann</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Nicklaus</surname><given-names>M. C.</given-names></name>
+<article-title>QSAR Modeling
+of
+Imbalanced High-Throughput Screening Data in PubChem</article-title>. <source>J. Chem. Inf. Model.</source>
+<year>2014</year>, <volume>54</volume>, <fpage>705</fpage>–<lpage>712</lpage>. <pub-id pub-id-type="doi">10.1021/ci400737s</pub-id>.<pub-id pub-id-type="pmid">24524735</pub-id>
+<pub-id pub-id-type="pmcid">PMC3985743</pub-id></mixed-citation></ref><ref id="ref25"><mixed-citation publication-type="journal" id="cit25"><name name-style="western"><surname>Buterez</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Janet</surname><given-names>J. P.</given-names></name>; <name name-style="western"><surname>Kiddle</surname><given-names>S. J.</given-names></name>; <name name-style="western"><surname>Liò</surname><given-names>P.</given-names></name>
+<article-title>MF-PCBA: Multifidelity
+High-Throughput Screening Benchmarks for Drug Discovery and Machine
+Learning</article-title>. <source>J. Chem. Inf. Model.</source>
+<year>2023</year>, <volume>63</volume>, <fpage>2667</fpage>–<lpage>2678</lpage>. <pub-id pub-id-type="doi">10.1021/acs.jcim.2c01569</pub-id>.<pub-id pub-id-type="pmid">37058588</pub-id>
+<pub-id pub-id-type="pmcid">PMC10170507</pub-id></mixed-citation></ref><ref id="ref26"><mixed-citation publication-type="journal" id="cit26"><name name-style="western"><surname>Keshavarzi
+Arshadi</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Salem</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Firouzbakht</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Yuan</surname><given-names>J. S.</given-names></name>
+<article-title>MolData, a molecular benchmark for disease and target
+based machine learning</article-title>. <source>J. Cheminf.</source>
+<year>2022</year>, <volume>14</volume>, <fpage>10</fpage><pub-id pub-id-type="doi">10.1186/s13321-022-00590-y</pub-id>.<pub-id pub-id-type="pmcid">PMC8899453</pub-id><pub-id pub-id-type="pmid">35255958</pub-id></mixed-citation></ref><ref id="ref27"><mixed-citation publication-type="undeclared" id="cit27"><person-group person-group-type="allauthors"><name name-style="western"><surname>Pandl</surname><given-names>K. D.</given-names></name>; <name name-style="western"><surname>Feiland</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Thiebes</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Sunyaev</surname><given-names>A.</given-names></name></person-group><source>Trustworthy machine learning
+for health care: Scalable data valuation with the shapley value</source>. In <series>ACM CHIL 2021—Proceedings of the 2021 ACM Conference
+on Health, Inference, and Learning</series>, <year>2021</year>; pp <fpage>47</fpage>–<lpage>57</lpage>.</mixed-citation></ref><ref id="ref28"><mixed-citation publication-type="journal" id="cit28"><name name-style="western"><surname>Breck</surname><given-names>E.</given-names></name>; <name name-style="western"><surname>Polyzotis</surname><given-names>N.</given-names></name>; <name name-style="western"><surname>Roy</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Whang</surname><given-names>S. E.</given-names></name>; <name name-style="western"><surname>Zinkevich</surname><given-names>M.</given-names></name>
+<article-title>Data Validation
+for Machine Learning</article-title>. <source>SysML</source>
+<year>2019</year>, <fpage>1</fpage>–<lpage>14</lpage>.</mixed-citation></ref><ref id="ref29"><mixed-citation publication-type="journal" id="cit29"><name name-style="western"><surname>Lundberg</surname><given-names>S. M.</given-names></name>; <name name-style="western"><surname>Erion</surname><given-names>G.</given-names></name>; <name name-style="western"><surname>Chen</surname><given-names>H.</given-names></name>; <name name-style="western"><surname>DeGrave</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Prutkin</surname><given-names>J. M.</given-names></name>; <name name-style="western"><surname>Nair</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Katz</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Himmelfarb</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Bansal</surname><given-names>N.</given-names></name>; <name name-style="western"><surname>Lee</surname><given-names>S.-I.</given-names></name>
+<article-title>From local explanations to global
+understanding with explainable AI for trees</article-title>. <source>Nature Machine Intelligence</source>
+<year>2020</year>, <volume>2</volume>, <fpage>56</fpage>–<lpage>67</lpage>. <pub-id pub-id-type="doi">10.1038/s42256-019-0138-9</pub-id>.<pub-id pub-id-type="pmcid">PMC7326367</pub-id><pub-id pub-id-type="pmid">32607472</pub-id></mixed-citation></ref><ref id="ref30"><mixed-citation publication-type="journal" id="cit30"><name name-style="western"><surname>Jia</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Dao</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Wang</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Hubis</surname><given-names>F. A.</given-names></name>; <name name-style="western"><surname>Gurel</surname><given-names>N. M.</given-names></name>; <name name-style="western"><surname>Li</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Zhang</surname><given-names>C.</given-names></name>; <name name-style="western"><surname>Spanos</surname><given-names>C.</given-names></name>; <name name-style="western"><surname>Song</surname><given-names>D.</given-names></name>
+<article-title>Efficient task specific
+data valuation for nearest neighbor algorithms</article-title>. <source>Proceedings of the VLDB Endowment</source>
+<year>2019</year>, <volume>12</volume>, <fpage>1610</fpage>–<lpage>1623</lpage>. <pub-id pub-id-type="doi">10.14778/3342263.3342637</pub-id>.</mixed-citation></ref><ref id="ref31"><mixed-citation publication-type="undeclared" id="cit31"><person-group person-group-type="allauthors"><name name-style="western"><surname>Koh</surname><given-names>P. W.</given-names></name>; <name name-style="western"><surname>Liang</surname><given-names>P.</given-names></name></person-group><source>Understanding Black-box
+Predictions via Influence Functions</source>. In <series>34th International
+Conference on Machine Learning, ICML 2017</series>, <year>2017</year>; pp <fpage>2976</fpage>–<lpage>2987</lpage>.</mixed-citation></ref><ref id="ref32"><mixed-citation publication-type="journal" id="cit32"><name name-style="western"><surname>Mousavi</surname><given-names>S. S.</given-names></name>; <name name-style="western"><surname>Schukat</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Howley</surname><given-names>E.</given-names></name>
+<article-title>Deep Reinforcement Learning: An Overview</article-title>. <source>Lecture Notes in Networks and Systems</source>
+<year>2018</year>, <volume>16</volume>, <fpage>426</fpage>–<lpage>440</lpage>. <pub-id pub-id-type="doi">10.1007/978-3-319-56991-8_32</pub-id>.</mixed-citation></ref><ref id="ref33"><mixed-citation publication-type="journal" id="cit33"><name name-style="western"><surname>Dreiman</surname><given-names>G. H. S.</given-names></name>; <name name-style="western"><surname>Bictash</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Fish</surname><given-names>P. V.</given-names></name>; <name name-style="western"><surname>Griffin</surname><given-names>L.</given-names></name>; <name name-style="western"><surname>Svensson</surname><given-names>F.</given-names></name>
+<article-title>Changing the
+HTS Paradigm: AI-Driven Iterative Screening for Hit Finding</article-title>. <source>SLAS discovery: advancing life sciences R &amp; D</source>
+<year>2021</year>, <volume>26</volume>, <fpage>257</fpage>–<lpage>262</lpage>. <pub-id pub-id-type="doi">10.1177/2472555220949495</pub-id>.<pub-id pub-id-type="pmid">32808550</pub-id>
+<pub-id pub-id-type="pmcid">PMC7838329</pub-id></mixed-citation></ref><ref id="ref34"><mixed-citation publication-type="journal" id="cit34"><name name-style="western"><surname>Ahmed</surname><given-names>L.</given-names></name>; <name name-style="western"><surname>Georgiev</surname><given-names>V.</given-names></name>; <name name-style="western"><surname>Capuccini</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Toor</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Schaal</surname><given-names>W.</given-names></name>; <name name-style="western"><surname>Laure</surname><given-names>E.</given-names></name>; <name name-style="western"><surname>Spjuth</surname><given-names>O.</given-names></name>
+<article-title>Efficient
+iterative virtual screening
+with Apache Spark and conformal prediction</article-title>. <source>J. Cheminf.</source>
+<year>2018</year>, <volume>10</volume>, <fpage>8</fpage><pub-id pub-id-type="doi">10.1186/s13321-018-0265-z</pub-id>.<pub-id pub-id-type="pmcid">PMC5833896</pub-id><pub-id pub-id-type="pmid">29492726</pub-id></mixed-citation></ref><ref id="ref35"><mixed-citation publication-type="journal" id="cit35"><name name-style="western"><surname>Virtanen</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Gommers</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Oliphant</surname><given-names>T. E.</given-names></name>; <name name-style="western"><surname>Haberland</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Reddy</surname><given-names>T.</given-names></name>; <name name-style="western"><surname>Cournapeau</surname><given-names>D.</given-names></name>; <name name-style="western"><surname>Burovski</surname><given-names>E.</given-names></name>; <name name-style="western"><surname>Peterson</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Weckesser</surname><given-names>W.</given-names></name>; <name name-style="western"><surname>Bright</surname><given-names>J.</given-names></name>; et al. <article-title>SciPy 1.0: Fundamental
+Algorithms for Scientific Computing in Python</article-title>. <source>Nat. Methods</source>
+<year>2020</year>, <volume>17</volume>, <fpage>261</fpage>–<lpage>272</lpage>. <pub-id pub-id-type="doi">10.1038/s41592-019-0686-2</pub-id>.<pub-id pub-id-type="pmid">32015543</pub-id>
+<pub-id pub-id-type="pmcid">PMC7056644</pub-id></mixed-citation></ref><ref id="ref36"><mixed-citation publication-type="journal" id="cit36"><name name-style="western"><surname>Chakravorty</surname><given-names>S. J.</given-names></name>; <name name-style="western"><surname>Chan</surname><given-names>J.</given-names></name>; <name name-style="western"><surname>Greenwood</surname><given-names>M. N.</given-names></name>; <name name-style="western"><surname>Popa-Burke</surname><given-names>I.</given-names></name>; <name name-style="western"><surname>Remlinger</surname><given-names>K. S.</given-names></name>; <name name-style="western"><surname>Pickett</surname><given-names>S. D.</given-names></name>; <name name-style="western"><surname>Green</surname><given-names>D. V.</given-names></name>; <name name-style="western"><surname>Fillmore</surname><given-names>M. C.</given-names></name>; <name name-style="western"><surname>Dean</surname><given-names>T. W.</given-names></name>; <name name-style="western"><surname>Luengo</surname><given-names>J. I.</given-names></name>; et al. <article-title>Nuisance Compounds,
+PAINS Filters, and Dark Chemical Matter in the GSK HTS Collection</article-title>. <source>SLAS Discovery</source>
+<year>2018</year>, <volume>23</volume>, <fpage>532</fpage>–<lpage>544</lpage>. <pub-id pub-id-type="doi">10.1177/2472555218768497</pub-id>.<pub-id pub-id-type="pmid">29699447</pub-id>
+</mixed-citation></ref><ref id="ref37"><mixed-citation publication-type="journal" id="cit37"><name name-style="western"><surname>Benjamini</surname><given-names>Y.</given-names></name>; <name name-style="western"><surname>Hochberg</surname><given-names>Y.</given-names></name>
+<article-title>Controlling the False Discovery Rate:
+A Practical and
+Powerful Approach to Multiple Testing</article-title>. <source>Journal
+of the Royal Statistical Society: Series B (Methodological)</source>
+<year>1995</year>, <volume>57</volume>, <fpage>289</fpage>–<lpage>300</lpage>. <pub-id pub-id-type="doi">10.1111/j.2517-6161.1995.tb02031.x</pub-id>.</mixed-citation></ref><ref id="ref38"><mixed-citation publication-type="undeclared" id="cit38"><person-group person-group-type="allauthors"><name name-style="western"><surname>Seabold</surname><given-names>S.</given-names></name>; <name name-style="western"><surname>Perktold</surname><given-names>J.</given-names></name></person-group><source>statsmodels: Econometric
+and Statistical Modeling with Python</source>. In <series>9th Python
+in Science Conference</series>, <year>2010</year>.</mixed-citation></ref><ref id="ref39"><mixed-citation publication-type="weblink" id="cit39"><person-group person-group-type="allauthors"><name name-style="western"><surname>Landrun</surname><given-names>G.</given-names></name></person-group><source>Rdkit/Rdkit: 2022_09_5
+(Q3 2022) Release</source>, <year>2023</year>; <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.rdkit.org/">https://www.rdkit.org/</uri>.</mixed-citation></ref><ref id="ref40"><mixed-citation publication-type="journal" id="cit40"><name name-style="western"><surname>Pedregosa</surname><given-names>F.</given-names></name>; <name name-style="western"><surname>Varoquaux</surname><given-names>G.</given-names></name>; <name name-style="western"><surname>Gramfort</surname><given-names>A.</given-names></name>; <name name-style="western"><surname>Michel</surname><given-names>V.</given-names></name>; <name name-style="western"><surname>Thirion</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Grisel</surname><given-names>O.</given-names></name>; <name name-style="western"><surname>Blondel</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Prettenhofer</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Weiss</surname><given-names>R.</given-names></name>; <name name-style="western"><surname>Dubourg</surname><given-names>V.</given-names></name>
+<article-title>Scikit-learn: Machine Learning in
+Python</article-title>. <source>J. Mach. Learn. Res.</source>
+<year>2011</year>, <volume>12</volume>, <fpage>2825</fpage>–<lpage>2830</lpage>.</mixed-citation></ref><ref id="ref41"><mixed-citation publication-type="undeclared" id="cit41"><person-group person-group-type="allauthors"><name name-style="western"><surname>Abadi</surname><given-names>M.</given-names></name>; <name name-style="western"><surname>Barham</surname><given-names>A. A. P.</given-names></name>; <name name-style="western"><surname>Brevdo</surname><given-names>E.</given-names></name>; <name name-style="western"><surname>Chen</surname><given-names>Z.</given-names></name>; <name name-style="western"><surname>Citro</surname><given-names>C.</given-names></name>; <name name-style="western"><surname>Corrado</surname><given-names>G. S.</given-names></name></person-group><article-title>{TensorFlow}: Large-Scale Machine
+Learning on Heterogeneous Systems</article-title>, <year>2015</year>; <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.tensorflow.org/">https://www.tensorflow.org/</uri>, <pub-id pub-id-type="doi">10.1007/s10661-016-5564-0</pub-id>.</mixed-citation></ref><ref id="ref42"><mixed-citation publication-type="book" id="cit42"><person-group person-group-type="allauthors"><name name-style="western"><surname>Ramsundar</surname><given-names>B.</given-names></name>; <name name-style="western"><surname>Eastman</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Walters</surname><given-names>P.</given-names></name>; <name name-style="western"><surname>Pande</surname><given-names>V.</given-names></name>; <name name-style="western"><surname>Leswing</surname><given-names>K.</given-names></name>; <name name-style="western"><surname>Wu</surname><given-names>Z.</given-names></name></person-group><source>Deep Learning for the Life Sciences</source>; <publisher-name>O’Reilly Media</publisher-name>, <year>2019</year>.</mixed-citation></ref><ref id="ref43"><mixed-citation publication-type="journal" id="cit43"><name name-style="western"><surname>Friedman</surname><given-names>M.</given-names></name>
+<article-title>The Use of
+Ranks to Avoid the Assumption of Normality Implicit in the Analysis
+of Variance</article-title>. <source>Journal of the American Statistical
+Association</source>
+<year>1937</year>, <volume>32</volume>, <fpage>675</fpage>–<lpage>701</lpage>. <pub-id pub-id-type="doi">10.1080/01621459.1937.10503522</pub-id>.</mixed-citation></ref></ref-list></back></article>

@@ -1,0 +1,47 @@
+{
+  "source": "sources\\CensorADMET_hERG_IC50_B.parquet",
+  "sha256": "30bd9d9a51fe48a4fc4b992b1fca5461843a702ddb88ed8a31af8063f3fdec54",
+  "rows": 11370,
+  "unit_definition": "pIC50=-log10(IC50 in mol/L); inhibitory if IC50 <= the illustrative threshold",
+  "scope": "hERG IC50 assay_type B aggregate; not raw replicate records, clinical safety, or a literature-extraction experiment",
+  "training_run": false,
+  "model_inference_run": false,
+  "classification_assumption": "Trust release relations =, <, > and bound orientation as supplied; do not replace a bound by an exact value.",
+  "multi_assay_rows": 350,
+  "multi_document_rows": 120,
+  "quality_flag_counts": {
+    "exact_consistent": 7821,
+    "censored_compatible": 3453,
+    "strict_exact_range_ok": 96
+  },
+  "thresholds": [
+    {
+      "threshold_um": 1.0,
+      "threshold_p": 6.0,
+      "all_rows": {
+        "supported_not_inhibitory_at_threshold": 9456,
+        "supported_inhibitory": 1679,
+        "insufficient_bound": 235
+      },
+      "censored_rows_only": {
+        "supported_not_inhibitory_at_threshold": 3164,
+        "supported_inhibitory": 54,
+        "insufficient_bound": 235
+      }
+    },
+    {
+      "threshold_um": 10.0,
+      "threshold_p": 5.0,
+      "all_rows": {
+        "supported_inhibitory": 5505,
+        "supported_not_inhibitory_at_threshold": 5543,
+        "insufficient_bound": 322
+      },
+      "censored_rows_only": {
+        "supported_not_inhibitory_at_threshold": 3053,
+        "supported_inhibitory": 78,
+        "insufficient_bound": 322
+      }
+    }
+  ]
+}

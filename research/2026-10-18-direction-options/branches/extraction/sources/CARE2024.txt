@@ -1,0 +1,1012 @@
+=== PDF page 1 ===
+  CARE: Extracting Experimental Findings From Clinical Literature
+
+             Aakanksha Naik1     Bailey Kuehl1     Erin Bransom1
+                     Doug Downey1    Tom Hope1,2
+
+                               1Allen Institute of AI, USA
+                        2The Hebrew University of Jerusalem
+
+
+
+
+                                                                           ABSTRACT
+                                                          Nested Spans                Abstract
+                                                                     A therapeutic   trial with verapamil… 12 patients admitted to our coronary
+    Extracting fine-grained experimental findings                      care unit… oral verapamil 480 mg/day and placebo were administered
+    from literature can provide dramatic utility for                       attacksalternatelywereduringdocumented...4 randomisednumber48-hourof attacksperiodsduring... Transient2 placeboischaemicperiods
+     scientific applications. Prior work has devel-                 were 123 , and 130 ,thanand 0.00631 andand23 lessduringthanthe0.0032 treatment) .     periods ( P less
+   oped annotation schemas and datasets for lim-
+     ited aspects of this problem, failing to capture               Result           RELATIONS           Discontinuous                                                                              (3-ary nested  NUMERICFINDING: P less than 0.006     Spans
+    the real-world complexity and nuance required.                  relation)
+    Focusing on biomedicine, this work presents          Result              Result1                     Result2
+  CARE—a new IE dataset for the task of ex-           (4-ary
+    tracting clinical findings. We develop a new            relations)    NUMERICFINDING: 31        NUMERICFINDING: 123
+    annotation schema capturing fine-grained find-
+    ings as n-ary relations between entities and at-                      POPULATION: 12 patients   MEASUREMENT: ...attacks
+     tributes, which unifies phenomena challenging                      TREATMENT: ...verapamil..     TREATMENT: placebo
+    for current IE systems such as discontinuous en-
+                                                                AttributeOf
+                                                                                                   DOSAGE: 480 mg/day     tity spans, nested relations, variable arity n-ary           (3-ary relation)  ROUTE: oral
+     relations and numeric results in a single schema.
+  We collect extensive annotations for 700 ab-                              TEMPORAL: 48-hour periods
+     stracts from two sources:  clinical trials and
+                                                       Figure 1: A partial example of entity, attribute and rela-    case reports. We also demonstrate the general-
+                                                             tion annotation using our schema for a clinical trial.     izability of our schema to the computer science
+    and materials science domains. We benchmark
+     state-of-the-art IE systems on CARE, showing
+    that even models such as GPT4 struggle. We        applications such as producing literature reviews
+    release our resources1 to advance research on                                           (DeYoung et al., 2021), supporting evidence-based
+    extracting and aggregating literature findings.                                                  decision-making (Naik et al., 2022), and generating
+1  Introduction                          new hypotheses (Wang et al., 2023).
+                                             While there have been efforts on building re-      It is surely a great criticism of our pro-
+                                                   sources and tools to capture findings in various do-     fession that we have not organised a
+                                             mains such as clinical trials (Lehman et al., 2019),      critical summary, by specialty or sub-
+                                             computer science (Jain et al., 2020) and social     specialty, adapted periodically, of all
+                                            and behavioral sciences (Magnusson and Fried-     relevant randomised controlled  trials.
+                                           man, 2021)—a major obstacle has been creating     (Archie Cochrane, 1979)
+                                                a representation that is expressive enough to cap-
+  Though this critique focused on clinical trials,    ture complex and nuanced information about find-
+the statement arguably applies to much of sci-    ings. We propose a new representation schema
+ence today.  There is tremendous potential util-    that makes important progress in capturing the real-
+ity in extracting, structuring and aggregating fine-   world complexity of scientific findings in papers,
+grained information about experimental findings   and use it to build a high-quality annotated dataset
+and the conditions under which they were achieved,   focusing on biomedical (clinical) findings. Our
+across scientific studies. Once extracted and aggre-   schema represents fine-grained information about
+gated, scientific findings can power many critical    experimental findings and conditions as n-ary rela-
+                                                       tions between entities and attributes, and includes  1CARE is available at https://github.com/allenai/
+CARE                                                  several structural complexities such as discontinu-
+
+                                        4580
+                Findings of the Association for Computational Linguistics: NAACL 2024, pages 4580–4596
+                          June 16-21, 2024 ©2024 Association for Computational Linguistics
+=== PDF page 2 ===
+ous span annotation, variable arity in relations and   2018; Nye et al., 2018), and at the same time our
+nestedness in relations. These aspects have been    resulting dataset is larger in size than previous cor-
+studied individually in previous datasets (Karimi    pora. Our final dataset annotation is extremely rich;
+et al., 2015; Tiktinsky et al., 2022), but our schema    at 16.23 relations per abstract, our relation den-
+is the first to unify them. Our dataset also captures    sity is nearly 4x that of prior work on annotating
+numeric findings in addition to their interpretation    findings from clinical trials (Lehman et al., 2019).
+(e.g., significance, utility, etc.); prior datasets typi-    We evaluate a wide range of IE models on our
+cally focus solely on the latter (e.g., Lehman et al.    dataset, including both extractive systems and gen-
+(2019) captures increases/decreases in outcomes    erative LLMs. Given the high annotation burden,
+but not their magnitudes).                   we test generative LLMs in both fully supervised
+  Though these  factors make our annotation    as well as zero-shot and few-shot settings. Our
+schema more complex than prior work, the addi-    results demonstrate the difficulty of our dataset,
+tional nuance it affords can power several high-   with even SOTA models such as GPT4 struggling
+impact downstream use cases. For instance, the pro-    to accurately extract clinical findings. As a highly
+cess of conducting a systematic review2 includes    challenging new dataset designed to be reflective
+extracting data about specific outcomes from a    of real-world nuance and informational needs, we
+large number of relevant studies.  Unlike prior   hope CARE3 is an important resource for the sci-
+schemas which only capture interpretation and not    entific NLP and IE research community to pursue.
+precise numeric outcomes, extractors trained on
+                                       2  Related Workour schema can extract relevant data to assist the
+review process.  Moreover, fine-grained popula-   2.1  Information Extraction from Scientific
+tion and treatment details captured by our schema         Literature
+makes it capable of answering highly complex clin-                                    Much prior work has focused on information ex-
+ical questions (e.g., “Does vaccination significantly                                                       traction from scientific papers (Luan et al., 2018;
+improve mortality outcomes for female patients                                                     Jain et al., 2020), including biomedical literature
+over 65 who required ventilation?”). Therefore,                                                     (see (Luo et al., 2022a) for a detailed summary).
+models trained on our schema can assist physicians                                         Most relevant to our goal in this work is prior re-
+in developing more personalized treatment plans,                                                  search on extracting findings or results from sci-
+especially for patients with multiple comorbidities                                                            entific literature, which has only explored limited
+or health conditions. Our schema can also help with                                                    aspects of this problem.
+the development and exploration of richer clinical                                            Gábor et al. (2018) and Luan et al. (2018) an-
+hypotheses due to its additional granularity.                                                    notate associative relations between entities be-
+  To build our dataset, named CARE (Clinical                                                  ing compared or producing a result, as part of
+Aggregation-oriented Result Extraction), we col-                                                          their broader goal of developing IE resources for
+lect extensive annotations for 700 abstracts (clinical                                             computer science, but do not capture any nuance
+trials and case reports). We also conduct annota-                                                                (e.g., directionality, causality, etc. of results). Con-
+tion studies demonstrating that our schema gener-                                                          versely, Magnusson and Friedman (2021) develop a
+alizes to computer science and materials science,                                            schema focused solely on capturing associations be-
+using minor updates based on analogies between                                             tween experimental variables and evidence. How-
+aspects across experimental domains (e.g., popula-                                                          ever, their focus on sentence-level annotation from
+tions/interventions →tasks/methods in CS). This    scientific claims limits how much additional nu-reflects the expressive power of our schema to                                               ance about experimental setting can be captured.
+generalize across domains while capturing gran-                                       Some prior efforts have also explored result ex-
+ular and useful information, making it a strong                                                          traction from biomedical literature. The EBM-NLP
+"backbone schema" for research efforts on result-                                            (Nye et al., 2018) and Evidence Inference (Lehman
+oriented scientific IE.                                                           et al., 2019) corpora contain annotations for ex-
+  We achieve good agreement scores (0.74-0.78                                                  perimental findings from clinical trials, following
+partial F1) comparable to prior work that used sim-                                                    the well-established PICO (participant, interven-
+pler schemas that are easier to annotate (Luan et al.,                                                           tion, comparator, outcome) framework (Richard-
+                                                son et al., 1995). Sanchez-Graillet et al. (2022) also
+   2https://training.cochrane.org/handbook/
+current                                                 3https://github.com/allenai/CARE
+
+                                        4581
+=== PDF page 3 ===
+   Type        EBM  CTKG  Example
+   Population      ✓    ✓     This study compared rizatriptan 5 mg and placebo in 1268 outpatients treating a
+                                            single migraine attack
+   Subpopulation    ✓    ✓    We found low-certainty evidence of little or no difference in delirium (RR 1.06,
+                             95% CI 0.55 to 2.06; 2 studies, 800 participants)
+   Treatment      ✓    ✓      Dialysate magnesium was 0.375 mM/L for the hemodialysis
+   Measurement    ✓    ✓     Headache relief rates after rizatriptan 10 mg were higher
+   Temporal         ✗    ✓      After a 48-hour run-in period , oral verapamil 480 mg/day and placebo were
+                                         administered
+   NumericFinding    ✗    ✓     The number of attacks during treatment periods were 31 and 23
+   Qualifier         ✗      ✗      Pindolol and metoprolol lowered blood pressure to the same extent
+
+Table 1: Examples of entity types in our schema. EBM and CTKG columns indicate whether these entity types are
+present in the EBM-NLP and CTKG schemas respectively. EBM-NLP uses IE to extract information according to
+its schema, while CTKG is a database schema not based on IE.
+
+
+develop a PICO-inspired schema-based annotation        Type     EBM CTKG Example
+format for diabetes and glaucoma trials. Chen et al.       Age       ✓    ✗    for those age 60-67
+(2022) focuses on aggregating findings, which are                                      years
+already manually organized in structured format in        Sex       ✓    ✗   210 females
+                                                                  Size       ✓   ✓   12 patients
+databases such as AACT (Aggregate Analysis of         Condition    ✓   ✓    patients     getting
+ClinicalTrials.gov) (Tasneem et al., 2012). How-                                    hemodialysis
+ever, these efforts are tailored to clinical trials and        Demographic  ✗    ✗  A  40’s  Japanese                                                                       man
+do not translate easily to other domains. Finally,
+                                                           Route        ✗    ✗    oral verapamilLuo et al. (2022a) conducted novelty annotation for                                                         Dosage       ✗    ✗    verapamil     480
+relations, indicating whether they were presented                                mg/day
+as new observations; however they did not focus          Strength      ✗    ✗     rizatriptan 5 mg
+                                                                Duration      ✗    ✗    for 4 weekson experimental findings.
+   In contrast, we develop a representation schema                                                     Table 2: Examples of attribute types in our schema.
+expressive enough to capture fine-grained experi-  EBM and CTKG columns indicate whether these types
+mental findings, while generalizing across scien-    are present in the EBM-NLP and CTKG schemas.
+tific domains. Our schema also contains phenom-                                                        ipating in a clinical trial, but ignores trial outcomes
+ena challenging for SOTA IE models (§3.2).                                            and findings. Among non-medical scientific do-
+                                                mains, numeric span extraction work has mainly
+2.2  Extracting Numeric Information            focused on extraction from tables (Hou et al., 2019).
+                                        None of these studies focus extensively on linkingAnother unique aspect of our schema is our focus
+                                             numeric spans with entities that can help in inter-on capturing numeric information from experimen-
+                                                     preting this information, which is key to our work.tal findings and setup, which is understudied. Some
+prior work on open IE has explored extraction and
+                                       3  Annotation Schemalinking of numeric spans (Madaan et al., 2016;
+Saha et al., 2017), including linking to implied en-  We develop a new annotation schema to represent
+tities (Elazar and Goldberg, 2019) (e.g., “it’s worth    fine-grained clinical findings present in biomedical
+two million” can be linked to currency). However,    abstracts, and later demonstrate its broader applica-
+these models broadly focused on sentence-level    bility to domains beyond biomedicine (§6.2). Our
+extraction and did not evaluate on scientific text.    schema captures this knowledge via three main
+  Within the scientific domain, some studies have    elements, commonly used in IE tasks:
+focused on numeric information extraction from    1. Entities involved in a study, which are spans of
+biomedical/clinical text. Kang and Kayaalp (2013)    text, either contiguous or non-contiguous, belong-
+and Claveau et al. (2017) extract numeric spans    ing to one of the seven types listed in Table 1.
+from FDA-released descision summaries and clini-    2. Attributes associated with entities, which are
+cal trial eligibility criteria respectively. EBM-NLP    also contiguous or non-contiguous spans of text,
+(Nye et al., 2018) annotates some categories of    belonging to one of the nine types listed in Table 2.
+numeric information associated with cohorts partic-   The first five attribute types are associated with
+
+                                        4582
+=== PDF page 4 ===
+   Type            Arity  EI CTKG Example
+    AttributeOf      N-ary  ✗   ✗   (Subpopulation: 144 had the U-type method, Size: 144)
+    SubpopulationOf N-ary  ✗   ✗   (Population: 285 women, Subpopulation: 144 had the U-type method,
+                                    Subpopulation: 141 had the H-type method)
+    TreatmentOf     Binary ✗  ✓   (Subpopulation: 144 had the U-type method, Treatment: U-type method)
+    Result          N-ary ✓  ✓   (Subpopulation: 144 had the U-type method, Measurement: objective cure
+                                                 rates, NumericFinding: 87.5%)
+
+Table 3: Examples of relation types in our schema. EI and CTKG columns indicate whether these relation types are
+present in the EI and CTKG schemas respectively. While the EI and CTKG datasets contain 4-ary and binary result
+relations respectively, our n-ary schema allows fine-grained information to be captured more flexibly.
+
+
+population and subpopulation entities, while the    for treatment vs control groups). Tables 1, 2 and 3
+remaining four types are associated with treatment    provide a more detailed comparison of our schema
+entities. Other entity types do not have any associ-   with EBM-NLP, EI and CTKG.
+ated attributes.
+                                                    3.2  Annotation Complexity3. N-ary Relations linking together various enti-
+ties and attributes, where N (relation arity) is vari-   In addition to using an expanded set of entity, at-
+able and nesting is allowed. A relation is an n-tuple,    tribute and relation types, our annotation schema
+where each element can be an entity, attribute or    supports the following phenomena (also illustrated
+another n-ary relation. Relations are categorized    in Figure 1), unifying them all in a single dataset:
+into four types listed in Table 3.                   Discontinuous spans: Biomedical abstracts often
+                                                    present multiple entities as conjunctive phrases or
+3.1  Comparison to Existing Clinical Schemas                                                                    lists of items, so we allow discontinuous span anno-
+Prior work such as EBM-NLP (Nye et al., 2018)    tation to capture every entity. For example, given
+and Evidence Inference (Lehman et al., 2019; DeY-   the phrase “maximal diameters and volumes”, our
+oung et al., 2020) has focused on developing IE   scheme captures two measurement entities: “maxi-
+schemas to represent clinical knowledge appearing   mal diameters” and “maximal volumes”, with the
+in the literature in a structured format. In addition,    latter being a discontinuous span.
+work such as CTKG (Chen et al., 2022) outside the   Nested/overlapping spans: Attributes, as defined
+NLP/IE sphere has built schema for representing    in our annotation scheme, are often present within
+clinical information in databases. However, these   an entity span or overlap with an entity span. This
+schemas suffer from a few shortcomings: (i) most    motivates our decision to allow nested and overlap-
+are designed for clinical trials; their applicability to    ping spans to be annotated.
+other types of biomedical literature is untested, (ii)   Variable arity in relations: Owing to variation
+focus on a small set of broad entity types, which    in clinical studies, findings are often described in
+leaves out fine-grained details, (iii) follow strict   a wide range of formats (e.g., outcome for a sin-
+relation formats, which makes it hard to capture ad-   gle population, outcome for a pair of populations,
+ditional nuance that might be useful for interpreting   outcome for a single population at different time
+findings.                                             periods, etc.). This diversity motivated our choice
+  Our schema makes several enhancements to    of variable arity for relation annotation, similar to
+tackle these issues. First, it is extensible to other    Tiktinsky et al. (2022).
+categories of biomedical literature beyond clinical   Nested relations: In addition to outcomes for in-
+trials, and we demonstrate this by applying our    dividual populations/groups, clinical studies often
+schema to case reports. Second, our schema cap-   present comparative findings and analyses, such
+tures more fine-grained information about various    as improvement on an outcome given a pair of in-
+entities than prior work via attributes (see Table 2).   terventions. Our scheme allows for annotation of
+Third, allowing for variable arity and nesting in    nested relations to link these higher-order observa-
+relation annotation provides the flexibility which    tions with their associated atomic findings.
+makes our schema capable of representing both   Our complete annotation guidelines can be found at
+atomic findings (e.g., value of primary outcome   https://github.com/allenai/CARE.  Figure 1
+observed for a given treatment) as well as compos-   presents partial entity, attribute and relation annota-
+ite findings (e.g., outcome improvement observed    tions for an example clinical trial abstract.
+
+                                        4583
+=== PDF page 5 ===
+          Category   Exact F1   Partial F1                     Metric        Train    Dev     Test
+            Entity       0.5764      0.7578                     #Docs         500      100     100
+            Attribute     0.6174      0.7801                      #Tokens      135,363   27,120   25,219
+           Relation     0.4209      0.7414                          #Entities      12022    2367    2286
+                                                                   #Attributes    3992     804     762
+                                                                  #Relations     8205     1594    1560Table 4: Final inter-annotator agreement scores on a
+sample of 28 abstracts, measured during full-scale data
+                                                           Table 5: Statistics for final collected dataset.annotation.
+
+4  Dataset Collection                           4.1  Annotation Pilots
+                                We conducted three pilot rounds with the follow-
+Annotation Tool: We use TeamTat4 (Islamaj et al.,   ing goals:  (i) training annotators to apply our
+2020), a web-based tool for team annotation since   schema, (ii) evaluating agreement, and (iii) assess-
+it allows for n-ary and nested relation annotation, a    ing whether our schema captures clinical knowl-
+core component of our schema.                   edge of interest. Annotators worked on a fresh set
+Annotator Background: We recruit two in-house    of 5-10 abstracts per round, followed by agreement
+annotators5 with backgrounds in data analytics and   computation and disagreement discussion. For en-
+                                                                tity and attribute annotation, agreement is com-data science, both having extensive experience in
+                                                 puted as entity-level F1 between annotators, usingreading and annotating scientific papers. One of
+                                                both strict (entity boundaries match exactly) andour annotators has a background in biology. Both
+                                                          partial (entity boundaries overlap on at least oneannotators went through several pilot rounds to
+                                                    token) matching. For relations, we first align anno-gain familiarity with our task and schema. Addi-
+                                                         tations from both annotators by linking pairs of re-tionally, we used their feedback and insights from
+                                                          lations which share        of participating entities.pilots to solidify our schema design (see §4.1). We             ≥50%                                            Agreement is computed as F1 score between anno-also solicited feedback from two medical students
+                                                            tators, using both strict (100% of entities match)and an MD to validate our final schema.
+                                            and partial matching. After achieving reasonable
+Data Sources: CARE covers two categories of                                              agreement levels by round 3 (partial F1 scores of
+biomedical literature:  (i) clinical trials, and (ii)                                                       0.79, 0.68 and 0.79 for entity, attribute and relation
+case reports. Clinical trials are research studies that                                                   annotation respectively), we started full-scale data
+test a medical, surgical, or behavioral intervention                                                   annotation (further discussion in Appendix C).
+in people to determine whether a new form of treat-
+ment or prevention or a new diagnostic device is    4.2  Full-Scale Annotation
+effective. Case reports are detailed reports of the
+                                         The full-scale data annotation process was con-
+symptoms, signs, diagnosis, treatment, and follow-
+                                                  ducted in six rounds. To continue monitoring agree-
+up of an individual patient, usually motivated by
+                                               ment, a small agreement set of 5 abstracts (not
+unusual or novel occurrences. We sample clini-
+                                                        identified to the annotators) was included in ev-
+cal trials from the EBM-NLP (Nye et al., 2018)
+                                                  ery round. Table 9 in the appendix presents inter-
+dataset, which consists of 4993 abstracts annotated
+                                                    annotator agreement during each annotation round,
+with PICO spans, only retaining abstracts contain-
+                                                while Table 4 shows overall agreement scores.
+ing at least one number (4685 in total). To sample
+                                                   Overall and per-round agreement scores continued
+case reports, we extract all reports with at least one
+                                                      to remain in the same range as agreement scores
+number in the abstract from PubMed (907,862 in
+                                             from later pilot rounds, demonstrating consistency
+total) and randomly sample from this pool. We sam-
+                                                      in annotation quality. Despite the complexity of
+ple 350 abstracts from each source, resulting in our
+                                                 our schema, our agreement scores are comparable
+final dataset size of 700 abstracts, which is slightly
+                                                       to datasets using simpler schemas like EBM-NLP
+larger than other prior corpora that perform fine-
+                                                           (entity agreement of 0.62-0.71; Cohen’s kappa) and
+grained annotation (§ 4.3). Further characteristics
+                                        SciERC (relation agreement of 67.8; kappa score).
+of our abstract sample are detailed in Appendix C.
+                                           Appendix C provides additional details about our
+                                                          full-scale annotation setup.
+   4https://www.teamtat.org                     Consensus Annotation: For all abstracts anno-
+   5included as co-authors on this paper                     tated by multiple annotators during pilots or full-
+
+                                        4584
+=== PDF page 6 ===
+   Phenomenon           Train   Dev     Test          if all identified entities do not match. As with
+    #Discontinuous Spans   8.9%   10.1%   9.3%       agreement score calculation, predicted relations
+   #Nested Spans         3.4%    4.3%    2.5%       are first aligned with gold relations by choosing
+   #Overlapping Spans    1.6%    2.0%    0.7%                                                      the gold relation with highest overlap per predicted   #Nested Relations      11.4%   11.2%   11.9%
+                                                          relation. Then a partial match score is computed
+Table 6: Prevalence of interesting annotation phenom-   as #shared_entities/total_entities and used in
+ena in final collected dataset.                           the F1 computation instead of binary 0/1 score.
+
+scale annotation (55 in total), we construct a “con-   5.1  Extractive IE Baselines:
+sensus” version post disagreement discussion. The                                 We evaluate the following systems:
+final dataset releases consensus annotations for                                                              • OneIE (Lin et  al., 2020): A sentence-level
+these abstracts. Since this subset has been anno-                                                            joint entity, relation and event extraction sys-
+tated by multiple annotators and discussed exten-                                                  tem, which extracts an “information network”
+sively, we expect annotations to be higher-quality                                                         representation of entities and events (nodes), con-
+and include all these abstracts in the test set.                                                    nected by relations (edges). Beam search is used
+                                                          to find the highest-scoring network.
+4.3  Dataset Statistics                                                              • PURE (Zhong and Chen, 2021): A sentence-
+Table 5 gives an overview of statistics for our fi-      level pipelined extraction system, which learns
+nal collected dataset. Our dataset size is compa-     separate contextual representations for entity and
+rable to other prior biomedical corpora which per-      relation extraction, using entity representations
+forms exhaustive fine-grained annotation (though      to further refine relation extraction.
+not always with a clinical knowledge focus) such    • LocLabel (Shen et al., 2021): A sentence-level
+as BioRED (Luo et al. (2022a); 600 abstracts) and     two-stage named entity recognition (NER) sys-
+Sanchez-Graillet et al. (2022) (211 abstracts). Ta-    tem capable of extracting nested spans. Inspired
+ble 6 presents the proportion of various interest-    by object detection work, it produces boundary
+ing phenomena allowed by our schema in the final      proposals for candidate entities, then labels them
+dataset. Interestingly, CARE contains 9% discon-     with correct entity types.
+                                                              • W2NER (Li et al., 2022): A sentence-level uni-tinuous spans, making it one of the rare datasets
+                                                           fied NER model, capable of extracting nestedcontaining a large proportion of discontinuous men-
+tions.6 At 11%, the final data also contains a high     and discontinuous spans. It recasts NER as word-
+                                             word relation classification on a 2-D grid of wordproportion of nested relations.
+                                                              pairs, then decodes word pair relations into final
+5  Benchmarking IE Models                   span extractions.
+                                                For comparability and better adaptation to our
+We benchmark the performance of two categories                                                        dataset, we replace BERT-based encoders in all
+of models on CARE: (i) extractive models, and (ii)                                                systems with PubmedBERT (Gu et al., 2021), and
+generative LLMs. We also test generative LLMs in                                                 follow best-reported hyperparameters per system
+two settings: (i) finetuning on the full training set,                                                     (see Appendix E). Table 7 presents their perfor-
+and (ii) zero-shot and in-context learning.                                         mance on entity and attribute extraction. Unfor-
+Experimental Setup: We test each model on the    tunately, applying these systems to our relation
+three sub-tasks—entity extraction, attribute extrac-   extraction task is infeasible, since none of them
+tion and relation extraction—in isolation. Model    are designed for document-level relation extraction
+performance on entity and attribute extraction is    or n-ary relations. Tiktinsky et al. (2022) modify
+evaluated using entity-level F1. Relation extrac-  PURE for n-ary relation extraction with variable ar-
+tion performance is evaluated using a relaxed over-     ity. However, given a set of candidate entities, they
+lap F1 score metric inspired by Tiktinsky et al.   consider all possible n-ary combinations and pre-
+(2022), which assigns partial credit to correctly    dict relationships per cluster. This is tractable for
+identified subsets of entities in a relation, even    their work on sentence-level extraction of single-
+                                                 type (drug interaction) relations, but not tractable   6Dai et al. (2020) considers 10% discontinuous spans
+to be a high proportion, identifying only three biomedical    for document-level multi-type n-ary relation extrac-
+datasets that satisfy this criterion: CADEC (Karimi et al.,    tion.7 Therefore, we do not test extractive models
+2015), ShARe 13 (Pradhan et al., 2013) and ShARe 14 (Mow-
+ery et al., 2014).                                       7On limiting combination size to 10, every abstract pro-
+
+                                        4585
+=== PDF page 7 ===
+     Model          Ent F1   Attr F1   Rel F1            full-texts from the Pile (Gao et al., 2020) with a
+                  Extractive Baselines                  custom PubMed-trained tokenizer.
+     OneIE            55.07     48.84      –         When training and testing on attribute and re-
+    PURE            55.94     61.04      –            lation extraction, these models are provided gold
+     LocLabel         53.69     55.25      –            entities and attributes by surrounding them with    W2NER          51.84     57.98      –
+                                                         entity markers (< ent >< /ent >) in the input.
+                 Generative Baselines
+                                   We evaluate GPT3.5 and GPT4 in zero-shot and
+    FLAN-T5         45.08     23.27     33.24                                                    in-context learning settings. We provide our IE    BioGPT          14.43     29.84     33.15
+    BioMedLM        1.50     10.62     32.76        schema and example outputs and prompt the model
+                                                        to produce extractions in a clean JSON format that     GPT-3.5 0-shot    11.14     5.06     14.35
+     GPT-3.5 1-shot    21.40     8.61     31.58         adheres to the schema. Additionally, for our in-
+     GPT-3.5 3-shot    23.40     8.85     31.58         context learning experiments, we follow (Liu et al.,
+     GPT-3.5 5-shot    8.92      9.92     32.20
+                                               2021) and select the k most similar examples from
+     GPT-4 0-shot     26.89     9.02     32.04                                                      the training set for every test instance according to     GPT-4 1-shot     31.07     11.82     42.81
+     GPT-4 3-shot     16.68     13.16     53.69          similarity computed by the SPECTER v2.0 (Singh
+     GPT-4 5-shot      5.04     13.90     55.04           et al., 2022) PRX model trained on scientific titles
+                                            and abstracts. Selected examples are appended to
+Table 7: Performance of all extractive and generative                                                    the prompt in decreasing order of similarity, with
+baselines on entity, attribute and relation extraction.
+                                                            later examples dropped if they don’t fit. We run
+on relation extraction.                             experiments for the k = 1, 3, 5 most similar exam-
+  Another caveat with extractive models is that    ples. Further hyperparameter details for all models
+they do not identify discontinuous spans (except    are provided in Appendix E and full prompts are
+W2NER). To assess how this impacts model perfor-   provided in Appendix G.
+mance, we compute an additional entity-level F1      Table 7 shows the performance of all generative
+score which merges span predictions linked in gold   models. One caveat with GPT3.5/4 is that model
+annotation (i.e., we assume oracle span merging),   outputs sometimes contain correct entity/attribute
+and observe that this does not significantly improve   spans assigned to the wrong type (e.g., a subpop-
+performance (avg. increase of ∼1.5 F1). Therefore,    ulation misclassified as a population entity in aTable 7 reports F1 scores without merging.            result relation). Since we are evaluating the perfor-
+                                          mance of relation extraction in isolation, we do not
+5.2  Generative IE Baselines:                     consider such mistyping as errors.
+Motivated by recent work demonstrating LLM ca-
+                                                    5.3  End-to-End Evaluation:pabilities on information extraction (Wadhwa et al.,
+2023), we assess the ability of LLMs on our tasks,   In addition to evaluating SOTA systems on each
+in both finetuning and zero-shot/in-context learning    sub-task in isolation, we assess the feasibility of
+settings.                                         end-to-end extraction. Table 7 shows that PURE
+  We evaluate the following finetuned LLMs:         is the best-performing system on entity and at-
+• FLAN-T5 (Chung et al., 2022): Enhanced ver-    tribute extraction. On the other hand, GPT4 5-shot
+  sion of T5 (Raffel et al., 2020) finetuned on a   and FLAN-T5 perform best on relation extraction
+  large mixture of tasks, but not specifically pre-   (GPT3.5 5-shot and BioGPT are close). We test
+  trained for biomedicine. We use FLAN-T5-XL,   out a hybrid end-to-end extraction system in which
+  which has 3B parameters.                            entities and attributes are detected using PURE,
+• BioGPT (Luo et al., 2022b): A 1.6B autoregres-   then input text marked up with these extractions is
+  sive model, pretrained from scratch on 15M ab-   provided to FLAN-T5 for relation extraction. This
+  stracts and titles from PubMed with a custom    hybrid system achieves an F1 score of 33.58, very
+  Pubmed-trained tokenizer.                          similar to RE performance with gold markup. Hy-
+• BioMedLM8: A 2.7B autoregressive model, pre-   pothesizing that this might be an indication that
+  trained from scratch on all PubMed abstracts and    finetuned LLMs ignore entity/attribute markup dur-
+                                                   ing RE, we run an additional experiment in which
+duces 500,000 candidate combinations
+   8https://crfm.stanford.edu/2022/12/15/        we train FLAN-T5 to extract relations from raw
+biomedlm.html                                           text (no markup). This setup achieves an F1 score
+
+                                        4586
+=== PDF page 8 ===
+  Original Type      Generalized Type       Description
+  Population         Research Problem Con-   Setting/scenario in which the authors are testing their hypothesis (e.g., task
+                         text                      or dataset being studied in ML/NLP).
+  Subpopulation      Problem   Stages/Sub-  Subgroups or subsamples of overall setting (e.g., dataset splits in ML/NLP).
+                        parts
+  Treatment          Technique/Method      Key technique being proposed or investigated and other techniques being
+                                         compared (e.g., model or metric in ML/NLP).
+  SubpopulationOf    Sub-PartOf              Links together problem context entities to stage/sub-part entities (e.g., for
+                                    ML/NLP, this relation would link the overall task to low-data and fully
+                                               supervised settings).
+ TreatmentOf       AppliedTo              Links together a technique to all the problem contexts/sub-parts it is being
+                                                    tested in.
+
+Table 8: Changes required to construct a generalized version of our original schema developed for clinical finding
+extraction, which we use to test whether it applies to other domains such as computer science and materials science
+
+of 33.07, showing that entity/attribute markup does                       MAT SCI ABSTRACT
+not provide significant benefit.                                                                Solidtimes oxidethickerfuelthancellsthe…size; BECsof AAOwhichporesareare0.5 and 4
+                                                                                                      tested… thicker BEC ensures far more active mass
+6  Discussion                                                                                            transport than the thinner BEC cell …
+                                                                                      RELATIONS
+6.1  How much does strict evaluation                                    PROBLEM CONTEXT:
+     underestimate LLM performance?                                                      Solid oxide fuel cells                                                                      SubpartOf                  SubpartOf
+Table 7 shows that even fully-supervised generative               PROBLEMthickerSUBPART:BEC        PROBLEMthinner BECSUBPART:cell
+models severely lag behind much smaller extractive                                                                     AppliedTo                     AppliedTo
+models on entity and attribute extraction. However,                 TECHNIQUE: 0.5 times      TECHNIQUE: 4 times
+prior work (Wadhwa et al., 2023) has observed                     thicker… than AAO pores     thicker… than AAO pores
+that strict IE evaluation metrics underestimate the                               Result
+performance of LLMs since their outputs often                   QUALIFIER: far more     MEASUREMENT:mass transportactive
+contain minor variations from gold annotations,
+which could still be correct. Therefore, we conduct    Figure 2: A partial example of entity, attribute and re-
+human evaluation of a subset of FLAN-T5 and    lation annotation using our generalized schema for a
+GPT4 5-shot predictions on entity and attribute    materials science abstract.
+extraction for a more accurate assessment.                                                    small-scale pilots in two additional domains: (i)
+  For every setting, we collect all abstracts with   Computer Science, and (ii) Materials Science.
+one or more wrong predictions and randomly sam-                                  We first develop a generalized version of our
+ple ten to evaluate. We go over all false positives                                              proposed schema for these studies. Of the three
+per abstract marking ones that could be considered                                                elements in our schema, entities and relations are
+correct. Our evaluation shows that for FLAN-T5,                                                       largely transferable and only require minor renam-
+35 out of 73 entity and 12 out of 32 attribute er-                                                          ing. Table 8 provides an overview of changes made
+rors are marked correct. For GPT4, these numbers                                                      to entity/relation nomenclature. Attributes on the
+are worse; 38 out of 126 entity and 20 out of 79                                                    other hand, were tailored more closely to our goal
+attribute errors are marked correct. This indicates                                                    of extracting clinical findings. Therefore, we drop
+that LLMs indeed struggle with our span extraction                                                                  all attributes and ask our annotators to propose can-
+tasks, and their poor performance is not simply a                                                     didate attributes as they go through the annotation
+consequence of strict evaluation.                                                    process. We use the same annotators who partici-
+                                                  pated in dataset creation, to leverage their existing
+6.2  How easily can we extend our schema to                                                       familiarity with our schema, assigning one anno-
+     other domains?                                                          tator to each domain. Their task is to annotate ten
+Though we focus on extracting clinical findings    abstracts each while documenting: (i) potential at-
+from biomedical literature during schema design,    tributes that can be added to the schema, and (ii)
+we try to incorporate enough flexibility to allow    important experimental information missed by the
+our schema to be easily adapted to other scientific    generalized schema.
+domains. To demonstrate this flexibilty, we conduct      After completing the task, annotators reported
+
+                                        4587
+=== PDF page 9 ===
+that it was feasible to apply our proposed schemas   domains with minor adaptations, our generaliza-
+to these scientific domains. Figure 2 shows an ex-    tion annotation studies were comparatively small
+ample materials science abstract with partial anno-   and preliminary, limited to testing the schema on
+tations according to the generalized schema. Com-   computer science and material science papers. In
+puter science posed some difficulty due to the pres-   addition, while our schema covers many types of
+ence of lots of relative results and references in    experimental findings, the richness and huge va-
+the abstract, which made entity annotation ambigu-    riety of scientific experiments neccessarily means
+ous. However, there were no important aspects    that more types of findings could be added. In the
+of experimental information, aside from potential    future, more studies should be performed on using
+attribute proposals, that our current schema could   our schema in other domains, and on extending
+not account for.                                  our schema with more types of information (enti-
+                                                                 ties, attributes, relations). CARE also focuses on
+7  Conclusion                                 English-language papers only, and in the future it
+                                          would be interesting and important to extend ourIn this work, we presented CARE, a new IE dataset
+                                          schema and dataset to cover biomedical/clinicalfor the task of extracting clinical findings from
+                                                     studies in other languages, to capture importantbiomedical literature. To collect this dataset, we
+                                                             scientific findings that are potentially missed whenfirst developed a new annotation schema capable
+                                                 only looking at papers in English.of capturing fine-grained information about experi-
+                                                             Finally, a limitation of our current benchmarkingmental findings, which unified several challenging
+                                                            effort is the lack of more flexible evaluation metrics,IE phenomena such as discontinuous spans, nested
+                                                         particularly when assessing the performance of gen-relations and variable arity n-ary relations. Using
+                                                       erative LLMs. We try to provide supplementarythis annotation scheme, we collected an extensively
+                                       human evaluation for some models to overcomeannotated dataset of 700 abstracts from clinical tri-
+                                                             this issue, but this is not scalable and would requireals and case reports. Our benchmarking experi-
+                                                 ongoing/continuous evaluation efforts. This is notments showed that state-of-the-art extractive and
+                                                 a major focus for our current work, but developinggenerative LLMs including GPT4 still struggle on
+                                           more flexible automated evaluation is an importantthis task, particularly on relation extraction. We
+                                                      future direction for IE research.release both our annotation schema and CARE as
+a challenging new resource for the IE community                                      Acknowledgements
+and to encourage further research on extraction and
+representation of findings from scientific literature.   This work was funded in part by NSF Convergence
+                                                    Accelerator Award ITE-2132318. We would like to
+8  Limitations                                 thank Lucy Lu Wang, Byron Wallace and Dr. Ruth
+                                                   Sapir-Pichhadze for valuable feedback on early ver-Despite being a cornerstone of our work, the rich-
+                                                    sions of the annotation schema, and the Semanticness and complexity of our newly proposed anno-
+                                                  Scholar team at AI2 and our anonymous reviewerstation schema also poses some limitations. An-
+                                                       for their helpful comments on our work.notators needed some prior experience with read-
+ing and understanding complex scientific text, and
+had to undergo multiple rounds of additional train-   References
+ing before they were able to accurately apply our
+                                                        Ziqi Chen, Bo Peng, Vassilis N Ioannidis, Mufei Li,schema and start full-scale annotation. Though
+                                                  George Karypis, and Xia Ning. 2022. A knowl-
+these stringent expertise and training requirements                                                     edge graph of clinical trials (ctkg). Scientific reports,
+and heavy reliance on human annotators helped us      12(1):4724.
+collect a high-quality resource in CARE, they si-
+                                           Hyung Won Chung, Le Hou, Shayne Longpre, Barretmultaneously limit the scalability of our collection                                                   Zoph, Yi Tay, William Fedus, Yunxuan Li, Xuezhi
+protocol and make it difficult to construct large-                                                Wang, Mostafa Dehghani, Siddhartha Brahma, et al.
+scale benchmarks for this task, spanning multiple      2022. Scaling instruction-finetuned language models.
+domains/fields of science.                              arXiv preprint arXiv:2210.11416.
+  Our annotated corpus, CARE, is based on RCTs                                                    Vincent Claveau, Lucas Emanuel Silva Oliveira, Guil-
+and case reports. While our schema is broad and ex-     laume  Bouzillé, Marc Cuggia,  Claudia Maria
+pressive enough to generalize to other experimental      Cabral Moro, and Natalia Grabar. 2017. Numerical
+
+                                        4588
+=== PDF page 10 ===
+   eligibility criteria in clinical protocols: annotation,    Rezarta Islamaj, Dongseop Kwon, Sun Kim, and Zhiy-
+  automatic detection and interpretation. In Artificial     ong Lu. 2020. Teamtat: a collaborative text annota-
+   Intelligence in Medicine: 16th Conference on Arti-       tion tool. Nucleic acids research, 48(W1):W5–W11.
+   ficial Intelligence in Medicine, AIME 2017, Vienna,
+   Austria, June 21-24, 2017, Proceedings 16, pages    Sarthak Jain, Madeleine van Zuylen, Hannaneh Ha-
+  203–208. Springer.                                               jishirzi, and Iz Beltagy. 2020. SciREX: A challenge
+                                                                dataset for document-level information extraction. In
+Xiang Dai, Sarvnaz Karimi, Ben Hachey, and Cecile      Proceedings of the 58th Annual Meeting of the Asso-
+   Paris. 2020. An effective transition-based model       ciation for Computational Linguistics, pages 7506–
+   for discontinuous NER. In Proceedings of the 58th      7516, Online. Association for Computational Lin-
+  Annual Meeting of the Association for Computational        guistics.
+   Linguistics, pages 5860–5870, Online. Association
+                                                Yanna Shen Kang and Mehmet Kayaalp. 2013. Extract-   for Computational Linguistics.
+                                                          ing laboratory test information from biomedical text.
+                                                        Journal of pathology informatics, 4(1):23.Jay DeYoung, Iz Beltagy, Madeleine van Zuylen, Bailey
+  Kuehl, and Lucy Lu Wang. 2021.  MSˆ2: Multi-                                                  Sarvnaz Karimi, Alejandro Metke-Jimenez, Madonna
+  document summarization of medical studies. In Pro-                                               Kemp, and Chen Wang. 2015. Cadec: A corpus of ad-
+   ceedings of the 2021 Conference on Empirical Meth-                                                           verse drug event annotations. Journal of biomedical
+  ods in Natural Language Processing, pages 7494–                                                              informatics, 55:73–81.
+  7513, Online and Punta Cana, Dominican Republic.
+  Association for Computational Linguistics.            Eric Lehman, Jay DeYoung, Regina Barzilay, and By-
+                                                       ron C Wallace. 2019. Inferring which medical treat-
+Jay DeYoung, Eric Lehman, Benjamin Nye, Iain Mar-      ments work from reports of clinical trials. In Proceed-
+   shall, and Byron C Wallace. 2020. Evidence infer-      ings of the 2019 Conference of the North American
+  ence 2.0: More data, better models. In Proceedings      Chapter of the Association for Computational Lin-
+   of the 19th SIGBioMed Workshop on Biomedical Lan-       guistics: Human Language Technologies, Volume 1
+  guage Processing, pages 123–132.                    (Long and Short Papers), pages 3705–3717.
+
+Yanai Elazar and Yoav Goldberg. 2019. Where’s my    Jingye Li, Hao Fei, Jiang Liu, Shengqiong Wu, Meishan
+  head? definition, data set, and models for numeric      Zhang, Chong Teng, Donghong Ji, and Fei Li. 2022.
+  fused-head identification and resolution. Transac-      Unified named entity recognition as word-word rela-
+   tions of the Association for Computational Linguis-       tion classification. In Proceedings of the AAAI Con-
+   tics, 7:519–535.                                         ference on Artificial Intelligence, volume 36, pages
+                                                   10965–10973.
+Kata Gábor, Davide Buscaldi, Anne-Kathrin Schu-
+  mann, Behrang QasemiZadeh, Haïfa Zargayouna,   Ying Lin, Heng Ji, Fei Huang, and Lingfei Wu. 2020.
+  and Thierry Charnois. 2018.  SemEval-2018 task    A joint neural model for information extraction with
+   7: Semantic relation extraction and classification in       global features. In Proceedings of the 58th Annual
+   scientific papers. In Proceedings of the 12th Inter-     Meeting of the Association for Computational Lin-
+   national Workshop on Semantic Evaluation, pages       guistics, pages 7999–8009, Online. Association for
+  679–688, New Orleans, Louisiana. Association for      Computational Linguistics.
+  Computational Linguistics.
+                                                      Jiachang Liu, Dinghan Shen, Yizhe Zhang, Bill Dolan,
+                                                 Lawrence Carin, and Weizhu Chen. 2021. WhatLeo Gao, Stella Biderman, Sid Black, Laurence Gold-
+                                                makes good in-context examples for gpt-3? arXiv   ing, Travis Hoppe, Charles Foster, Jason Phang, Ho-
+                                                             preprint arXiv:2101.06804.   race He, Anish Thite, Noa Nabeshima, et al. 2020.
+  The pile: An 800gb dataset of diverse text for lan-                                                 Yi Luan, Luheng He, Mari Ostendorf, and Hannaneh
+  guage modeling. arXiv preprint arXiv:2101.00027.                                                                  Hajishirzi. 2018. Multi-task identification of entities,
+                                                                  relations, and coreference for scientific knowledge
+Yu Gu, Robert Tinn, Hao Cheng, Michael Lucas, Naoto                                                       graph construction. In Proceedings of the 2018 Con-
+  Usuyama, Xiaodong Liu, Tristan Naumann, Jianfeng                                                           ference on Empirical Methods in Natural Language
+  Gao, and Hoifung Poon. 2021. Domain-specific lan-                                                         Processing, pages 3219–3232, Brussels, Belgium.
+  guage model pretraining for biomedical natural lan-                                                         Association for Computational Linguistics.
+  guage processing. ACM Transactions on Computing
+   for Healthcare (HEALTH), 3(1):1–23.               Ling Luo, Po-Ting Lai, Chih-Hsuan Wei, Cecilia N
+                                                           Arighi, and Zhiyong Lu. 2022a.  Biored: a rich
+Yufang Hou, Charles Jochim, Martin Gleize, Francesca      biomedical relation extraction dataset. Briefings in
+  Bonin, and Debasis Ganguly. 2019.  Identification       Bioinformatics, 23(5):bbac282.
+   of tasks, datasets, evaluation metrics, and numeric
+   scores for scientific leaderboards construction.  In    Renqian Luo, Liai Sun, Yingce Xia, Tao Qin, Sheng
+  Proceedings of the 57th Annual Meeting of the Asso-      Zhang, Hoifung Poon, and Tie-Yan Liu. 2022b.
+   ciation for Computational Linguistics, pages 5203–      Biogpt:   generative  pre-trained  transformer  for
+  5213, Florence, Italy. Association for Computational      biomedical text generation and mining.  Briefings
+   Linguistics.                                                 in Bioinformatics, 23(6):bbac409.
+
+                                        4589
+=== PDF page 11 ===
+Aman Madaan, Ashish Mittal, Ganesh Ramakrishnan,   Yongliang Shen, Xinyin Ma, Zeqi Tan, Shuai Zhang,
+   Sunita Sarawagi, et al. 2016.  Numerical relation    Wen Wang, and Weiming Lu. 2021. Locate and la-
+   extraction with minimal supervision. In Proceedings       bel: A two-stage identifier for nested named entity
+   of the AAAI Conference on Artificial Intelligence,       recognition. In Proceedings of the 59th Annual Meet-
+  volume 30.                                             ing of the Association for Computational Linguistics
+                                                  and the 11th International Joint Conference on Natu-
+Ian H Magnusson and Scott E Friedman. 2021. Ex-       ral Language Processing (Volume 1: Long Papers),
+   tracting fine-grained knowledge graphs of scientific      pages 2782–2794, Online. Association for Computa-
+   claims: Dataset and transformer-based results. arXiv       tional Linguistics.
+   preprint arXiv:2109.10453.
+                                               Amanpreet Singh, Mike D’Arcy, Arman Cohan, Doug
+Danielle L Mowery, Sumithra Velupillai, Brett R South,     Downey, and Sergey Feldman. 2022.  Scirepeval:
+  Lee Christensen, David Martinez, Liadh Kelly, Lor-    A multi-format benchmark for scientific document
+   raine Goeuriot, Noemie Elhadad, Sameer Pradhan,       representations. arXiv preprint arXiv:2211.13308.
+  Guergana Savova, et al. 2014. Task 2: Share/clef
+                                             Asba Tasneem, Laura Aberle, Hari Ananth, Swati   ehealth evaluation lab 2014. In Proceedings of CLEF
+                                                         Chakraborty, Karen Chiswell, Brian J McCourt, and  2014.
+                                                      Ricardo Pietrobon. 2012. The database for aggre-
+                                                          gate analysis of clinicaltrials. gov (aact) and subse-Aakanksha Naik, Sravanthi Parasa, Sergey Feldman,
+                                                       quent regrouping by clinical specialty.  PloS one,  Lucy Lu Wang, and Tom Hope. 2022.  Literature-
+                                                          7(3):e33677.  augmented clinical outcome prediction. In Findings
+   of the Association for Computational Linguistics:                                              Aryeh Tiktinsky, Vijay Viswanathan, Danna Niezni,
+  NAACL 2022, pages 438–453, Seattle, United States.                                              Dana Meron Azagury, Yosi Shamay, Hillel Taub-
+  Association for Computational Linguistics.                                                          Tabib, Tom Hope, and Yoav Goldberg. 2022. A
+                                                             dataset for n-ary relation extraction of drug combi-
+Benjamin Nye, Junyi Jessy Li, Roma Patel, Yinfei Yang,                                                              nations. In Proceedings of the 2022 Conference of
+   Iain Marshall, Ani Nenkova, and Byron C Wallace.                                                           the North American Chapter of the Association for
+  2018. A corpus with multi-level annotations of pa-                                                     Computational Linguistics: Human Language Tech-
+   tients, interventions and outcomes to support lan-                                                             nologies, pages 3190–3203.
+  guage processing for medical literature. In Proceed-
+   ings of the 56th Annual Meeting of the Association for   Somin Wadhwa, Silvio Amir, and Byron Wallace. 2023.
+  Computational Linguistics (Volume 1: Long Papers),      Revisiting relation extraction in the era of large lan-
+  pages 197–207.                                    guage models. In Proceedings of the 61st Annual
+                                                    Meeting of the Association for Computational Lin-
+Sameer Pradhan, Noemie Elhadad, Brett R South, David       guistics (Volume 1: Long Papers), pages 15566–
+   Martinez, Lee M Christensen, Amy Vogel, Hanna      15589, Toronto, Canada. Association for Computa-
+  Suominen, Wendy W Chapman, and Guergana K       tional Linguistics.
+  Savova. 2013. Task 1: Share/clef ehealth evaluation
+   lab 2013. CLEF (working notes), 1179.              Qingyun Wang, Doug Downey, Heng Ji, and Tom Hope.
+                                                        2023. Learning to generate novel scientific directions
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine      with contextualized literature-based discovery. arXiv
+  Lee, Sharan Narang, Michael Matena, Yanqi Zhou,       preprint arXiv:2305.14259.
+  Wei Li, and Peter J Liu. 2020. Exploring the limits
+   of transfer learning with a unified text-to-text trans-    Yijia Zhang, Qingyu Chen, Zhihao Yang, Hongfei Lin,
+   former. The Journal of Machine Learning Research,     and Zhiyong Lu. 2019.  Biowordvec, improving
+  21(1):5485–5551.                                    biomedical word embeddings with subword infor-
+                                                     mation and mesh. Scientific data, 6(1):52.
+W Scott Richardson, Mark C Wilson, Jim Nishikawa,
+                                               Zexuan Zhong and Danqi Chen. 2021. A frustratingly  Robert S Hayward, et al. 1995. The well-built clini-
+                                                       easy approach for entity and relation extraction. In   cal question: a key to evidence-based decisions. Acp
+                                                      Proceedings of the 2021 Conference of the North    j club, 123(3):A12–A13.
+                                                  American Chapter of the Association for Computa-
+                                                              tional Linguistics: Human Language Technologies,Swarnadeep Saha, Harinder Pal, and Mausam. 2017.
+                                                       pages 50–61, Online. Association for Computational   Bootstrapping for numerical open IE. In Proceedings
+                                                               Linguistics.   of the 55th Annual Meeting of the Association for
+  Computational Linguistics (Volume 2: Short Papers),
+  pages 317–323, Vancouver, Canada. Association for  A  Schema Definitions
+  Computational Linguistics.
+                                            A.1  Entity Types
+Olivia Sanchez-Graillet, Christian Witte, Frank Grimm,    Entities can belong to one of the following seven
+  and Philipp Cimiano. 2022. An annotated corpus of                                                      types:   clinical trial publications supporting schema-based
+   relational information extraction. Journal of Biomed-    1. Population: Patient groups/cohorts studied in
+   ical Semantics, 13(1):1–18.                         an article.
+
+                                        4590
+=== PDF page 12 ===
+2. Subpopulation: Slices/sub-groups of a popula-    2. Subpopulation:  N-ary  relations capturing
+   tion entity sharing some underlying characteris-      parent-child relationships between population
+    tic.                                          and subpopulation entities.
+3. Treatment: Treatment regimens, procedures,    3. InterventionOf: Binary relations linking popu-
+   therapies etc. prescribed and/or tested to allevi-       lation and subpopulations entities with the inter-
+   ate a population’s conditions/symptoms.             vention(s) tested on them.
+4. Measurement: Tests used to assess population    4. Result: N-ary relations capturing all numeric or
+   status and outcomes of the tested intervention.       non-numeric outcome results and comparisons
+5. Temporal: Temporal information such as time       reported by linking together the population, sub-
+   points at which outcomes are measured.             population, intervention, measurement, numer-
+6. NumericFinding: All numeric information as-      icfinding and/or qualifier and temporal entities
+   sociated with study findings (e.g., p-values, haz-      involved in each result/comparison.
+   ard ratios, etc.).                                All n-ary relations can contain multiple entities
+7. Qualifier: Non-numeric information associated    of a single type. For example, a result relation
+   with study findings that provides important per-   can involve multiple interventions or populations.
+   spective for interpreting them (e.g., phrases in-   The only cardinality constraints imposed are that
+   dicating evidence directionality).                every result relation should focus on a single mea-
+                                              surement entity and always contain at least one
+A.2  Attribute Types                              population/intervention entity.
+Attributes can belong to one of the following nine
+                              B  Additional Annotation Rulestypes:
+1. Age:  Numeric or non-numeric information   While using this annotation schema to annotate
+   about the age of the population under study.        clinical knowledge, we also keep in mind the fol-
+2. Sex:  Reported sex of the population under   lowing rules:
+   study.                                                   • For every entity/attribute span, only annotate its
+3. Size: Size of the population sample under study.       first occurrence in the text, unless there is a more
+4. Condition: Medical conditions prevalent in the      descriptive span later. We follow this rule to
+   study population, including diseases, symptoms,     avoid conducting an additional coreference anno-
+   prior medical history and procedures, etc.            tation step to link all spans referring to the same
+5. Demographic: Additional demographic infor-      entity.
+   mation reported about the population such as    • Ignore misspellings and include all associated
+   location, race, etc.                                modifiers and abbreviations while annotating
+6. Route: Description of the way an intervention     spans
+    is administered (e.g., a chemical may be admin-    • Do not annotate generic or high-level spans (e.g.,
+   istered orally, topically, intravenously, etc.).         genetic disorder), or generic terms (e.g., com-
+7. Dosage: Quantity of administration for the in-      plications, deficiency, disease, syndrome, gene,
+   tervention being studied. This is not necessarily      drug, protein, nucleotide, etc.).
+   limited to chemical/drug interventions (e.g., for    • Do not annotate background occurrences of enti-
+   an intervention like educational sessions, num-       ties. For example, if a treatment Y is mentioned
+   ber of sessions is considered “dosage”).             as “X is usually treated using Y,...”, do not anno-
+8. Strength: Strength of chemical/drug interven-      tate Y unless Y was one of the treatments actually
+   tions administered.                               given to a population in the current study.
+9. Duration: Interval of time over which an inter-
+                           C  Dataset Construction Details   vention was administered.
+                                                 Characteristics of sampled abstracts: Since the
+A.3  Relation Types                                  EBM-NLP corpus sampled randomized clinical
+Our schema allows for both binary and n-ary re-    trials from PubMed with an emphasis on cardio-
+lations (with variable n), to capture four types of    vascular diseases, cancer, and autism, the clinical
+structure:                                                    trials portion of our dataset also heavily features
+1. AttributeOf: N-ary relations linking population    these topics. On the other hand, for case reports,
+   and intervention entities with their associated   comparing MeSH term distributions across all re-
+   attributes.                                        ports (2M abstracts) with case reports containing
+
+                                        4591
+=== PDF page 13 ===
+             Round      Entity F1       Attribute F1      Relation F1
+                        Exact   Partial   Exact   Partial   Exact   Partial
+                    Pilot 1   0.6240   0.7579   0.7215   0.8163   0.2193   0.6379
+                    Pilot 2   0.7206   0.8818   0.6923   0.7385   0.4997   0.7878
+                    Pilot 3   0.6449   0.7900   0.5370   0.6852   0.4449   0.7960
+                Batch 1  0.5130   0.7318   0.7611   0.8496   0.3899   0.6979
+                Batch 2  0.6094   0.7900   0.6216   0.8508   0.6397   0.9137
+                Batch 3  0.5312   0.7797   0.6364   0.8182   0.3121   0.7595
+                Batch 4  0.5714   0.7817   0.7347   0.7755   0.5399   0.7343
+                Batch 5  0.5643   0.6929   0.4717   0.6762   0.3382   0.6766
+                Batch 6  0.6358   0.7930   0.5417   0.7582   0.3122   0.6890
+                  Overall  0.5764   0.7578   0.6174   0.7801   0.4209   0.7414
+
+         Table 9: Evolution of inter-annotator agreement during pilots and full-scale annotation rounds
+
+
+                                             numeric information (the 900k we sample from),       Type       Exact F1   Partial F1
+                                    we see a massive reduction (> 30%) in terms as-
+      Population      0.4333     0.8665                                                    sociated with the following topics: surgery and
+    Subpopulation    0.4299     0.6168                                                   post-surgery care, dentistry, ophthalmology, pros-
+      Intervention     0.4333     0.5781                                                    theses and rehab, patient care and nursing, some
+    Measurement     0.5230     0.7554                                               mental disorders and circulatory diseases/issues.
+      Temporal       0.6230     0.6885                                             Hence, we expect these topics to be relatively un-
+   NumericFinding    0.7063     0.8812                                               dersampled in our pool of case reports.
+        Qualifier       0.6911     0.7749
+                                            Annotation Pilots: During pilots, we also con-
+                                                ducted one or more disagreement discussion ses-  Table 10: Inter-annotator agreement per entity type
+                                                     sions per pilot round. These discussions were help-
+                                                           ful in providing annotators the opportunity to high-       Type      Exact F1   Partial F1
+                                                            light important spans/relations being missed by the
+       Age        0.8500     0.9756         schema, which led to the addition of the subpop-
+        Sex        0.9231     0.9231           ulation entity, demographic attribute, and subpop-
+         Size        0.6462     0.7385           ulationof and treatmentof relations. Despite the
+      Condition     0.5091     0.7429           introduction of some new elements, inter-annotator
+    Demographic    0.6667     0.8000          agreement continued to increase steadily over the
+        Route       0.8000     0.8000            pilot rounds, as shown in Table 9 before plateauing
+       Dosage      0.6923     0.9630            at the end of round 3.
+        Strength            -              -                                                   Full-Scale Annotation: During rounds 1-3 of full-
+       Duration      0.0800     0.4800                                                       scale annotation, annotators were provided batches
+                                                   of 25 abstracts each. As their familiarity with theTable 11: Inter-annotator agreement per attribute type.
+                                                  annotation schema and ability to handle ambigu-Note that the agreement sample did not include any
+strength entities.                                  ous cases improved, we provided larger batches of
+                                          100 abstracts each during rounds 4-6. After each
+                                                 round, agreement was assessed and disagreement       Type       Exact F1   Partial F1
+                                                   dicussions were conducted to discuss ambiguous
+      AttributeOf      0.7654     0.7654                                                      cases, if needed, which ensured that agreement
+     InterventionOf     0.3797     0.3797                                         was maintained across rounds as seen from Ta-
+   SubpopulationOf    0.1633     0.5185                                                      ble 9. Tables 10, 11 and 12 present final agreement
+        Result        0.2561     0.7994                                                   scores per entity type, attribute type and relation
+                                                 type respectively. From these tables, we can see
+ Table 12: Inter-annotator agreement per relation type                                                           that Subpopulation and Intervention entities are the
+
+                                        4592
+=== PDF page 14 ===
+trickiest to annotate, leading to lower agreement on    since our extraction tasks are abstract-level and re-
+SubpopulationOf and InterventionOf relation types    quire longer input contexts. We use the June 2023
+due to error cascading (i.e., if entity annotations    versions of both models due to their function call-
+don’t match, relation annotations are unlikely to    ing capabilities, which leverage a structured JSON
+match either).                                     output format to improve information extraction
+                                                            capabilities. All experiments are run with a temper-
+D  Inter-Annotator Agreement                 ature of 0 and max output length of 512 tokens.
+
+Table 9 shows the evolution in inter-annotator  F  Computing Infrastructure
+agreement over our initial pilot rounds, as well as
+                                                  All LLM experiments are carried out on NVIDIAthe level of inter-annotator agreement maintained
+                                  RTX A6000 GPUs with 48 GB RAM. Each finetun-during each round of the full-scale annotation pro-
+                                                    ing run (FLAN-T5, BioGPT, BioMedLM) requirescess. We see a large increase in relation agreement
+                                           two GPUs with runtimes ranging from 9-17 hoursfrom pilot 1 to pilot 2, and consistent agreement
+                                              depending on task size and model size. We usescores across all tasks in all rounds thereafter. Ta-
+                                                      the DeepSpeed integration from Huggingface, withbles 10, 11 and 12 present inter-annotator agree-
+                                        ZeRO-3 optimization, for multi-GPU training.ment breakdown according to entity, attribute and
+relation types in our schema.                         G  Prompt Details
+E  Hyperparameter Details                    Figures 3, 4 and 5 present the prompts used to eval-
+                                                   uate the performance of finetuned LLMs (FLAN-
+Extractive Models:                             T5, BioGPT and BioMedLM) on entity, attribute
+• OneIE: We use an overall learning rate and   and relation extraction respectively. Similarly, Fig-
+  weight decay of 1e −3, and a learning rate and    ures 6, 7 and 8 present the prompts used to evaluate
+  weight decay of 1e −5 for the BERT component,    the performance of GPT-3.5 and GPT-4 models (in
+  a batch size of 10, and gradient clipping value of    a zero-shot setting) on entity, attribute and relation
+  5.0. The model is trained for 60 epochs with a    extraction respectively. For the in-context learning
+  5-epoch warmup phase.                               setting, additional few-shot examples are appended
+• PURE: We use a context window size of 300    to the prompt before providing the abstract.
+  words, overall learning rate of 1e −5, task learn-
+  ing rate of 5e −4, batch size of 16, and train for  100 epochs.
+• LocLabel: We use a learning rate of 5e −6, warmup rate of 0.1, weight decay of 0.01, gra-
+  dient clipping value of 1.0, batch size of 6
+  and train for 35 epochs.  LocLabel also re-
+  quires word vectors, for which we use the 200-
+  dimensional Pubmed-trained word2vec embed-
+  dings (BioWordVec) released by Zhang et al.
+  (2019), which are available at https://github.
+  com/ncbi-nlp/BioWordVec.
+• W2NER: We use an overall learning rate of 1e−
+  3 and a learning rate of 5e −6 for the BERT  component, no weight decay, warmup factor fo
+  0.1, gradient clipping value of 5.0, batch size of
+  8, and train for 10 epochs.
+Generative Models: All models are trained for 10
+epochs with a learning rate of 1e −5, input contextlength of 1024, output length of 128, and a batch
+size of 2.
+GPT3.5/GPT4: We test the 16k and 8k context
+length versions of GPT3.5 and GPT4 respectively
+
+                                        4593
+=== PDF page 15 ===
+                                               Entity Extraction Prompt
+
+            Given an abstract from a biomedical paper, extract all population entities present in the
+            abstract.
+            Population entities are defined as patient groups/cohorts studied in an article.
+            Generate the output in this format: entity1 <sep> entity2. If no entities of the specified
+            type are present, output None.
+
+            Abstract: A primary intracranial HCG-producing tumour was studied in an 8 year old boy with
+            congenital adrenal hyperplasia. The case provided a unique opportunity to study the
+            sequential changes in serum and urinary androgens and HCG as measured by radioreceptor assay
+            for HCG and by radioimmunoassay for HCG using antisera raised against the hormone specific
+            for the beta subunit of HCG. Plasma concentrations of HCG, measured by the radioreceptor
+            assay, closely correlated with the biologic activity of his tumour as measured by serum
+            testosterone concentration. This case demonstrates that precocious puberty in any child,
+            including with a known androgen disorder such as congenital adrenal hyperplasia warrants
+            thorough investigation.
+
+            Extracted entities:
+
+               Output 🤖: “an 8 year old boy with congenital adrenal hyperplasia”
+
+
+
+
+Figure 3: Example prompt used to evaluate the performance of finetuned LLMs on entity extraction. Such prompts
+are generated for all seven entity types in our dataset.
+
+
+
+
+
+                                             Attribute Extraction Prompt
+
+            Given an abstract from a biomedical paper with all population entities highlighted with **,
+            extract all age attributes associated with these entities.
+            Age attributes are defined as numeric or non-numeric information about the age of the
+            population under study.
+            Generate the output in this format: attribute1 <sep> attribute2. If no attributes of the
+            specified type are present, output None.
+
+            Abstract: **A primary intracranial HCG-producing tumour was studied in an 8 year old boy with
+            congenital adrenal hyperplasia**. The case provided a unique opportunity to study the
+            sequential changes in serum and urinary androgens and HCG as measured by radioreceptor assay
+            for HCG and by radioimmunoassay for HCG using antisera raised against the hormone specific
+            for the beta subunit of HCG. Plasma concentrations of HCG, measured by the radioreceptor
+            assay, closely correlated with the biologic activity of his tumour as measured by serum
+            testosterone concentration. This case demonstrates that precocious puberty in any child,
+            including with a known androgen disorder such as congenital adrenal hyperplasia warrants
+            thorough investigation.
+
+            Extracted attributes:
+
+               Output 🤖: “8 year old”
+
+
+
+
+Figure 4: Example prompt used to evaluate the performance of finetuned LLMs on attribute extraction with gold
+entities provided. Such prompts are generated for all nine attribute types in our dataset.
+
+
+
+                                        4594
+=== PDF page 16 ===
+                                              Relation Extraction Prompt
+
+            Given an abstract from a biomedical paper with all important entities and attributes
+            highlighted with **, extract all attributeof relations between them.
+            Attributeof relations are defined as n-ary relations linking population and treatment
+            entities with their corresponding attributes.
+            Generate the output in this format: entity1 <ent> attribute1 <sep> entity2 <ent> attribute2
+            <ent> attribute3. If no relations of the specified type are present, output None.
+
+            Abstract: **A primary intracranial HCG-producing tumour was studied in an 8 year old boy with
+            congenital adrenal hyperplasia**. The case provided a unique opportunity to study the
+            sequential changes in serum and urinary androgens and HCG as measured by radioreceptor assay
+            for HCG and by radioimmunoassay for HCG using antisera raised against the hormone specific
+            for the beta subunit of HCG. Plasma concentrations of HCG, measured by the radioreceptor
+            assay, closely correlated with the biologic activity of his tumour as measured by serum
+            testosterone concentration. This case demonstrates that precocious puberty in any child,
+            including with a known androgen disorder such as congenital adrenal hyperplasia warrants
+            thorough investigation.
+
+            Extracted relations:
+               Output 🤖: “a primary .. hyperplasia <ent> 8 year old <ent> boy <ent> a <ent>
+               congenital adrenal hyperplasia”
+
+
+
+
+Figure 5: Example prompt used to evaluate the performance of finetuned LLMs on relation extraction with gold
+entities and attributes provided. Such prompts are generated for all four relation types in our dataset.
+
+
+
+
+
+                                               Entity Extraction Prompt
+
+            System Prompt: Assistant is a system built to extract key information from biomedical papers.
+
+            User: Given an abstract from a biomedical paper, extract all entities present in the
+            abstract.
+
+            Abstract: A primary intracranial HCG-producing tumour was studied in an 8 year old boy with
+            congenital adrenal hyperplasia. The case provided a unique opportunity to study the
+            sequential changes in serum and urinary androgens and HCG as measured by radioreceptor assay
+            for HCG and by radioimmunoassay for HCG using antisera raised against the hormone specific
+            for the beta subunit of HCG. Plasma concentrations of HCG, measured by the radioreceptor
+            assay, closely correlated with the biologic activity of his tumour as measured by serum
+            testosterone concentration. This case demonstrates that precocious puberty in any child,
+            including with a known androgen disorder such as congenital adrenal hyperplasia warrants
+            thorough investigation.
+               Output 🤖: {"population": ["an 8 year old boy with congenital adrenal hyperplasia"],
+               “subpopulation”: [], "treatment": [], “measurement”: [“Plasma concentrations of HCG”,
+               “biologic activity of his tumour”], “temporal”: [], “numericfinding”: [], “qualifier”:
+               [“closely correlated with”]}
+
+
+
+
+Figure 6: Prompt used to evaluate the performance of GPT-3.5 and GPT-4 on the entity extraction task. Additionally,
+entity type definitions from Table 1 are provided as function parameters to leverage OpenAI’s function calling
+capabilities.
+
+
+
+                                        4595
+=== PDF page 17 ===
+                                              Attribute Extraction Prompt
+
+            System Prompt: Assistant is a system built to extract key information from biomedical papers.
+
+            User: Given an abstract from a biomedical paper with all the important entities highlighted
+            with **, extract all attributes associated with these entities.
+
+            Abstract: **A primary intracranial HCG-producing tumour was studied in an 8 year old boy with
+            congenital adrenal hyperplasia**. The case provided a unique opportunity to study the
+            sequential **changes in** **serum** and **urinary** **androgens** and **HCG** as measured by
+            radioreceptor assay for HCG and by radioimmunoassay for HCG using antisera raised against the
+            hormone specific for the beta subunit of HCG. **Plasma concentrations of HCG**, measured by
+            the radioreceptor assay, **closely correlated with** the **biologic activity of his tumour**
+            as measured by serum testosterone concentration. This case demonstrates that precocious
+            puberty in any child, including with a known androgen disorder such as congenital adrenal
+            hyperplasia warrants thorough investigation.
+
+                Output 🤖: {"age": ["8 year old"], “sex”: [“boy”], "size": [“A”], “condition”:
+                [“congenital adrenal hyperplasia”], “demographic”: [], “route”: [], “dosage”: [],
+                “strength”: [], “duration”: []}
+
+
+
+
+Figure 7: Prompt used to evaluate performance of GPT-3.5 and GPT-4 on the attribute extraction task with gold
+entities provided. Additionally, attribute type definitions from Table 2 are provided as function parameters to
+leverage OpenAI’s function calling capabilities.
+
+
+
+
+
+                                              Relation Extraction Prompt
+
+            System Prompt: Assistant is a system built to extract key information from biomedical papers.
+
+            User: Given an abstract from a biomedical paper with all the important entities and
+            attributes highlighted with **, extract all relations between these entities and attributes.
+
+            Abstract: ** **A** primary intracranial HCG-producing tumour was studied in an **8 year old**
+            **boy** with **congenital adrenal hyperplasia** **. The case provided a unique opportunity to
+            study the sequential **changes in** **serum** and **urinary** **androgens** and **HCG** as
+            measured by radioreceptor assay for HCG and by radioimmunoassay for HCG using antisera raised
+            against the hormone specific for the beta subunit of HCG. **Plasma concentrations of HCG**,
+            measured by the radioreceptor assay, **closely correlated with** the **biologic activity of
+            his tumour** as measured by serum testosterone concentration. This case demonstrates that
+            precocious puberty in any child, including with a known androgen disorder such as congenital
+            adrenal hyperplasia warrants thorough investigation.
+               Output 🤖: {"subpopulationof": [], “treatmentof”: [], "attributeof": [{“population”:
+               “A primary .. adrenal hyperplasia”, “age”: “8 year old”, “sex”: “boy”, “size”: “A”}],
+               “result”: [{“measurement”: “plasma concentrations of HCG”, “qualifier”: “closely
+               correlated with”, “population”: “A primary .. adrenal hyperplasia”}]}
+
+
+
+
+Figure 8: Prompt used to evaluate performance of GPT-3.5 and GPT-4 on the relation extraction task with gold
+entities and attributes provided. Additionally, relation type definitions from Table 3 are provided as function
+parameters to leverage OpenAI’s function calling capabilities.
+
+
+
+                                        4596

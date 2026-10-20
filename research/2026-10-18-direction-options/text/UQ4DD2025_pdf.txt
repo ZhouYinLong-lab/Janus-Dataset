@@ -1,0 +1,1185 @@
+## PDF page 1
+Enhancing uncertainty quantification in drug discovery with censored
+regression labels
+
+
+
+Downloaded from: https://research.chalmers.se, 2026-10-18 04:27 UTC
+
+
+
+
+
+    Citation for the original published paper (version of record):
+    Svensson, E., Friesacher, H., Winiwarter, S. et al (2025). Enhancing uncertainty quantification in
+    drug discovery with censored regression labels. Artificial Intelligence in the Life Sciences, 7.
+    http://dx.doi.org/10.1016/j.ailsci.2025.100128
+
+
+
+
+
+N.B. When citing this work, cite the original published paper.
+
+
+
+
+
+research.chalmers.se offers the possibility of retrieving research publications produced at Chalmers University of Technology. It
+covers all kind of research output: articles, dissertations, conference papers, reports etc. since 2004. research.chalmers.se is
+administrated and maintained by Chalmers Library
+
+
+                                       (article starts on next page)
+
+## PDF page 2
+                                                     Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+                                                 Contents lists available at ScienceDirect
+
+                         Artificial Intelligence in the Life Sciences
+
+
+                                            journal homepage: www.elsevier.com/locate/ailsci
+
+
+Research article
+
+Enhancing uncertainty quantification in drug discovery with censored
+regression labels
+Emma Svensson a,b    ,∗, Hannah Rosa Friesacher a,c, Susanne Winiwarter d, Lewis Mervin e,
+Adam Arany c, Ola Engkvist a,f
+
+a Molecular AI, Discovery Sciences, R&D, AstraZeneca, Gothenburg, 431 83, Sweden
+b ELLIS Unit Linz & Institute for Machine Learning, Johannes Kepler University Linz, Linz, 4040, Austria
+c ESAT-STADIUS, KU Leuven, Leuven, 3000, Belgium
+d Drug Metabolism and Pharmacokinetics, Research and Early Development Cardiovascular, Renal and Metabolism (CVRM), BioPharmaceuticals R&D,
+AstraZeneca, Gothenburg, 431 83, Sweden
+e Molecular AI, Discovery Sciences, R&D, AstraZeneca, Cambridge, CB2 0AA, UK
+f Department of Computer Science and Engineering, Chalmers University of Technology, Gothenburg, 412 96, Sweden
+
+
+A R T I C L E   I N F O            A B S T R A C T
+
+
+Dataset link: https://github.com/MolecularAI/          In the early stages of drug discovery, decisions regarding which experiments to pursue can be influenced
+uq4dd                                      by computational models for quantitative structure–activity relationships (QSAR). These decisions are critical
+                                          due to the time-consuming and expensive nature of the experiments. Therefore, it is becoming essential to
+Keywords:
+                                                  accurately quantify the uncertainty in machine learning predictions, such that resources can be used optimallyUncertainty quantification
+Censored regression                            and trust in the models improves. While computational methods for QSAR modeling often suffer from limited
+Temporal evaluation                               data and sparse experimental observations, additional information can exist in the form of censored labels that
+Distribution shift                                  provide thresholds rather than precise values of observations. However, the standard approaches that quantify
+Deep learning                                      uncertainty in machine learning cannot fully utilize censored labels. In this work, we adapt ensemble-based,
+Drug discovery                                     Bayesian, and Gaussian models with tools to learn from censored labels by using the Tobit model from survival
+Molecular property prediction                          analysis. Our results demonstrate that despite the partial information available in censored labels, they are
+                                                      essential to reliably estimate uncertainties in real pharmaceutical settings where approximately one-third or
+                                        more of experimental labels are censored.
+
+
+
+1. Introduction                                                             limited. This low-data problem is another effect of the time-consuming
+                                                              and costly experiments needed to generate data. As such, there is a
+   Drug discovery is a challenging field of research where experiments     continuously increasing need for application-specific uncertainty quan-
+are time-consuming and expensive. In addition, the development of      tification methods in molecular property prediction, particularly in the
+therapeutic agents bears a high risk of failure resulting in the aban-    modeling of affinity scores and drug side effects through quantitative
+donment of a drug candidate during the later stages of the drug     structure–activity relationships (QSAR) [4].
+discovery pipeline, which leads to an extensive waste of money and        Uncertainty quantification in machine learning is typically disentan-
+time. To optimize the use of resources and accelerate the drug de-     gled into its underlying sources, which provide a deeper understanding
+velopment workflow, machine learning models are often applied to     of the factors contributing to overall predictive uncertainty [2]. The
+support a smart allocation of these resources [1]. In the context of    two primary sources of uncertainty are aleatoric and epistemic uncer-
+machine learning-assisted drug discovery, uncertainty quantification     tainty [5,6]. Aleatoric uncertainty refers to the inherent stochastic vari-
+enables safer and more reliable deployment of computational models      ability within experiments. It is often considered irreducible because it
+by increasing human confidence in the models [2]. The effects are     cannot be mitigated through additional data or model improvements.
+highly relevant for the drug discovery pipeline as they allow users to     In drug discovery specifically, aleatoric uncertainty can reflect the
+judge results based on the predicted uncertainty quantification before                                                                         inherent unpredictability of interactions between certain molecular
+deciding how to progress in the experimental workflow [3]. Applying                                                            compounds as a result of either biological stochasticity or human
+machine learning models to early-stage drug discovery requires mod-                                                                             intervention. As such, proper quantification of aleatoric uncertainty can
+eling the complex chemical space where data availability is typically
+
+
+  ∗Corresponding author at: Molecular AI, Discovery Sciences, R&D, AstraZeneca, Gothenburg, 431 83, Sweden.
+     E-mail address:  svensson@ml.jku.at (E. Svensson).
+
+https://doi.org/10.1016/j.ailsci.2025.100128
+Received 4 December 2024; Received in revised form 30 January 2025; Accepted 5 February 2025
+Available online 13 February 2025
+2667-3185/© 2025 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY license ( http://creativecommons.org/licenses/by/4.0/).
+
+## PDF page 3
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+lead to better risk management in drug discovery by highlighting areas    drug discovery, despite its potential to enhance model accuracy and
+where outcomes are inherently uncertain [7].                             uncertainty quantification.
+  On the other hand, epistemic uncertainty encompasses uncertain-       The problem of censored regression has been widely studied in other
+ties related to the model’s lack of knowledge, which can stem from      fields, particularly in survival analysis, where Hollander et al. [34]
+insufficient training data or model limitations [5,6]. Unlike aleatoric    demonstrated that the information contained in data decreases after
+uncertainty, epistemic uncertainty can be reduced by acquiring addi-     censorship. Despite the reduced information in censored labels, Hüttel
+tional data or through improvements to the model. Understanding and     et al. [35] further showed that these labels are crucial in Bayesian
+quantifying epistemic uncertainty in drug discovery allows researchers     active learning due to their contribution to increased entropy and
+to strategically guide data collection efforts, focusing on areas of the    mutual information between the predicted and true data distributions.
+chemical space where the model’s predictions are less certain [8]. By     Additionally, censored labels have enhanced quantile regression in
+further separating these individual aspects of epistemic uncertainty,     survival analysis, as demonstrated by Pearce et al. [36]. In the context
+targeted enhancements to the machine learning model itself can be     of drug discovery, limited work has explored ways to incorporate
+achieved. Recent work by Gustafsson et al. [9] emphasizes the im-     censored labels for regression tasks. Arany et al. [37] proposed an
+portance of uncertainty quantification in out-of-distribution scenarios,     adaptation of the mean squared error (MSE) to account for censored
+highlighting how epistemic uncertainty can inform about when a model     labels by using a one-sided squared loss. However, their approach did
+will likely fail due to a lack of relevant training data. In real-world     not address uncertainty quantification. This approach was first explored
+drug discovery, it is especially advantageous to understand the various     for uncertainty quantification in an earlier version of our work on
+sources of epistemic uncertainty, as navigating the vast chemical space    a smaller subset of the datasets provided here [38]. To the best of
+efficiently and effectively can significantly impact the success of a    our knowledge, no prior work has yet adapted both the MSE and the
+project.                                                     more general Gaussian negative log-likelihood (NLL) for uncertainty
+   Approaches that quantify uncertainty in machine learning regres-     quantification in predictive modeling for drug discovery. Therefore,
+sion tasks can be broadly categorized into several types: Bayesian     further exploration of how censored labels can be effectively integrated
+learning [10], ensemble-based methods [11–14], distance-based ap-     into regression models to improve prediction accuracy and uncertainty
+proaches [15,16], mean–variance estimation [17–19], evidential learn-     estimation in drug discovery is needed.
+ing [20], conformal prediction [21], and quantile regression [22],        In this work, we address the challenge of effectively utilizing cen-
+among others. Recent studies have compared and benchmarked these     sored regression labels during QSAR modeling in drug discovery, a
+methods on publicly available datasets for modeling of molecular prop-    domain where data is often scarce, and uncertainty quantification is
+erties [8,23–27]. Despite these efforts, no single method has emerged      critical for decision-making. While previous approaches have primarily
+as consistently superior across all evaluation metrics and tasks [3,28].     focused on high-quality data, our work expands the ability of ma-
+   The prior research mentioned above has primarily been performed     chine learning models to incorporate partial, yet valuable information
+on publicly available datasets using random or scaffold-based ways to     provided in censored labels, thereby enhancing the reliability of the
+split the data for evaluation. These means have been shown to either     uncertainty estimates. To achieve this, we develop and extend existing
+overestimate machine learning models, in the case of the random split,    methods, adapting them to the unique demands of drug discovery tasks.
+or underestimate the performance with the scaffold-based split [23,27,   We also refine evaluation techniques to rigorously assess the impact of
+29]. Hirschfeld et al. [23] stress the need for a more realistic evaluation,     incorporating censored labels, ensuring that the benefits are demon-
+such as a temporal data split, to gain insights into the real implications     strated across relevant metrics. Our contributions are summarized as
+and nuances between the approaches. Additionally, Yin et al. [27] point     follows:
+out that public benchmarks do not allow proper temporal evaluation
+                                                                                                                      • We derive extended versions of ensemble-based models, Bayesian
+as they lack relevant information and sufficient replications for reliable
+                                                                          models, and Gaussian mean–variance estimators capable of learn-
+statistics. Temporal evaluation based on information available in public
+                                                                              ing from additional partial information available in censored
+data, such as ChEMBL, for molecular property prediction can be mis-
+                                                                                 regression labels.
+leading [30]. The reason is that the time stamp of data points in public
+                                                                                                                      • Similarly, we adapt available evaluation methods to compare
+data relates to when the compound was added to the public domain
+                                                                     models trained with and without the additional censored labels.
+rather than when the experiment was performed. Instead, modeling
+                                                                                                                      • Furthermore, we provide a large-scale comparison between the
+the real evolution of experiments in a pharmaceutical company  is
+                                                                                    resulting censored regression models in a comprehensive tempo-
+what makes a temporal evaluation truly useful [31]. Earlier work
+                                                                                           ral evaluation using internal pharmaceutical assay-based data.
+on internal pharmaceutical assay-based data from Merck compares a
+                                                                                                                      • Finally, we showcase how the resulting model predictions can
+temporal splitting strategy with random and structure-based splitting
+                                                                     be used in practical applications to streamline and aid the drug
+strategies [32]. Sheridan [32] concludes that the temporal option best
+                                                                             discovery process in a case study.
+approximates the true predictive performance, but they do not explore
+uncertainty quantification.
+   In addition to the limited amount of precise data in drug discovery,     2. Methods
+partial information in the form of censored labels  is often gener-
+ated during experiments. Censored labels arise when the experiment’s       The methodologies employed in our study are divided into two parts
+measurement range is exceeded, such that the exact value cannot be     detailing the data and the modeling approaches. First, we describe the
+recorded. For instance, a fixed range of compound concentrations is     data used in our analysis, including the sources and types of biological
+typically used to test the compound’s effect on biochemical processes     assays explored. Following this, we outline the models and techniques
+in an assay. If no response is observed within this range, the experiment    implemented to leverage this data, focusing on how they are adapted to
+may only indicate that the response lies above or below the tested    handle the unique challenges presented by censored regression labels.
+concentrations rather than providing a specific value. This results in       The analysis in this work was performed on data from 15 internal
+a censored label, where the true value is known only to exceed or     biological assays, categorized into two distinct groups: project-specific
+fall below a certain threshold. While censored labels can be easily     target-based assays and cross-project assays related to side effects,
+included in classification tasks by categorizing observations as active    such as Absorption, Distribution, Metabolism, Excretion, and Toxicity
+or inactive [33], integrating them into regression models that predict    (ADME-T) properties [39]. This division allows us to explore the effects
+continuous values is far less trivial. Due to this challenge, censored     of censored labels on uncertainty estimation using different assay types.
+data has not yet been properly utilized in regression tasks within     Similar datasets were utilized in the recent study by Friesacher et al.
+
+                                                                        2
+
+## PDF page 4
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+                Table 1
+               Data overview. A detailed overview of the assays used in this analysis, including the short name used throughout the results. For each assay,
+                key properties are shown, such as the proportion of the censored data, the end-point, the assay size, and the experimental standard deviation
+                 derived from a control compound. Due to proprietary constraints, detailed descriptions of target-based assays cannot be disclosed.
+
+                   Short name            Assay                      End-point          Goal         Assay          Censoring                   Control
+                                             description                                                          size         <        >              std
+
+                 Target-based
+                   Target 1            N/A                     pIC50             ↑            5,082        32%      1%           0.13
+                   Target 2            N/A                     pIC50             ↑            5,237        43%      0%           0.24
+                   Target 3            N/A                     pIC50             ↑            10,465      0%       0%           0.36
+                   Target 4            N/A                     pIC50             ↑            10,624       12%      2%           0.20
+                   Target 5            N/A                   pEC50            ↑            12,612       35%      0%           0.32
+                   Target 6            N/A                     pIC50             ↑            13,093      0%       0%           0.31
+                   Target 7            N/A                     pIC50             ↑            14,605       25%      0%           0.32
+
+              ADME-T
+              ADME-T CYP 1       CYP3A4                  pIC50             ↓            12,875       61%      0%           0.11
+              ADME-T CYP 2        CYP2C9 (a)               pIC50             ↓            12,876       63%      0%           0.11
+              ADME-T CYP 3        CYP2C9 (b)               pIC50             ↓            14,062       58%      0%           0.12
+              ADME-T Perm.          Permeability              Log Perm.         ↑            16,511      8%       0%           0.17
+              ADME-T Solub.           Solubility                Log Solub.         ↑            47,607      5%       6%           0.21
+              ADME-T hERG           Toxicity                  pIC50             ↓            67,687       42%      0%           0.19
+              ADME-T LogD            Lipophilicity             LogD          ≈ 2          88,114      0%       8%           0.10
+              ADME-T CLint          Metabolic Stability        Log 𝐶 𝑙int          ↓            92,161      8%       6%           0.14
+
+               The ‘‘Goal’’ column in the table indicates the desired performance of a drug candidate on this assay (↑for high, ↓for low values). While LogD
+                   targets can be project-specific, a target value of 2 is generally assumed, as excessively high or low values are typically undesirable.
+
+
+[33], providing a relevant benchmark for our work. An overview of the    measurements for molecular compounds in the data were then aggre-
+assays used in this study is presented in Table 1.                         gated using the median of the result. The standard deviation for this
+   The target-based assays are crucial for ongoing drug development     aggregation was also used in the study to indicate the experimental
+projects and, therefore, cannot be disclosed fully. They all model either     error. For each assay, a control compound was available which had
+the half-maximal inhibitory concentration (IC50) or the half-maximal    been tested many times more than any other compound. The standard
+effective concentration (EC50), as seen in Table 1. ADME-T assays are     deviation of the control compound was used as an indication of the
+important in the pharmaceutical industry to test the pharmacokinetic     general experimental error of the assay, also presented in Table 1. The
+profile and safety of drug candidates. Four of the included ADME-     control compounds were removed before modeling each assay.
+T assays also measure IC50. Three of the included ADME-T assays         All remaining molecular compounds were then encoded with RD-
+measure the inhibiting effects on two isoforms of Cytochrome P450     Kit (version 2023.03.3) [40] from SMILES strings [41] to Morgan
+to check for potential drug–drug interactions. Two CYP2C9 assays     Fingerprints (ECFP) [42] of size 1024 and radius 2. Other, more ad-
+are included, which differ in the methods used for measuring CYP    vanced ways to encode molecular compounds exist, such as the graph-
+inhibition. In the CYP2C9 (b) assay, a fluorescent substrate is used    based ChemProp model [7] and the pre-trained language-based CDDD
+to determine CYP inhibition. The two other CYP assays, CYP2C9 (a)    model [43]. Models based on the resulting embeddings from these neu-
+and CYP3A4 apply an updated protocol, where the degradation of      ral network encoders have been compared and shown improvements in
+a drug is measured using liquid chromatography-mass spectrometry     prior work [23,26,30]. However, Dutschmann et al. [26] showed that
+(LC-MS). The solubility assay determines aqueous solubility in a high     fingerprints perform best in combination with random forest and are
+throughput fashion, starting from a dimethyl sulfoxide (DMSO) stock     close second to CDDD in combination with neural networks. Additional
+solution where the organic solvent is evaporated to have a solid sample.     prior work has similarly shown that neural networks perform better
+The result gives the maximum concentration of a compound in an     in combination with fingerprints compared to other machine learning
+aqueous solution at pH 7.4. The included toxicity assay determines the    methods [44,45]. While we employ the fingerprint representations
+compound’s potential to inhibit the human Ether-à-go-go-Related Gene     in this study for simplicity and computational reasons, we strongly
+(hERG) potassium channel. This hERG inhibition is correlated to severe    encourage considering state-of-the-art, learned representations before
+                                                                     deploying our proposed methods in practical applications.cardiac side effects by prolonging the time it takes the heart to contract
+and relax, i.e. the QT interval.                                        Data censoring. Given that the determination of exact experimental
+   The remaining ADME-T assays model other important properties     results is often connected with additional experimental efforts, a sig-
+that influence the pharmacokinetics of a drug candidate. The perme-     nificant proportion of the data is provided with censorship. We follow
+ability assay measures the flux of a compound across the Caco-2 cell     the definition of censored regression proposed by Hüttel et al. [35].
+layer. The permeability is measured in 1E-6 cm/s and is related to in     Formally, if we define the true experimental label 𝑦∗𝑛∈R of a molecular
+vivo absorption. To obtain a compound’s lipophilicity, the logarithm of    compound with features 𝒙𝑛∈R𝑑of length 𝑑from an assay, a censored
+the distribution coefficient between octanol and aqueous phase at pH     label provides only an observation of a threshold 𝑧𝑛below or above
+7.4 is obtained (LogD). Finally, the Clint assay assesses the metabolic    which the true result lies. In the case of right-censoring this means
+stability of a compound in μL/min/million  cells.  It measures how     that instead of observing 𝑦∗𝑛we observe 𝑦𝑛= min(𝑦∗𝑛, 𝑧𝑛) and for left-
+fast the compound is metabolized in rat hepatocytes and enables the     censoring we instead observe 𝑦𝑛= max(𝑦∗𝑛, 𝑧𝑛). As such, we introduce
+predictions of in vivo hepatic clearance.                               a mask 𝑚𝑛which is 1 if 𝑦∗𝑛> 𝑧𝑛and −1 if 𝑦∗𝑛< 𝑧𝑛, otherwise 𝑚𝑛= 0.
+   During the data preparation, the measurements of all target-based    As a result, we get the dataset censored = {𝒙𝑛, 𝑦𝑛, 𝑚𝑛}𝑁𝑛=1 for each assay
+assays and the ADME-T assays measuring CYP and hERG inhibition     with total number of labels 𝑁. In particular, note that the censoring
+were transformed to pIC50/pEC50 by taking the negative log base 10 of     threshold can vary for different labels which is different from fixed-
+the measurements after transforming them to molar units. In addition,     value censoring where the threshold is fixed [46]. Furthermore, we
+the measurements of the solubility, permeability, and Clint assays were    assume that the true distribution and the censoring distribution are
+transformed to log10-scale. The assay measuring lipophilicity was not     conditionally independent given the molecular compound’s features,
+modified, as it already comprised results on the log scale. Duplicated       i.e. that 𝑦∗𝑛 ⟂  𝑧𝑛|𝒙𝑛. Labels that are not censored are henceforth
+
+                                                                        3
+
+## PDF page 5
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 1. Five-fold temporal split. Illustrating the five folds created based on the date of the experiments and how they are used to create three temporal settings, each with more
+training data. For each setting, the first subsequent fold is used for validation, and the second subsequent fold is used for testing. Note that the folds were created to have roughly
+equal size, not based on fixed time intervals.
+
+
+referred to as observed labels. An observed dataset was also prepared     assays. ADME-T assays include final drug candidates from all kinds
+for each assay to evaluate if the performance improved by including the     of drug discovery projects that stem from a diverse chemical space.
+censored labels. These datasets contain only the observed labels defined     Target-based assays, on the other hand, are more focused on a given
+by observed = {𝒙𝑛, 𝑦𝑛, 𝑚𝑛}∀𝑛∶𝑚𝑛=0.                                       chemical space, which can shift over time as the focus of the project
+   While prior work mentions the possibility of extending the defini-     changes. This important distinction would not be possible without the
+tion of censored regression to include both right- and left-censoring     temporal split proposed in this work, and the effects of it on model
+at once [35,37], the majority of previous applications focus only on     performance, as well as calibration of predicted uncertainty, is explored
+right-censoring. During the aggregation of duplicated measurements in     during the evaluation of the models.
+the data preparation for this work, observed labels were always pri-
+oritized over censored labels. If no observed labels were available, the     2.1. Models for uncertainty quantification
+compounds were assigned the most common censored threshold among
+the potential duplicated measurements. Table 1 lists the percentage of        In this work, we propose five models that extend existing techniques
+censored labels for each assay used in this work divided between left-     to handle censored labels alongside two baseline models that only learn
+and right-censoring, according to the log-scale of the end-points. Note    from observed labels without accounting for censorship. Fig. 2 gives
+that while many assays include only left-censored labels, i.e., 𝑦∗𝑛< 𝑧𝑛,    an overview of all models and how they can estimate epistemic and/or
+two assays have a more balanced amount of censored labels, namely the     aleatoric uncertainty. Ensemble-based and Bayesian approaches, such
+ADME-T assays for solubility and metabolic stability. There is also one     as Random Forests [11], ensembles of neural networks [13], Monte
+of the included assays that only have right-censored labels, namely the     Carlo (MC) Dropout [12] and the approximation of a Bayesian neural
+ADME-T assay for lipophilicity. Finally, two of the target-based assays,    network known as Bayes by Backprop [10] are commonly used to
+Target 3 and Target 6, do not have any censored labels. These two     estimate epistemic uncertainty. For aleatoric uncertainty, two primary
+assays are useful in the model comparison to determine how all of the    methods are available: the Gaussian mean–variance estimator [18]
+considered models compare when no censored labels are available.       and evidential deep learning [20]. By creating an ensemble of the
+                                                                    Gaussian model, we can also derive estimates of epistemic uncertainty.
+Temporal split.  Apart from the modeling of censored data, a key contri-     Evidential deep learning, on the other hand, simultaneously models
+bution of our work relates to evaluating the uncertainty quantification     four parameters that can be used to directly estimate aleatoric and epis-
+of molecular property prediction in a temporal setting. As such, we     temic uncertainty. We extend all of these models, except the Random
+simulated realistic assay-based modeling of pharmaceutical projects by     Forest and Evidential model, to learn from both observed and censored
+splitting the data of each assay into five folds based on the date of the     data, while the two remaining approaches are used as baselines. A
+experiment. Where duplicated measurements were aggregated, the first     detailed description of how the model selection is performed for each
+experiment date of all measurements was used. Fig. 1 illustrates the    model is provided in Table S1 of the supplementary material. While
+folds and resulting three settings used to evaluate and compare trained     the data used in this work is proprietary and cannot be disclosed,
+models as time evolves in this work, similar to how it was previously     the full methodology is available on GitHub at https://github.com/
+done by Svensson et al. [38]. The time intervals were chosen to create    MolecularAI/uq4dd. Our framework is inspired by the design pattern
+roughly equally sized folds regarding the number of observed labels.      proposed by Hartog et al. [47].
+   By comparing the feature-space and label distributions between
+                                                                        Ensemble-based approaches.  In general, ensemble-based approaches arethe three training folds and their respective validation and test sets,
+                                                                            useful to model epistemic uncertainty by estimating the model vari-we identified various scenarios of in- versus out-of-distribution cases
+                                                                         ance. An ensemble is defined as a set of 𝐾base estimators 𝑓(𝒙𝑛),among the datasets. For the feature-space analysis, we created t-SNE
+                                                                                for which the average of the individual base estimators’ predictions isprojections of the molecular compounds in each dataset shown in
+                                                                     taken as the final prediction by the ensemble and the variance of theFig. S2 of the supplementary material. For the label-space analysis, we
+                                                                           predictions as an estimate of the predictive uncertainty as follows,
+compared the distributions of all observed labels of each fold as shown
+in Fig. S1 of the supplementary material.                                    1 ∑𝐾                1 ∑𝐾
+                                                   𝜇𝑛=       𝑓𝑘(𝒙𝑛),  𝜎2ep,𝑛=       (𝑓𝑘(𝒙𝑛) −𝜇𝑛)2.                     (1)   Generally, for the ADME-T assays no clear distribution shift  is      𝐾            𝐾
+                                                                                      𝑘=1                    𝑘=1
+present in either the feature-space or the label-space over time. On
+the contrary, for the target-based assays both the feature-space and        In a Bayesian framework, the uncertainty in model parameters 𝜽re-
+the label-space shift over time. These observed trends are naturally      sults in the predictive uncertainty of the model 𝑝(𝑦𝑛|𝒙𝑛, 𝜽). The true pos-
+expected due to the fundamental difference between the two kinds of     terior distribution of the model parameters for a given dataset can be
+
+                                                                        4
+
+## PDF page 6
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 2. Overview of models. Illustrations of all models used in this study. The top row shows ensemble-based and Bayesian methods for which epistemic uncertainty can be
+obtained from the standard deviation in sampled predictions. All models in the bottom row produce aleatoric estimates of uncertainty. Additionally, epistemic uncertainty can be
+derived from the Gaussian Ensemble and the Evidential model.
+
+                                                                   ∑𝑁                                                                                                                             𝑛=1 𝜀2𝑛. The interpretation ofdescribed as 𝑝(𝜽|), such that the predictive uncertainty of the Bayesian    and get the CensoredMSE as MSE = 𝑁1
+model average is defined by 𝑝(𝑦𝑛|𝒙𝑛, ) = ∫𝜣𝑝(𝑦𝑛|𝒙𝑛,̃ 𝜽)𝑝(̃𝜽|)d̃𝜽[6,48].     the proposed loss is that when the model correctly predicts a value
+As shown by Lakshminarayanan et al. [13] and Gal [48], the variance    above the threshold of a right-censored label or below the threshold
+of ensemble predictions approximates the epistemic part of this true     of a left-censored label the error is set to zero. This reflects a perfect
+posterior distribution.                                                     prediction and does not result in any weight updates due to the zero
+   One of the simplest and most widely used traditional machine     gradient of a constant.
+learning methods for ensemble-based uncertainty quantification takes
+                                                                     Bayes by backprop.  Blundell et al. [10] proposed a Bayesian version
+the decision trees in a Random Forest as an ensemble [11]. We use the
+                                                                              of neural networks, known as Bayes by Backprop, that approximates
+implementation of decision tree regressors from Scikit-learn [49] where
+                                                                        the posterior distribution of the network weights. In traditional neural
+each decision tree is trained independently using different sub-samples
+                                                                      networks, the weights are deterministic, meaning that a single set of
+of the training data. The final prediction is obtained by averaging the
+                                                                         values is learned during training. However, in Bayes by Backprop, the
+predictions of all the trees and the variance constitutes the epistemic
+                                                                     weights are modeled as random variables with associated probability
+uncertainty estimate. Similarly, ensembles can be created by training
+                                                                                 distributions, typically Gaussian. This allows the network to maintain
+multiple instances of the same neural network architecture with dif-
+                                                                  a distribution over the weights, reflecting the uncertainty about the true
+ferent random weight initialization [13]. We first consider the neural
+                                                                         values of these parameters given the observed data.
+network architecture with a single output, which means that each base
+                                                              To train the Bayes by Backprop model, the goal is to approximate
+estimator makes a prediction such that the final prediction by the
+                                                                        the posterior distribution 𝑝(𝒘|) of the weights 𝒘given the train-ensemble again is the average of the individual predictions and the
+                                                                         ing data . Since exact Bayesian inference is intractable for neural
+variance estimates the epistemic uncertainty [50]. We use 50 randomly
+                                                                      networks, a variational approximation is used. The approach involves
+initialized and independently trained neural networks to create this
+                                                                          defining a variational distribution 𝑞(𝒘|𝜽), parameterized by 𝜽, whichensemble and hence refer to it as Ensemble. All neural networks in this
+                                                                    approximates the true posterior. The optimal variational parameters
+work are implemented and trained with PyTorch [51].
+                                                         𝜽are learned by minimizing the variational free energy, also known
+   Furthermore, MC-Dropout is another technique that uses dropout
+                                                                          as the evidence lower bound (ELBO), which balances the trade-off
+in neural networks to approximate Bayesian inference [12]. Dropout
+                                                                between fitting the data well and staying close to the prior distribution
+is typically used when training neural networks to prevent overfitting
+                                                                           𝑝(𝒘). The loss function used to train the Bayes by Backprop model is
+by randomly setting a fraction of the neurons to zero. During MC-
+                                                                           therefore
+Dropout, multiple samples are drawn from the model using dropout
+during the inference phase. Similar to the ensemble-based approaches,    BNN = KL[𝑞(𝒘|𝜽) ∥𝑝(𝒘)] −E𝑞(𝒘|𝜽)[log 𝑝(|𝒘)],                     (3)
+the variance between these predictions provides an estimate of the
+                                                              where the first term is the Kullback–Leibler (KL) divergence between
+epistemic uncertainty. We use the same neural network architecture
+                                                                        the variational distribution 𝑞(𝒘|𝜽) and the prior distribution 𝑝(𝒘) andfrom the Ensemble in our MC-Dropout model but train only one model
+                                                                        the second term is the expected log-likelihood of the data under the
+and draw 500 samples from it during the inference step.
+                                                                             variational distribution. The KL divergence penalizes deviations from
+   In a standard regression framework, the mentioned base estimators
+                                                                        the prior distribution while the expected log-likelihood encourages the
+of these models are trained using the MSE loss. We propose to use the
+                                                             model to find weight distributions that explain the observed data well.
+adapted CensoredMSE loss from Arany et al. [37] to allow the models
+                                                                               In our implementation, we convert the same neural network used in
+to learn also from additional censored labels where available. As such,
+                                                                        the ensemble-based approaches into a Bayesian neural network and use
+we define a one-sided error of a given prediction 𝜇𝑛and the true label                                                                        the CensoredMSE as the log-likelihood to allow the Bayes by Backprop
+𝑦𝑛as follows,                                                             model to learn from censored labels. The KL divergence is unaffected
+   ⎧ min (𝑧𝑛−𝜇𝑛, 0) ,     if 𝑚𝑛= −1,                                by censored labels as it relates solely to the learned weight distribution
+   ⎪
+𝜀𝑛= ⎨ 𝑦𝑛−𝜇𝑛,                 if 𝑚𝑛= 0,                                (2)    with respect to the prior. During inference, we sample 500 sets of
+                                                                     weights from the learned distribution, and the resulting ensemble of    max (𝑧𝑛−𝜇𝑛, 0) ,    if 𝑚𝑛= 1,       ⎪⎩
+
+                                                                        5
+
+## PDF page 7
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+models generates a distribution of predictions. As for the ensemble-    𝛾𝑛∈R, 𝜈𝑛> 0, 𝛼𝑛> 1, 𝛽𝑛> 0, which together model the prediction 𝜇𝑛∼
+based approaches, the spread of these predictions provides an estimate    (𝛾𝑛, 𝜎2𝑛𝜈−1𝑛) and variance 𝜎2𝑛∼𝛤−1(𝛼𝑛, 𝛽𝑛). In the implementation, the
+of the epistemic uncertainty, which reflects the model’s uncertainty due     outputs for 𝜈𝑛, 𝛼𝑛, and 𝛽𝑛are all passed through a Softplus function, and
+to limited data or model capacity.                                      then 1 is added to 𝛼𝑛. Through this hierarchical model, the parameters
+                                                                         express the epistemic uncertainty and aleatoric uncertainty estimates
+Gaussian models. So far, the base estimators of all described models
+                                                                                     as,
+produce only a prediction of the regression label. Next, we introduce
+                                                                                         𝛽𝑛                 𝛽𝑛
+                                                                                                                                                                                                   .                                  (6)the mean–variance-estimator originally proposed by Nix and Weigend     𝜎2ep,𝑛=                                                                                                                                                                      ,  𝜎2al,𝑛=                                                                        𝜈𝑛(𝛼𝑛− 1)                                                                          𝛼𝑛− 1[18]. More recent work by Choi et al. [19] suggests that the uncertainty
+estimates by this model are related to the heteroscedastic aleatoric
+                                                                The Evidential model is trained using the evidential loss, which
+uncertainty as it captures the noise inherent in data. As such, we define
+                                                                       optimizes the predicted parameter 𝛾𝑛, 𝜈𝑛, 𝛼𝑛, 𝛽𝑛to balance their fit to thethe mean–variance-estimator as a neural network with two outputs:
+                                                                      data and simultaneous calibration of uncertainty estimates. The loss is
+one representing the predicted value 𝜇𝑛and the other representing the
+                                                                        defined as,                                           𝜎2model’s        estimate                  of                   the                         aleatoric                                 uncertainty                                         The predicted                                                                        vari-                                                                      al,𝑛.                                                            𝑁                                                        (                                                           )                                                                                                                    ⎞                                                                                                         ⎛ance       is processed                through                       a                             Softplus                                    function                                               to                                             ensure                                                       non-negativity                                                                             𝜋                                                                               1                                                                          1 ∑                                                                                                      𝛤(𝛼𝑛)                                                                  EL =                                                                                         log                                                                 + log                                                                                                                    ⎟                                                                                                         ⎜                                                                                         −𝛼𝑛log (2𝛽𝑛(1 + 𝜈𝑛))    (7)and     stability.             This               model                                is                           trained                                 using                                        the                                       NLL,                                          which                                                           in the case                                                                      of                                           𝑁                                                                               2                                                                                                        𝜈𝑛                                                                                          𝑛=1                                                                                 𝛤(𝛼𝑛+                                                                                                                                         12)                                                                                                                                                                                                                                        ⎟⎠                                                                                                                                                                                                                  ⎜⎝a presumed           Gaussian                       distribution                            becomes                                         the                                               following,                                                                        )                                                                     (                                                                                      1
+                                                          +                                                                                                  log ((𝑦𝑛−𝛾𝑛)2𝜈𝑛+ 2𝛽𝑛(1 + 𝜈𝑛))              (8)                                                                  𝛼𝑛+    ∑𝑁                                                                                      2NLL = 1             −log𝜑(𝑦𝑛|𝒙𝑛, 𝜽)    𝑁
+           𝑛=1                                                          + 𝜆|𝑦𝑛−𝛾𝑛| ⋅(2𝜈𝑛+ 𝛼𝑛),                                 (9)                                                                     (4)
+        𝑁
+       1 ∑                                                            𝛤is                                                                                    the Gamma                                                                                                        distribution                                                                                            and                                                                                                𝜆is                                                                                                           a hyperparameter                                                                                                                                                 deter-   =                        + constant,                      where             1 log(𝜎2al,𝑛) + (𝑦𝑛−𝜇𝑛)2    𝑁             2                                                                 mining                                                                                the level                                                                                               of regularization.                                                                                         The                                                                                                                                                   first                                                                                                                       part                                                                                                                                of the evidential                                                                                                                                                           loss           𝑛=1                           2𝜎2al,𝑛
+                                                                            (Eq. (7)) corresponds to the log-likelihood of the predicted mean and
+where 𝜑(𝑦𝑛|𝒙𝑛, 𝜽) is the probability density function for the Gaussian
+distribution with parameters 𝜇𝑛and 𝜎2al,𝑛estimated by the model with     variance of the normal-inverse Gamma distribution. The second part
+                                                   1                                (Eq. (8)) optimizes the predictions toward the true target values 𝑦𝑛
+parameters 𝜽. Note that the constant term 2log(2𝜋) is omitted from the     while also accounting for the uncertainty in the predictions. Finally, the
+loss. Additionally, note that the variance is lower bound by a small
+                                                                                       last part (Eq. (9)) provides the regularization that penalizes the model
+number (𝜉= 1𝑒−6) for numerical stability as done in the PyTorch
+                                                                                for being overly confident, we use 𝜆= 1.
+implementation of the Gaussian NLL [51].
+                                                                    While evidential learning has been used previously to estimate
+  We refer to this model as Gaussian going forward and additionally
+                                                                         uncertainty in drug discovery-related tasks [27,56] its effectiveness at
+make a Gaussian Ensemble from 5 independently trained Gaussian
+                                                                          disentangling aleatoric and epistemic uncertainty has recently been
+models. A similar approach was used by Busk et al. [52], who suggests
+                                                                      questioned Juergens et al. [57], therefore we decided not to provide
+we get the aleatoric estimate from the expected value of all predicted
+                                                               an extension of this model for cases with censored labels. Instead,
+variances and the epistemic estimate from the variance of the predic-
+                                                                        the Evidential model is used solely as a baseline to benchmark the
+tion. Furthermore, this decomposition of the sources of uncertainty is
+                                                                    performances of the other approaches with that of this commonly used
+similar to how it is done for Gaussian Mixture Models [53,54]. Hub-
+                                                                   model.
+schneider et al. [53] argues that this decomposition results in epistemic
+uncertainty estimates that vanish with more data, thus being reducible,
+                                                                                 2.2. Evaluation
+in contrast to the aleatoric part which does not, thus being irreducible.
+As such, these results also correspond to the definition of epistemic and
+                                                                The focus of this work is to determine the performance of models
+aleatoric sources of uncertainty [2,5,6].
+                                                             on realistic pharmaceutical data. As such  all models are primarily
+   To adapt this learning objective to be able to handle additional
+                                                                       evaluated on the full test sets containing observed and, if available,
+censored labels where available, we take inspiration from the Tobit
+                                                                     censored labels. The MSE loss is used to evaluate the performance of
+model [55] used more recently in Bayesian active learning for survival
+                                                                        the predictions made by the models, in cases of censored labels we use
+analysis by Hüttel et al. [35]. The intuition behind this method is that
+                                                                        the one-sided squared error from Eq. (2). Other metrics are required to
+for censored labels we use the integral of the probability density func-
+                                                                        evaluate the accuracy and calibration of the predicted uncertainties. We
+tion that is within the correct censored region. Thus, for a left-censored
+                                                                         consider two ways to evaluate predicted uncertainty: one that evaluates
+label with threshold 𝑧𝑛the objective is to maximize the integral of
+                                                                      only the accuracy or calibration of the uncertainty and another that
+𝜑(𝑦𝑛|𝒙𝑛, 𝜽) below 𝑧𝑛, in other words to minimize the negative logarithm                                                                          evaluates predictive performance intertwined with how well-calibrated
+of the cumulative distribution function 𝛷(𝑧𝑛|𝒙𝑛, 𝜽). On the contrary, for
+                                                                        the predicted uncertainty is.
+right-censored labels with threshold 𝑧𝑛the objective is to minimize the
+                                                    A detailed way to evaluate the predicted uncertainties by them-
+negative logarithm of the complement to the cumulative distribution
+                                                                              selves is by comparing the confidence-based calibration curve to the
+function 1 −𝛷(𝑧𝑛|𝒙𝑛, 𝜽). In summary, our proposed CensoredNLL is
+                                                                               identity function, which corresponds to perfect calibration [8,25,53,
+defined as,
+         𝑁                                                            54]. The confidence-based calibration curve is obtained by computing
+    ∑NLL = −1                (1 −|𝑚𝑛|) log𝜑(𝑦𝑛|𝒙𝑛, 𝜽)                                    the z% confidence interval (CI) for every predicted uncertainty in the     𝑁             𝑛=1                                                                     test set. Next, the observed fraction of errors within each CI is calcu-
+           {                                        (5)     lated for several expected fractions between 0 and 1. Again, we adopt
+                            𝛷(𝑧𝑛|𝒙𝑛, 𝜽),         if 𝑚𝑛= −1,
+          + |𝑚𝑛| log                                                       this evaluation technique for censored labels by using the one-sided
+                         1 −𝛷(𝑧𝑛|𝒙𝑛, 𝜽),    if 𝑚𝑛= 1.                 squared error from Eq. (2).
+                                                                        Furthermore, the Gaussian NLL [58] and the Expected Normalized
+Evidential deep learning. Another probabilistic approach to uncertainty     Calibration Error (ENCE) [59] are two global metrics that evaluate
+estimation is through evidential learning using a neural network as     the intertwined predictive performance and calibration of uncertainties.
+proposed by Amini et al. [20]. This approach leverages the principles   We use the extended version of the Gaussian NLL from the Tobit model
+of evidential reasoning, where the network outputs parameters of a     that can handle censored labels as defined in Eq. (5), and does not omit
+distribution that characterizes both aleatoric and epistemic uncertainty.    any constant terms. The ENCE metric is derived from the error-based
+In evidential deep learning, the neural network outputs four parameters     calibration plot proposed by Levi et al. [59], which is made from a
+
+                                                                        6
+
+## PDF page 8
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+binned representation of the root MSE (RMSE) and the root mean vari-    0.05∕𝑚where 𝑚is the number of datasets times the number of models in
+ance (RMV), i.e., predicted uncertainty. In the case of censored labels,     the comparison. If the difference is positive and significant (𝑝 < 0.05∕𝑚)
+we again employ the one-sided squared error before taking the root     the model trained with censored data is deemed best. Similarly, if the
+of the mean. Computationally, the errors and corresponding predicted     difference is negative and significant (𝑝 < 0.05∕𝑚) the model trained
+uncertainties are ordered based on increasing predicted uncertainty and     without censored data is deemed best. The results of the ablation study
+split into a set of bins. For each bin 𝑏of size |𝑏| the RMSE and RMV     are summarized in Fig. 3. In addition, the results on test sets containing
+are calculated as,                                                      only observed labels are provided in Fig. S3 of the supplementary
+    √                 √
+            1 ∑                                       1 ∑                           material. The magnitude of all underlying scores for Fig. 3 and Fig. S3
+RMSE𝑏=          (𝑦𝑖−𝜇𝑖))2,  RMV𝑏=         𝜎2𝑖.              (10)     are also supplied in Fig. S4 and S5 of the supplementary material.               |𝑏| 𝑖∈𝑏                              |𝑏| 𝑖∈𝑏
+                                                                   Throughout the ablation study, the assays are ordered according to
+The bins are then summarized to give the ENCE metric as follows,         the percentage of censored labels available in the full dataset. Note
+         1 ∑ |RMSE𝑏−RMV𝑏|                                           that the two assays without any available censored labels, Target 3 andENCE =                                              .                               (11)
+         || 𝑏∈    RMV𝑏                                             Target 6, have been excluded. Each star in Fig. 3 and Fig. S3 indicates
+                                                                             that the model trained with or without censored data was significantly
+   Other metrics have been proposed and used to evaluate uncertainty     better in one of the three temporal settings. As such, each bar can
+estimates in drug discovery applications, such as Spearman’s Rank Cor-    have a maximum of three stars. If a star is located above the bar, the
+relation Coefficient between predicted uncertainties and corresponding    model trained with censored data is the best, and vice versa if it is
+errors [23,25–27]. However, this score has been criticized due to the     located below the bar. The dark gray stars mark the significance under
+stochasticity and unreliability of the result Rasmussen et  al. [60].     Bonferroni correction, but the uncorrected significances are also shown
+Statistically, a data point with high predicted uncertainty can  still     as the light gray stars. The total number of significant cases under
+result in a prediction with low error and vice versa. Additionally, it     Bonferroni correction is summarized in the legend for each model. Note
+is non-trivial how to adjust this score for censored labels. Therefore,     that the total number of datasets in this ablation study is 39, including
+we discard the metric from our analysis.                                 the 13 assays and 3 temporal settings. The error bars illustrate the
+                                                                      standard deviation between the temporal settings.
+3. Experiments                                                  The 𝛥NLL results in the bottom panel of Fig. 3 show predominately
+                                                                enhanced performances when the models are trained with the censored
+  We start our experiments by evaluating the effect of training models     regression labels. Particularly, the Ensemble and Gaussian Ensemble
+with the additional partial information available in the real pharma-    models show significant enhancements in a majority of the datasets
+ceutical assay-based setup in the form of censored regression labels.    when trained with censored labels. All other models are enhanced
+This comparison  is conducted as an ablation study, comparing the     or comparable in all but a few datasets. By instead considering each
+difference in performance between models trained with and without     assay at a time, we see that for all assays apart from ADME-T Perm.
+censored data for each assay. Next, we provide an in-depth comparison    and ADME-T Solub. more models are improved by the censored labels
+between the models on each temporal setting of every assay. The     than hurt by them. The two exceptions are among the assays with
+model comparison evaluates the predictive performance and calibration     the smallest percentages of censored labels available. In this case, the
+separately for aleatoric and epistemic uncertainty estimates. Finally, we     Bonferroni correction could be considered too restrictive given the
+provide practical illustrations of the resulting uncertainty estimates for    much smaller number of comparisons in each analysis. In terms of the
+the best-performing model in terms of the aleatoric and epistemic parts     uncorrected significance, 8 out of the 13 assays see a strong majority
+respectively.                                                                 of enhanced performances with the censored labels.
+                                                                        Furthermore, the magnitudes of the 𝛥NLL scores in Fig. 3 generally
+3.1. Ablation study                                             become larger for assays with higher proportions of censored labels,
+                                                                    with a more substantial shift occurring around 35%. A more detailed
+  We compare the performance of each model trained with and with-     analysis of this trend for each model respectively is seen in Fig. S5 of the
+out the censored data to determine the impact of training uncertainty-     supporting material. There, we see that for Ensemble and MC-Dropout
+aware machine learning models with additional partial information     the improvements grow for assays with > 35% censored labels. For
+in the form of censored regression labels for molecular property pre-     these assays, the NLL is on average enhanced by 52% for the Ensemble
+diction. Each test set is kept the same, containing all available data    model and 48% for the MC-Dropout. Similarly, the Gaussian model
+including the censored labels. However, the baseline models are trained    and both uncertainty sources of the Gaussian Ensemble model also see
+only on the observed labels from the training datasets, i.e. observed.     substantial enhancements for assays with > 35% censored labels. For
+Similarly, the validation set, used for hyper-parameter optimization and     the Gaussian model and the aleatoric part of the Gaussian Ensemble, the
+early stopping, only contains observed labels for the baseline models.    NLL is enhanced by 34% on average for these assays. The NLL for the
+We first evaluate the differences in NLL as a measurement of the in-     epistemic part of the Gaussian Ensemble for these assays on the other
+tertwined predictive accuracy and calibration of uncertainty estimates.    hand is enhanced by 56% on average. Finally, the Bayes by Backprop
+We define the test score from the model trained without censored data    model is consistently improved already for assays with > 13% censored
+as NLLobserved and the test score from the model trained with censored     labels although by a slightly lower average enhancement of 24%.
+data as NLLcensored. As NLL is minimized for more accurate predictions       While the NLL provides an overview of the overall performance of
+and better-calibrated uncertainty estimates, we define the evaluation     these uncertainty estimation methods, it is also interesting to evaluate
+metric as 𝛥NLL = NLLobserved−NLLcensored such that a positive difference     the effect of the censored labels on the predictive accuracy on its own.
+indicates that the performance was enhanced for the model trained    The ablation study in terms of 𝛥MSE is presented in the top panel
+with censored data. Next, we do the same analysis in terms of the MSE     of Fig. 3. Note that the Gaussian Ensemble only occurs once in this
+to evaluate the effect of including the censored labels on the predictive      result, as the different uncertainty estimates do not impact the MSE.
+accuracy independent from the uncertainty estimation.                  There appears to be a greater difference between the effects of the
+  We evaluate the difference in MSE and NLL for each assay and     censored labels on the two loss functions in terms of predictive accuracy
+temporal setting and test the statistical significance using a two-sided    compared to the NLL. Recall that the Ensemble, MC-Dropout, and Bayes
+Mann–Whitney–Wilcoxon test [61]. Due to the vast number of statis-    by Backprop models are adapted using the one-sided squared loss,
+tical tests required, we apply Bonferroni correction to counteract the    whereas the two Gaussian models use the Tobit loss with similarities to
+multiple comparisons problem [62]. As such, we use a significance level     the NLL. Regarding the significant differences, the results for Ensemble,
+
+                                                                        7
+
+## PDF page 9
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 3. Ablation study. Difference between MSE (top) and NLL (bottom) for models trained with and without censored labels. The error bars aggregate the three temporal settings.
+For each temporal setting, a star indicates whether one of the models trained with or without censored labels was significantly better. As such, each bar can have a maximum of
+three stars. Stars above a bar indicate that the censored model was significantly better, with Bonferroni correction (𝑝 < 0.05∕𝑚) in dark gray and without correction (𝑝 < 0.05) in
+light gray. In contrast, the stars below a bar indicate the opposite. The legend summarizes the number of Bonferroni corrected significant differences per model.
+
+
+MC-Dropout, and Bayes by Backprop are similar in terms of 𝛥MSE as     interesting, we believe it is secondary to the analysis performed on the
+they were in terms of 𝛥NLL. The Ensemble model is enhanced for a      full set of test labels. The reason is that the full test set is the only
+majority of datasets, and the other two are enhanced or comparable    one that simulates the real scenario in the drug discovery process. In
+in all but a few datasets. The improvements are however smaller in      reality, there would be no way of excluding the compounds that in
+magnitude, as seen especially in Fig. S4 of the supplementary material.     hindsight would result in censored labels when tested in the lab. Fig. S3
+Proportionally, the enhancements of the MSE are  still, on average,     in the supplementary material shows the 𝛥MSE and 𝛥NLL on only
+around 20% for these models on the assays with > 35% censored labels.     observed test labels (i.e. excluding the censored labels). These scores
+The combined results of these models in terms of MSE and NLL, indicate     are mostly not improved by including censored labels during training.
+that the inclusion of censored labels during the training procedure    The performance of the Bayes by Backprop model is mostly not signif-
+mostly impacts the uncertainty estimation abilities of the models rather     icantly affected by the inclusion of censored labels during its training.
+than predictive accuracy.                                         The predictive accuracy of the Ensemble and MC-Dropout models is
+  On the contrary, the predictive accuracy of the Gaussian models     typically worse when censored labels are included while the impact on
+trained with the Tobit loss is mostly not improved by including the     the NLL is more varying. The performance of the Gaussian models is
+censored labels. The magnitude of the loss in predictive accuracy for     almost always negatively impacted by the inclusion of censored labels
+the Gaussian models is largest for Target assays with ≥25% censored     during training.
+labels included for the adapted version of the models, as seen in Fig. S4       By considering the full datasets, including the censored labels, as
+of the supplementary material. The proportional losses in MSE are     the true underlying data distributions, we can conclude that the results
+comparable to the enhancements in NLL, consisting of around −30%    on the observed labels only illustrate a crucial point. Namely, that
+on average for all assays. This  is an unfortunate drawback of our     the censored labels make up a critical part of the distributions, such
+proposed adaption of the Gaussian models using the Tobit loss and     that machine learning models trained with or without them do not
+should be considered when using the models in practice. However, as     transfer to the test set corresponding to the opposite case. Models
+these machine learning approaches are most often used in applications     trained without censored labels do not perform well on test sets with
+for high-throughput screening in the early stages of the drug discovery     censored labels, and models trained on full datasets do not perform
+pipeline, the ranking of molecular compounds is usually considered     well on test sets without censored labels. We believe this is a natural
+more critical than the exact prediction of a given property. As such,    consequence of the vast imbalance in the censored labels. As seen in
+we believe the enhancement of the uncertainty estimates can outweigh     Table 1 most assays only include censoring in one direction. Only two
+the loss in predictive accuracy. Furthermore,  it  is possible that a     of the assays explored in this study have a more balanced occurrence
+weighting scheme included in the Tobit loss functions could make the     of left- and right-censored labels, namely ADME-T Solub. and ADME-
+Gaussian models trained with censored labels favorable also in terms    T CLint. However, the total proportion of censored labels for these
+of predictive accuracy.                                                    assays is not large enough to significantly impact the difference in per-
+   As a final step in this ablation study, we analyze the impact of    formance between the models trained with and without the censored
+training the models with and without the censored labels on solely     labels as discussed above. While the reduced performance of the models
+the observed test labels. Similar to the analysis of the 𝛥MSE, this     trained with censored labels on observed test labels is unfortunate,
+is useful to determine which impact the adapted training procedure    we argue that it is so far an unavoidable side-effect of the optimal
+has on censored versus observed test labels. While this analysis  is    performance achieved on true test sets overall. In the future, other
+
+                                                                        8
+
+## PDF page 10
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 4. Predictive accuracy. Comparing the predictive accuracy of all models in terms of MSE, aggregated over 10 experiments. For each dataset, the best model in terms of
+mean MSE is marked with a start together with any other models not statistically worse based on a one-sided Mann–Whitney–Wilcoxon test with Bonferroni correction. Apart from
+the Random Forest and Evidential models, all other models are trained with censored labels where available.
+
+
+ways of incorporating censored training labels could be explored, such    with censored labels, two additional baselines are included: a Random
+as using the absolute values of censored labels without the additional     Forest model and a model trained with evidential deep learning. These
+censored information.                                              models are trained without censored labels as explained in the Methods
+    All in  all, this ablation study has shown that the inclusion of     section.
+censored labels during training of uncertainty-aware methods can in
+                                                                                   Predictive accuracy. The predictive performances of the models are
+some cases negatively impact the predictive accuracy as well as the
+                                                                       presented in Fig. 4 in terms of MSE. An initial observation is that the
+performance on observed labels separately. However, it has also shown
+                                                   MSE is generally lower for the models trained on the ADME-T assays.
+that including censored labels during machine learning is important to
+                                                                        This result is expected given the diversity and size of the ADME-T
+accurately estimate well-calibrated uncertainties in real pharmaceutical
+                                                                              assays, compared to the target-based assays. More data means that the
+scenarios, where censoring occurs and cannot be avoided. The enhance-
+                                                                models can learn to generalize better and the lack of shifts in both
+ments are especially prominent when the proportion of censored labels
+                                                                        the feature space and the label space provides an easier prediction
+makes up roughly one-third or more of all available data for a given
+                                                                                  task. For seven out of the eight ADME-T assays, the Ensemble model
+assay. Given the overall majority of improvements in the NLL seen
+                                                                                                is the best or among the best for all temporal settings. In a couple of
+with censored labels included during training on the full test sets, we
+                                                                              instances, the MC-Dropout model is comparable, and for the ADME-T
+recommend the community utilize this data in the future during QSAR
+                                                                 Perm. assay the Bayes by Backprop model significantly outperforms all
+modeling for regression tasks. Furthermore, we continue to compare
+                                                                        other models. In the target-based assays, there is a greater variation in
+these models to each other and the additional baselines in the following
+                                                                        the best-performing models. For three target-based assays, the Bayes
+section.                                                              by Backprop model  is consistently among the best across all three
+                                                                    temporal settings, and in one target-based assay, the Ensemble model is
+3.2. Model comparison                                                       consistently among the best. However, for the remaining three assays
+                                                                       Target 1, Target 2, and Target 7 the best-performing model changes
+  We compare the proposed models trained with all available data,     drastically over time. This observation is of great importance, as it illus-
+including censored labels, on each dataset by obtaining their predictive     trates that, typically, the conclusions about the best-performing model
+accuracy in terms of MSE, their local calibration in terms of the    drawn early in the development of an ADME-T assay are reliable and
+confidence-based calibration curves, and their overall performance in       still hold throughout the later development of the assay. On the other
+terms of NLL and ENCE. Where uncertainty estimates are evaluated,     hand, as target-based assays might significantly shift in chemical space
+we separate the aleatoric and epistemic parts. For each dataset, the     over time the same is not always true for the model comparison on
+three temporal settings are evaluated separately such that the results     these kinds of assays. For target-based assays, a new model comparison
+can be compared between different sizes of training sets, and as time    might be needed later on in the development of the assays to keep the
+evolves. For instance,  it  is relevant to know  if conclusions drawn     best-performing model up-to-date.
+from the first temporal setting also hold throughout time, i.e. on the        For the most part, the Random Forest and Evidential models, which
+following temporal settings. In this analysis, the assays are first ordered     are trained without censored labels, perform poorly compared to the
+by category and then according to the overall size of the dataset. For     best-performing models. This is also true for the Evidential model on
+the scores, MSE, NLL, and ENCE the model with the best average     the two assays that do not have any censored labels, meaning that
+score over 10 repeated experiments is marked with a star. Additionally,     neither of the other models has the advantage of being trained on more
+any other performances not significantly different from the best model     data. We interpret this as an indication that the poor performance of the
+according to a one-sided Mann–Whitney–Wilcoxon test are also marked     Evidential model compared to the other models is not primarily related
+with stars [61]. Similar to the ablation study, we use Bonferroni cor-     to the fact that the other models are trained with censored labels. The
+rection to counteract the multiple comparisons problem [62]. Here the    Random Forest model, however, does reach comparable results to the
+significance level is 𝑝 < 0.05∕𝑚, where 𝑚is the number of comparisons    Bayes by Backprop model for some of the temporal settings on the
+per dataset. The two target-based assays without censored labels are    two assays, but it is never significantly better than all other models
+included. Apart from the proposed extended models, which are trained    on any datasets. As such, it might be interesting to try to extend the
+
+                                                                        9
+
+## PDF page 11
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 5. Calibration curves. Full calibration curves for all uncertainty estimates on the third temporal setting containing three folds in the training set, aggregated over 10
+experiments. The black line in each panel illustrates what a perfectly calibrated model would look like. Apart from the Random Forest and Evidential models, all other models
+are trained with censored labels.
+
+
+Random Forest model to also handle censored labels in the future. Note,     models. However, for practical applications, the computational cost of
+that this should be possible similar to how the one-sided square loss      this model also needs to be taken into consideration. It is substantially
+was used for models originally trained using MSE. However, it would    more demanding to train 50 individual models for the Ensemble com-
+require lower-level changes to the implementations in Scikit-learn [49]    pared to the single model architecture used in the Bayesian approaches.
+which we deem out of the scope of this study given that it does not    As such, it is worth keeping in mind, that when Bayes by Backprop
+significantly outperform any of the other proposed methods herein.     performs comparable to the Ensemble, it will also be significantly faster
+We do not believe it would be possible to simply include the censored     to train.
+labels as they are during the training of the Random Forest, given the     Calibration.  Next, we evaluate the local calibration of the uncertainty
+non-fixed window of censoring per assay.                                 estimates of each model in terms of the confidence-based calibration
+   Considering all datasets, i.e. assays and their respective temporal     curves described in the Methods section shown in Fig. 5. We focus this
+settings, the Ensemble model performs best overall, by being among     analysis on the third and biggest temporal setting. The results from
+the best-performing models for 28 out of the 45 dataset instances.     the two earlier settings are provided in Fig. S8 of the supplementary
+The only approach that matches the performance of the Ensemble     material. For the most part, we see that all aleatoric estimates are
+model is the Bayes by Backprop model which is among the best for 19    much better calibrated than many of the epistemic estimates. This is
+dataset instances. From the remaining models, the MC-Dropout model    an interesting observation as  it holds for models that produce both
+is only among the best-performing models for 9 dataset instances,     epistemic and aleatoric uncertainty estimates including the Gaussian
+usually together with the Ensemble model. The Evidential model and    Ensemble and the Evidential model, as well as the simple Gaussian
+the Random Forest model are among the best together with the Bayes    model which only produces aleatoric estimates. The observation  is
+by Backprop model in 7 versus 5 cases each. When training with two     true for ADME-T and target-based assays alike and thus irrespective of
+folds of the Target 1 assay, the two Gaussian models perform best     distribution shifts or dataset size.
+                                                        Among the epistemic uncertainty estimates, a clear trend showstogether with the Ensemble model. However, this is the only instance
+                                                                             that the Evidential model is grossly under-confident, whereas manywhere these models are among the best.
+                                                                              of the ensemble-based models are over-confident, especially the Ran-
+    It is reasonable and compatible with previous conclusions, that the
+                                                    dom Forest model. This means that the Evidential model predicts CIs
+Ensemble model achieves the highest predictive accuracy, i.e. lowest
+                                                                             that are far too wide and, on the contrary, that the ensemble-based
+MSE [63]. The reason is that this model contains the highest number
+                                                                models predict very narrow CIs. For the three ADME-T CYP assays,
+of individually trained models. As such, the consensus in the predic-
+                                                                        the Bayes by Backprop estimates of the epistemic uncertainty are well-
+tions by the base models can reach a higher accuracy in cases where                                                                               calibrated. Similarly, for many of the target-based assays, both the
+the problem is solvable by the available data. In comparison to the                                                                   Bayes by Backprop model and the MC-Dropout model produce well-
+Gaussian Ensemble, the regular Ensemble has a slight advantage in     calibrated estimates of the epistemic uncertainty. These observations
+terms of solely predictive accuracy because it is only trained to optimize     corroborate previously reported findings that ensembles tend to be
+the MSE. The Gaussian model simultaneously needs to optimize the     under-calibrated in terms of the epistemic uncertainty compared to
+calibration of the predicted uncertainty and thus might need to sacrifice     Bayesian approaches [53].
+some predictive accuracy  if they are miss-aligned. For the Random       As pointed out by Rasmussen et al. [60], these confidence-based
+Forest, the number of decision trees was optimized for each dataset in     calibration curves can in some cases be misleading in determining
+the model selection, as such in some cases the ensemble contains more    whether predicted uncertainties accurately depict small versus large
+than 50 trees. However, as the Random Forest is less complex than a     errors. Perfect calibration could in principle be achieved by a model
+neural network it is still reasonable that the neural network ensemble     that always predicts the same level of uncertainty. As such, Levi et al.
+performs better. Out of the remaining models, the Evidential model     [59] propose to additionally measure the dispersion of the predicted
+relies on a single trained base model, but the Bayesian models instead     uncertainties using the coefficient of variation, 𝑐𝑣, as follows
+learn an infinite set of model parameters.                     √∑𝑁
+                                                                                                      𝑛=1(𝜎𝑛−𝜇𝜎)2              𝑁
+   Overall, our results show the Ensemble as the best-performing al-              𝑁−1                  1 ∑
+                                                        𝑐𝑣=                           ,  where 𝜇𝜎=        𝜎𝑛.                     (12)
+ternative considering only the predictive accuracy of the considered              𝜇𝜎           𝑁 𝑛=1
+
+                                                                        10
+
+## PDF page 12
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 6. Combined accuracy of uncertainty estimation and predictive performance. Comparing the NLL of all epistemic uncertainty estimating models, aggregated over 10
+experiments. For each dataset, the best model in terms of average NLL  is marked with a star together with any other models not statistically worse based on a one-sided
+Mann–Whitney–Wilcoxon test with Bonferroni correction. Apart from the Random Forest and Evidential models, all other models are trained with censored labels where available.
+
+
+We provide these values for all models and datasets in Fig. S9 of        Similarly to what was observed in the MSE, Fig. 6 shows that
+the supplementary material. According to these results, we deem that     the NLL scores are generally slightly lower for the ADME-T assays
+all of the best-performing models exhibit sufficient dispersion in their    compared to the target-based assays. Target 4 is again an outlier with
+uncertainty estimates. There are some cases where the dispersion is     quite low NLL scores for the best-performing models compared to the
+very low for the Random Forest model, but this is only the case on     other target-based assays. Recall from Eq. (5) that the NLL includes a
+some of the very smallest training sets where it is understandable that    term with the squared error. Thus, it is likely that this trend arises
+the model struggled to learn regardless. Additionally, many previous    from that source. In the ENCE scores presented in Fig. S7 of the
+studies on uncertainty estimation have shown that the calibration can    supplementary material, the same trend can be partially observed but
+typically be improved by recalibrating the uncertainties [25,60,64]. It       it is not as prominent. Apart from this, the Bayes by Backprop model
+is, however, not straightforward how recalibration could be applied in     also outperforms all other models in all temporal settings for 8 assays in
+the context of censored labels. Thus, we leave this to be explored in     terms of ENCE. Contrary to the NLL, the Ensemble is never among the
+future work.                                                            best-performing models in terms of ENCE, but the Evidential model is
+                                                                             consistently among the best for 3 assays. Regardless of which model is
+Overall performance.  In the final step of our model comparison, we
+                                                                        the best, the one that is best in the first temporal setting is in most cases
+compare the models using the global scores NLL and ENCE which take
+                                                                             also best in the subsequent temporal settings, also in terms of ENCE.
+both the predictive accuracy and the calibration of uncertainties into
+                                                                        For the aleatoric uncertainty estimates, shown in Fig. S6 of the sup-
+account. The results for NLL of the epistemic estimates are shown in
+                                                                   plementary material, the Evidential model is significantly outperformed
+Fig. 6 while the results for NLL of the aleatoric estimates are provided
+                                                              by either or both of the Gaussian models in all but 3 of the 24 ADME-in Fig. S6 of the supplementary material. Additionally, the ENCE scores
+                                                        T dataset instances. Among the target-based assays, there are moreare provided in Fig. S7 of the supplementary material, where similar
+                                                                       times that the Evidential model is comparable to or outperforms theconclusions can be observed as for the NLL scores. The NLL scores
+                                                                    Gaussian models. However, the Target 5 assay is the only one whereare highly varying for some of the poorly performing models, and
+                                                                        the Evidential model is consistently among the best through time. Ontherefore the plots have been cut to show the NLL below 2.5 in the
+                                                                        the other hand, the Gaussian Ensemble is the single best or among thecase of the aleatoric models and 6 for the epistemic models. This
+                                                                            best for the vast majority of datasets, namely in 39 out of 45. In the casewas done for readability and does not hide any information about the
+                                                                              of the NLL for the aleatoric uncertainty estimates, like for the MSE, thebest-performing models.
+   In terms of epistemic uncertainty, the Bayes by Backprop model is     best-performing model is almost exclusively robust throughout time for
+overwhelmingly best in terms of NLL, with 35 out of 45 best-performing     the ADME-T assays but not always robust for the target-based assays.
+scores. Only on the Target 4 assays, does the Ensemble model outper-    The same conclusions can be seen in terms of the ENCE score. Note also
+form Bayes by Backprop consistently throughout time. On 7 out of all     that the NLL and ENCE scores for the aleatoric uncertainty estimates
+15 assays, the Bayes by Backprop model outperforms all other models     are mostly lower than for the epistemic uncertainty estimates, similar
+entirely in all temporal settings. For an additional 4 assays, Bayes by     to the results seen in the calibration curves.
+Backprop is consistently among the best-performing models throughout
+time. This observation means that in terms of the NLL, the conclusions     3.3. Case study
+drawn early for an assay from both categories can oftentimes be trusted
+to hold throughout time. We believe that this robustness for the target-         Finally, we perform a case study on one example assay from each
+based assays, which exhibit distribution shifts, speaks to the reliability     category to explore the practical implications and usefulness of the
+of the epistemic uncertainty estimates in accounting for distribution     epistemic and aleatoric estimates respectively. In the case study of
+shifts where present. As such, the best-performing model in terms of     aleatoric uncertainty, we compare the predicted uncertainty estimates
+predictive accuracy might change over time, only due to differences in     with ground truth experimental error in the form of the standard
+how well the models handle the distribution shifts. Still, the overall     deviation between duplicated experiments. For this analysis, we cannot
+best-performing model is reliable for all assay types irrespective of     include censored labels due to the aggregation strategy described in the
+distribution shifts.                                               Methods section. Additionally, we exclude experiments repeated less
+
+                                                                        11
+
+## PDF page 13
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 7. Epistemic estimates by Bayes by Backprop. A practical illustration of the epistemic uncertainty estimates by the Bayes by Backprop model on two assays: ADME-T hERG
+without clear distribution shifts over time, and Target 7 with prominent distribution shifts over time.
+
+
+than three times and those with no variation reported in the data. We      later folds. Similar trends are also present in the label distributions
+chose the assays with the most available compounds with duplicated     as seen in Fig. S1 of the supplementary material. Furthermore, the
+experiments, e.g. ADME-T hERG and Target 6. For the epistemic case     label distribution for the Target 7 assays does not shift continuously
+study, we instead pick Target 7 as a target-based assay due to  its     over time. Instead, it shifts greatly toward higher pIC50 values in the
+particularly challenging distribution shift. Similarly to the aleatoric    second fold and then back toward lower values in the last two folds.
+case study, we compare the results with the ADME-T hERG assay, which    The remaining three plots to the right in each panel of Fig. 7 show the
+has no visible distribution shift in either the label or feature space as     t-SNE projections of each test set, i.e. folds 3, 4, and 5, separately. Here,
+seen in Fig. S1 and Fig. S2 of the supplementary material respectively.     the size of the data points is determined by the averaged epistemic
+   This case study is solely possible due to the temporal split and     uncertainty predicted by the Bayes by Backprop model trained on the
+                                                                          three temporal settings respectively, i.e. with an increasing number ofthe additional information available through the internal pharmaceu-
+                                                                             training folds. Note that the legends of these plots detail the respectivetical data, which are generally not accessible or trustworthy in public
+                                                       minimum and maximum predicted uncertainties on the given test set.datasets. Similar remarks were made by Sheridan [32] and point to the
+                                                                        For the ADME-T hERG assay, only minor differences can be ob-
+necessity of openness from the pharmaceutical industry to learn from
+                                                                       served between compounds positioned in various regions of the feature
+each other and push the field forward.
+                                                                           space. This is expected given the lack of overall distribution shifts
+Epistemic uncertainty quantification.  For the practical case study of the    between the folds. Additionally, we evaluate the span of uncertainty
+epistemic uncertainty estimates, we illustrate the epistemic uncertainty     estimates, according to the minimum and maximum values listed in
+estimates averaged over the 10 repeated experiments of the Bayes by     the legend of each plot. The third temporal setting has the largest
+Backprop model on the ADME-T hERG and the Target 7 assays. The    span of 0.3 compared to 0.24 and 0.2 for the first two settings. This
+Bayes by Backprop model is chosen as it is significantly the best model     indicates that the model is better at separating the compounds in the
+in terms of NLL across all temporal settings of both of these example      final temporal setting compared to the previous one, likely due to the
+assays, as shown in Fig. 6. The case study compares the epistemic     increased size of the training data. Another effect of the increasing
+                                                                             training data can be seen in the difference in the maximum predicteduncertainty between different regions of the t-SNE projections of each
+                                                                         uncertainty between the folds. For the model trained on three folds,test set, as illustrated in the rightmost part of each panel in Fig. 7.
+                                                                        the maximum is 0.36, which is smaller than the values seen for theIt also relates this to the full t-SNE projection including the folds
+                                                                models trained on less data, which are 0.4 for the model trained on
+used for training and validation, as seen in the leftmost parts of the
+                                                             two folds and 0.48 for the model trained on one fold. This is a direct
+same figure. Note, that this only accounts for distributional shifts in a
+                                                              and expected behavior of the epistemic uncertainty, that more data
+linear approximation of the feature space. As the fundamental nature
+                                                                                  results in more certain models i.e. lower predicted uncertainties. In the
+of the feature space is non-linear, this analysis cannot cover these non-
+                                                                        case of the target-based assay, we note that the maximum estimated
+linearities. Similarly, we cannot evaluate any parts of the epistemic
+                                                                         uncertainty on each test set is very high, between 0.7–0.75. This can
+uncertainty related to other factors than the distribution shift in this
+                                                                 be a result of the general distribution shift present between every fold
+analysis. The other factors might include epistemic uncertainty that                                                                        or the overall small dataset. In both cases overall high uncertainty is to
+relates to the choice of model architecture or training procedures. We                                                                 be expected.
+have to rely on the metrics used in the model comparison section above                                                                     Based on the distribution shift present in the feature space, and
+to account for these factors of epistemic uncertainty.                      considering that epistemic uncertainty should account for distributional
+   In the full t-SNE projections of each dataset containing all five folds,      shifts, we expect that distribution shifts are reflected in the predicted
+we see the trend described in the Methods section. The chemical space     epistemic uncertainties. As such, our analysis provides empirical ev-
+of the ADME-T hERG assay is highly diverse, already in the first fold,     idence to support this claim, and  it illustrates that the uncertainty
+and does not shift substantially over time. However, some clusters are     estimates cover additional sources of uncertainty related to the model
+formed in the outer edges of the chemical space, where the different      itself, such as poor generalization in cases when training data is lim-
+folds are well separated. For the Target 7 assay on the other hand,      ited.  It is important to understand all sources of uncertainty when
+there is a clear shift in the chemical space from the right side of the     basing future critical decisions on model predictions, such as in drug
+plot representing the initial measurements to the left side showing the     discovery.
+
+                                                                        12
+
+## PDF page 14
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+   Considering the cases addressed in this section of our study, we    and Fig. S7 of the supplementary material, this could indicate that the
+can deduce practical suggestions on how the identified sources can     learned aleatoric uncertainties reflect something other than the exper-
+impact the continued drug discovery process. If poor generalization is     imental error examined here. The model may be able to learn trends
+determined, indicated by overall high uncertainty estimates and low     in the label space given similar compounds in the feature space. For
+predictive performance of a model, the model needs to be retrained     instance, activity cliffs can exist where very similar compounds prompt
+with more data before deployment. Another alternative is to reconsider     significantly different responses in an assay [67]. Such relationships
+the choice of model, but our temporal study shows that the Bayes     could be explored in future research, but from our analysis, it would
+by Backprop model remains the best choice in the future, despite the     also be interesting to try modeling these molecular properties without
+addition of more data. When distribution shifts are identified, such as     aggregating duplicated measurements.
+in the target-based assay, further data exploration in chemical spaces        Additionally, we compare the scale of the predicted aleatoric esti-
+with high uncertainty estimates is needed before deployment.            mates across different test sets and assay types. First, we see that the
+   Further research is necessary to disentangle the sources of epis-     estimates are significantly lower on the ADME-T hERG assay than the
+temic uncertainty, including distribution shifts and other model-related     Target 6 assay. This might relate to several factors that make the two
+sources. One alternative approach would be to quantify the distribution     assays distinctly different. It could simply be a result of the overall
+shift using other means, either with distance-based approaches, such as     size of the datasets: recall from Table 1 that the Target 6 assay has
+the average Tanimoto or cosine similarity [15] between an inference     only 13,093 labels compared to the 67,687 labels available for ADME-
+compound and compounds in the training set, or the interpretable    T hERG. However, this trend also corresponds well with the observed
+method proposed by Kulinski and Inouye [65]. Additionally, more     standard deviation of the control compounds on the two assays, which
+advanced pre-training procedures can be used, that are trained to incor-    was 0.19 for the ADME-T hERG assay and 0.31 for the Target 6 assay.
+porate distribution shifts more effectively [66]. After the distribution    These errors from the control compounds should be more reliable and
+shift has been independently quantified, the predicted epistemic uncer-     thus give a better general estimate of the overall homoscedastic noise
+tainty could be re-evaluated such that the remaining model uncertainty     present in each assay.
+is disentangled from this information.                                      Furthermore, an important discrepancy can be observed by com-
+                                                                       paring the distributions of the aleatoric estimates on each test set
+Aleatoric uncertainty quantification. To examine the aleatoric estimates    between the first row and the second row of Fig. 8. In the first row, all
+by the best-performing model from the model comparison above, we     predictions are made by the same model, the one trained on only the
+need a way of quantifying the true experimental error. As such, we      first fold. Here, the distributions of the aleatoric estimates are roughly
+consider the variation between duplicated measurements of a single     the same for each test set of the two example assays respectively. In
+compound on the assay to provide this information. However, note     the second row, the illustrated predictions of each test set are made
+that this information was not provided to the models during training    by different models, trained on an increasing amount of folds. Thus,
+because duplicated measurements were aggregated as part of the data     these are the models used throughout all previous results of this study.
+preprocessing described in the Methods section. This procedure of     Apart from these models being trained on different amounts of data,
+aggregation is common when applying machine learning to molecular     they are also optimized individually as explained in the model selection
+property prediction, but an important question is if the available meth-     of the supplementary material. Therefore, these models can have vastly
+ods to estimate aleatoric uncertainty can learn the experimental error     different model architectures and be trained using different training
+from such preprocessed data.                                           procedures such as learning rate.
+   One potential issue with the described estimates of the true exper-         Crucially, none of these factors should have any effect on the
+imental error is that the number of duplicated measurements varies     aleatoric uncertainty as  it is often categorized in literature as irre-
+greatly between compounds. Some compounds are tested many times     ducible [2,5,6]. Despite this, we do see distinct differences between
+whereas many are tested only a handful of times or only once. The    most of the distributions of aleatoric estimates by each of these different
+compounds for which there is only one measurement do not give any    models in the bottom row of Fig. 8. Specifically, we see some instances
+indication about the experimental error and ones where only a few    where increasing amounts of training data result in generally lower
+duplicates are available might not be as reliable as those where the     aleatoric estimates. However, there is also one case where the opposite
+experiment was repeated many times. For this reason, we consider only      is true, between test folds 3 and 4 of the Target 6 assay. We can only
+compounds from the test sets that have more than 2 measurements and    assume this relation to be because of the differences in model archi-
+ones where the variation was greater than exactly zero.                     tectures. Therefore, our empirical results raise questions about whether
+   After filtering for duplicated experiments in the available data, the     the explored models’ supposed estimates of aleatoric uncertainty are re-
+ADME-T hERG assay contains 712 compounds with duplicated mea-      ally fully disentangled from the epistemic uncertainty. Similarly, recent
+surements from the test sets of all three temporal settings combined.     theoretical work on deriving suitable measures for aleatoric, epistemic,
+The Target 6 assay similarly contains 1712 duplicated experiments in    and total uncertainty has found that the aleatoric and epistemic parts
+total between the three test sets. In this analysis, we focus on the    do not necessarily have to add up to the total uncertainty [68]. As such,
+aleatoric estimates averaged over the 10 repeated experiments of the     the disentanglement of the sources of uncertainty should be considered
+Gaussian Ensemble. In the previous experiments of this study, this    an ongoing field of research that needs more work to fully determine
+model emerged as the significantly best or top-performing model across    how these estimates should be categorized and how they relate to the
+all temporal settings of the ADME-T hERG and Target 6 assay. Fig. 8     underlying noise in the data.
+illustrates the relationship between the predicted aleatoric estimates
+and the available experimental errors, colored by the three test sets.       4. Conclusions
+   In general, we cannot necessarily expect the model to learn the
+correct scale of the experimental errors since the experimental error       The low-data challenge in QSAR modeling during drug discovery is
+is not included in the training data. Instead, we are looking to evaluate     typically accompanied by additional, often overlooked, partial informa-
+if any upward trends can be observed, such that compounds with larger     tion from censored labels. Despite their potential value, censored labels
+experimental error also prompt greater predicted aleatoric uncertainty.    have not yet been fully utilized due to the lack of suitable methods
+However, no such trend can be observed for any of the models or     to incorporate them during machine learning. Recognizing this gap,
+test sets on the two assays. Given that the aleatoric estimates are    we have developed extensions to several established machine learning
+still well-calibrated according to the observed errors, as seen in the     models, enabling them to effectively learn from censored labels while
+calibration curves of Fig. 5 and the overall scores shown in Fig. S6     providing robust and reliable uncertainty quantification.
+
+                                                                        13
+
+## PDF page 15
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+
+
+
+Fig. 8. Aleatoric estimates by Gaussian ensemble. A practical illustration of the aleatoric uncertainty estimates by the Gaussian Ensemble on two example assays. Comparing
+the predicted aleatoric uncertainty to the experimental error. (Top row) Predictions by the model trained only on the first fold. (Bottom row) Predictions by the respective models
+trained on all folds up to the given test set.
+
+
+   Our results showed a particular advantage of including the censored         Finally, our case study showed how the uncertainty estimates from
+labels during training in cases where a high enough proportion of the     the most effective models can be practically applied to inform and guide
+experimental labels are censored. For the Bayes by Backprop model,    ongoing drug development efforts, offering valuable insights for risk
+the enhancements by including censored labels grew when they made    management and decision-making. Herein, we found that the epistemic
+up > 13% of the data, whereas > 35% was needed for prominent     uncertainty estimates correlate well with theoretical assumptions, but
+improvements with the other models. Despite these enhancements,     that the aleatoric uncertainty estimates require further analysis to
+drawbacks such as potentially decreased predictive performance and     understand their relation to the underlying, inherent noise in the data.
+overall performance on specifically observed labels should be consid-
+ered before adopting our suggested approach. These side effects are
+                                                           CRediT authorship contribution statement
+likely a result of the commonly unbalanced nature of the censored
+labels and should be addressed in future work.
+   Through a comprehensive temporal study using internal pharma-     Emma Svensson: Writing – original draft, Visualization, Software,
+ceutical datasets, we demonstrated the importance of these extended    Methodology, Formal analysis, Data curation, Conceptualization. Han-
+models in reliably estimating uncertainties in predicted key affinity    nah Rosa Friesacher: Writing – review & editing, Software, Methodol-
+scores, and side effects, of potential drug compounds. Our model com-     ogy, Data curation, Conceptualization. Susanne Winiwarter: Writing
+parison included approaches that estimate both aleatoric and epistemic     – review & editing, Data curation. Lewis Mervin: Writing – review
+uncertainties, providing a more complete understanding of prediction   & editing, Supervision, Conceptualization. Adam Arany: Writing –
+confidence. Specifically, we found that a straightforward ensemble of     review & editing, Supervision, Methodology. Ola Engkvist: Writing –
+individually trained neural networks achieves generally high predictive     review & editing, Supervision, Funding acquisition, Conceptualization.
+accuracy. However, when accounting for the calibration of uncertainty
+and computational cost, we recommend using the Bayesian Bayes by    Declaration of Generative AI and AI-assisted technologies in the
+Backprop model instead.                                              writing process
+   Thanks to the temporal evaluation, we were able to detect key
+differences between the distributions of target-based assays versus       During the preparation of this work, the authors used ChatGPT to
+ADME-T assays. The ADME-T assays are more diverse in terms of     proof-read parts of the manuscripts and correct grammatical errors.
+the chemical space and thus exhibit less of a shift throughout time                                                                            After using this tool, the authors reviewed and edited the content as
+compared to the target-based assays where distinct differences could be                                                                needed and take full responsibility for the content of the publication.
+observed for different time points. In light of these trends, we showed
+that the best-performing model in terms of predictive accuracy and
+                                                                   Declaration of competing interestcalibration of aleatoric uncertainty are typically robust throughout time
+for ADME-T assays but not always for target-based assays. As such,
+an evaluation of the best model for ADME-T assays can be trusted to       The authors declare that they have no known competing finan-
+hold without reevaluation whereas target-based assays may need to be      cial interests or personal relationships that could have appeared to
+reassessed occasionally.                                                   influence the work reported in this paper.
+
+                                                                        14
+
+## PDF page 16
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+Acknowledgments                                                                [12]  Gal Y, Ghahramani Z. Dropout as a Bayesian Approximation: Representing Model
+                                                                                               Uncertainty in Deep Learning. In: International conference on machine learning.
+  We thank our colleagues for many insightful discussions. We are          PMLR; 2016, p. 1050–9.
+                                                                                      [13] Lakshminarayanan B, Pritzel A, Blundell C. Simple and Scalable Predictive Un-
+also sincerely grateful for the valuable feedback that we have received             certainty Estimation Using Deep Ensembles. In: Advances in neural information
+from our reviewers. This study was partially funded by the European            processing systems, vol. 30, Curran Associates, Inc.; 2017.
+Union’s Horizon 2020 research and innovation programme under the      [14]  Scalia G, Grambow CA,  Pernici  B,  Li YP, Green WH. Evaluating  Scalable
+Marie Skłodowska-Curie Actions grant agreement ‘‘Advanced machine            Uncertainty Estimation Methods for Deep Learning-Based Molecular Property
+                                                                                                       Prediction. J Chem Inf Model 2020;60(6):2697–717. http://dx.doi.org/10.1021/
+learning for Innovative Drug Discovery (AIDD)’’ No. 956832. HRF, and
+                                                                                               acs.jcim.9b00975.
+AA are affiliated to Leuven.AI and received funding from the Flemish      [15]  Sheridan RP, Feuston BP, Maiorov VN, Kearsley SK. Similarity to Molecules in the
+Government (AI Research Program).                                                     Training Set is a Good Discriminator for Prediction Accuracy in QSAR. J Chem
+                                                                                                               Inf Comput Sci 2004;44(6):1912–28. http://dx.doi.org/10.1021/ci049782w.
+Appendix A. Supplementary materials                                       [16]  Berenger  F, Yamanishi  Y. A  Distance-Based Boolean  Applicability Domain
+                                                                                                           for  Classification  of High Throughput  Screening  Data.  J Chem  Inf Model
+                                                                                            2018;59(1):463–76. http://dx.doi.org/10.1021/acs.jcim.8b00499.
+   Supplementary material related to this article can be found online      [17]  Bishop CM. Mixture Density Networks. Technical Report, Birmingham: Aston
+at https://doi.org/10.1016/j.ailsci.2025.100128.                                         University; 1994.
+                                                                                      [18]  Nix DA, Weigend AS. Estimating the Mean and Variance of the Target Probability
+                                                                                                         Distribution. In: Proceedings of 1994 IEEE international conference on neural
+Data availability
+                                                                                              networks. ICNN’94, vol. 1, IEEE; 1994, p. 55–60.
+                                                                                      [19]  Choi S, Lee K, Lim S, Oh S. Uncertainty-Aware Learning from Demonstration
+   This work was conducted on internal data that cannot be disclosed            Using Mixture Density Networks with Sampling-Free Variance Modeling. In: 2018
+beyond the information provided in Table 1. Despite this, we believe           IEEE international conference on robotics and automation. ICRA, IEEE; 2018, p.
+the work brings great value to the community by showcasing crucial           6915–22.
+                                                                                      [20] Amini A, Schwarting W, Soleimany A, Rus D. Deep Evidential Regression. In:
+aspects of the data that could not otherwise be analyzed. First, the           Advances in neural information processing systems, vol. 33, Curran Associates,
+temporal evaluation would not be possible to the same extent on public               Inc.; 2020, p. 14927–37.
+data, which led to conclusions about how the models compare over      [21] Vovk V, Gammerman A, Shafer G. Algorithmic learning in a random world, vol.
+time. Second, while censoring in experimental labels are naturally            29, Springer; 2005.
+occurring in internal data, it is less common in public data. Therefore,      [22] Koenker R, Hallock KF. Quantile Regression. J Econ Perspect 2001;15(4):143–56,
+                                                                        URL https://www.aeaweb.org/articles?id=10.1257/jep.15.4.143.
+the key contribution of adapting and evaluating current uncertainty      [23]  Hirschfeld L, Swanson K, Yang K, Barzilay R, Coley CW. Uncertainty Quantifica-
+quantification approaches to censored labels, would not be possible             tion Using Neural Networks for Molecular Property Prediction. J Chem Inf Model
+without the proprietary data. All methodology is available in our code            2020;60(8):3770–80. http://dx.doi.org/10.1021/acs.jcim.0c00502.
+on GitHub at https://github.com/MolecularAI/uq4dd. Instructions to      [24] Kim  Q,  Ko  JH,  Kim  S,  Park  N,  Jhe  W.  Bayesian  Neural  Network
+                                                                                          with Pretrained Protein Embedding Enhances Prediction Accuracy  of Drug-
+prepare the programming environment, as well as how to run the train-                                                                                                  Protein Interaction. Bioinform 2021;37(20):3428–35. http://dx.doi.org/10.1093/
+ing, inference, and evaluation procedures on similar public data from            bioinformatics/btab346.
+Therapeutics Data Commons [69] can also be found there. Throughout      [25] Wang D, Yu J, Chen L, Li X, Jiang H, Chen K, et al. A Hybrid Framework for
+this work, all experiments were run on a cluster of servers with diverse           Improving Uncertainty Quantification in Deep Learning-Based QSAR Regression
+Nvidia GPUs using Python 3.11 with PyTorch 2.0.1 [46].                           Modeling. J Cheminf 2021;13(1):1–17. http://dx.doi.org/10.1186/s13321-021-
+                                                                                          00551-x.
+                                                                                      [26] Dutschmann TM, Kinzel  L, Ter Laak A, Baumann K. Large-Scale Evaluation
+                                                                                                        of k-Fold Cross-Validation Ensembles  for Uncertainty Estimation. J Cheminf
+References                                                                                 2023;15(1):49. http://dx.doi.org/10.1186/s13321-023-00709-9.
+                                                                                      [27]  Yin T, Panapitiya G, Coda ED, Saldanha EG. Evaluating Uncertainty-Based Active
+  [1] Mervin LH, Johansson  S, Semenova  E, Giblin KA, Engkvist O. Uncertainty            Learning for Accelerating the Generalization of Molecular Property Prediction. J
+       Quantification in Drug Design. Drug Discov Today 2021;26(2):474–89. http:           Cheminf 2023;15(1):105. http://dx.doi.org/10.1186/s13321-023-00753-5.
+      //dx.doi.org/10.1016/j.drudis.2020.11.027.                                        [28]  Lanini J, Huynh MTD, Scebba G, Schneider N, Rodríguez-Pérez R. Unique: A
+  [2]  Apostolakis G. The Concept of Probability in Safety Assessments of Technological          Framework for Uncertainty Quantification Benchmarking. J Chem Inf Model
+      Systems. Science 1990;250(4986):1359–64, URL http://www.jstor.org/stable/            2024;64(22):8379–86. http://dx.doi.org/10.1021/acs.jcim.4c01578.
+      2878382.                                                                       [29]  Svensson  E,  Hoedt  PJ,  Hochreiter  S,  Klambauer  G.  HyperPCM:  Robust
+  [3] Yu J, Wang D, Zheng M. Uncertainty Quantification: Can We Trust Artificial            Task-Conditioned Modeling  of Drug–Target  Interactions. J Chem  Inf Model
+       Intelligence in Drug Discovery? IScience 2022;25(8):104814. http://dx.doi.org/            2024;64(7):2539–53. http://dx.doi.org/10.1021/acs.jcim.3c01417.
+      10.1016/j.isci.2022.104814.                                                      [30]  Lenselink EB, Ten Dijke N, Bongers B, Papadatos G, Van Vlijmen HW, Kowal-
+  [4] Hansch C, Fujita T. p-𝜎-𝜋Analysis. A Method for the Correlation of Biological            czyk W, et al. Beyond the Hype: Deep Neural Networks Outperform Established
+       Activity and Chemical Structure. J Am Chem Soc 1964;86(8):1616–26. http:           Methods Using a ChEMBL Bioactivity Benchmark Set. J Cheminf 2017;9(1):1–14.
+      //dx.doi.org/10.1021/ja01062a035.                                                     http://dx.doi.org/10.1186/s13321-017-0232-0.
+  [5]  Kendall A, Gal Y. What Uncertainties Do We Need in Bayesian Deep Learning      [31]  Fluetsch A, Di  Lascio  E,  Gerebtzoff G, Rodríguez-Pérez  R. Adapting Deep
+       for Computer Vision? In: Advances in neural information processing systems, vol.            Learning QSPR  Models  to  Specific  Drug  Discovery  Projects. Mol Pharm
+      30, Curran Associates, Inc.; 2017.                                                      2024;21(4):1817–26. http://dx.doi.org/10.1021/acs.molpharmaceut.3c01124.
+  [6]  Hüllermeier  E, Waegeman W.  Aleatoric and Epistemic  Uncertainty  in Ma-      [32]  Sheridan RP. Time-Split Cross-Validation as a Method for Estimating the Good-
+      chine  Learning: An  Introduction  to  Concepts  and  Methods. Mach  Learn            ness of Prospective Prediction. J Chem  Inf Model 2013;53(4):783–90.  http:
+      2021;110:457–506. http://dx.doi.org/10.1007/s10994-021-05946-3.                       //dx.doi.org/10.1021/ci400084k.
+  [7] Yang  K, Swanson  K,  Jin W, Coley  C, Eiden  P, Gao H,  et  al. Analyzing      [33]  Friesacher HR, Svensson E, Arany A, Mervin L, Engkvist O. Towards Reliable
+      Learned Molecular Representations for Property Prediction. J Chem Inf Model            Uncertainty Estimates  for Drug Discovery: A Large-scale Temporal Study of
+      2019;59(8):3370–88. http://dx.doi.org/10.1021/acs.jcim.9b00237.                           Probability Calibration.  In: ICML 2024 AI for science workshop. 2024, URL
+  [8] Heid E, McGill CJ, Vermeire FH, Green WH. Characterizing Uncertainty in            https://openreview.net/forum?id=5B8tsitI5s.
+     Machine Learning for Chemistry. J Chem Inf Model 2023;63(13):4012–29. http:      [34]  Hollander M, Proschan F, Sconing J. Measuring Information in Right-Censored
+      //dx.doi.org/10.1021/acs.jcim.3c00373.                                                 Models. Naval Res Logist 1987;34(5):669–81. http://dx.doi.org/10.1002/1520-
+  [9]  Gustafsson FK, Danelljan M, Schön TB. How Reliable is Your Regression Model’s           6750(198710)34:5<669::AID-NAV3220340507>3.0.CO;2-L.
+      Uncertainty Under Real-World Distribution Shifts? In: Transactions on machine      [35]  Hüttel FB, Riis C, Rodrigues F, Pereira FC. Bayesian Active Learning for Censored
+       learning research. 2023, URL https://openreview.net/forum?id=WJt2Pc3qtI.                Regression. 2024, arXiv preprint arXiv:2402.11973.
+[10]  Blundell C, Cornebise  J, Kavukcuoglu K, Wierstra D. Weight Uncertainty in      [36]  Pearce T, Jeong JH, Jia Y, Zhu J. Censored Quantile Regression Neural Networks
+      Neural Network. In: International conference on machine learning. PMLR; 2015,              for  Distribution-Free  Survival  Analysis.  In: Advances  in  neural information
+       p. 1613–22.                                                                               processing systems, vol. 35, Curran Associates, Inc.; 2022, p. 7450–61.
+[11]  Sheridan RP. Three Useful Dimensions for Domain Applicability in QSAR Models      [37] Arany A, Simm  J, Oldenhof M, Moreau Y. SparseChem: Fast and Accurate
+      Using Random Forest. J Chem Inf Model 2012;52(3):814–23. http://dx.doi.org/           Machine Learning Model for Small Molecules. 2022, arXiv preprint arXiv:2203.
+      10.1021/ci300004n.                                                                04676.
+
+                                                                        15
+
+## PDF page 17
+E. Svensson et al.                                                                                                                         Artiϧcial Intelligence in the Life Sciences 7 (2025) 100128
+
+
+[38]  Svensson E, Friesacher HR, Arany A, Mervin L, Engkvist O. Temporal Evaluation      [54] Yang CI, Li YP. Explainable Uncertainty Quantifications for Deep Learning-Based
+       of Uncertainty Quantification Under Distribution Shift. In: International work-            Molecular Property Prediction. J Cheminf 2023;15(1):13. http://dx.doi.org/10.
+      shop on AI in drug discovery. Springer; 2024, p. 132–48. http://dx.doi.org/10.           1186/s13321-023-00682-3.
+      1007/978-3-031-72381-0_11.                                                     [55]  Tobin   J.  Estimation  of  Relationships  for  Limited  Dependent  Variables.
+[39]  Heyndrickx W, Mervin L, Morawietz T, Sturm N, Friedrich L, Zalewski A, et al.            Econometrica:  J  Econ  Soc  1958;26(1):24–36.  http://dx.doi.org/10.2307/
+     MELLODDY: Cross-pharma Federated Learning at Unprecedented Scale Unlocks           1907382.
+       Benefits in QSAR without Compromising Proprietary Information. J Chem Inf      [56] Wang R, Liu Z, Gong J, Zhou Q, Guan X, Ge G. An Uncertainty-Guided Deep
+     Model 2023;64(7):2331–44. http://dx.doi.org/10.1021/acs.jcim.3c00799.                   Learning Method Facilitates Rapid Screening of CYP3A4 Inhibitors. J Chem Inf
+[40] Landrum G. ?RDKit: Open-Source Cheminformatics. 2006, http://dx.doi.org/10.          Model 2023;63(24):7699–710. http://dx.doi.org/10.1021/acs.jcim.3c01241.
+      5281/zenodo.6961488, URL http://www.rdkit.org.
+                                                                                      [57]  Juergens M, Meinert N, Bengs V, Hüllermeier E, Waegeman W.  Is Epistemic
+[41]  Weininger D. SMILES, a Chemical Language and Information System. 1. In-
+                                                                                               Uncertainty Faithfully Represented by Evidential Deep Learning Methods? In:
+      troduction  to Methodology and Encoding  Rules.  J Chem  Inf Comput  Sci
+                                                                                                      International  conference on machine  learning,  vol.  235, PMLR;  2024,  p.
+      1988;28(1):31–6. http://dx.doi.org/10.1021/ci00057a005.
+                                                                                      22624–42.
+[42] Morgan HL. The Generation of a Unique Machine Description for Chemical
+                                                                                      [58]  Zadrozny B, Elkan C. Obtaining Calibrated Probability Estimates from Decision       Structures – A Technique Developed at Chemical Abstracts Service. J Chem Doc
+      1965;5(2):107–13. http://dx.doi.org/10.1021/c160017a018.                                Trees and Naive Bayesian Classifiers. In: International conference on machine
+[43]  Winter R, Montanari F, Noé F, Clevert DA. Learning Continuous and Data-Driven             learning. PMLR; 2001, p. 609–16.
+      Molecular Descriptors by Translating Equivalent Chemical Representations. Chem      [59]  Levi D, Gispan L, Giladi N, Fetaya E. Evaluating and Calibrating Uncertainty
+       Sci 2019;10(6):1692–701. http://dx.doi.org/10.1039/C8SC04175J.                          Prediction in Regression Tasks. Sensors 2022;22(15):5540. http://dx.doi.org/10.
+[44] Mayr A, Klambauer G, Unterthiner T, Steijaert M, Wegner JK, Ceulemans H,           3390/s22155540.
+       et  al. Large-Scale Comparison of Machine Learning Methods for Drug Target      [60] Rasmussen MH, Duan C, Kulik HJ, Jensen JH. Uncertain of Uncertainties? A
+       Prediction on ChEMBL. Chem  Sci 2018;9(24):5441–51. http://dx.doi.org/10.           comparison of Uncertainty Quantification Metrics for Chemical Data  Sets. J
+     1039/C8SC00148K.                                                               Cheminf 2023;15(1):121. http://dx.doi.org/10.1186/s13321-023-00790-0.
+[45] Van Tilborg D, Alenicheva A, Grisoni F. Exposing the Limitations of Molecular      [61] Mann HB, Whitney DR. On a Test of Whether One of Two Random Variables is
+     Machine Learning with Activity Cliffs. J Chem Inf Model 2022;62(23):5938–51.             Stochastically Larger Than the Other. Ann Math Stat 1947;50–60.
+      http://dx.doi.org/10.1021/acs.jcim.2c01073.                                       [62] Dunn  OJ.  Multiple  Comparisons  Among  Means.  J  Amer  Statist  Assoc
+[46]  Powell  JL. Censored Regression Quantiles. J Econ 1986;32(1):143–55.  http:            1961;56(293):52–64.
+      //dx.doi.org/10.1016/0304-4076(86)90016-3.
+                                                                                      [63] Ovadia Y, Fertig E, Ren  J, Nado Z, Sculley D, Nowozin  S, et  al. Can You
+[47]  Hartog PBR, Svensson E, Mervin L, Genheden S, Engkvist O, Tetko IV. Registries
+                                                                                                  Trust Your Model’s Uncertainty? Evaluating Predictive Uncertainty Under Dataset
+       in Machine Learning-Based Drug Discovery: A Shortcut to Code Reuse.  In:
+                                                                                                                    Shift. In: Advances in neural information processing systems, vol. 32, Curran
+       International workshop on AI in drug discovery. Springer; 2024, p. 98–115.
+                                                                                                        Associates, Inc.; 2019.
+      http://dx.doi.org/10.1007/978-3-031-72381-0_9.
+                                                                                      [64]  Janet JP, Duan C, Yang T, Nandy A, Kulik HJ. A Quantitative Uncertainty[48]  Gal Y. Uncertainty in deep learning [Ph.D. thesis], Department of Engineering,
+       University of Cambridge; 2016.                                                          Metric Controls Error in Neural Network-Driven Chemical Discovery. Chem Sci
+[49]  Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, et al.            2019;10(34):7913–22.
+       Scikit-learn: Machine Learning in Python. J Mach Learn Res 2011;12:2825–30,      [65]  Kulinski S, Inouye DI. Towards Explaining Distribution Shifts. In: International
+     URL http://jmlr.org/papers/v12/pedregosa11a.html.                                       conference on machine learning. PMLR; 2023, p. 17931–52.
+[50]  Tetko IV, Sushko  I, Pandey AK, Zhu H, Tropsha A, Papa E, et  al.  Critical      [66]  Bertolini M, Clevert DA, Montanari F. Explaining, Evaluating and Enhancing Neu-
+      Assessment of QSAR Models of Environmental Toxicity Against Tetrahymena               ral Networks’ Learned Representations. In: International conference on artificial
+       Pyriformis:  Focusing on  Applicability Domain and  Overfitting by  Variable            neural networks. Springer; 2023, p. 269–87.
+       Selection. J Chem Inf Model 2008;48(9):1733–46. http://dx.doi.org/10.1021/      [67] Maggiora GM. On Outliers and Activity Cliffs Why QSAR Often Disappoints. J
+      ci800151m.                                                          Chem Inf Model 2006;46(4). http://dx.doi.org/10.1021/ci060117s, 1535–1535.
+[51]  Paszke A, Gross S, Massa F, Lerer A, Bradbury J, Chanan G, et al. PyTorch:      [68]  Sale Y, Bengs V, Caprio M, Hüllermeier E. Second-Order Uncertainty Quan-
+     An Imperative Style, High-Performance Deep Learning Library. In: Advances in               tification: A Distance-Based Approach. In: International conference on machine
+      neural information processing systems, vol. 32, Curran Associates, Inc.; 2019.               learning. PMLR; 2024.
+[52] Busk J, Jørgensen PB, Bhowmik A, Schmidt MN, Winther O, Vegge T. Calibrated
+                                                                                      [69] Huang K, Fu T, Gao W, Zhao Y, Roohani YH, Leskovec J, et al. Therapeutics
+      Uncertainty  for Molecular Property  Prediction using Ensembles  of Message
+                                                                                        Data Commons: Machine Learning  Datasets and Tasks  for Drug Discovery
+      Passing Neural Networks. Mach Learn: Sci Technol 2021;3(1):015012.
+                                                                                   and Development. In: Thirty-fifth conference on neural information processing
+[53]  Hubschneider C, Hutmacher R, Zöllner JM.  Calibrating Uncertainty Models
+                                                                                             systems datasets and benchmarks track (round 1). 2021, URL https://openreview.
+       for Steering Angle Estimation. In: 2019 IEEE intelligent transportation systems
+                                                                                    net/forum?id=8nvgnORnoWr.
+      conference. ITSC, IEEE; 2019, p. 1511–8.
+
+
+
+
+
+                                                                        16

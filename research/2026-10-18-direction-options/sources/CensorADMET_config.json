@@ -1,0 +1,43 @@
+{
+  "release_version": "1.0.0",
+  "split_seed": 0,
+  "folds": 5,
+  "model_seeds": [0, 1, 2],
+  "measurement_model_seeds": [0, 1],
+  "tau": 0.85,
+  "budgets": [0.02, 0.05, 0.1, 0.2],
+  "feature_set": "morgan",
+  "morgan_radius": 2,
+  "morgan_bits": 2048,
+  "epochs": 150,
+  "aggregated_endpoints": [
+    "hERG_IC50_B",
+    "CYP3A4_IC50_A",
+    "CYP2D6_IC50_A",
+    "CYP2C9_IC50_A",
+    "CYP1A2_IC50_A",
+    "CYP2C19_IC50_A",
+    "hERG_Ki_B",
+    "hERG_IC50_T",
+    "ABCB1_IC50_B",
+    "CYP3A4_IC50_B"
+  ],
+  "aggregated_splits": ["random", "scaffold"],
+  "measurement_endpoints": [
+    "hERG:IC50",
+    "CYP3A4:IC50",
+    "CYP2D6:IC50",
+    "CYP2C9:IC50",
+    "CYP1A2:IC50",
+    "CYP2C19:IC50",
+    "hERG:Ki",
+    "ABCB1:IC50"
+  ],
+  "measurement_splits": ["random", "scaffold", "assay", "document", "source", "threshold", "assay_scaffold"],
+  "broadened_property_endpoints": [
+    "Solubility_nM",
+    "Clearance_mLminkg",
+    "HalfLife_hr_sub"
+  ],
+  "broadened_property_splits": ["random", "scaffold", "assay", "document", "source", "threshold"]
+}

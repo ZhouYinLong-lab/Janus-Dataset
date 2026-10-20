@@ -1,0 +1,172 @@
+{
+  "retrieved_utc": "2026-10-18T04:28:14.838196+00:00",
+  "sources": [
+    {
+      "name": "UQ4DD2025.pdf",
+      "url": "https://research.chalmers.se/publication/545243/file/545243_Fulltext.pdf",
+      "download_state": "downloaded",
+      "resolved_url": "https://research.chalmers.se/publication/545243/file/545243_Fulltext.pdf",
+      "bytes": 3607716,
+      "sha256": "7bd94597d30c169e13878fbecab0400bccb6841e40db4785699555107793f65f",
+      "pages": 17,
+      "status": "ok"
+    },
+    {
+      "name": "UQ4DD_README.html",
+      "url": "https://github.com/MolecularAI/uq4dd",
+      "download_state": "downloaded",
+      "resolved_url": "https://github.com/MolecularAI/uq4dd",
+      "bytes": 334370,
+      "sha256": "b8f71c5c290148b43eeeabbdc4c1b4342aebfb76bfb12f2ba58682b56e6af398",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_README.html",
+      "url": "https://github.com/eva-mitropoulou/censorADMET",
+      "download_state": "downloaded",
+      "resolved_url": "https://github.com/eva-mitropoulou/censorADMET",
+      "bytes": 298703,
+      "sha256": "6bb598db497c960feec9f656264451a8bf7acbfbccd8c3114f089c2a6d4512f6",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_tree.json",
+      "url": "https://api.github.com/repos/eva-mitropoulou/censorADMET/git/trees/main?recursive=1",
+      "status": "error",
+      "error": "403 Client Error: rate limit exceeded for url: https://api.github.com/repos/eva-mitropoulou/censorADMET/git/trees/main?recursive=1"
+    },
+    {
+      "name": "CensorADMET_citation.txt",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/CITATION.cff",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/CITATION.cff",
+      "bytes": 995,
+      "sha256": "3e851f9d360c03e3b7600f83d17df01065bceb900677a634ca414e999cd4f7d0",
+      "status": "ok"
+    },
+    {
+      "name": "MoleculeACE2022.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9749029/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9749029/fullTextXML",
+      "bytes": 195289,
+      "sha256": "9a16482ba18b613aa10fd70d26a5047c8a4740c4d077fa0b9730f9b8d68921d5",
+      "status": "ok"
+    },
+    {
+      "name": "ChEMBLCuration2015.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4607714/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4607714/fullTextXML",
+      "bytes": 102858,
+      "sha256": "978beb54ef9f383ba8d09973c6254f9378914f2d1fc5c5b2a2b8c9aa0deabcee",
+      "status": "ok"
+    },
+    {
+      "name": "CliffCuration2016.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5657146/fullTextXML",
+      "status": "error",
+      "error": "500 Server Error:  for url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5657146/fullTextXML"
+    },
+    {
+      "name": "CARA2024.html",
+      "url": "https://www.nature.com/articles/s42004-024-01204-4",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.nature.com/articles/s42004-024-01204-4",
+      "bytes": 587629,
+      "sha256": "6ca8f5a2ef27d7d0ca6244e90fe7e9f3766f56dcccf93e315f9110e475458353",
+      "status": "ok"
+    },
+    {
+      "name": "BindingDBContext2026.html",
+      "url": "https://arxiv.org/html/2609.34001v1",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/html/2609.34001v1",
+      "bytes": 512816,
+      "sha256": "127540655bd5d02a35c47a1f7ba60a55f131b6dbf6578613a27e7c4cf940a759",
+      "status": "ok"
+    },
+    {
+      "name": "BindingDBContext2026.pdf",
+      "url": "https://arxiv.org/pdf/2609.34001v1",
+      "download_state": "downloaded",
+      "resolved_url": "https://arxiv.org/pdf/2609.34001v1",
+      "bytes": 1328434,
+      "sha256": "82d57e3d50c6c903ce60c16142dd0f7499880b7c79d785f2937bb21ec98774f9",
+      "pages": 24,
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_config.json",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/configs/manuscript-v1.0.0.json",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/configs/manuscript-v1.0.0.json",
+      "bytes": 1050,
+      "sha256": "ec38aae239c3e772f44baadc59e822ab9e8aa96d7af0a1bd8d5a21540f887945",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_zenodo.json",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/.zenodo.json",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/.zenodo.json",
+      "bytes": 1278,
+      "sha256": "fcd51b5a5794f59c7e4d8d41ceef92e7ec8c78e24a0c599ec69276614affda20",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_LICENSE_DATA.txt",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/LICENSE_DATA",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/LICENSE_DATA",
+      "bytes": 22240,
+      "sha256": "3f941b3b89cf7b8370ceb83cc76d2120d471b58735d8ca60238a751a48d7f72f",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_data_readme.txt",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/data/README.md",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/data/README.md",
+      "bytes": 1742,
+      "sha256": "ce81b3bb37fb7cbb988af9562bc30cb404a421ffddaa8a54e66f66b35939aa19",
+      "status": "ok"
+    },
+    {
+      "name": "CensorADMET_data.py",
+      "url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/src/censoradmet/data.py",
+      "download_state": "downloaded",
+      "resolved_url": "https://raw.githubusercontent.com/eva-mitropoulou/censorADMET/main/src/censoradmet/data.py",
+      "bytes": 14413,
+      "sha256": "6edf556f2f2bcc8410583a1b6e5a83b2078cb1c317307b781e2c484d3434460c",
+      "status": "ok"
+    },
+    {
+      "name": "CARA2024.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11150475/fullTextXML",
+      "download_state": "downloaded",
+      "resolved_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11150475/fullTextXML",
+      "bytes": 209728,
+      "sha256": "801b71c656e061a72a8a48cc8a44617d0dfbc63ec27728a71754d93d4ece658d",
+      "status": "ok"
+    },
+    {
+      "name": "CARA_README.html",
+      "url": "https://github.com/tiantz17/CARA",
+      "download_state": "downloaded",
+      "resolved_url": "https://github.com/tiantz17/CARA",
+      "bytes": 339513,
+      "sha256": "0856cd0eb17b544bdf3e1c426a222b813626ac8a9df546b97fc99007f3492dce",
+      "status": "ok"
+    },
+    {
+      "name": "MoleculeACE_README.html",
+      "url": "https://github.com/molML/MoleculeACE",
+      "download_state": "downloaded",
+      "resolved_url": "https://github.com/molML/MoleculeACE",
+      "bytes": 307000,
+      "sha256": "71eac3f37079208a53f05e655afaae3cbbc912189719e52eb42f12522c43d0b1",
+      "status": "ok"
+    }
+  ]
+}

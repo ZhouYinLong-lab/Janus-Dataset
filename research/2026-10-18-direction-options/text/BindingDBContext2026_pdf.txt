@@ -1,0 +1,1613 @@
+## PDF page 1
+           Assay-Aware BindingDB: Curating Experimental
+                 Context for Binding Affinity Prediction
+
+
+
+
+                              Ming-Hsiu Wu 1   Xuejiao Shirley Guo 3   Bingsong Zeng 2
+                           Ziqian Xie 1  Shuiwang Ji 3  Wenshe Liu 3   Cui Tao 4   Degui Zhi 1
+
+                                 1The University of Texas Health Science Center at Houston
+                                   2The University of Texas MD Anderson Cancer Center2026                                               3Texas A&M University
+                                               4Mayo Clinic
+
+                       {ming.hsiu.wu,bingsong.zeng,ziqian.xie,degui.zhi}@uth.tmc.eduSep                                   wliu@chem.tamu.edu, {xjguo6,sji}@tamu.edu
+27                                          Tao.Cui@mayo.edu
+
+
+                                               Abstract
+
+                            Protein–ligand binding affinity prediction is fundamental to computational drug
+                              discovery, yet modern AI-driven models are limited by pervasive heterogeneity in
+                                 their training data: bioactivity values are aggregated across diverse assay types and
+                            experimental conditions without accounting for protocol-level differences, introduc-
+                             ing systematic noise. Existing harmonization approaches either discard assay-level[q-bio.BM]
+                           metadata or collapse it into coarse categorical distinctions, leaving rich contextual
+                              signal unused. We address this gap with two contributions. First, we introduce
+                         Assay-Aware BindingDB, an assay-metadata augmentation of 74,425 BindingDB
+                             protein–ligand pairs spanning four widely used assay types (ITC, SPR, RBA, and
+                         FPA), with structured metadata extracted from the linked primary literature by a
+                            two-stage agentic framework that decouples contextual evidence extraction from
+                            ontology-conditioned JSON synthesis. Evaluated against domain-expert references,
+                              the framework achieves human-curator-comparable fidelity (presence F1 ≥0.947,
+                           semantic content accuracy ≥0.913 across all four assay types). Second, we pro-
+                          pose a context-conditioned affinity prediction model that injects an assay-context
+                        embedding into the Boltz-2 affinity module. On a paper-level held-out split de-
+                           signed to prevent shortcut learning, a single context-conditioned model reduces
+                         combined-regime MSE from 1.27 to 1.19 and raises Pearson correlation from
+                           0.64 to 0.67, with significant gains on SPR and FPA; ITC—the only label- and
+                            immobilization-free assay in the set—shows no improvement, consistent with
+                                     its design removing the protocol artifacts the metadata captures. Together, thesearXiv:2609.34001v1
+                                 results support the central hypothesis that systematically curated assay metadata is
+                            informative signal—not irreducible noise—for protein–ligand affinity prediction
+                          wherever protocol-level variation drives heterogeneity in reported readouts.
+
+
+              1  Introduction
+
+                    Protein–ligand binding affinity prediction is a fundamental problem in computational drug discovery,
+                    as affinity governs both the potency and selectivity of candidate therapeutics [23]. Modern AI-
+                    driven affinity prediction models are data-hungry, making large-scale chemogenomic databases
+                  such as BindingDB [12, 13] and ChEMBL [30, 5] indispensable training resources. However,
+                    the predictive reliability of these models is fundamentally limited by pervasive heterogeneity in
+
+
+                           Preprint.
+
+## PDF page 2
+the underlying bioactivity data [7, 9, 11]. This heterogeneity arises primarily from the diversity
+of binding affinity measures: experimental affinities may be reported as Kd, Ki, IC50, or EC50,
+with the choice of measure mainly determined by the assay employed. Compounding this issue,
+critical experimental conditions—including assay format, pH, temperature, protein concentration,
+and buffer composition—vary across studies, further aggravating cross-dataset inconsistency. Naively
+aggregating such data without accounting for these differences introduces systematic error into trained
+models [11]. Harmonizing these heterogeneous data sources thus remains a central challenge for
+training reliable models.
+
+To address this metadata gap, structured curation of assay conditions at scale is essential—yet existing
+approaches fall short. Manual annotation is prohibitively labor-intensive given the exponential
+growth of biomedical literature, while rule-based NLP methods lack the flexibility to parse the
+linguistic variability of experimental descriptions [15, 26]. Recent advances in autonomous AI
+agents [3, 16, 4]—systems capable of multi-step reasoning, iterative self-correction, and dynamic
+tool use—offer a transformative opportunity to harmonize bioactivity metadata retrospectively from
+primary literature at scale.
+
+Building on this insight, we argue that binding affinity prediction can be improved by treating assay
+context not as discardable noise, but as informative signal. Systematically recovered experimental
+metadata can be incorporated directly into affinity prediction models, enabling them to account
+for systematic variation arising from differing experimental conditions. This motivates a unified
+framework that integrates large-scale automated metadata curation with context-aware binding affinity
+prediction (Figure 1).
+
+
+Our contributions are:
+
+        • Assay-Aware BindingDB, a large-scale augmentation of BindingDB entries with struc-
+         tured assay metadata—including assay type, assay format, and experimental condi-
+        tions—systematically extracted from the linked primary literature.
+
+        • A context-aware affinity prediction model that injects curated assay metadata into the
+         prediction pipeline, allowing the model to explicitly account for measurement heterogeneity
+         arising from differing experimental protocols.
+
+        • We demonstrate that incorporating assay context as structured input yields improvements
+         in binding affinity prediction accuracy, validating the hypothesis that assay metadata is
+         informative signal rather than irreducible noise.
+
+
+
+
+  (a)                                                      (b)
+
+                                                                                                      Assay-type          pH   temperature   buffer
+                                                    ITC
+                                                                    7.4  25 ℃  PBSPBS ……                       Protein    Ligand      Affinity               Protein  Ligand   Assay-metadata   Affinity
+
+
+                               Scientific
+                                literature                 SPR
+
+                                                                    8.0  37 ℃ MES ……
+
+
+
+                                     RBA
+          Agentic-LLM
+                                                                    7.4  25 ℃   Tris ……
+
+
+
+                                            FPA
+                                                                    6.0  30 ℃ MES ……
+
+
+
+                                                                                                    Affinity
+   BindingDB
+
+
+Figure 1: Overview. (a) An agentic LLM framework extracts assay metadata from the primary
+literature linked to BindingDB entries across four assay types (ITC, SPR, RBA, FPA), yielding
+Assay-Aware BindingDB. (b) The curated metadata augments each (protein, ligand, affinity) record
+and is injected into the affinity prediction model, conditioning affinity prediction on the experimental
+protocol.
+
+
+
+                                       2
+
+## PDF page 3
+2  Related Works
+
+2.1  Diverse Binding Affinity Measurement Harmonization
+
+Several approaches have sought to place heterogeneous bioactivity measurements on a common
+scale. ChEMBL [5, 17] introduced the pChEMBL value — defined as −log10(molar activity) for
+standardized dose-response endpoints (IC50, EC50, Ki, Kd, Potency, ED50) — which enables
+convenient ranking and thresholding of compound potency but treats all qualifying measurement
+types as interchangeable without accounting for experimental conditions, or detection methodology.
+Tang et al. [24] proposed the KIBA score, a parametric integration of IC50, Ki, and Kd via Cheng-
+Prusoff-inspired [29] adjustments that improved drug–target interaction classification over any single
+bioactivity type; however, KIBA is restricted to kinase targets, harmonizes only at the level of bioac-
+tivity type without capturing assay protocol details, and applies a global two-parameter correction
+that assumes a fixed IC50–Ki/Kd relationship across all systems. Tanoli et al. [25] introduced DTP
+scoring, which maps bioactivity values onto a [0, 1] potency scale using protein-family-specific cutoffs
+(from IDG/TCRD) and a binary assay-format factor (biochemical vs. cell-based), parameterizing a
+piecewise linear transformation with fixed thresholds and aggregating multiple measurements per
+compound–target pair by median. While DTP improves on pChEMBL’s uniform −log10 transform
+by introducing family- and format-level awareness, it still treats all biochemical assays identically
+(e.g., surface plasmon resonance, fluorescence polarization, and radioligand binding share the same
+factor) and relies on hand-crafted rules. Across all three approaches, the core limitation is the
+same: assay-level protocol metadata — the detection technology, binding model, and experimental
+conditions that shape the reported value — is either discarded or collapsed into coarse categorical
+distinctions.
+
+2.2  Agent-Based Information Extraction
+
+While databases like ChEMBL and BindingDB contain millions of curated records, they represent
+only a small fraction of historical and contemporary medicinal chemistry data. The vast majority
+of protein–ligand bioactivity measurements remain trapped within the unstructured text, tables, and
+supplementary materials of scientific literature and pharmaceutical patents. Recent multi-agent LLM
+systems have begun to address this bottleneck [6, 2]. Yan et al. [28] introduced BIOMINER, a multi-
+modal agentic system that decomposes bioactivity mining from journal articles into four specialized
+agents for document parsing, chemical structure resolution, bioactivity measurement extraction, and
+cross-modal integration, explicitly separating semantic reasoning—handled by a domain-tuned multi-
+modal LLM—from deterministic chemical symbolic construction via RDKit [10] and OPSIN [14]
+to enable reliable resolution of complex Markush representations. Concurrently, Shepard et al. [22]
+presented HARVEST, a five-agent sequential pipeline targeting USPTO patent archives, which chains
+three LLM-based semantic agents—target identification, activity extraction conditioned on upstream
+target context, and compound alias resolution—with two deterministic resolution agents for chemical
+structure standardization and protein mapping to UniProt identifiers. Both systems demonstrate that
+principled agent decomposition can scale bioactivity extraction to tens of thousands of documents
+with near-human fidelity. However, neither system captures or encodes the assay-level context—
+detection technology, binding model, and experimental conditions—that governs cross-protocol
+comparability of the extracted values. Our work aims to fill this gap.
+
+3  Assay-Aware BindingDB
+
+3.1  Two-Stage Agentic Extraction Framework
+
+Problem Formulation  We decompose the heterogeneous source D into two functionally distinct
+components: a BindingDB record r that provides a brief description of the target assay, and the
+associated scientific literature L containing the full experimental details. That is, D = (r, L). The
+record r acts as a query anchoring the extraction task, while L is the corpus to be mined. Together
+with a predefined assay schema ontology O, the goal is to construct a structured ontology-compliant
+record Cs
+              Φ : L | r, O −→Cs,     such that  Cs |= O,                        (1)
+where r and O appear as conditioning inputs (prompts) rather than as data to be transformed, and
+Cs |= O denotes schema satisfaction. We factorize Φ through an intermediate semantic context Ce
+
+
+                                       3
+
+## PDF page 4
+(Figure A1):
+                    Ce = fext(L | r),    Φ(L | r, O) =  fstruct(Ce | O).                    (2)
+Throughout, we use the bar “|” to denote conditioning: the argument to its left is transformed by the
+function, whereas the argument to its right enters as a prompt that shapes the function’s behavior
+without being itself rewritten. In what follows, we instantiate fext and fstruct as two LLM agents that
+respectively realize the contextual extraction and ontology-conditioned synthesis stages of Eq. (2).
+
+Agent 1 — Contextual evidence extractor.  Agent 1 is prompted with the BindingDB record
+r—a concise natural-language description of the assay of interest (e.g., “Binding of inhibitors and
+substrates to immobilized AcrB”)—and uses it as a query to search the associated literature L (the
+main paper, with supplementary information and referenced papers when accessible) for supporting
+evidence:
+                               fext : L | r −→Ce,     Ce = {c1, c2, . . . , cn}.                       (3)
+Each context unit ci is a localized evidence span (a text segment, figure, table ,or caption) drawn
+from L, annotated with a provenance tag (e.g., [EXPERIMENTAL PROCEDURES], [FIGURE], [SUP-
+PLEMENTARY]). Because r only enters as a conditioning prompt, fext does not attempt to rewrite or
+transform it; it uses r solely to focus attention on the assay-relevant portions of L.
+
+Agent 2 — JSON Synthesizer.  Agent 2 is prompted with the predefined assay schema ontology O—
+a machine-readable specification of admissible fields, types, descriptions, and enumerations—and
+maps the extracted semantic context Ce to an ontology-compliant record:
+
+                                          fstruct : Ce | O −→Cs,     Cs |= O.                             (4)
+
+Here O is not consumed as data but conditions the decoding behavior of fstruct, constraining the
+output space so that every key–value pair in Cs conforms to a declared field in O and is grounded in
+one or more context units from Ce.
+
+Both agents are instantiated with Qwen3.5-27B [20, 21] in non-thinking mode under greedy decoding
+(T = 0). Agent 1 reads rasterized page images of the main paper, supplementary PDFs, and accessible
+cited references; Agent 2 consumes the resulting spans in text-only mode under ontology-conditioned
+prompting. When Agent 1 indicates the protocol is deferred to a cited paper, the citation is resolved
+against a MinerU markdown [18] rendering of the source reference list and the extraction is recursed
+on the cited paper up to a fixed depth. Extraction is run once per unique (PMID, DESCRIPTION) and
+shared across all pairs in that group. See Appendix B for full details.
+
+3.2  Extraction Evaluation
+
+Protocol.  We evaluate the predicted record Cs against a human-curated reference C∗s at the leaf-field
+level, under a typed, multi-metric protocol designed to disentangle genuine extraction errors from
+superficial format, unit, and paraphrase variation. The leaf fields of O are partitioned by value
+space into four types—categorical (e.g., instrument manufacturer, sensor-chip type, immobilization
+strategy), numeric scalar (pH, temperature, analyte flow rate), numeric range (immobilization
+density, association/dissociation time), and free text (buffer composition, analyte concentration
+ranges, reference description)—and each type is paired with a dedicated comparator. Categorical
+fields are scored by normalized exact match after Unicode folding, case folding, and whitespace
+collapsing. Numeric scalars are compared only after unit harmonization:  for each dimension
+D ∈{time, temperature, flow rate, concentration} we define a canonical unit u∗D (respectively s, ◦C,
+µL/min, nM) and a map
+                        ϕD : (v, u) 7−→v∗∈R,                                   (5)
+that parses a value–unit pair (v, u) and converts it to the canonical scale. The unit u may be specified
+in one of three ways: embedded within the value string (e.g., "3 min"), provided in a sibling field
+(e.g., flow_rate.value paired with flow_rate.unit), or absent from the record, in which case
+φD falls back to the ontology default u∗D. Conversion is linear across all three dimensions. Two
+scalars are then deemed equal when their canonical forms agree within a 2% relative tolerance,
+so that (3, min) and (180, s) are correctly identified as equivalent. Numeric ranges are compared
+endpoint-wise under the same tolerance after range-separator normalization. Free-text fields are
+scored by an LLM (Qwen3.5-27B) judge
+
+                   J (p, g | k, d) −→{0.0, 0.5, 1.0},                              (6)
+
+
+                                       4
+
+## PDF page 5
+conditioned on the field name k and its ontology description d ∈O so that decisions are grounded in
+field-specific semantics, with 1.0 denoting factual equivalence, 0.5 denoting a strict informational
+superset/subset relation (a common and benign outcome when concise paraphrases drop non-essential
+detail), and 0.0 denoting factual disagreement or hallucination; each comparison is averaged over
+K = 3 independent judge samples to reduce variance.
+
+We decouple null-handling from content quality by reporting four orthogonal axes: (i) presence—
+precision, recall, and F1 over the extractor’s null vs. non-null decisions, which penalizes both missed
+fields (FN) and hallucinated values (FP); (ii) content accuracy on TP rows, reported at two strictness
+levels—normalized (type-, unit-, and format-aware) equality, and semantic equivalence under J —so
+that the normalized-to-semantic gap quantifies paraphrase tolerance independently of genuine content
+errors; (iii) per-type semantic content accuracy on TP rows, reported separately for each of the
+four field types under its most permissive comparator (semantic equivalence under J for free text,
+normalized equality for categorical, numeric scalar, and numeric range), so that extraction bottlenecks
+tied to specific value spaces—e.g., free-text paraphrase fidelity vs. numeric unit handling—are not
+washed out by aggregation; and (iv) overall field accuracy, which credits the extractor for both
+correctly predicted nulls (TN) and correctly extracted values (TP) at each of the two strictness levels,
+providing a single composite score that reflects end-to-end record-construction quality. We report
+micro averages pooled across record–field pairs within each assay type, enabling per-assay-type
+comparison of extraction quality.
+
+Results.  We instantiate the framework of Section 3.1 on four widely used assay types reported in
+BindingDB: isothermal titration calorimetry (ITC), surface plasmon resonance (SPR), radioligand
+binding assay (RBA), and fluorescence polarization anisotropy (FPA). For each BindingDB entry, the
+assay type is assigned by keyword matching against their DESCRIPTION field, and a type-specific
+schema ontology O is used to condition Agent 2. The full schema ontologies O for these four assay
+types are provided in Appendix A. To evaluate extraction quality, we uniformly sample 30 distinct
+papers per assay type (120 papers in total); since a single paper may contribute multiple records, the
+resulting evaluation set covers a larger number of extracted records Cs, each of which is compared
+against a domain-expert-curated reference C∗s under the protocol of Section 3.2. Results across all
+four assay types are reported in Table 1.
+
+Table 1: Four-axis evaluation of the agentic extraction framework across four assay types (ITC, SPR,
+RBA, FPA). Rows report presence (precision/recall/F1 over null vs. non-null decisions), content
+accuracy on TP rows at two strictness levels, per-type semantic accuracy on TP rows, and overall
+field accuracy with TN credited as correct. All numbers are micro averages within each assay type.
+
+                                      ITC   SPR  RBA   FPA
+
+                         Presence (null vs. non-null)
+                              Precision        0.994   0.958   0.942   0.964
+                             Recall           0.980   0.988   0.951   0.983
+                        F1              0.987   0.973   0.947   0.974
+
+                         Content accuracy (TP rows)
+                          Normalized      0.907   0.785   0.957   0.955
+                           Semantic        0.954   0.913   0.994   0.977
+
+                           Per-type semantic content accuracy (TP rows)
+                              Categorical      1.000   0.835   0.988   0.965
+                         Numeric scalar   0.936   0.885   1.000   0.992
+                         Numeric range   0.890   0.933   1.000   0.870
+                            Free text         1.000   1.000   1.000   1.000
+
+                          Overall field accuracy (TN credited as correct)
+                          Normalized      0.919   0.794   0.911   0.936
+                           Semantic        0.951   0.891   0.932   0.950
+
+
+Overall fidelity.  Across all four assay types, the framework reliably both detects which assay-
+condition fields are present in the source literature and extracts semantically equivalent values when
+they are. Presence F1 ranges from 0.947 (RBA) to 0.987 (ITC), and semantic content accuracy from
+0.913 (SPR) to 0.994 (RBA). The composite overall field accuracy, which jointly credits correct null
+
+
+                                       5
+
+## PDF page 6
+predictions and correct extractions, exceeds 0.89 for every assay type, indicating that the two-stage
+agentic framework produces structured assay metadata at human-curator-comparable fidelity.
+
+Normalized vs. semantic.  The normalized-to-semantic gap is largest for SPR (+0.128), reflecting
+the prevalence of fields whose information content is preserved across substantially different surface
+forms. Analyte concentration ranges, for instance, may be reported as explicit endpoints (“3.12–
+25 µM”) or as a top concentration plus a dilution scheme (“25 µM highest, 4 concentrations, dilution
+factor 0.5”)—semantically equivalent specifications that normalized equality cannot reconcile but J
+recognizes as factually consistent. Buffer composition exhibits analogous variability, with identical
+formulations rendered in different component orderings, abbreviations, and concentration notations.
+Only J accommodates this surface-form heterogeneity.
+
+Field-type breakdown.  At the leaf-field-type level, free-text fields achieve 1.000 semantic ac-
+curacy across all four assays, confirming that Agent 2 reliably captures the substantive content.
+Categorical fields are extracted with ≥0.96 semantic accuracy except for SPR (0.835), where the
+larger and more heterogeneous vocabulary of biosensor instruments, chip chemistries, and immo-
+bilization protocols leaves room for residual misclassification. Part of this residual error is itself
+irreducible, arising from ambiguous or incomplete descriptions in the source literature for fields such
+as data_analysis.fitting_model, which leave the ground-truth assignment underdetermined
+and thus place a ceiling on attainable extraction accuracy. Numeric fields are extracted with ≥0.87
+semantic accuracy across the board, with SPR again the most challenging case in numeric scalar
+and FPA slightly weaker on numeric ranges. Taken together, these results validate the central design
+choice of Section 3.1—agentic context extraction followed by ontology-conditioned synthesis—and
+establish that the recovered metadata is of sufficient quality to serve as informative signal for the
+context-conditioned affinity prediction model of Section 4.
+
+3.3  Dataset Construction
+
+Having established that the two-stage extraction framework produces metadata at human-curator-
+comparable fidelity, we apply it to the subset of BindingDB entries matching our four target assay
+types (ITC, SPR, RBA, FPA) to construct Assay-Aware BindingDB. Construction proceeds in
+three stages. First, we identify candidate entries by keyword matching the assay-type descriptors
+against BindingDB’s DESCRIPTION field, yielding 113,311 candidate protein–ligand pairs. Second,
+for each candidate we attempt to retrieve the associated primary literature; after removing entries
+whose source articles are not accessible, 5,991 unique papers remain. Third, we apply the two-stage
+agentic extractor of Section 3.1 to every retrieved paper and retain only those records whose extracted
+metadata satisfies the assay-type ontology O. After this final filter, 74,425 protein–ligand pairs
+constitute Assay-Aware BindingDB, each paired with a structured, ontology-compliant assay-context
+record suitable for downstream context-conditioned modeling.
+
+Table 2 reports the per-assay-type composition. The dataset spans 1,662 unique protein targets and
+46,218 unique compounds across four complementary slices of the bioactivity landscape: ITC (1,898
+pairs) and SPR (4,253 pairs) report exclusively Kd values, consistent with their thermodynamic
+and kinetic readouts; RBA contributes the largest single cohort (49,291 pairs), dominated by Ki
+(34,516) and IC50 (14,853) values typical of competitive radioligand-displacement experiments;
+and FPA (18,983 pairs) contributes a mixed-measure cohort spanning all three affinity types. This
+curated, context-annotated resource forms the basis of the affinity-prediction experiments in Section 4.
+Attrition between candidate identification and the final dataset arises predominantly from constraints
+on source-text availability and processing rather than extraction-quality failures; we defer a detailed
+discussion to the Limitations section.
+
+4  Context-conditioned Binding Affinity Prediction
+
+Assay-context encoding.  Given an ontology-compliant record Cs produced by the extraction
+pipeline of Section 3.1, we augment it with two additional fields—the assay type (e.g., ITC, SPR,
+FPA, RBA) and the reported binding-affinity measure (e.g., Kd, Ki, IC50)—and render the resulting
+record as a JSON string τ(Cs). This string is encoded with the pretrained Qwen3-Embedding-8B
+encoder ϕctx:
+                              ectx =  ϕctx τ(Cs)  ∈Rdctx,      dctx = 4096.                        (7)
+
+
+                                       6
+
+## PDF page 7
+Table 2: Composition of Assay-Aware BindingDB. For each assay type, we report the number of
+candidate BindingDB entries matching the assay-type keywords, the number of papers retrieved,
+the retained entries (protein–ligand pairs), the number of unique targets and compounds, and the
+counts of reported Kd, Ki, and IC50 values. Unique target, compound, and affinity-measure counts
+are computed over the final retained pairs.
+
+Assay    Candidates        Lit.       Retained
+                                                    Targets   Compounds   Kd     Ki       IC50
+ type         (pair)        retrieved       (pair)
+
+ ITC        2,157        346        1,898      272        1,382       1,898         -             -
+ SPR       4,883        590        4,253      424        3,351       4,253         -             -
+RBA      77,051       4,343      49,291      593        30,136           -      34,516    14,853
+ FPA       29,220       712       18,983      373        11,349      2,385     4,909     11,689
+
+ Total      113,311       5,991      74,425      1,662       46,218      8,536    39,425    26,542
+
+
+Using a general-purpose text encoder allows us to represent arbitrary assay fields as a single dense
+vector without hand-designing a separate embedding for each categorical attribute, and naturally
+accommodates free-text descriptors that resist one-hot encoding.
+
+Injection into the Boltz-2 affinity module. We adopt Boltz-2 [19] as our base structural model
+and modify its affinity module to condition on ectx. The original module mean-pools the refined pair
+representation z over the protein–ligand interaction mask to obtain a trunk summary g, which is
+then passed through an MLP and two heads predicting a binding likelihood and a numerical affinity
+value. We retain only the affinity regression head and intercept immediately after the pooling step,
+concatenating the assay-context embedding to g before the downstream MLP:
+
+                g = MeanPooling z, mask = Mpl + Mil ⊙(1 −Id)  ,                   (8)
+                                ˜g = g ∥ectx  ,                                                           (9)
+                                  ˆyaff = MLPaff(˜g).                                                      (10)
+
+where [ · ∥· ] denotes vector concatenation, Mpl and Mil are the protein–ligand and intra-ligand
+masks, and MLPaff is a five-layer MLP — four ReLU-activated linear layers followed by a final
+linear projection — inherited from Boltz-2’s post-pooling pathway and affinity regression head, with
+its first linear layer widened from dg to dg + dctx.
+
+Training.  Given the limited size of our training set, we train only MLPaff from scratch on the
+curated Assay-Aware BindingDB while keeping the rest of the publicly released Boltz-2 weights
+frozen, allowing the model to focus on learning the assay-context conditioning. The text encoder ϕctx
+is likewise kept frozen throughout training to preserve its pretrained semantic space; only MLPaff
+(including its widened first linear layer) receives gradient updates.
+
+4.1  Experimental Results
+
+Splitting strategy.  We split Assay-Aware BindingDB at the paper level rather than at the protein–
+ligand pair level to prevent shortcut learning through the assay-context embedding. Pairs reported
+within a single paper typically span a narrow range of binding affinities, since they share the same
+assay protocol, target, and chemotype series. Under a pair-level split, the assay-context embedding ectx
+would act as a near-unique identifier of the source paper: rather than learning how assay conditions
+modulate affinity, the model could exploit ectx as a shortcut to recognize the paper at test time
+and predict any value within its narrow affinity range, inflating metrics without genuine context-
+aware generalization. Paper-level splitting eliminates this shortcut by ensuring that no assay-context
+embedding seen during training recurs at test time, so any improvement attributable to ectx must
+reflect generalization across assay protocols rather than memorization of paper identity.
+
+Experimental setup.  We evaluate three configurations on the paper-level held-out split: (i) the full
+model with assay-context embedding (w/); (ii) an ablation in which ectx is removed and predictions
+are made from the structural trunk summary g alone (w/o); and (iii) a context-only variant (ctx-only)
+in which the structural representation is ablated and predictions are made from ectx alone. We report
+mean squared error (MSE) on p-affinity values (−log10 affinity in M), Pearson correlation (Rp),
+
+
+                                       7
+
+## PDF page 8
+and concordance index (c-index), each as mean ± std over 10 independent paper-level train/val/test
+splits. We further exclude pairs whose reported affinity is censored (i.e., expressed as a > or <
+inequality rather than a point estimate) and pairs whose protein or ligand inputs fail preprocessing by
+the Boltz-2 structural pipeline or RDKit. We train and evaluate in two regimes: a combined regime,
+in which the model is trained on the union of all four assay types and evaluated on the full held-out
+test set (reported as All in Table 3); and four per-assay-type regimes, in which a separate model is
+trained and evaluated on each assay type in isolation (ITC, SPR, FPA, RBA). The per-assay-type
+regimes isolate the contribution of assay-context conditioning within each protocol family, while the
+combined regime tests whether ectx enables a single model to handle protocol heterogeneity across
+the dataset.
+
+
+
+Aggregate results.  Across the combined regime (65,169 pairs, all four assay types pooled), condi-
+tioning on assay context reduces MSE from 1.27 to 1.19, raises Rp from 0.64 to 0.67, and improves
+c-index from 0.73 to 0.74. A paired t-test across the 10 splits finds all three improvements significant
+(p < 0.001 on MSE, Rp, and c-index). The ctx-only variant collapses on every metric (MSE 1.77, Rp
+0.45, c-index 0.65), confirming that ectx supplies signal complementary to—not a shortcut around—
+the structural representation, and that paper-level splitting effectively removes the trivial-identifier
+failure mode discussed above.
+
+
+
+Per-assay-type breakdown.  Within each per-assay-type regime, the gains are most pronounced on
+SPR and FPA. SPR shows the largest single-cohort improvement: MSE drops by 15% (2.47 →2.11),
+Rp rises by +0.09 (0.50 →0.59), and c-index by +0.03 (0.67 →0.71), with all three gains
+significant at p < 0.01. FPA shows similarly broad and significant improvements across MSE
+(1.06 →0.94, −11%), Rp (+0.04), and c-index (+0.01), again with p < 0.01 on all three. RBA—
+the largest cohort, where the structural baseline is already strongest—shows smaller but consistent
+gains: MSE 1.17 →1.15 (not significant, p = 0.14), Rp +0.02 (p < 0.05), and c-index +0.01
+(p < 0.05).
+
+ITC is the lone exception: under context conditioning, MSE rises from 1.35 to 1.47 (p < 0.05), Rp
+drops from 0.49 to 0.41 (p < 0.1), and c-index regresses by 0.03 without reaching significance. We
+argue this regression is consistent with, rather than contrary to, the central hypothesis of the paper.
+ITC is widely regarded as the gold-standard biophysical method for binding-affinity measurement
+precisely because it is label-free and immobilization-free: both partners are free in solution, and Kd
+is recovered as a direct thermodynamic quantity without recourse to an exogenous reporter [27, 8, 1].
+Each absent component is itself a protocol-dependent source of variation that the schema is designed
+to capture in the other three assays—tracer Kd uncertainty propagating through Cheng–Prusoff in
+RBA and FPA, surface-density and mass-transport effects in SPR, fluorescence interference and label
+perturbation in FPA—but is, by construction, absent from ITC. The recoverable protocol metadata for
+ITC therefore modulates the reported Kd far less than its counterparts modulate the readouts of the
+other three assays, and when the affinity-modulating signal in ectx is weak relative to the parameters
+it adds to the head, conditioning on it can introduce noise rather than information.
+
+
+
+On the value of curated assay context.  Two observations support the claim that the curated
+assay metadata is a meaningful source of these gains. First, both the w/ and w/o configurations
+are evaluated on top of Boltz-2 weights pretrained on BindingDB, so any baseline performance
+attributable to seeing protein–ligand pairs during pretraining is shared by both configurations and
+cancels out of the comparison. The improvement of w/ over w/o therefore isolates the contribution of
+the assay-context embedding ectx, independent of pretraining exposure. Second, the gains delivered
+by ectx—significant in the combined regime and in three of the four per-assay-type regimes (SPR,
+FPA, RBA)—indicate that the assay metadata supplies information beyond what the structural trunk
+already encodes. Taken together, the dataset and the context-conditioned head support the central
+hypothesis of this work: systematically curated assay metadata is genuine, non-trivial signal for
+protein–ligand affinity prediction wherever protocol-level variation drives heterogeneity in reported
+affinity values, and treating it as such is a productive lever for closing the gap between heterogeneous
+bioactivity data and reliable affinity prediction.
+
+
+                                       8
+
+## PDF page 9
+Table 3: Context-conditioned affinity prediction on the paper-level held-out split of Assay-Aware
+BindingDB. The All row reports the combined regime (single model trained on all four assay types
+pooled); the ITC, SPR, FPA, and RBA rows report per-assay-type regimes (separate model trained on
+each assay type in isolation). w/: full model with ectx; w/o: ectx ablated; ctx-only: structural trunk
+ablated. Reported as mean ± std over 10 independent paper-level train/val/test splits. Best result per
+metric per cohort in bold.
+
+                  Cohort         Variant   MSE ↓      Rp ↑       c-index ↑
+
+                              w/      1.19±0.05  0.67±0.02  0.74±0.01
+                    All (65,169)   w/o      1.27±0.06   0.64±0.02   0.73±0.01
+                                    ctx-only  1.77±0.07   0.45±0.02   0.65±0.01
+
+                              w/       1.47±0.27   0.41±0.17   0.64±0.06
+                ITC (1,761)    w/o     1.35±0.26  0.49±0.07  0.67±0.03
+                                    ctx-only  1.64±0.38   0.22±0.15   0.58±0.04
+
+                              w/      2.11±0.27  0.59±0.07  0.71±0.03
+              SPR (3,650)   w/o      2.47±0.14   0.50±0.10   0.67±0.04
+                                    ctx-only  2.83±0.48   0.39±0.14   0.63±0.05
+
+                              w/      1.15±0.07  0.61±0.02  0.72±0.01
+             RBA (44,223)  w/o      1.17±0.08   0.59±0.02   0.71±0.01
+                                    ctx-only  1.70±0.06   0.27±0.03   0.59±0.01
+
+                              w/      0.94±0.09  0.73±0.03  0.76±0.01
+               FPA (15,535)  w/o      1.06±0.12   0.69±0.05   0.75±0.02
+                                    ctx-only  1.61±0.22   0.47±0.07   0.65±0.02
+
+
+5  Limitations
+
+Metadata extraction coverage.  While extraction is human-curator-comparable on records it
+processes (Section 3.2), many candidate BindingDB entries fail upstream of the extractor: (i) the
+source article is inaccessible to our retrieval pipeline; (ii) operative protocol details are deferred to cited
+methods papers or supplementary material we cannot retrieve; or (iii) the paper exceeds the language
+model’s context window or memory budget. A residual fraction reflects under-specified source
+descriptions—an irreducible ceiling regardless of model capacity. Better retrieval (supplementary
+material, cited references), longer-context extractors, and targeted re-prompting are natural avenues.
+
+Assay-type coverage.  We cover four assay types (ITC, SPR, RBA, FPA); others—ELISA, thermal
+shift, AlphaScreen, and various cell-based functional readouts—fall outside our scope. Extending O
+and the extraction prompts to these assays would broaden coverage and test cross-modality generality.
+
+Context encoding and model architecture.  The structured assay record is serialized to JSON,
+embedded by a frozen general-purpose text encoder, and concatenated with the Boltz-2 trunk summary
+before the affinity head. We have not systematically explored alternative context representations (per-
+field embeddings, ontology-aware encoders, graph representations of buffer and protocol topology, or
+categorical–text hybrids) or fusion architectures (cross-attention, context-conditioned modulation of
+earlier trunk layers). These may yield further gains over our concatenation baseline.
+
+6  Conclusion
+
+We presented Assay-Aware BindingDB: 74,425 BindingDB protein–ligand pairs augmented with
+structured assay metadata, extracted from primary literature by a two-stage agentic framework that
+attains human-curator-comparable fidelity across ITC, SPR, RBA, and FPA. Injecting an assay-context
+embedding into the Boltz-2 affinity module reduces combined-regime MSE from 1.27 to 1.19 and
+raises Pearson correlation from 0.64 to 0.67 on a paper-level held-out split, with significant gains on
+SPR, FPA, and RBA. ITC—the only label- and immobilization-free assay—shows no improvement,
+consistent with its design removing the very protocol artifacts that the metadata captures. These
+results support the hypothesis that curated assay metadata is informative signal, not irreducible noise,
+wherever protocol-level variation drives heterogeneity in reported affinity values.
+
+
+                                       9
+
+## PDF page 10
+References
+
+ [1] Margarida Bastos, Olga Abian, Christopher M Johnson, Frederico Ferreira-da Silva, Sonia Vega,
+    Ana Jimenez-Alesanco, David Ortega-Alarcon, and Adrian Velazquez-Campoy. Isothermal
+      titration calorimetry. Nature Reviews Methods Primers, 3(1):17, 2023.
+
+ [2] Yufan Chen, Ching Ting Leung, Bowen Yu, Jianwei Sun, Yong Huang, Linyan Li, Hao Chen,
+    and Hanyu Gao. A multi-agent system enables versatile information extraction from the
+     chemical literature. arXiv preprint arXiv:2507.20230, 2025.
+
+ [3] Jinyuan Fang, Yanwen Peng, Xi Zhang, Yingxu Wang, Xinhao Yi, Guibin Zhang, Yi Xu, Bin Wu,
+     Siwei Liu, Zihao Li, et al. A comprehensive survey of self-evolving ai agents: A new paradigm
+     bridging foundation models and lifelong agentic systems. arXiv preprint arXiv:2508.07407,
+     2025.
+
+ [4] Mohamed Amine Ferrag, Norbert Tihanyi, and Merouane Debbah. From llm reasoning to
+    autonomous ai agents: A comprehensive review. arXiv preprint arXiv:2504.19678, 2025.
+
+ [5] Anna Gaulton, Louisa J Bellis, A Patricia Bento, Jon Chambers, Mark Davies, Anne Hersey,
+    Yvonne Light, Shaun McGlinchey, David Michalovich, Bissan Al-Lazikani, et al. Chembl: a
+     large-scale bioactivity database for drug discovery. Nucleic acids research, 40(D1):D1100–
+    D1107, 2012.
+
+ [6] Yoshitaka Inoue, Tianci Song, Xinling Wang, Augustin Luna, and Tianfan Fu. Drugagent:
+     Multi-agent large language model-based reasoning for drug-target interaction prediction. ArXiv,
+     pages arXiv–2408, 2025.
+
+ [7] Tuomo Kalliokoski, Christian Kramer, Anna Vulpetti, and Peter Gedeck. Comparability of
+    mixed ic50 data–a statistical analysis. PloS one, 8(4):e61007, 2013.
+
+ [8] Georg Krainer and Sandro Keller.  Single-experiment displacement assay for quantifying
+      high-affinity binding by isothermal titration calorimetry. Methods, 76:116–123, 2015.
+
+ [9] Christian Kramer, Tuomo Kalliokoski, Peter Gedeck, and Anna Vulpetti. The experimental
+     uncertainty of heterogeneous public k i data. Journal of medicinal chemistry, 55(11):5165–5173,
+     2012.
+
+[10] Greg Landrum. Rdkit: Open-source cheminformatics. https://www.rdkit.org.
+
+[11] Gregory A Landrum and Sereina Riniker. Combining ic50 or k i values from different sources is
+     a source of significant noise. Journal of chemical information and modeling, 64(5):1560–1567,
+     2024.
+
+[12] Tiqing Liu, Yuhmei Lin, Xin Wen, Robert N Jorissen, and Michael K Gilson. Bindingdb: a
+     web-accessible database of experimentally determined protein–ligand binding affinities. Nucleic
+     acids research, 35(suppl_1):D198–D201, 2007.
+
+[13] Tiqing Liu, Linda Hwang, Stephen K Burley, Carmen I Nitsche, Christopher Southan, W Patrick
+     Walters, and Michael K Gilson. Bindingdb in 2024: a fair knowledgebase of protein-small
+     molecule binding data. Nucleic acids research, 53(D1):D1633–D1644, 2025.
+
+[14] Daniel M Lowe, Peter T Corbett, Peter Murray-Rust, and Robert C Glen. Chemical name to
+      structure: Opsin, an open source solution, 2011.
+
+[15] Kojiro Machi, Seiji Akiyama, Yuuya Nagata, and Masaharu Yoshioka. Ospar: A corpus for
+      extraction of organic synthesis procedures with argument roles. Journal of Chemical Information
+    and Modeling, 63(21):6619–6628, 2023.
+
+[16] Tula Masterman, Sandi Besen, Mason Sawtell, and Alex Chao. The landscape of emerging
+      ai agent architectures for reasoning, planning, and tool calling: A survey.  arXiv preprint
+     arXiv:2404.11584, 2024.
+
+
+                                       10
+
+## PDF page 11
+[17] David Mendez, Anna Gaulton, A. Patrícia Bento, Jon Chambers, Marleen De Veij, Eloy Félix,
+     María Paula Magariños, Juan F. Mosquera, Prudence Mutowo, Michał Nowotka, María Gordillo-
+    Marañón, Fiona Hunter, Laura Junco, Grace Mugumbate, Milagros Rodriguez-Lopez, Francis
+     Atkinson, Nicolas Bosc, Chris J. Radoux, Aldo Segura-Cabrera, Anne Hersey, and Andrew R.
+     Leach. Chembl: Towards direct deposition of bioassay data. Nucleic Acids Research, 47:
+    D930–D940, 1 2019. ISSN 13624962. doi: 10.1093/nar/gky1075.
+
+[18] Junbo Niu, Zheng Liu, Zhuangcheng Gu, Bin Wang, Linke Ouyang, Zhiyuan Zhao, Tao Chu,
+     Tianyao He, Fan Wu, Qintong Zhang, et al. Mineru2. 5: A decoupled vision-language model
+      for efficient high-resolution document parsing. In The 64th Annual Meeting of the Association
+      for Computational Linguistics–Industry Track, 2025.
+
+[19] Saro Passaro, Gabriele Corso, Jeremy Wohlwend, Mateo Reveiz, Stephan Thaler, Vignesh Ram
+     Somnath, Noah Getz, Tally Portnoi, Julien Roy, Hannes Stark, et al. Boltz-2: Towards accurate
+     and efficient binding affinity prediction. BioRxiv, pages 2025–06, 2025.
+
+[20] Qwen Team. Qwen3 technical report. arXiv preprint arXiv:2505.09388, 2025.
+
+[21] Qwen Team. Qwen3.5: Towards native multimodal agents, February 2026. URL https:
+    //qwen.ai/blog?id=qwen3.5.
+
+[22] Viktoriia Shepard, Aibulat Musin, Kristina Chebykina, Natalia A Zeninskaya, Lukia Mis-
+     tryukova, Konstantin Avchaciov, and Peter O Fedichev. Harvest: Unlocking the dark bioactivity
+     data of pharmaceutical patents via agentic ai. bioRxiv, pages 2026–03, 2026.
+
+[23] Danislav S Spassov. Binding affinity determination in drug design: insights from lock and key,
+     induced fit, conformational selection, and inhibitor trapping models. International Journal of
+     Molecular Sciences, 25(13):7124, 2024.
+
+[24] Jing Tang, Agnieszka Szwajda, Sushil Shakyawar, Tao Xu, Petteri Hintsanen, Krister Wenner-
+     berg, and Tero Aittokallio. Making sense of large-scale kinase inhibitor bioactivity data sets: a
+     comparative and integrative analysis. Journal of Chemical Information and Modeling, 54(3):
+     735–743, 2014.
+
+[25] Ziaurrehman Tanoli, Zaid Alam, Aleksandr Ianevski, Krister Wennerberg, Markus Vähä-
+     Koskela, and Tero Aittokallio. Interactive visual analysis of drug–target interaction networks
+     using drug target profiler, with applications to precision medicine and drug repurposing. Brief-
+     ings in bioinformatics, 21(1):211–220, 2020.
+
+[26] Alain C Vaucher, Federico Zipoli, Joppe Geluykens, Vishnu H Nair, Philippe Schwaller, and
+    Teodoro Laino. Automated extraction of chemical synthesis actions from experimental proce-
+     dures. Nature communications, 11(1):3601, 2020.
+
+[27] Sonia Vega, Olga Abian, and Adrian Velazquez-Campoy. A unified framework based on the
+     binding polynomial for characterizing biological systems by isothermal titration calorimetry.
+     Methods, 76:99–115, 2015.
+
+[28] Jiaxian Yan, Jintao Zhu, Yuhang Yang, Qi Liu, Kai Zhang, Zaixi Zhang, Xukai Liu, Boyan
+     Zhang, Kaiyuan Gao, Jinchuan Xiao, et al. Biominer: A multi-modal system for automated
+     mining of protein-ligand bioactivity data from literature. BioRxiv, pages 2025–04, 2025.
+
+[29] Cheng Yung-Chi and William H Prusoff. Relationship between the inhibition constant (ki) and
+     the concentration of inhibitor which causes 50 per cent inhibition (i50) of an enzymatic reaction.
+     Biochemical pharmacology, 22(23):3099–3108, 1973.
+
+[30] Barbara Zdrazil, Eloy Felix, Fiona Hunter, Emma J Manners, James Blackshaw, Sybilla Corbett,
+    Marleen de Veij, Harris Ioannidis, David Mendez Lopez, Juan F Mosquera, Maria Paula
+     Magarinos, Nicolas Bosc, Ricardo Arcila, Tevfik Kizilören, Anna Gaulton, A Patrícia Bento,
+     Melissa F Adasme, Peter Monecke, Gregory A Landrum, and Andrew R Leach. The chembl
+     database in 2023: a drug discovery platform spanning multiple bioactivity data types and time
+     periods. Nucleic Acids Research, 52(D1):D1180–D1192, 11 2023. ISSN 0305-1048. doi:
+     10.1093/nar/gkad1004. URL https://doi.org/10.1093/nar/gkad1004.
+
+
+
+                                       11
+
+## PDF page 12
+A  Assay Schema Ontologies
+
+ This appendix specifies the four type-specific schema ontologies O used to condition Agent 2
+ (Section 3.1) during ontology-compliant JSON synthesis. Each schema enumerates the leaf fields,
+ their value types, whether they are required by the schema, and either their permitted enumerated
+ values or representative examples drawn from the surveyed literature. Field paths use dot notation
+ to indicate nesting. A dagger (†) marks fields the schema declares as required. The type? suffix
+ denotes a nullable type (i.e., null is permitted in addition to the listed type).
+
+ A.1  Isothermal Titration Calorimetry (ITC)
+
+
+Table 4: Schema ontology O for Isothermal Titration Calorimetry (ITC). A dagger (†) marks fields required by the
+schema. type? denotes a nullable type.
+
+
+
+ Field path                    Type           Description
+
+ instrument†                   object          Details about the ITC instrument used.
+ instrument.model†              string        Brand and model of the ITC instrument used. Examples:
+                                               MicroCal VP-ITC; MicroCal PEAQ-ITC
+ protein†                      object          Details about the protein/macromolecule used in the
+                                                     experiment.
+ protein.name†                  string       Name of the protein.
+ protein.location†                string         Physical location of the protein during the experiment.
+                                                  Allowed: cell; syringe
+ protein.concentration†           string?        Concentration of the protein in micromolar (uM).
+                                                       Extract numeric value only (no units). Convert from
+                                                        other molar units: mM × 1000, nM / 1000. Use a string
+                                                           to allow ranges (e.g., ’75-225’). Return null if the paper
+                                                         reports it in mass units (e.g., mg/mL) without providing
+                                                   a molecular weight for conversion. Use ASCII ’u’ in
+                                                          unit strings, not Unicode micro. Examples: 15; 75-225;
+                                                          null
+ protein.solution_volume†         string        Volume of the protein solution in microliters (uL).
+                                                       Extract numeric value only. Convert from other units:
+                                 mL × 1000. Use ASCII ’u’ in unit strings, not Unicode
+                                                    micro. Examples: 3000; 270
+ ligand†                       object          Details about the small molecule/ligand used in the
+                                                     experiment.
+ ligand.name†                  string       Name of the ligand.
+ ligand.location†                string         Physical location of the ligand during the experiment.
+                                                  Allowed: cell; syringe
+ ligand.concentration†           string?        Concentration of the ligand in micromolar (uM). Extract
+                                                 numeric value only (no units). Convert from other molar
+                                                             units: mM × 1000, nM / 1000. Use a string to allow
+                                                    ranges (e.g., ’10-30’). Return null if the paper reports it
+                                                          in mass units (e.g., mg/mL) without providing a
+                                                   molecular weight for conversion. Use ASCII ’u’ in unit
+                                                              strings, not Unicode micro. Examples: 30; 10-30; null
+ assay_conditions†              object         Conditions under which the titration was performed.
+ assay_conditions.buffer_         string        Composition of the buffer. Put concentration before
+ composition†                                       chemical. Exclude pH. Examples: 10 mM Hepes, 150
+                             mM NaCl, 3mM EDTA
+ assay_conditions.pH†            number      pH of the buffer. Examples: 7.4
+ assay_conditions.temperature_    string         Temperature of the experiment in ◦C. Extract numeric
+ c†                                                  value only. Examples: 25
+ assay_conditions.stirring_speed†   string          Stirring speed in rpm. Extract numeric value only.
+                                                Examples: 1000
+
+                                                                               (continued on next page)
+
+
+
+                                       12
+
+## PDF page 13
+                                      (continued from previous page)
+
+ Field path                    Type           Description
+
+ assay_conditions.reference_cell_   string         Content of the reference cell (usually water or buffer).
+ content†
+ assay_conditions.control_        string         Description of control experiments/blanks performed to
+ method†                                               correct for heat of dilution. Examples: Titration of
+                                                     ligand into buffer; Titration of buffer into protein
+                                                         solution; Subtracted constant heat of injection
+ assay_conditions.injection_       object          Specifics regarding the injection volumes and timing.
+ parameters†
+ assay_conditions.injection_        string        Volume of the first injection in microliters (uL). Extract
+ parameters.first_volume†                         numeric value only. Convert from other units: mL ×
+                                                  1000. Use ASCII ’u’ in unit strings, not Unicode micro.
+                                                Examples: 0.4; 1; 2
+ assay_conditions.injection_        string        Volume of subsequent injections in microliters (uL).
+ parameters.subsequent_volume†                     Extract numeric value only. Convert from other units:
+                                 mL × 1000. Use ASCII ’u’ in unit strings, not Unicode
+                                                    micro. Examples: 2; 8; 10
+ assay_conditions.injection_        string         Duration of each injection in s. Extract numeric value
+ parameters.duration†                                  only. Examples: 4; 16; 20
+ assay_conditions.injection_        string        Time between each injection in s. Extract numeric value
+ parameters.spacing†                                   only. Examples: 120; 150; 180
+ assay_conditions.injection_        string          Total number of injections. Extract numeric value only.
+ parameters.total_count†                          Examples: 19; 20; 25
+ data_analysis†                 object          Details about how the data was modeled.
+ data_analysis.binding_model†     string        The binding model used to fit the ITC data. Examples:
+                                                          one-site; two-sites
+
+
+ A.2  Surface Plasmon Resonance (SPR)
+
+
+Table 5: Schema ontology O for Surface Plasmon Resonance (SPR). A dagger (†) marks fields required by the
+schema. type? denotes a nullable type.
+
+
+
+ Field path                    Type           Description
+
+ instrument†                   object          Details about the SPR instrument used.
+ instrument.manufacturer†        string            e.g., GE Healthcare, Cytiva, Biacore AB, PlexArrayTM
+ instrument.model†              string            e.g., Biacore T200, Biacore 8K, BIAcore 3000,
+                                            PlexArrayTM HT SPRi
+ sensor_chip†                  object          Details about the sensor chip.
+ sensor_chip.type†               string        The type of sensor chip surface. Examples: CM5; CM7;
+                                               SA; NTA; ...
+ sensor_chip.manufacturer†       string            e.g., GE Healthcare, XanTec, Biacore
+ immobilization†                object          Details about the molecule immobilized on the chip (the
+                                                         ligand).
+ immobilization.ligand_name†     string        The name of the protein, compound, or molecule
+                                                      attached to the chip. Examples: his-tagged HDAC8;
+                                                       Biotinylated MEK1; SARS-CoV-2 Mpro; Compound
+                                           UA-18
+ immobilization.strategy†         string        The chemical or affinity method used for
+                                                     immobilization. Allowed: Amine coupling; SA-Biotin
+                                                      capture; NTA-His capture; Thiol coupling; Aldehyde
+                                                     coupling; GST capture; Antibody capture;
+                                                      Photo-crosslinking; Direct immobilization; Other
+ immobilization.density_ru†       string |      The immobilization level in Response Units (RU). Use
+                             number         a string to capture ranges or approximations. Examples:
+                                               ~4900; 6000-8000; 4000; 800-1800
+
+                                                                               (continued on next page)
+
+
+
+                                       13
+
+## PDF page 14
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+immobilization.concentration_    number?       The concentration of the ligand used during the
+for_immobilization†                               immobilization step, in micromolar (uM). Convert from
+                                                      other molar units: mM × 1000, nM / 1000. Return null
+                                                                        if the paper reports it in mass units (e.g., ug/mL)
+                                                   without providing a molecular weight for conversion.
+                                           Use ASCII ’u’ in unit strings, not Unicode micro.
+                                               Examples: 1; 50; 12.5; null
+analyte†                      object          Details about the molecule in solution being tested (the
+                                                        analyte).
+analyte.description†             string     A general description of the analyte(s). Examples:
+                                                Fragments; Peptides; Small molecules; Compounds; ...
+analyte.concentration_range†     string        The range of concentrations tested, described as text.
+                                                Normalize all concentrations to micromolar (uM) using:
+                           mM × 1000, nM / 1000. Use ASCII ’u’ in unit strings,
+                                                    not Unicode micro. Examples: 2000 uM; 5-0.0195 uM;
+                                                  0.2-100 uM; 9-step, 2-fold, top 0.02 uM
+assay_conditions†              object         Conditions during the binding
+                                                       (association/dissociation) phase.
+assay_conditions.running_        string        The full composition of the running buffer, including
+buffer_composition†                                  additives (e.g., DMSO, Tween). Exclude pH here; use
+                                                      the separate pH field.
+assay_conditions.pH†            number        The pH of the running buffer. Examples: 7.4; 6.0; 7.5
+assay_conditions.assay_type†      string        The type of kinetic experiment performed. Allowed:
+                                                     Single Cycle Kinetics; Multi Cycle Kinetics; Single
+                                                Cycle Steady-State Affinity; Multi Cycle Steady-State
+                                                              Affinity; Screening; Unknown
+assay_conditions.assay_flow_      number        The flow rate used during analyte injection, in
+rate†                                                   microliters per minute (uL/min).
+assay_conditions.temperature_    string        The temperature of the experiment. Use a string to
+c†                                                allow for ’room temperature’. Examples: 25; 4; room
+                                                  temperature
+assay_conditions.association_     string |      The contact/association time in seconds. Use a string to
+time_s†                       number         capture ranges. Examples: 60; 120; 70; 30-600
+assay_conditions.dissociation_     string |      The dissociation time in seconds. Use a string to
+time_s†                       number         capture ranges. Examples: 240; 420; 600; 100-600; ...
+assay_conditions.regeneration_    string        The composition of the solution used to regenerate the
+solution†                                           chip surface. Examples: None; 10 mM glycine pH 2; 40
+                            mM CHAPS...; 9:1 1M NaCl: Glycerol
+data_analysis†                 object          Details about how the raw data was processed and
+                                                 modeled.
+data_analysis.reference_         string         Description of the reference surface or channel used for
+description†                                           subtraction. Examples: Untreated SA surface; Fc1 (no
+                                                       ligand); Reference channels; Flow-cells 1 and 3
+data_analysis.subtraction_        string        The method of data normalization. Allowed: Double
+method†                                             referenced; Reference subtracted; Solvent correction;
+                                              Background subtracted; Blank subtracted; Other
+data_analysis.fitting_model†      string        The kinetic or affinity model used to fit the data.
+                                                 Allowed: 1:1 Langmuir binding model; 1:1 binding
+                                             model with mass transport; Steady-state affinity;
+                                                    Two-state binding model; Heterogeneous binding model;
+                                                     Bivalent analyte model; Other
+data_analysis.software†          string        The software used for data analysis. Examples:
+                                                  BiaEvaluation 3.0; GeneData; Scrubber software,
+                                                     version 2.0c; Biacore 8K Insight Evaluation Software
+                                                    Version 2.0
+
+
+A.3  Radioligand Binding Assay (RBA)
+
+
+
+
+                                       14
+
+## PDF page 15
+Table 6: Schema ontology O for Radioligand Binding Assay (RBA). A dagger (†) marks fields required by the
+schema. type? denotes a nullable type.
+
+
+
+ Field path                    Type           Description
+
+ biological_preparation†         object          Details about the biological source containing the
+                                                          target receptor.
+ biological_preparation.source_     string        The type of biological material used. Allowed:
+ type†                                     Membrane homogenate; Whole cells; Tissue section;
+                                                        Purified protein; Cell lysate; Tissue homogenate; Other
+ biological_preparation.tissue_or_   string        The tissue, cell line, or expression system used.
+ cell_line†                                       Examples: Rat striatal membranes; CHO-K1 cells
+                                                         stably expressing hD2R; HEK293 cells transfected with
+                                      hMOR; Guinea pig brain cortex; ...
+ biological_preparation.species†     string        The species origin of the biological preparation.
+                                                Examples: Human; Rat; Mouse; Guinea pig; ...
+ biological_preparation.target_     string        The receptor or protein target being studied, including
+ protein†                                          isoform or subunit composition if specified. Examples:
+                                            Dopamine D2 receptor; GABAA (α1β2γ2); Muscarinic
+                                  M1 receptor; Opioid mu receptor (MOR); ...
+ biological_preparation.protein_    string        The concentration of membrane protein or cells per
+ concentration†                                        well/tube, including units. Heterogeneous field: may be
+                                                 mass-based (ug/well, ug/tube, ug/mL) or
+                                                      cell-count-based (cells/well). Use ASCII ’u’ in unit
+                                                              strings, not Unicode micro. Examples: 50 ug/well; 20
+                                             ug protein/tube; 100,000 cells/well; 15 ug membrane
+                                                       protein
+ radioligand†                  object          Details about the radiolabeled probe used in the assay.
+ radioligand.name†              string        The name of the radioligand, including the isotope label.
+                                                Examples: [3H]-SCH 23390; [125I]-RTI-55;
+                                          [3H]-DPCPX; [3H]-raclopride; ...
+ radioligand.isotope†             string        The radioisotope used for labeling. Allowed: 3H; 125I;
+                                                 35S; 14C; 33P; Other
+ radioligand.specific_activity†      object        The specific activity of the radioligand.
+ radioligand.specific_activity.       string |      Numeric value of the specific activity. Use a string to
+ value†                        number         capture ranges or approximations. Examples: 85.5;
+                                                   81-86; 2200
+ radioligand.specific_activity.unit†   string         Unit of specific activity. Allowed: Ci/mmol; mCi/mmol;
+                                           GBq/mmol; TBq/mmol
+ radioligand.concentration_used†   number?       The concentration of radioligand used in the assay, as a
+                                            number in nanomolar (nM). Convert from other molar
+                                                             units: pM / 1000, uM × 1000, mM × 1000000. Return
+                                                          null if the paper reports only a qualitative value (e.g.,
+                                           ’~Kd concentration’) or uses units that cannot be
+                                                    converted to nM. Use ASCII ’u’ in unit strings
+                                                    elsewhere in the schema, not Unicode micro. Examples:
+                                                      1; 0.5; 2; null
+ radioligand.kd_value†           object        The known dissociation constant (Kd) of the
+                                                     radioligand for the target, required for Ki calculation
+                                                       via Cheng-Prusoff.
+ radioligand.kd_value.value†       number       Kd value as a number in nanomolar (nM). Convert from
+                                                       other units: uM × 1000, pM / 1000. Use ASCII ’u’ in
+                                                          unit strings, not Unicode micro.
+ radioligand.kd_value.source†      string        Whether the Kd was determined in-house or taken from
+                                                                 literature. Allowed: Determined in this study; Literature
+                                                      value; Not specified
+ test_compound†                object          Details about the unlabeled compound(s) being
+                                                       evaluated.
+
+                                                                               (continued on next page)
+
+
+
+
+                                       15
+
+## PDF page 16
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+test_compound.description†       string     A general description of the test compound(s).
+                                               Examples: Small molecules; Peptides; Novel D2
+                                                      antagonists; Natural product library
+test_compound.concentration_    string        The range of concentrations tested for the competition
+range†                                               curve, as a string with all concentrations normalized to
+                                                micromolar (uM). Convert from other molar units: nM /
+                                                 1000, pM / 1000000, mM × 1000. Use ASCII ’u’ in
+                                                         unit strings, not Unicode micro. Examples: 0.0001-10
+                                        uM; 10-point, half-log dilution, top 10 uM; 12
+                                                      concentrations, 3-fold serial dilution; Single point at 10
+                                 uM
+test_compound.vehicle_solvent†    string        The solvent used to dissolve the test compounds and its
+                                                              final assay concentration. Examples: DMSO, final 1%;
+                                    DMSO, final 0.1%; Water; Ethanol, final 0.5%
+nsb_definition†                object      How nonspecific binding (NSB) was defined in the assay.
+                                                   This is critical for data interpretation.
+nsb_definition.compound_        string        The unlabeled compound used to define 100%
+name†                                            displacement (nonspecific binding). Examples: SCH
+                                               23390; Haloperidol; Naloxone; Atropine; ...
+nsb_definition.compound_        number?       The concentration of the NSB-defining compound as a
+concentration†                               number in micromolar (uM). Convert from other molar
+                                                            units: nM / 1000, mM × 1000. Return null if the paper
+                                                   uses units that cannot be converted to uM. Use ASCII
+                                                         ’u’ in unit strings, not Unicode micro. Examples: 10; 1;
+                                                100; null
+nsb_definition.selectivity_        string        Whether the NSB compound is selective for the target,
+rationale†                                           or a broad/non-selective displacer. Allowed:
+                                                         Target-selective; Non-selective; Not specified
+assay_conditions†              object         Conditions during the incubation phase.
+assay_conditions.assay_format†    string        The physical format of the assay. Examples: Filtration
+                                                          (well); Filtration (tubes); Scintillation Proximity Assay
+                                                  (SPA); Centrifugation; ...
+assay_conditions.buffer_         string        The full composition of the incubation buffer, including
+composition†                                               salts and additives. Exclude pH here; use the separate
+                                    pH field. Examples: 50 mM Tris-HCl, 120 mM NaCl, 5
+                            mM MgCl2, 1 mM EDTA; 50 mM HEPES, 10 mM
+                                            MgCl2, 100 mM NaCl
+assay_conditions.pH†            number        The pH of the incubation buffer. Examples: 7.4; 7.5;
+                                                     6.8
+assay_conditions.incubation_     string        The temperature during incubation. Use a string to
+temperature†                                     allow for ’room temperature’. Examples: 25; 37; 4;
+                                           room temperature
+assay_conditions.incubation_     string |      The duration of incubation as a number in minutes.
+time†                        number         Convert from other units: h × 60, s / 60. Use a string to
+                                                     capture ranges (e.g., ’60-120’). Examples: 60; 90; 120;
+                                               60-120
+assay_conditions.equilibrium_     string        Whether the authors confirmed that binding had reached
+confirmed†                                         equilibrium (e.g., via a time course). Allowed: Yes; No;
+                                              Not specified
+assay_conditions.total_assay_     number        The total volume of the assay mixture as a number in
+volume†                                               microliters (uL). Convert from other units: mL × 1000.
+                                           Use ASCII ’u’ in unit strings, not Unicode micro.
+                                               Examples: 200; 500; 1000; 250
+separation_and_detection†       object      How bound and free radioligand were separated and
+                                        how radioactivity was measured.
+separation_and_detection.         string        The method used to separate bound from free
+separation_method†                                  radioligand. Allowed: Rapid vacuum filtration;
+                                                  Harvester filtration; Centrifugation; SPA (no
+                                                      separation); FlashPlate (no separation); Other
+
+                                                                               (continued on next page)
+
+
+                                       16
+
+## PDF page 17
+                                      (continued from previous page)
+
+ Field path                    Type           Description
+
+ separation_and_detection.filter_    string?       The type of filter used, if filtration-based. Null if not
+ type†                                                  applicable. Examples: GF/B; GF/C; Unifilter-96 GF/B;
+                                         Whatman GF/B pretreated with 0.3% PEI
+ separation_and_detection.wash_    string?       The wash conditions after filtration. Null if not
+ protocol†                                              applicable. Examples: 3 × 3 mL ice-cold 50 mM
+                                                  Tris-HCl pH 7.4; 4 × 1 mL cold wash buffer; 3 × 500
+                                           uL ice-cold buffer
+ separation_and_detection.         string        The instrument used to measure radioactivity.
+ detection_instrument†                           Examples: Perkin Elmer MicroBeta2; Beckman LS6500
+                                                             scintillation counter; Packard TopCount NXT; Wallac
+                                             1450 MicroBeta
+ separation_and_detection.         string?       The scintillation cocktail used for liquid scintillation
+ scintillation_cocktail†                               counting. Null if gamma counting or proximity-based.
+                                                Examples: Ultima Gold; MicroScint-20; EcoLite;
+                                                OptiPhase SuperMix
+ data_analysis†                 object          Details about how the raw data was processed and
+                                                 modeled.
+ data_analysis.endpoint_          string        The primary binding parameter reported in the
+ reported†                                              publication. Allowed: Ki; IC50; Kd; Bmax; Percent
+                                                           inhibition; pKi; pIC50; EC50; Other
+ data_analysis.ic50_to_ki_         string?       The method used to convert IC50 to Ki, if applicable.
+ conversion†                                       Null if Ki was not derived from IC50. Allowed:
+                                                  Cheng-Prusoff equation; Munson-Rodbard correction;
+                                                 Exact solution (Cer & Bhatt); Not applicable; Not
+                                                          specified
+ data_analysis.fitting_model†      string        The model used to fit competition or saturation binding
+                                                       curves. Examples: One-site competition; Two-site
+                                                     competition; Four-parameter logistic; Saturation
+                                                    binding (one-site); ...
+ data_analysis.hill_slope_         object        Whether a Hill slope (nH) was reported and its value, if
+ reported†                                              available. nH̸ = 1 may indicate cooperativity or
+                                                    binding heterogeneity.
+ data_analysis.hill_slope_reported.   string         Allowed: Yes, fixed to 1; Yes, variable; Not reported
+ reported†
+ data_analysis.hill_slope_reported.   number?       The Hill slope value if reported as variable. Null if fixed
+ value                                                or not reported.
+ data_analysis.software†          string        The software used for curve fitting and data analysis.
+                                                Examples: GraphPad Prism 9; GraphPad Prism 8;
+                                                  SigmaPlot; GeneData Screener; ...
+ data_analysis.replicates†         object        The number of replicates and independent experiments.
+ data_analysis.replicates.          string       Number of replicates per concentration within a single
+ technical_replicates†                              experiment (e.g., duplicate, triplicate). Examples:
+                                                     Duplicate; Triplicate; Singlicate; Not specified
+ data_analysis.replicates.          string |     Number of independent experiments (n). Use a string to
+ independent_experiments†       number         capture ranges. Examples: 3; 2-4; ≥3; Not specified
+
+
+ A.4  Fluorescence Polarization / Anisotropy (FPA)
+
+
+Table 7: Schema ontology O for Fluorescence Polarization / Anisotropy (FPA). A dagger (†) marks fields required
+by the schema. type? denotes a nullable type.
+
+
+
+ Field path                    Type           Description
+
+ biological_preparation†         object          Details about the biological source containing the
+                                                          target protein.
+
+                                                                               (continued on next page)
+
+
+
+
+                                       17
+
+## PDF page 18
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+biological_preparation.source_     string        The type of biological material used. Examples:
+type†                                                 Purified protein; Membrane homogenate; Whole cells;
+                                                     Cell lysate; ...
+biological_preparation.tissue_or_   string        The tissue, cell line, or expression system used to
+cell_line†                                        produce the protein. Examples: E. coli BL21(DE3)
+                                                    expressing His-tagged hBRD4-BD1; CHO-K1 cells
+                                                        stably expressing hERα-LBD; Sf9 insect cells
+                                                    expressing hHsp90α; HEK293T cells transfected with
+                                 hMDM2
+biological_preparation.species†     string        The species origin of the target protein. Examples:
+                                        Human; Rat; Mouse; Bovine; ...
+biological_preparation.target_     string        The protein target being studied, including domain or
+protein†                                              construct boundaries if specified. Examples: BRD4
+                                            bromodomain 1 (BD1, residues 44–168); MDM2
+                                                       (residues 1–118); Hsp90α N-terminal domain; ERα
+                                                    ligand-binding domain; ...
+biological_preparation.protein_    number |      The concentration of protein used in the assay, as a
+concentration†                 string?       number in nanomolar (nM). Convert from other molar
+                                                            units: uM * 1000, pM / 1000, mM * 1000000. Return
+                                                         null if the paper reports mass units (e.g., mg/mL)
+                                                   without a molecular weight for conversion, or if not
+                                                            stated. Use ASCII ’u’, not Unicode micro. Examples:
+                                                  50; 100; 25; 200; ...
+biological_preparation.protein_    string?       The purification method used, if reported. Examples:
+purity_method                               Ni-NTA affinity chromatography followed by SEC; GST
+                                                pulldown and TEV cleavage; Not specified
+fluorescent_tracer†             object          Details about the fluorescently labeled probe used in the
+                                                       assay. Analogous to the radioligand in an RBA.
+fluorescent_tracer.name†         string        The name or identifier of the fluorescent tracer,
+                                                     including the fluorophore label. Examples:
+                                                 FITC-labeled p53 peptide (residues 15–29);
+                                        TAMRA-JQ1; FAM-SMAC peptide (AVPIAQK);
+                                             BODIPY-geldanamycin; ...
+fluorescent_tracer.tracer_type†    string        The chemical nature of the tracer. Examples: Labeled
+                                                      peptide; Labeled small molecule; Labeled nucleic acid;
+                                                Labeled protein fragment; ...
+fluorescent_tracer.fluorophore†    string        The fluorophore conjugated to the tracer. Examples:
+                                                   Fluorescein (FITC); FAM (6-carboxyfluorescein);
+                                      TAMRA; BODIPY; ...
+fluorescent_tracer.excitation_      number?       The excitation wavelength used, in nanometers.
+wavelength_nm                                 Examples: 485; 530; 635; 480
+fluorescent_tracer.emission_       number?       The emission wavelength used, in nanometers.
+wavelength_nm                                 Examples: 530; 580; 670; 520
+fluorescent_tracer.               number?       The concentration of tracer used in the assay, as a
+concentration_used†                          number in nanomolar (nM). Convert from other molar
+                                                            units: uM * 1000, pM / 1000. Return null if only
+                                                          qualitative (e.g., ’~Kd concentration’) or if not stated.
+                                           Use ASCII ’u’, not Unicode micro. Examples: 5; 10; 1;
+                                            20
+fluorescent_tracer.kd_value†      object        The known dissociation constant (Kd) of the tracer for
+                                                      the target protein, required for Ki calculation via
+                                                   Cheng-Prusoff.
+fluorescent_tracer.kd_value.       number?      Kd as a number in nanomolar (nM). Convert from other
+value†                                          molar units: uM * 1000, pM / 1000. Use ASCII ’u’, not
+                                              Unicode micro.
+fluorescent_tracer.kd_value.       string        Whether the tracer Kd was determined in-house or
+source†                                            taken from literature. Examples: Determined in this
+                                                      study; Literature value; Not specified
+
+                                                                               (continued on next page)
+
+
+
+
+                                       18
+
+## PDF page 19
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+test_compound†                object          Details about the unlabeled competitor compound(s)
+                                                  being evaluated.
+test_compound.description†       string     A general description of the test compound(s).
+                                               Examples: Small molecules; Peptides; Novel BRD4
+                                                          inhibitors; Stapled peptides targeting MDM2; ...
+test_compound.concentration_    string        The range of concentrations tested for the competition
+range†                                               curve, as a string with all concentrations normalized to
+                                                micromolar (uM). Convert from other molar units: mM
+                                            * 1000, nM / 1000, pM / 1000000. Use ASCII ’u’, not
+                                              Unicode micro. Examples: 0.0001-100 uM; 10-point,
+                                                        half-log dilution, top 50 uM; 12 concentrations, 3-fold
+                                                          serial dilution; Single point at 10 uM
+test_compound.vehicle_solvent†    string        The solvent used to dissolve the test compounds and its
+                                                              final assay concentration. Examples: DMSO, final 1%;
+                                    DMSO, final 0.5%; DMSO, final 2%; Water
+test_compound.dmso_tolerance_   string        Whether the authors verified that the final DMSO
+tested                                               concentration does not interfere with FP signal or
+                                                         protein-tracer binding. Allowed: Yes; No; Not specified
+assay_controls†                object      How the assay window (fully bound and fully displaced
+                                                        signals) was defined. Analogous to NSB definition in
+                                           RBA.
+assay_controls.high_signal_       string        The condition representing maximum
+control†                                              polarization/anisotropy (fully bound tracer). Examples:
+                                                    Protein + tracer, no competitor; Protein + tracer +
+                                DMSO vehicle
+assay_controls.low_signal_       string        The condition representing minimum
+control†                                              polarization/anisotropy (fully displaced or free tracer).
+                                               Examples: Tracer only, no protein; Tracer + 100 uM
+                                                  unlabeled JQ1; Tracer + 50 uM reference competitor
+assay_controls.positive_control_   string?     A reference compound of known affinity used to
+compound                                             validate the assay. Examples: (+)-JQ1; Nutlin-3a;
+                                           17-AAG; GDC-0152; ...
+assay_controls.positive_control_   string?       The expected Ki or IC50 for the positive control
+expected_value                               compound, including units. Examples: Ki = 50 nM;
+                                            IC50 = 0.6 uM; Not specified
+assay_controls.z_prime_         object        Whether the Z’-factor (assay quality metric) was
+reported†                                          reported and its value.
+assay_controls.z_prime_reported.   string         Allowed: Yes; No
+reported†
+assay_controls.z_prime_reported.   number?       The Z’-factor value, if reported. Null otherwise.
+value
+assay_conditions†              object         Conditions during the incubation phase.
+assay_conditions.assay_format†    string        The plate format used. Allowed: 384-well black plate;
+                                                    96-well black plate; 384-well low-volume black plate;
+                                                  1536-well black plate; Other
+assay_conditions.plate_type       string?        Specific plate information if reported. Examples:
+                                              Corning 3575 (384-well, low-volume, black,
+                                                         flat-bottom); Greiner 784076 (384-well, black,
+                                                         flat-bottom); PerkinElmer OptiPlate-384; Not specified
+assay_conditions.buffer_         string        The full composition of the assay buffer, including salts
+composition†                                  and additives. Exclude pH here; use the separate pH
+                                                                  field. Examples: 50 mM HEPES, 150 mM NaCl, 0.01%
+                                                      Triton X-100, 1 mM DTT; 100 mM phosphate buffer,
+                                            100 mM NaCl, 0.05% CHAPS; PBS with 0.01%
+                                              Tween-20 and 0.1 mg/mL BSA
+assay_conditions.ph†            number        The pH of the assay buffer. Examples: 7.4; 7.5; 7.0
+
+                                                                               (continued on next page)
+
+
+
+
+
+                                       19
+
+## PDF page 20
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+assay_conditions.detergent_used   string?       Whether a detergent was included to reduce compound
+                                                    aggregation or nonspecific binding, and which one.
+                                               Examples: 0.01% Triton X-100; 0.05% CHAPS; 0.01%
+                                               Tween-20; 0.05% Pluronic F-127; ...
+assay_conditions.incubation_     string        The temperature during incubation. Use a string to
+temperature†                                     allow for ’room temperature’. Examples: 25; 37; 4;
+                                           room temperature
+assay_conditions.incubation_     string |      The duration of incubation before reading, as a number
+time†                        number          in minutes. Convert from other units: h * 60. Use a
+                                                          string for ranges (e.g., ’30-60’) or qualitative values
+                                                                 (e.g., ’overnight’). Examples: 30; 60; 120; 30-60; ...
+assay_conditions.equilibrium_     string        Whether the authors confirmed that binding had reached
+confirmed†                                         equilibrium (e.g., via a time course of FP signal).
+                                                 Allowed: Yes; No; Not specified
+assay_conditions.total_assay_     number?       The total volume of the assay mixture per well, as a
+volume†                                     number in microliters (uL). Convert from other units:
+                                mL * 1000. Use ASCII ’u’, not Unicode micro.
+                                               Examples: 20; 25; 50; 100; ...
+assay_conditions.order_of_       string?       The order in which components were added and any
+addition                                             pre-incubation steps. Examples: Protein + compound
+                                                    pre-incubated 15 min, then tracer added; All
+                                               components added simultaneously; Compound + tracer
+                                             added to protein; Not specified
+detection†                    object      How fluorescence polarization or anisotropy was
+                                                 measured. FP/FA is a homogeneous assay with no
+                                                    separation step.
+detection.readout_mode†         string        Whether the assay reports fluorescence polarization or
+                                                     fluorescence anisotropy. Allowed: Fluorescence
+                                                      Polarization (FP); Fluorescence Anisotropy (FA); Not
+                                                         specified
+detection.readout_unit†          string        The unit used for the raw readout values. Allowed: mP
+                                                         (millipolarization); Anisotropy (r); Not specified
+detection.instrument†           string        The plate reader used to measure FP/FA. Examples:
+                               BMG PHERAstar FSX; Tecan Infinite M1000 Pro;
+                                                PerkinElmer EnVision; Molecular Devices SpectraMax
+                                               Paradigm; ...
+detection.g_factor_correction     string        Whether the instrument G-factor was determined and
+                                                     applied to correct for optical bias between detection
+                                                     channels. Allowed: Yes; No; Not specified
+detection.assay_window          object        The dynamic range of the assay, i.e. the difference in
+                                 mP or anisotropy between fully bound and free tracer.
+detection.assay_window.bound_   string |      The FP/FA value for the fully bound tracer (high
+signal                        number?         control). Examples: 220; 220 mP; 0.18 r
+detection.assay_window.free_      string |      The FP/FA value for the free tracer (low control).
+signal                        number?       Examples: 80; 80 mP; 0.05 r
+detection.assay_window.delta      string |      The difference between bound and free signal.
+                             number?       Examples: 140; 140 mP; 0.13 r
+data_analysis†                 object          Details about how the raw data was processed and
+                                                 modeled.
+data_analysis.endpoint_          string        The primary binding parameter reported in the
+reported†                                              publication. Allowed: Ki; IC50; Kd; Percent inhibition;
+                                                  pKi; pIC50; EC50; Other
+data_analysis.ic50_to_ki_         string?       The method used to convert IC50 to Ki, if applicable.
+conversion†                                     For FP/FA competition assays, Cheng-Prusoff requires
+                                                      the tracer Kd and tracer concentration. Allowed:
+                                                 Cheng-Prusoff equation; Nikolovska-Coleska equation;
+                                                 Exact solution; Not applicable; Not specified
+
+                                                                               (continued on next page)
+
+
+
+
+
+                                       20
+
+## PDF page 21
+                                     (continued from previous page)
+
+Field path                    Type           Description
+
+data_analysis.fitting_model†      string        The model used to fit competition curves. Allowed:
+                                                    One-site competition; Two-site competition;
+                                                 Four-parameter logistic (4PL); Three-parameter
+                                                            logistic (3PL, Hill slope fixed to 1); Dose-response
+                                                      (variable slope); Other
+data_analysis.hill_slope_         object        Whether a Hill slope (nH) was reported and its value, if
+reported†                                              available. nH̸ = 1 may indicate compound aggregation,
+                                                         cooperativity, or assay interference.
+data_analysis.hill_slope_reported.   string         Allowed: Yes, fixed to 1; Yes, variable; Not reported
+reported†
+data_analysis.hill_slope_reported.   number?       The Hill slope value if reported as variable. Null if fixed
+value                                                or not reported.
+data_analysis.data_             string?     How raw FP/FA data was normalized before curve
+normalization                                                 fitting. Allowed: Percent inhibition relative to controls;
+                                                    Fraction bound; Raw mP values fitted directly; Raw
+                                                    anisotropy values fitted directly; Not specified
+data_analysis.software†          string        The software used for curve fitting and data analysis.
+                                               Examples: GraphPad Prism 9; GraphPad Prism 10;
+                                                 SigmaPlot; GeneData Screener; ...
+data_analysis.replicates†         object        The number of replicates and independent experiments.
+data_analysis.replicates.          string       Number of replicates per concentration within a single
+technical_replicates†                               experiment. Examples: Duplicate; Triplicate;
+                                                        Singlicate; Not specified
+data_analysis.replicates.          string |     Number of independent experiments (n). Use a string to
+independent_experiments†       number         capture ranges. Examples: 3; 2-4; ≥3; Not specified
+artifact_controls               object         Controls and checks for common FP/FA artifacts that
+                                              can produce false positives or inaccurate affinities.
+artifact_controls.compound_      string        Whether the authors checked for intrinsic fluorescence
+fluorescence_interference†                          of test compounds at the assay wavelengths, which can
+                                                            artifactually alter FP/FA readings. Allowed: Tested and
+                                                   excluded interfering compounds; Tested, no interference
+                                                   observed; Counter-screen performed; Not specified
+artifact_controls.compound_      string        Whether compound aggregation was assessed (e.g.,
+aggregation_check                             dynamic light scattering, detergent sensitivity, Hill slope
+                                                           analysis). Allowed: Yes, detergent sensitivity tested; Yes,
+                                     DLS performed; Yes, Hill slope monitored; No; Not
+                                                         specified
+artifact_controls.inner_filter_      string        Whether the authors checked for inner filter effect
+effect                                                (absorption of excitation or emission light by the test
+                                          compound at high concentrations), which can cause
+                                                   apparent FP changes unrelated to binding. Allowed:
+                                                      Tested; Not tested; Not specified
+artifact_controls.orthogonal_      string?       Whether hits were confirmed by an orthogonal (non-FP)
+assay_confirmation                                binding assay. Examples: ITC; SPR; TR-FRET;
+                                                 AlphaScreen; ...
+
+
+
+B  Extraction Pipeline Implementation Details
+
+
+We describe the implementation of the assay-extraction pipeline used to populate structured records
+from primary literature, using Surface Plasmon Resonance (SPR) as the running example. The
+pipeline is decomposed into two stages. Stage 1 (paragraph localization) operates on rendered page
+images and is responsible for finding and copying the verbatim experimental text from the paper,
+its supplementary information, and – when needed – referenced literature. Stage 2 (schema filling)
+consumes only the text returned by Stage 1 and produces a structured JSON record conforming to the
+SPR pre-defined schema. Decomposing the task in this way has two practical consequences: (i) the
+expensive vision context (page images) is paid only once per unique (PMID, DESCRIPTION) pair,
+while protein–ligand pairs that share the same assay description reuse the cached result; and (ii) Stage
+
+
+                                       21
+
+## PDF page 22
+   Heterogeneous source data        𝒟      Agent 1 — Contextual evidence extractor           fext       Predefined assay schema ontology      𝒪
+
+                                                                                                                                                                    {
+                                                                                                                                                           "description":                                                                                                                                                                         "Details about the SPR instrument used.",     BindingDB record (BDBM282)                𝑟             IdentifiesCe = {c₁, c₂,and…, cₙ}extractsderivedsemanticfrom inputcontext𝒟  as unstructured text:            "instrument":                                                                                                                                                             "type": "object",
+       Binding of inhibitors and substrates to immobilized AcrB                                                                                             "properties":"manufacturer":{   {
+                                                                                                                                                               "description": "e.g., GE Healthcare, BIAcore, …
+                                                                                                                                                                 "type": "string"
+                                                                                                                                                               }…
+       Scientific literature                    ℒ
+                                                           Extracted semantic context                      CeCe
+       Sequential              Mechanism                             of Assembly                                         of Multidrug Efflux                  1.                                                                [EXPERIMENTAL                                                                           PROCEDURES]                                                                                                            Description                                                                                                                     of sensor                                                                                                                                chip                                                                                                                             Structured JSON                                     Cs     Pump AcrAB-TolC                       (Tikhonova                                     et al., 2011)                                                                                      2.                                                                [EXPERIMENTAL                                                                           PROCEDURES]                                                                                                         Immobilization                                                                                                                                        details                                                                                                                               {
+                                                                                      3. [EXPERIMENTAL PROCEDURES] Buffer and flow conditions               ”sensor_chip": ”SA",
+               Text segment                    Figures                       4. [EXPERIMENTAL PROCEDURES] Analyte concentration series             "immobilization": {
+                                                                                                                                                "Biotinylated                                                                                                                                                             AcrB (S1043C)"           A                BIAcore                     3000                             biosensor                                  system                                      was                                            used                                                       to
+               characterize                         binding                                     interactions.                                                   Disulfide                                               bonds                                                                    of                                            5. [Figure 2] pH data, association & dissociation time                        "ligand":"strategy":                                                                                                                                                 "SA-Biotin                                                                                                                                                               capture"
+                purified                     AcrB(S1043C)                               and                                      AcrA(S362C)                                            were
+                                                                                                                                       "density_ru":                                                                                                                                                   2040             reduced                       using                            Tris[2-carboxyethyl]phosphine
+              hydrochloride                               disulfide                                    reducing                                                 gel                                                     (Pierce)                                                                 in                                                                                                     },
+               buffer                     containing                    20mM                                        Tris-HCl                                             (pH                                                           7.0), 500mM
+                                                                                                                                     "assay_conditions": {              NaCl, 5mM                       EDTA,                            and when                                      needed,                                           0.03%                                          DDM.
+               Biotinylation                              of AcrB(S1043C)                                     and                                            AcrA(S362C)                                                was                                                                                                                                                                   "MES buffer",
+             performed                       with                             maleimide-PEG₂-Biotin                                                          (Pierce)                                                                     in
+                                                                                                                                                 6.0,              1:20                    protein:biotin                             molar ratio                                                            in the                                       same                                                         buffer                                                                   for                           Agent 2 — JSON synthesizer                               fstruct            "running_buffer_composition":"pH":
+             2hr on                         ice ...                                                                                                                                       "assay_type":                                                                                                                                                     "Multi-cycle kinetics
+                                                         Maps Ce to target structure defined by 𝒪, generating valid Cs               }…
+                                                                                                                                                                              Ontology-compliant output
+
+
+Figure A1: Two-stage agentic extraction framework. Solid arrows denote data flow; dashed arrows
+denote conditioning inputs (prompts). The BindingDB record r queries Agent 1 (fext), which extracts
+semantic context Ce from the associated literature L. The assay schema ontology O conditions
+Agent 2 (fstruct), which maps Ce to an ontology-compliant structured record Cs.
+
+
+2 reduces to text-only inference, so the same model can be served without an image processor, or
+replaced with a smaller text-only LM with no change to the rest of the pipeline.
+
+B.1  Models and Decoding
+
+Both stages use QWEN3.5-27B (the VL variant for Stage 1, the same checkpoint in text-only mode
+for Stage 2). Weights are loaded in bfloat16 with HuggingFace device_map="auto" on a single
+NVIDIA GPU. We disable the model’s optional “thinking” channel (enable_thinking=False) so
+that the response is the raw assistant turn, simplifying JSON parsing.
+
+Decoding is fully deterministic: we set τ = 0 and use greedy generation (do_sample=False)
+for both stages. The maximum number of newly generated tokens is max_new_tokens = 32,768,
+which we found sufficient for both the verbatim paragraph copy in Stage 1 and the structured
+JSON in Stage 2. Input page images are produced by fitz (1.24.14), one image per page, with
+no resolution downscaling. We do not impose a hard cap on the number of pages for the main
+paper, but supplementary PDFs longer than 50 pages are skipped (and the skip logged) to prevent
+context-window overflows on outlier supplements.
+
+B.2  Prompt Templates
+
+Each stage is driven by a single, schema-specific prompt; the SPR templates are reproduced in
+condensed form below. We use plain JSON as the output contract in both stages and post-process the
+response by stripping any ‘‘‘json code fences before parsing. Responses that fail json.loads are
+treated as Stage failures and skipped; we do not retry with a temperature-based sampler.
+
+Stage 1 – paragraph localization.  The vision model receives the full set of page images fol-
+lowed by the prompt below. The <assay_description> placeholder is filled with the BindingDB
+DESCRIPTION field for the current pair.
+
+        You are an expert scientific reader analyzing a research paper about
+        Surface Plasmon Resonance (SPR) experiments.
+        Task:  Find and extract the COMPLETE ORIGINAL text that describes
+        the following SPR assay experiment.
+        Assay Description:  <assay_description>
+        Instructions:
+
+         1. Search the paper for where this SPR assay is described (Methods
+            first, then Results, then figure captions).
+         2. Extract the COMPLETE ORIGINAL text – methods paragraphs,
+            numerical values visible in sensorgrams, relevant figure
+            captions, and tables.
+         3. Do NOT summarize or paraphrase.
+
+
+                                       22
+
+## PDF page 23
+         4. If the paper refers to a previous publication for protocol
+            details, locate the exact numbered entry in the bibliography
+            and copy the full citation.
+
+        Output format (JSON):
+       { "original_paragraph":  {"<key>":  "<text>", ...},
+         "reference_number_in_text":  "...",
+         "references_previous":  "..." }
+
+The keys in original_paragraph are intentionally free-form location labels (e.g. “Materials and
+Methods”, “Figure 2 caption”, “Supporting Information S1”). When the same description is also
+found in the supplementary PDF or in a referenced paper, the agent merges the two dictionaries with
+prefixed keys ([Supp <file>] <key>, [Ref PMID <id>] <key>) so provenance survives into
+Stage 2.
+
+Stage 2 – schema filling.  Stage 2 receives only the concatenated text from Stage 1 (no images) and
+is asked to fill the SPR pre-defined schema. The full template enumerates each field with a one-line
+type description and a normalization rule; the prescriptive parts of the prompt are:
+
+        You are an expert scientific reader analyzing extracted text from a
+        research paper about Surface Plasmon Resonance (SPR) experiments.
+        Task:  Extract structured assay parameters from the following text.
+        Assay Description:  <assay_description>
+        === EXTRACTED TEXT FROM PAPER ===
+       <concatenated_paragraphs>
+        === END OF EXTRACTED TEXT ===
+        Instructions:
+
+         1. Analyze the extracted text carefully to identify SPR assay
+            parameters.
+         2. Extract structured assay parameters into the fields described
+            below.
+         3. If a parameter is not mentioned in the text, use null.
+
+        STRUCTURED PARAMETERS TO EXTRACT:
+       <pre-defined schema>
+
+The complete field-level schemas for all four assay types (SPR, ITC, FPA, RBA) are given in
+Appendix A.
+
+
+B.3  Reference Resolution
+
+A non-trivial fraction of method sections defer to earlier publications (“SPR experiments were
+performed essentially as described in [27]”). Without resolving such pointers, Stage 2 receives
+a paragraph that is correct but uninformative and the structured record is mostly null. We there-
+fore add a reference-resolution step that is invoked (i) after a successful Stage 1 extraction whose
+references_previous field is non-empty, and (ii) when Stage 1 fails to find any relevant para-
+graph in the main paper or its supplementary. The same procedure is reused in both cases; the only
+difference is whether the resolved paragraph is combined with or substituted for the main-paper para-
+graph. Recursion is capped at max_reference_depth = 1 so that we follow only direct references;
+transitive “as described in [X], which is described in [Y]” chains are not chased, both because they
+are rare and because each additional hop multiplies the failure surface.
+
+The goal of the procedure is, starting from the model’s references_previous field, to recover
+the PMID of the cited paper so that its PDF can be fetched from PubMed Central and pushed back
+through Stage 1. To do this reliably, the Stage 1 prompt is written to also report the in-text reference
+number (e.g. “27”). When such a number is present, we (i) convert the source PDF to markdown
+with MinerU [18] and (ii) locate the matching bibliography entry by regular-expression match on
+the two numbering conventions dominant in chemistry/biology journals, (N) Author, ... and
+N. Author, ... The recovered citation string (e.g. “Smith, J. et al. J. Med. Chem. 2015, 58, 1234”)
+is then resolved to a PMID via the NCBI E-utilities esearch endpoint, in three substrategies tried
+in order: a DOI match if the citation contains one, a title match (the title is extracted by a one-shot
+
+
+                                       23
+
+## PDF page 24
+LM query with a regex fallback), and finally a structured author+year+journal+volume+page query.
+The first substrategy that returns a unique hit is accepted.
+
+We deliberately read the bibliography from MinerU’s text-layer extraction rather than from the
+rasterized page images used in Stage 1: bibliography entries are typeset in small font and densely
+packed with easily-confused tokens (author initials, volume/page numbers, DOIs), where the vision
+encoder’s effective resolution produces frequent OCR-style errors. Because the citation string
+recovered this way is verbatim from the paper, this design essentially eliminates citation hallucination;
+the only remaining failure mode is the PubMed lookup itself, and any reference that we cannot resolve
+to a PMID is appended (with the offending citation string) to a per-run chase_log for auditability.
+
+Once a referenced PMID is resolved, the corresponding PDF is fetched from PubMed Central, pushed
+through Stage 1 with the same prompt, and its original_paragraph dictionary is merged into the
+main-paper one with a provenance prefix [Ref PMID <id>] <key> (see Section B.2), so Stage 2
+can read both the original and the cited methods text in a single context. At most three referenced
+PMIDs are followed per paper.
+
+C  Compute Resources
+
+All experiments reported in this paper were performed on a single shared compute node equipped
+with two Intel Xeon Gold 6442Y CPUs (48 physical cores in total), 1 TB of system memory, and
+eight NVIDIA H100 80GB HBM3 GPUs (CUDA 12.6, driver 560.35.05). Individual workloads were
+assigned to one or more GPUs; no single experiment required more than eight GPUs concurrently.
+
+
+
+
+
+                                       24

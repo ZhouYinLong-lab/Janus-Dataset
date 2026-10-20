@@ -1,0 +1,23 @@
+{
+  "checked_utc": "2026-10-18T06:41:26.605827+00:00",
+  "checks": {
+    "主线证据表.csv": 10,
+    "方向比较表.csv": 6,
+    "branches/extraction/evidence.csv": 7,
+    "branches/targeted-value/evidence.csv": 6
+  },
+  "evidence_entries_including_reused_and_software": 23,
+  "source_file_count": 70,
+  "source_bytes": 34850882,
+  "format_checks": {
+    "PDF_header_ok": 6,
+    "not_checked": 45,
+    "JSON_parse_ok": 6,
+    "XML_parse_ok": 12,
+    "Parquet_header_footer_ok": 1
+  },
+  "broken_local_markdown_links": [],
+  "original_report_sha256_observed": "0e25ff3ff7e0450b35c47efe10870bb381d959ab34b1f262542bd937ce32a7b6",
+  "scope": "Document integrity and static resource checks, not independent scientific replication, expert labeling, completeness, or model performance.",
+  "passed": true
+}

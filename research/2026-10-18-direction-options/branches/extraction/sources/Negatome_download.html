@@ -1,0 +1,189 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+
+<head>
+<title>The Negatome Database 2.0</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<meta name="author" ,="" content="">
+<meta name="DC.Creator" content="">
+<meta name="generator" content="vim">
+<meta name="keywords" content="ppi, protein, interaction, database, bioinformatics">
+<link rel="stylesheet" type="text/css" href="mppi.css">
+<style>
+</style>
+</head>
+
+<body>
+
+<table background="topmiddle.jpg" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr>
+	<td bgcolor="" valign="top">
+	<map name="gsf">
+	<area alt="GSF" coords="15,10,80,80" href="http://www.helmholtz-muenchen.de/" target="_blank"></map>
+	<img src="topleft.jpg" alt="GSF" usemap="#gsf" border="0"></td>
+	<td align="right" valign="top">
+	<map name="mips">
+	<area alt="mips" coords="130,10,300,80" href="http://mips.helmholtz-muenchen.de/" target="_blank"></map>
+	<img src="topright.jpg" alt="MIPS" usemap="#mips" border="0"></td>
+</tr>
+</tbody></table>
+
+<h1>The Negatome Database 2.0</h1>
+<hr>
+
+<h2>Summary</h2>
+
+<p>
+The Negatome is a collection of protein and domain pairs which are unlikely engaged in direct physical interactions.
+The database currently contains experimentally supported non-interacting protein pairs derived from two distinct sources: by manual curation of literature and by
+analysing protein complexes from the PDB.
+More stringent lists of non-interacting pairs were derived from these two datasets by excluding interactions from IntAct. It can be used to evaluate
+newly derived experimental interactions.
+The Negatome is much less biased towards functionally dissimilar proteins than the negative data derived by randomly selecting proteins from different cellular locations.
+Thus, the negatome is complementary to such random data for training protein interaction prediction algorithms.
+</p>
+<p>
+Negatome 2.0 was created by use of an advanced text mining procedure to guide the manual annotation process. 
+Potential non-interactions were proposed by a modified version of a text mining tool called 
+<a href="http://mips.helmholtz-muenchen.de/excerbt/">Excerbt</a>. Compared to the first version the contents of the database have grown by over 300%.
+</p>
+
+<h2>Supplement</h2>
+
+<p>
+The supplement to the <a href="../negatome1/">Negatome 1.0</a> paper 
+can be downloaded <a href="../negatome1/Supplement88_NAR_06.pdf">here</a>.
+</p>
+<p>
+The supplement to the Negatome 2.0 paper can be downloaded <a href="SupplementaryMaterial.pdf"> here </a>.
+</p>
+
+<h2>References and Data Used</h2>
+<ul>
+<li>
+Blohm, P., Frishman, G., Smialowski, P., Goebels, F., Wachinger, B., Ruepp, A., Frishman, D. (2014) 
+"Negatome 2.0: a database of non-interacting proteins derived by literature mining, manual annotation, 
+and protein structure analysis", submitted to Nucleic Acids Research.
+</li>
+<li>
+Smialowski, P., Pagel, P., Wong, P., Brauner, B., Dunger, I., Fobo, G., Frishman, G., Montrone, C., Rattei, T., Frishman, D.,
+Ruepp, A. (2010) "The Negatome Database: a reference set of non-interacting protein pairs", Nucleic Acids Research
+38(Database issue): D540-4. <a
+href="http://nar.oxfordjournals.org/content/38/suppl_1/D540.long">Web</a>.
+</li>
+<li>
+Finn, R. D., M. Marshall, et al. (2005). "iPfam: visualization of protein-protein interactions in PDB at domain and amino acid resolutions." Bioinformatics 21(3): 410-2. <a href="http://ipfam.sanger.ac.uk/">Web</a> <a href="ipfam.tbl">Data</a>
+</li>
+<li>
+Kerrien, S., Y. Alam-Faruque, et al. (2007). "IntAct--open source resource for molecular interaction data." Nucleic Acids Res 35(Database issue): D561-5.  <a href="http://www.ebi.ac.uk/intact/">Web</a> <a href="intact.txt">Data</a>
+</li>
+<li>
+Kouranov, A., L. Xie, et al. (2006). "The RCSB PDB information portal for structural genomics." Nucleic Acids Res 34(Database issue): D302-5.  <a href="http://www.rcsb.org/">Web</a> 
+</li>
+<li>
+Stein, A., R. B. Russell, et al. (2005). "3did: interacting protein domains of known three-dimensional structure." Nucleic Acids Res 33(Database issue): D413-7.  <a href="http://gatealoy.pcb.ub.es/3did/">Web</a> <a href="3did.tbl">Data</a>
+</li>
+<li>
+Barnickel T., Weston J., et al. (2009). "Large scale application of neural network based semantic role labeling for automated relation extraction from biomedical texts" PLoS One 4(7):e6393. <a href="http://www.ncbi.nlm.nih.gov/pubmed/19636432">Web</a>
+</li>
+
+</ul>
+
+<p>
+</p>
+
+
+
+<h2>Download</h2>
+
+We provide a '<u>Linked view</u>' on the left side of the table below.  Text download can be done on the right. <br>
+
+<table>
+<tr>
+<td> <b> Dataset </b></td>
+<td>  <b>Derived from </b> </td>
+<td>  <b>Description </b></td>
+<td>  <b>Number of Pairs </b></td>
+</tr>
+
+<tr>
+<td> <a href="manual.html"> Manual </a> </td>
+<td> Manual literature annotation </td>
+<td> Manually annotated literature data describing the lack of protein interaction. High-throughput data are not included.  The data is restricted only to mammalian proteins.</td>
+<td> <a href="manual.txt">2171</a> </td>
+</tr>
+
+<tr>
+<td> <a href="manual_stringent.html"> Manual-stringent </a> </td>
+<td> Manual </td>
+<td> The Manual dataset filtered against the IntAct dataset </td>
+<td> <a href="manual_stringent.txt">1991</a> </td>
+</tr>
+
+<tr>
+<td> <a href="manual_pfam.html"> Manual-PFAM </a> </td>
+<td> Manual-stringent </td>
+<td> PFAM domain pairs found in the Manual dataset filtered using iPFAM and 3did </td>
+<td> <a href="manual_pfam.txt">1453</a> </td>
+</tr>
+
+<tr>
+<td> <a href="pdb.html"> PDB </a> </td>
+<td> The PDB database </td>
+<td> Protein pairs that are members of at least one structural complex but do not interact directly. Organism of origin is not restricted </td>
+<td> <a href="pdb.txt">4397 </a> </td>
+</tr>
+
+
+<tr>
+<td> <a href="pdb_stringent.html"> PDB-stringent </a> </td>
+<td> PDB </td>
+<td>The PDB dataset filtered against the IntAct dataset. </td>
+<td> <a href="pdb_stringent.txt">4161 </a></td>
+</tr>
+
+<tr>
+<td> <a href="pdb_pfam.html"> PDB-PFAM </a> </td>
+<td> PDB-stringent </td>
+<td> Non-interacting PFAM domains found in the same structural complex filtered using iPFAM and 3did </td>
+<td> <a href="pdb_pfam.txt">1234</a> </td>
+</tr>
+
+<tr>
+<td> <a href="combined.html"> Combined </a> </td>
+<td> Manual and PDB </td>
+<td> A combined non-interacting Protein dataset </td>
+<td> <a href="combined.txt">6532</a> </td>
+</tr>
+
+
+<tr>
+<td> <a href="combined_stringent.html"> Combined-stringent </a> </td>
+<td> Manual-stringent and PDB-stringent </td>
+<td> A combined stringent non-interacting Protein dataset </td>
+<td> <a href="combined_stringent.txt">6136</a> </td>
+</tr>
+
+
+<tr>
+<td> <a href="combined_pfam.html"> Combined Pfam</a> </td>
+<td> Manual-PFAM and PDB-PFAM </td>
+<td> A combined non-interacting Protein domain dataset </td>
+<td> <a href="combined_pfam.txt">2681</a> </td>
+</tr>
+
+</table>
+
+
+<h2>Acknowledgements</h2>
+<p>
+This work was partially funded by the <a href="http://www.biosapiens.info/">Biosapiens Network of Excellence</a>, 
+the DFG International Research Training Group 'Regulation and Evolution of Cellular Systems' 
+(GRK 1563), and the Joint Technology Platform within the Helmholtz Alliance for Systems Biology and 
+the Federal Ministry of Education, Science, Research and Technology (NGFN: 01GR0451, SysMBo, FKZ: 0315494A).
+</p>
+<hr>
+
+</body></html>

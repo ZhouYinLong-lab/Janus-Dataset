@@ -1,0 +1,274 @@
+=== PDF page 1 ===
+       Classifying Negative Findings in Biomedical Publications
+
+
+
+                 Bei Yu                                Daniele Fanelli
+       School of Information Studies          School of Library and Information Science
+            Syracuse University                         University of Montreal
+          byu@syr.edu               email@danielefanelli.com
+
+
+
+                                                   publishing negative results, such as the Journal
+                Abstract                       of Negative Results in Biomedicine, Journal of
+                                                Pharmaceutical Negative Results, Journal of
+    Publication bias refers to the phenome-       Negative Results in Ecology and Evolutionary
+   non  that  statistically significant, “posi-       Biology, and All Results Journals: Chem. Some
+    tive” results are more likely to be pub-        quantitative methods like the funnel plot (Egger
+    lished  than  non-significant,  “negative”        et al., 1997) were used to measure publication
+    results.  Currently,  researchers have  to        bias in publications retrieved for a certain topic.
+   manually identify negative results in a      A key step in such manual analysis is to exam-
+    large number of publications in order to       ine the article abstracts or full-texts to see wheth-
+   examine publication biases. This paper        er the findings are negative or not. For example,
+   proposes an NLP approach for automati-       Hebert et al. (2002) examined the full text of
+    cally classifying negated sentences in bi-       1,038 biomedical articles whose primary out-
+   omedical  abstracts  as  either  reporting      comes were hypothesis testing results, and found
+    negative findings or not. Using multino-      234 (23%) negative articles. Apparently, such
+   mial naïve Bayes algorithm and bag-of-      manual analysis approach is time consuming. An
+   words  features  enriched  by  parts-of-        accurate, automated classifier would be ideal to
+   speeches and  constituents, we  built a        actively track positive and negative publications.
+    classifier  that  reached 84%  accuracy         This paper proposes an NLP approach for au-
+   based on 5-fold cross validation on a bal-       tomatically identifying negative results in bio-
+   anced data set.                               medical abstracts. Because one publication may
+                                             have multiple findings, we currently focus on
+1   Introduction                                  classifying negative findings at sentence level:
+                                                       for a sentence that contains the negation cues
+Publication bias refers to the phenomenon that                                             “no” and/or “not”, we predict whether the sen-
+statistically significant, “positive” results are                                                   tence reported negative finding or not. We con-
+more likely to be published than non-significant,                                                      structed a training data set using manual annota-
+“negative” results (Estabrook et al., 1991). Due                                                      tion and convenience samples. Two widely-used
+to the “file-drawer” effect (Rosenthal, 1979),                                                         text classification algorithms, Multinomial naive
+negative results are more likely to be “filed                                            Bayes (MNB) and Support Vector Machines
+away” privately than to be published publicly.                                         (SVM), were compared in this study. A few text
+  Publication bias poses challenge for an accu-                                                     representation approaches were also compared
+rate review of current research progress. It                                           by their effectiveness in building the classifier.
+threatens the quality of meta-analyses and sys-                                         The approaches include (1) bag-of-words
+tematic reviews that rely on published research                                       (BOW), (2) BOW with PoS tagging and shallow
+results (e.g., the Cochrane Review). Publication                                                      parsing, and (3) local contexts of the negation
+bias may be further spread through citation net-                                                cues “no” and ‘not”, including the words, PoS
+work, and amplified by citation bias, a phenome-                                                         tags, and constituents. The best classifier was
+non that positive results are more likely to be                                                          built using MNB and bag-of-words features en-
+cited than negative results (Greenberg, 2009).                                                   riched with PoS tags and constituent markers.
+  To address the publication bias problem, some                                         The best performance is 84% accuracy based on
+new journals were launched and dedicated to                                                    5-fold cross validation on a balanced data set.
+
+
+                                         19
+
+       Proceedings of the 2014 Workshop on Biomedical Natural Language Processing (BioNLP 2014), pages 19–23,
+              Baltimore, Maryland USA, June 26-27 2014. c⃝2014 Association for Computational Linguistics
+=== PDF page 2 ===
+2   Related work                                   tive and/or negative results,” according to the
+                                                      journal’s website. This broader definition has its
+The problem of identifying negative results  is                                                 pros and cons. The added ambiguity poses chal-
+related to several other BioNLP problems, espe-                                                 lenge for manual and automated identification.
+cially on negation and scientific claim identifica-                                           At the same time, the broader definition allows
+tion.                                                    the inclusion of descriptive studies, such as the
+  The first relevant task is to identify negation                                                                  first JNRBM article (Hebert et al., 2002).
+signals and  their  scopes  (e.g., Morante and                                                           Interestingly, Hebert et al. (2002) defined
+Daelemans,  2008;2009;  Farkas  et  al.,  2010;                                                  “negative results” as “non-significant outcomes”
+Agarwal et al., 2011). Manually-annotated cor-                                            and drew a negative conclusion that “prominent
+pora like BioScope (Szarvas et al., 2008) were                                               medical journals often provide insufficient in-
+created to annotate negations and their scopes in                                                 formation to assess the validity of studies with
+biomedical  abstracts  in support of automated                                                  negative results”, based on descriptive statistics,
+identification. This task targets a wide range of                                                  not hypothesis testing. This finding would not be
+negation types, such as the presence or absence                                               counted as “negative” unless the broader defini-
+of clinical observations in narrative clinical re-                                                      tion is adopted.
+ports (Chapman et al., 2001). In comparison, our                                                       In our study, we utilized the JNRBM articles
+task focuses on identifying negative findings on-                                                   as a convenience sample of negative results, and
+ly. Although not  all negations report negative                                                   thus inherit its broader definition.
+results, negation signals are important rhetorical
+device  for  authors  to make  negative  claims.    3.2  The effectiveness of negation cues as
+Therefore, in this study we also examine preci-         predictors
+sion and recall of using negation signals as pre-                                         The Bioscope corpus marked a number of nega-
+dictors of negative findings.                                                      tion cues in the abstracts of research articles,
+  The second relevant task  is to identify the                                              such as “not”, “no”, “without”, etc. It is so far the
+strength and types of scientific claims. Light et                                            most comprehensive negation cue collection we
+al. (2004) developed a classifier to predict the                                              can find for biomedical publications. However,
+level of speculations in sentences in biomedical                                         some challenges arise when applying these nega-
+abstracts.  Blake  (2010)  proposed  a  “claim                                                      tion cues to the task of identifying negative re-
+framework”  that  differentiates  explicit claims,                                                             sults.
+observations, correlations, comparisons, and im-                                                                First, instead of focusing on negative results,
+plicit claims, based on the certainty of the causal                                                    the Bioscope corpus was annotated with cues
+relationship that was presented. Blake also found                                                  expressing general negation and speculations.
+that abstracts contained only 7.84% of all scien-                                                Consequently, some negation cues such as “un-
+tific  claims,  indicating  the need  for  full-text                                                       likely” was annotated as a speculation cue, not a
+analysis. Currently, our preliminary study exam-                                                 negation cue, although “unlikely” was used to
+ines abstracts only, assuming the most important                                                      report negative results like
+findings are reported there. We also focus on
+coarse-grained classification of positive vs. nega-                                                “These data indicate that changes in Wnt ex-
+tive findings at this stage, and leave for future                                                     pression per se are unlikely to be the cause of
+work the task of differentiating negative claims                                                       the observed dysregulation of β-catenin ex-
+in finer-granularity.                                                     pression in DD” (PMC1564412).
+3  The NLP approach                                                     Therefore, the Bioscope negation cues may
+3.1  The definition of negative results           not have captured all negation cues for reporting
+                                                  negative findings. To test this hypothesis, we
+When deciding what kinds of results count as                                              used the JNRBM abstracts (N=90) as a conven-
+“negative”, some prior studies used “non-                                                   ience sample of negative results, and found that
+significant” results as an equivalent for “negative                                           81 abstracts (88.9%) contain at least one Bio-
+results” (e.g. Hebert et al., 2002; Fanelli, 2012).                                               scope negation cue. Note that because the
+However, in practice, the definition of “negative                                JNRBM abstracts consist of multiple subsections
+results” is actually broader. For example, the                                               “background”, “objective”, “method”, “result”,
+Journal of Negative Results in Biomedicine                                            and “conclusion”, we used the “result” and “con-
+(JNRBM), launched in 2002, was devoted to                                                    clusions” subsections only to narrow down the
+publishing “unexpected, controversial, provoca-                                                  search range.
+
+
+                                         20
+=== PDF page 3 ===
+  Among the 9 missed abstracts, 5 used cues not    negations that did not report negative results be-
+captured in Bioscope negation cues: “insuffi-      came the main purpose of this preliminary study.
+cient”, “unlikely”, “setbacks”, “worsening”, and
+“underestimates”. However, the authors’ writing
+style might be affected by the fact that JNRBM       Discipline       #abstracts   Precision   Recall
+is dedicated to negative results. One hypothesis      Psychiatry        140         .11        .92
+is that the authors would feel less pressure to use     Clinical          127         .16        .94
+negative tones, and thus used more variety of        Medicine
+negation words. Hence we leave it as an open        Neuroscience      144         .20        .95
+                                              Immunology      140         .18        .95question whether the new-found negation cues
+                                                       Total            551         .16        .94and their synonyms are generalizable to other
+biomedical journal articles.
+                                                 Table 1: results of cue-based trivial classifier  The rest 4 abstracts (PMC 1863432, 1865554,
+1839113, and 2746800) did not report explicit
+negation results, indicating that sometimes ab-                                                   3.3   Classification task definition
+stracts alone are not enough to decide whether
+                                                This preliminary study focuses on  separatingnegative results were reported, although the per-
+                                                  negations that reported negative results and thosecentage is relatively low (4.4%). Hence, we de-
+                                                        not. We limit our study to abstracts at this time.cided that missing target is not a major concern
+                                             Because a paper may report multiple findings,for our task, and thus would classify a research
+                                     we performed the prediction at sentence level,finding as positive if no negation cues were
+                                            and leave for future work the task of aggregatingfound.
+                                                    sentence-level  predictions  to  abstract-level  or  Second, some positive research results may be
+                                                            article-level. By this definition, we will classifymistaken as negative just because they used ne-
+                                              each sentence as reporting negative finding orgation cues. For example, “without” is marked as
+                                                        not. A sentence that includes mixed findings willa negation cue in Bioscope, but it can be used in
+                                             be categorized as reporting negative finding.many contexts that do not indicate negative re-
+                                               “Not” and “no” are the most frequent negationsults, such as
+                                                cues in the Bioscope corpus, accounting for more
+                                                 than 85% of all occurrences of negation cues. In  “The effects are consistent with or without the
+                                                           this study we also examined whether local con-  presence of hypertension and other comorbidi-
+   ties and across a range of drug classes.”            text, such as the words, parts-of-speeches, and
+                                                      constituents  surrounding  the  negation  cues,  (PMC2659734)
+                                           would be useful for predicting negative findings.
+                                                Considering that different negation cues may be  To measure the percentage of false alarm, we
+                                              used in different contexts to report negative find-applied the aforementioned trivial classifier to a
+                                                        ings, we built a classifier based on the local con-corpus of 600 abstracts in 4 biomedical disci-
+                                                        texts of “no” and “not”. Contexts for other nega-plines, which were manually annotated by Fan-
+                                                      tion cues will be studied in the future.elli (2012). This corpus will be referred to as
+                                                     Therefore, our goal is to extract sentences con-“Corpus-600” hereafter. Each abstract is marked
+                                                      taining “no” or “not” from abstracts, and predictas “positive”, “negative”, “partially positive”, or
+                                              whether they report negative findings or not.“n/a”, based on hypothesis testing results. The
+latter two types were excluded in our study. The                                                   3.4   Training data
+trivial classifier predicted an abstract as “posi-
+tive” if no negation cues were found. Table 1      We obtained a  set of “positive examples”,
+reported the prediction results, including the pre-    which are negative-finding sentences, and a set
+cision and recall in identifying negative results.      of “negative examples” that did not report nega-
+This result corroborates with our previous find-      tive findings. The examples were obtained in the
+ing that the inclusiveness of negation cues is not     following way.
+the major problem since high recalls have been        Positive examples. These are sentences that
+observed in both experiments. However, the low    used “no” or “not” to report negative findings.
+precision is the major problem in that the false    We extracted all sentences that contain “no” or
+negative predictions are far more than the true       “not” in JNRBM abstracts, and manually marked
+negative predictions. Hence, weeding out the       each sentence as reporting negative findings or
+
+
+
+                                         21
+=== PDF page 4 ===
+not. Finally we obtained 158 sentences reporting
+negative findings.                                     Vascular mortality did not differ signifi-
+  To increase the number of negative-finding    (1)  cantly (0.19% vs 0.19% per year, p=0.7).
+examples and add variety to writing styles, we        "[NP Vascular/JJ mortality/NN ] [VP
+repeat the above annotations to all Lancet ab-       did/VBD not/RB differ/VB ] [ADVP sig-
+stracts (“result” and “finding” subsections only)         nificantly/RB ] [PP (/-LRB- ] [NP 019/CD                                                       (2)in the PubMed Central open access subset, and      %/NN ] [PP vs/IN ] [NP 019/CD %/NN ]
+obtained 55 more such sentences. Now we have        [PP per/IN ] [NP year/NN ] ,/, [NP
+obtained 213 negative-finding examples in total.        p=07/NNS ] [VP )/-RRB- ] ./."
+  Negative examples. To reduce the workload        “na na VP ADVP PP  did not differ signif-                                                       (3)for manual labeling, we utilized the heuristic rule         icantly VBD RB VB RB”
+that a “no” or “not” does not report negative re-
+sult if it occurs in a positive abstract, therefore             Table 2: text representations
+we extracted such sentences from positive ab-
+stracts in “Corpus-600”. These are the negative
+examples we will use. To balance the number of    3.6   Classification result
+positive and negative examples, we used a total                               We applied two supervised learning algorithms,
+of 231 negative examples in two domains (132 in                                                multinomial naïve Bayes (MNB), and Support
+clinical medicine and 99 in neuroscience) instead                                               Vector Machines (Liblinear) to the unigram fea-
+of all four domains, because there are not enough                                                      ture vectors. We used the Sci-kit Learn toolkit to
+positive examples.                                                    carry out the experiment, and compared the algo-
+  Now the training data is ready for use.                                                    rithms’ performance using 5-fold cross valida-
+                                                           tion. All algorithms were set to the default pa-3.5   Feature extraction
+                                                 rameter setting.
+We compared three text representation methods
+by their effectiveness in building the classifier.                                                       Representation     MNB   SVM
+The approaches are (1) BOW: simple bag-of-                                                Presence BOW              .82        .79
+words, (2) E-BOW: bag-of-words enriched with                                                            vs.   E-BOW           .82        .79
+PoS tagging and shallow parsing, and (3) LCE-                                                absence  LCE-BOW        .72        .72
+BOW: local contexts of the negation cues “no”                                 BOW              .82        .79and ‘not”, including the words, PoS tags, and                                                                          tf    E-BOW           .84        .79constituents. For (2) and (3), we ran the                                        LCE-BOW        .72        .72OpenNLP chunker through all sentences in the
+                                 BOW              .82        .75training data. For (3), we extracted the following
+                                                      Tfidf   E-BOW           .84        .73features for each sentence:
+                                        LCE-BOW        .72        .75
+•  The type of chunk (constituent) where
+                                                       Table 3: classification accuracy   “no/not” is in (e.g. verb phrase “VP”);
+                                               Table 3 reports the classification accuracy. Be-•  The types of two chunks before and after the                                                cause the data set contains 213 positive and 231   chunk where “not” is in;                                                  negative examples, the majority vote baseline is
+                                                         .52. Both algorithms combined with any text rep-•  All words or punctuations in these chunks;                                                     resentation methods outperformed the majority
+                                                    baseline significantly. Among them the best clas-•  The parts-of-speech of all these words.                                                              sifier is a MNB classifier based on enriched bag-
+                                               of-words representation and tfidf weighting. Alt-   See Table 2 below for an example of negative                                           hough LCE-BOW reached as high as .75 accura-finding: row 1 is the original sentence; row 2 is                                             cy using SVM and tfidf weighting, it did not per-the chunked sentence, and row 3 is the extracted                                            form as well as the other  text representationlocal context of the negation cue “not”. These                                               methods, indicating that the local context withthree representations were then converted to fea-                                                      +/- 2 window did not capture all relevant indica-ture vectors using the “bag-of-words” representa-                                                        tors for negative findings.tion. To reduce vocabulary size, we removed                                              Tuning  the  regularization  parameter C  inwords that occurred only once.                             SVM did not improve the accuracy. Adding bi-
+
+
+                                         22
+=== PDF page 5 ===
+grams to the feature set resulted in slightly lower    R. S. Hebert, S. M. Wright, R. S. Dittus, and T. A.
+accuracy.                                                  Elasy. 2002. Prominent medical journals often pro-
+                                                          vide insufficient information to assess the validity
+                                                           of studies with negative results. Journal of Nega-
+4   Conclusion                                               tive Results in Biomedicine 1(1):1.
+                                         M. Light, X-Y Qiu, and P. Srinivasan. 2004. The lan-
+In this study we aimed for building a classifier to                                                    guage  of  bioscience:  Facts,  speculations,  and
+predict whether a sentence containing the words       statements in between. In Proceedings of BioLink
+“no” or “not” reported negative findings. Built      2004 workshop on linking biological literature, on-
+with MNB  algorithms  and  enriched  bag-of-       tologies and databases: tools for users, pp. 17-24.
+words  features with  tfidf weighting,  the  best                                                    R. Morante, A. Liekens, and W. Daelemans. 2008.classifier reached .84 accuracy on a balanced                                                       Learning the scope of negation in biomedical texts.
+data set.                                                           In Proceedings  of the Conference on Empirical
+  This preliminary study shows promising re-      Methods in Natural Language Processing, pp. 715-
+sults for automatically identifying negative find-      724.
+ings for the purpose of tracking publication bias.                                                    R. Morante, and W. Daelemans. 2009. A metalearn-To reach this goal, we will have to aggregate the                                                          ing approach to processing the scope of negation.
+sentence-level predictions on individual findings                                                      Proceedings of the Thirteenth Conference on Com-
+to abstract- or article-level negative results. The       putational Natural Language Learning, 21-29.
+aggregation strategy is dependent on the decision
+                                                    R. Rosenthal. 1979. The file drawer problem and tol-of which finding is the primary outcome when                                                         erance  for  null  results.  Psychological  Bulle-multiple findings are present. We leave this as                                                                            tin, 86(3): 638.
+our future work.
+                                                 G. Szarvas, V. Vincze, R. Farkas, and J. Csirik. 2008.
+Reference                                      The BioScope corpus: annotation for negation, un-
+                                                               certainty and  their  scope  in  biomedical  texts.
+S. Agarwal, H. Yu, and I. Kohane, I. 2011. BioNOT:       In Proceedings of the Workshop on Current Trends
+  A searchable database of biomedical negated sen-       in Biomedical Natural Language Processing, pp.
+   tences. BMC bioinformatics, 12: 420.                    38-45.
+C. Blake. 2010. Beyond genes,  proteins, and ab-
+   stracts: Identifying scientific claims from full-text
+   biomedical  articles. Journal of biomedical infor-
+   matics, 43(2): 173-189.
+W. W. Chapman, W. Bridewell, P. Hanbury, G. F.
+  Cooper, and B. G. Buchanan. 2001. Evaluation of
+   negation phrases in narrative clinical reports. Pro-
+   ceedings of the AMIA Symposium, 105.
+P. J. Easterbrook, R. Gopalan, J. A. Berlin, and D. R.
+  Matthews. 1991. Publication bias in clinical re-
+   search. Lancet, 337(8746): 867-872.
+M. Egger, G. D. Smith, M. Schneider, and C. Minder.
+   1997. Bias in meta-analysis detected by a simple,
+   graphical test. BMJ 315(7109): 629-634.
+D. Fanelli. 2012. Negative results are disappearing
+  from     most      disciplines     and     coun-
+   tries. Scientometrics 90(3): 891-904.
+R. Farkas, V. Vincze, G. Móra, J. Csirik, and G. Szar-
+   vas. 2010. The CoNLL-2010 shared task: learning
+   to detect hedges and their scope in natural language
+   text. Proceedings of the Fourteenth Conference on
+  Computational Natural Language Learning---
+  Shared Task, 1-12.
+S. A. Greenberg. 2009. How citation distortions create
+  unfounded authority: analysis of a citation net-
+   work. BMJ 339, b2680.
+
+
+                                         23
