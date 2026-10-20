@@ -1,0 +1,15 @@
+reference_ids,related_observation_ids,comparison,result,reason,source_blocks
+BR058,EX001,both_readings,agree_source_reported_negative,两次阅读均定位BaBgl3B对Rb1的条件性定性阴性;不是两名专家验证,P35464910-B0059;P35464910-B0060
+BR059,EX002,both_readings,agree_source_reported_negative,两次阅读均定位BaBgl3B对Rd的条件性定性阴性;不声称每项有独立HPLC曲线,P35464910-B0059;P35464910-B0060;P35464910-B0065
+BR060,EX003,both_readings,agree_source_reported_negative,两次阅读均定位BaBgl3A对Rd的条件性定性阴性,P35464910-B0059;P35464910-B0060
+BR055,EX004,both_readings,agree_hold_conflict,正文无活性与表格9.65%都存在;共同保留待核实,P35464910-B0042;P35464910-B0058
+BR042;BR048,EX005;EX006,both_readings,agree_hold_undefined_symbols,两个破折号未找到活性语义定义;不写零,P35464910-B0053;P35464910-B0055
+BR002;BR003,EX007;EX008,both_readings,agree_weak_upper_bound,低于10U/mg不等于LOD;以弱活性上界保留,P32522206-B0008;P32522206-B0031
+BR010,EX009,both_readings,agree_group_only,70受体面板缺逐个结果;不按补集制造阴性,P32522206-B0009;P32522206-B0033
+BR001;BR004;BR005;BR006;BR007;BR008,,reference_more_detailed,positive_and_weak_not_in_narrow_negative_output,参照另列pNPX残余活性和五个寡糖正动力学;原候选B0008已命中;完整内容保留参照表而不当阴性漏检,P32522206-B0008;P32522206-B0046;P32522206-B0047;P32522206-B0048;P32522206-B0049;P32522206-B0050
+BR011;BR061,,reference_more_detailed,positive_synthesis_or_conversion_not_negative,E521S仍合成产物;BaBgl3A对Rb1有两个正产物读数;不与Rd阴性合并,P32522206-B0010;P32522206-B0017;P35464910-B0059
+BR016;BR017;BR018;BR019;BR020;BR021,,scope_review,rule_missed_other_evidence_but_not_new_catalytic_negatives,无配体电子密度及不利对接未被原规则命中;是规则范围缺口;不能充作本研究催化阴性漏例,P33471829-B0052;P33471829-B0054;P33471829-B0057
+BR062;BR063;BR069;BR070,,scope_review,rule_missed_additive_effects,more than70percent抑制和保护性变化未被规则命中;均不是证明底物无反应的零值,P35464910-B0040
+BR012;BR013;BR014;BR015,,scope_review,excluded_other_source_or_endpoint,背景机理和引用他人阴性不算本研究新观察;供体耗尽和NMR空项不当无产物,P32522206-B0004;P32522206-B0013;P32522206-B0016;P32522206-B0017
+BR022;BR023;BR024;BR025;BR026;BR027;BR028;BR029;BR030;BR031;BR032;BR033;BR034;BR035;BR036;BR037;BR038;BR039;BR040;BR041;BR043;BR044;BR045;BR046;BR047;BR049;BR050;BR051;BR052;BR053;BR054;BR056;BR057,,complete_panel_readback,positive_panel_not_negative,参照逐格读取36格面板;3格为冲突或歧义已另列;其余33格保留正值而非按低值造阴性,P35464910-B0047;P35464910-B0048;P35464910-B0049;P35464910-B0050;P35464910-B0051;P35464910-B0052;P35464910-B0053;P35464910-B0054;P35464910-B0055;P35464910-B0056;P35464910-B0057;P35464910-B0058
+BR009;BR064;BR065;BR066;BR067;BR068;BR071,,scope_review,relative_activity_or_interpretation_not_negative,残余百分比及解释性exclusive不能覆盖实测正值;预处理时长方法结果存在不一致,P32522206-B0008;P35464910-B0035;P35464910-B0036;P35464910-B0042;P35464910-B0063;P35464910-B0065

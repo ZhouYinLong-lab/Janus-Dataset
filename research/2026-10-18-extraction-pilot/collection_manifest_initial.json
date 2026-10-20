@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-18",
+  "selection_log": "research\\beta-glucosidase-screening-log.csv",
+  "selection_log_sha256": "10d6c21e992b9da104eb034581dcffe5122c900907586e087d62e408e130fbc5",
+  "selected_pmids": [
+    "32207174",
+    "32522206",
+    "33166469",
+    "33347927",
+    "33471829",
+    "33636259",
+    "34423980",
+    "34785432",
+    "34965581",
+    "35464910",
+    "35793414",
+    "36371935",
+    "37055368"
+  ],
+  "metadata_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=32207174,32522206,33166469,33347927,33471829,33636259,34423980,34785432,34965581,35464910,35793414,36371935,37055368&retmode=xml",
+  "metadata_sha256": "7ab5c9ac18f40e8242cdf5de1356ebe7c9b1991377eae55997e060162ec639be",
+  "rules": {
+    "explicit_no_detect": "\\b(?:no|not|without|neither|unable)\\b.{0,100}\\b(?:activit\\w*|hydrolys\\w*|cataly\\w*|detect\\w*|react\\w*|cleav\\w*|substrate\\w*)\\b|\\b(?:activit\\w*|hydrolys\\w*|detect\\w*)\\b.{0,70}\\b(?:absent|undetectable|not observed|not detected)\\b",
+    "weak_or_inactive": "\\b(?:negligible|inactive|inactivit\\w*|undetectable|non[- ]?substrate\\w*|poor(?:ly)?|weak(?:ly)?|lower activit\\w*|low activit\\w*)\\b",
+    "table_marker": "(?:\\bND\\b|\\bN/?D\\b|not determined|not tested|not detected|[<>≤≥]\\s*0?\\.?\\d|(?:^|\\|)\\s*(?:0(?:\\.0+)?|[-–—])\\s*(?:\\||$))"
+  },
+  "selected_papers": 13,
+  "obtained_fulltexts": 3,
+  "source_blocks": 198,
+  "rule_candidates": 19,
+  "note": "Candidates are unvalidated; no PMC identifier is a bounded retrieval outcome, not proof of global full-text absence."
+}

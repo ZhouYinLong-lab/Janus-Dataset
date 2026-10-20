@@ -1,0 +1,4 @@
+pmid,fulltext_obtained,eligible_for_new_substrate_assay_cohort,reason,prior_fulltext_status,source_url
+32522206,yes,yes,有BGL-1明确底物活性比较及Methods;两条低于10U/mg需按弱活性处理,已读旧例本轮复核,https://doi.org/10.1186/s12934-020-01386-1
+33471829,yes,no,本研究为结构结晶对接和模拟;底物酶活结果主要引用早期文献;不能当作本研究新底物活性面板,本轮首次全文筛选,https://doi.org/10.1371/journal.pone.0241325
+35464910,yes,yes,有三个确定酶的底物特异性与人参皂苷转化实验及Methods,本轮首次全文取证,https://doi.org/10.3389/fmicb.2022.860014

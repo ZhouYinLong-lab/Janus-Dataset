@@ -1,0 +1,6 @@
+# Preserve downloaded evidence bytes so source-manifest hashes survive checkout.
+/research/2026-10-18-gap-trial/**/sources/** -text
+/research/2026-10-18-extraction-pilot/**/sources/** -text
+/research/2026-10-18-literature-judgment/**/sources/** -text
+/research/2026-10-18-direction-options/**/sources/** -text
+/research/2026-10-20-domain-selection/**/sources/** -text

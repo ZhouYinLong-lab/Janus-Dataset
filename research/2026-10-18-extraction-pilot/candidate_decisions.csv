@@ -1,0 +1,33 @@
+candidate_id,block_id,decision,observation_ids,reason
+C0001,P32522206-B0004,exclude_background,,引言的一般低产率及酶工程背景不是本研究逐底物阴性
+C0002,P32522206-B0008,retain_weak,EX007;EX008,低于10U/mg是作者弱活性描述;不是LOD或实测零
+C0003,P32522206-B0009,retain_group_claim,EX009,70受体初筛只给组级总结且data not shown;图注NMR未见某信号不是催化阴性
+C0004,P32522206-B0015,exclude_background_or_duplicate,,低Ki和低效率含其他酶及本研究弱活性重复;不计新增阴性
+C0005,P32522206-B0017,exclude_background_or_duplicate,,通用glycosynthase背景及较低合成活性;不是逐配对无活性报告
+C0006,P32522206-B0019,exclude_duplicate,,结论的弱效率和poor受体谱已由Results保留
+C0007,P32522206-B0029,exclude_control_statement,,BSA不影响催化不等于酶对底物无活性
+C0008,P32522206-B0058,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0009,P32522206-B0059,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0010,P32522206-B0061,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0011,P32522206-B0063,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0012,P32522206-B0064,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0013,P32522206-B0066,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0014,P32522206-B0067,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0015,P32522206-B0068,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0016,P32522206-B0070,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0017,P32522206-B0072,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0018,P32522206-B0073,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0019,P32522206-B0074,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0020,P32522206-B0076,exclude_non_activity_table,,核磁氢碳化学位移表的破折号;不是酶活性
+C0021,P33471829-B0050,exclude_crystallography,,poor指结构电子密度而非催化活性;本文无本轮所需的新底物活性面板
+C0022,P35464910-B0002,exclude_background,,引言not substrate specific是其他研究的底物谱背景而非不反应
+C0023,P35464910-B0018,exclude_blank_control,,without enzyme指空白对照配方不是实测酶底物阴性
+C0024,P35464910-B0019,exclude_blank_control,,without enzyme指空白对照配方不是实测酶底物阴性
+C0025,P35464910-B0021,exclude_blank_control,,方法段提供条件并可回链;空白本身不计酶底物阴性
+C0026,P35464910-B0035,exclude_weak_stability,,poor thermal stability及保留活性百分比不等于某底物无活性
+C0027,P35464910-B0042,hold_source_conflict,EX004,正文gentiobiose无活性与Table3的9.65%不一致;不能按句子生成0
+C0028,P35464910-B0053,hold_undefined_symbol,EX005,底物表破折号未定义;保留未知
+C0029,P35464910-B0055,hold_undefined_symbol,EX006,底物表破折号未定义;保留未知
+C0030,P35464910-B0059,retain_reported_negative,EX001;EX002;EX003,联合Methods及Figure6图注明确配对和条件;不把文字推广成数值零
+C0031,P35464910-B0063,exclude_duplicate,EX001;EX002,Discussion重复BaBgl3B结论而非新增观察
+C0032,P35464910-B0065,exclude_duplicate,EX001;EX002,Conclusion重复BaBgl3B两底物无活性而非新增观察

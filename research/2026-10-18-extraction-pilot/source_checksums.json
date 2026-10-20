@@ -1,0 +1,17 @@
+{
+  "research\\2026-10-18-extraction-pilot\\sources\\32522206.pdf": "a7ab031c70a2272e0807addb55fb21f5fa3251899acb4db11895dc898e5d6ada",
+  "research\\2026-10-18-extraction-pilot\\sources\\32522206_PMC7288487.xml": "86b6a59078ce60b0ac8f0c6de4bbdbe61f99bb9de20946177fd4e8b3b24629fc",
+  "research\\2026-10-18-extraction-pilot\\sources\\32522206_supplement.docx": "0b87f23cfe808e3d42820da26ed7179cf4678e4fa153dfca97701c9f63c2926e",
+  "research\\2026-10-18-extraction-pilot\\sources\\33471829.pdf": "049211a8bb96fa1eafbadeb28681a3533dd89830cae979226893b4fe81e822fd",
+  "research\\2026-10-18-extraction-pilot\\sources\\33471829_PMC7817009.xml": "f7a96d6a971622d0a1a784c39a590dfe18f595cdd349e9bdccb61f7699f38246",
+  "research\\2026-10-18-extraction-pilot\\sources\\35464910.pdf": "2179cc81ff48c26af234f81a2ed5b23c9709cfd8d4321a8d8a016a10e22d09ff",
+  "research\\2026-10-18-extraction-pilot\\sources\\35464910_figure6.webp": "0233b0431e50f4ee6d116707a71df2952b4716eff4195ded2c41ba1f20cd86a7",
+  "research\\2026-10-18-extraction-pilot\\sources\\35464910_PMC9024363.xml": "493e4b9d4e9b8b60ed5fbeba5d7579f4f2291d54336402c0451996570336c50e",
+  "research\\2026-10-18-extraction-pilot\\sources\\35464910_supplement.docx": "3b101c9d1451923e9af8a496170cb699baa075e40b9c79a336043a1f2ed4c727",
+  "research\\2026-10-18-extraction-pilot\\sources\\35464910_supplementary.zip": "e74dd9b30674503a8e10e3a780aaecca2ddeaa1ec6af7b53f90de6d0309dcee2",
+  "research\\2026-10-18-extraction-pilot\\sources\\fixed_cohort_pubmed.xml": "7ab5c9ac18f40e8242cdf5de1356ebe7c9b1991377eae55997e060162ec639be",
+  "research\\2026-10-18-extraction-pilot\\collect_and_scan.py": "ed497d47b42b6cd98d1c69a9f594848bfe87b78065cbae4d40fc1c26f7d2d3d9",
+  "research\\2026-10-18-extraction-pilot\\download_evidence.py": "731dfa05d7c455f8f45bbd05521bdbc91aed5dd8e53c608d1b9b4148c46c564d",
+  "research\\2026-10-18-extraction-pilot\\verify_and_summarize.py": "355af753ae3f23191af59e7531f99e9d8bf92976fb4ad6fad3a79becf3741874",
+  "research\\2026-10-18-extraction-pilot\\事先约定.md": "14655370d18285daa444163e7005419efdcbe3cb309190a9090c082e31a2df59"
+}

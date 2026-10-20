@@ -1,0 +1,43 @@
+{
+  "selected_papers": 13,
+  "xml_fulltexts_obtained": 3,
+  "eligible_new_catalytic_assay_papers": 2,
+  "source_blocks": 247,
+  "source_tables": 7,
+  "source_table_rows": 120,
+  "initial_candidate_blocks": 19,
+  "candidate_blocks": 32,
+  "reviewed_candidate_blocks": 32,
+  "decision_counts": {
+    "exclude_background": 2,
+    "retain_weak": 1,
+    "retain_group_claim": 1,
+    "exclude_background_or_duplicate": 2,
+    "exclude_duplicate": 3,
+    "exclude_control_statement": 1,
+    "exclude_non_activity_table": 13,
+    "exclude_crystallography": 1,
+    "exclude_blank_control": 3,
+    "exclude_weak_stability": 1,
+    "hold_source_conflict": 1,
+    "hold_undefined_symbol": 2,
+    "retain_reported_negative": 1
+  },
+  "retained_evidence_units": 9,
+  "evidence_decision_counts": {
+    "source_reported_negative": 3,
+    "hold_out": 3,
+    "retain_weak_not_binary_negative": 2,
+    "group_claim_not_pair_labels": 1
+  },
+  "source_reported_negative_pairs": 3,
+  "blind_reference_items": 71,
+  "human_gold_standard": false,
+  "model_training_performed": false,
+  "notes": [
+    "Two AI-assisted readings plus source checks; not independently validated extraction accuracy.",
+    "The three reported negatives share one source and protocol; not three independent studies.",
+    "Ten papers lack a PMC identifier in the selected PubMed response; publisher access was not exhausted.",
+    "Repeated conclusions and nonactivity-table dashes are not new observations."
+  ]
+}

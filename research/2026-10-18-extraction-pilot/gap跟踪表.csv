@@ -1,0 +1,7 @@
+gap,question,current_evidence,this_round,status,unresolved,local_evidence
+G1,阴性是否存在且有多少可取得,已有实测例子足以支持局部存在;数量和可获取性仍不能外推,固定13篇通过官方XML取得3篇;2篇符合本轮实验范围,本轮不再论证存在性,公共XML未取到不等于没有全文;开放子集不能估领域比例,paper_access.csv;fulltext_eligibility.csv
+G2,到底怎样挖且哪里会错,已运行下载分块规则候选助手判读来源复查流程,32处候选逐条判读;9项重点证据;3条作者报告阴性;3条暂缓,局部流程跑通未验证自动准确率,无专家金标准;原图未全部数字化;其他来源泛化未知,本轮抽取汇报.md;candidate_decisions.csv;reference_adjudication.csv
+G3,条件能否保留及是否有用,上轮GH1模型对照局部支持条件有用,3条阴性将结果方法图注连接到37度2h及浓度;另标条件映射和未给字段,本轮补了实际正文绑定案例,最适pH是跨段映射;无逐条LOD或明确重复数;不证明通用条件补全,一次抽取是怎么完成的.md;negative_records.csv;../2026-10-18-gap-trial/metrics_summary.csv
+G4,相对已有数据库多了什么,只有旧限定范围查询,本轮未查新增3条的精确数据库覆盖,仍未验证增量,已在论文出现和本轮新整理不等于未被数据库收录,../2026-10-01-pilot-fourteen-live-resource-crosswalk.md
+G5,怎样变成训练记录,原值来源条件与解释分开,输出3条定性阴性候选;冲突和破折号不入阴性子表;弱活性保留上界,产生可审核候选记录,尚无专家确认或训练使用;不能把定性结果改成数值0,extracted_observations.csv;negative_records.csv
+G6,新增阴性是否改善模型,旧PU复现及标签替换不是新增文献阴性独立收益,本轮不训练模型,仍未验证,需要同任务足够同类记录及固定测试和训练预算;当前3条不足,../2026-10-18-gap-trial/模型价值相关工作核查.md

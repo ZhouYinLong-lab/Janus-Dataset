@@ -1,0 +1,47 @@
+{
+  "source_article": "https://doi.org/10.1021/cb500244v",
+  "seeds": [
+    17,
+    29,
+    43,
+    71,
+    101
+  ],
+  "source_core_rows": 2304,
+  "source_core_proteins": 96,
+  "source_rows_without_sequence": 240,
+  "duplicate_source_cells": 6,
+  "boundary_or_unresolved_source_cells": 1,
+  "model_rows": 2057,
+  "model_proteins": 86,
+  "exact_sequence_groups": 86,
+  "model_below_background": 1574,
+  "model_above_background": 483,
+  "model_pairs": 258,
+  "mixed_pairs": 106,
+  "minimum_conflicting_rows_if_single_pair_label": 261,
+  "versions": {
+    "python": "3.13.12",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "sklearn": "1.9.0",
+    "openpyxl": "3.1.5"
+  },
+  "parameters": {
+    "n_estimators": 200,
+    "max_depth": 8,
+    "min_samples_leaf": 5,
+    "max_features": 1.0,
+    "folds": 5,
+    "threads": 2,
+    "hyperparameter_search": false
+  },
+  "inputs": {
+    "research\\sources\\gh1-2014\\cb500244v_si_003.xlsx": "aaa4764b503528fe39f776f59176f33399a91bec5de02dd20a0f6832091823d2",
+    "research\\sources\\gh1-2014\\cb500244v_si_004.xlsx": "fac87a78c3a75d5d5291e58cc9b38ec31b96bf0500ba288285a37aee7f354a67",
+    "research\\pilots\\gh1-nims\\gh1_nims_core96_ncbi_sequences.fasta": "2c8c19b376e17f16e237e52cd88e32ecd39c728e93489d9b1a9199c8a6e67e93",
+    "research\\pilots\\gh1-nims\\gh1_nims_core96_ncbi_crosswalk.csv": "885f7e1ebd29cac863c1f625a4b4775e7da33102ec2be98c7dec6db77f716fb5",
+    "research\\2026-10-18-gap-trial\\实验事先约定.md": "e099a90472559a88ba1e559400012d65a44f95f2510012de3c76d67ce3a70941",
+    "research\\2026-10-18-gap-trial\\run_context_trial.py": "9c87252f7e660cc7701c299a0ba46b1e9885c29c62abdbfb3405a28c143fd71d"
+  }
+}
