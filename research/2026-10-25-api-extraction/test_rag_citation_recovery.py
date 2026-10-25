@@ -31,6 +31,12 @@ class CitationAliasTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             repair(self.envelope(['[]']), {'evidence_ids': ['raw:B1:abc:0:900']})
 
+    def test_card_prefix_only_with_complete_identity(self):
+        payload, _ = repair(self.envelope(['B1:abc']), {'evidence_ids': ['card:B1:abc']})
+        self.assertEqual(payload['citations'], ['card:B1:abc'])
+        with self.assertRaises(ValueError):
+            repair(self.envelope(['B1']), {'evidence_ids': ['card:B1:abc']})
+
 
 if __name__ == '__main__':
     unittest.main()
