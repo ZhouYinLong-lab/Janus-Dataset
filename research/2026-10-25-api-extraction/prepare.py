@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 from corpus import HERE,LEGACY,PARSER_VERSION,existing_papers,parse_source,read,save,sha
+from linked_context import LinkedContext
 
 
 def split_units(units,cap=7000,overlap=300):
@@ -31,25 +32,19 @@ def build_jobs(document,metadata,primary_cap=10000,context_cap=18000):
         current.append(unit);size+=len(unit['text'])
     if current:chunks.append(current)
     all_units=split_units(document['units'])
+    linked=LinkedContext(document)
     jobs=[]
     for n,primary in enumerate(chunks):
         pids={u.get('parent_unit_id',u['unit_id']) for u in primary}
-        primary_words=set(re.findall(r'[a-z0-9]{3,}', ' '.join(u['text'] for u in primary).lower()))
         options=[u for u in all_units if u.get('parent_unit_id',u['unit_id']) not in pids]
-        def score(u):
-            words=set(re.findall(r'[a-z0-9]{3,}',u['text'].lower()))
-            return (-len(words&primary_words),u['unit_id'])
-        options.sort(key=score)
-        context=[];used=0
-        for unit in options:
-            if used+len(unit['text'])<=context_cap:
-                context.append(unit);used+=len(unit['text'])
+        context,audit=linked.select(primary,options,context_cap)
         canonical={'schema_version':1,'paper_id':document['paper_id'],'source_sha256':document['source_sha256'],
                    'source_parser_version':document.get('parser_version',1),
                    'source_path':document['source_path'],'doi':metadata.get('doi'),'title':metadata.get('title'),
                    'source_url':metadata.get('url'),'scope_basis':metadata.get('scope_basis'),
                    'scope_hypothesis':'molecular_glue_pending_source_confirmation',
                    'primary_units':primary,'context_units':context,
+                   'context_selection_audit':audit,
                    'context_omitted_units':len(options)-len(context),
                    'primary_chunk_index':n,'paper_primary_chunks':len(chunks)}
         fingerprint=hashlib.sha256(json.dumps(canonical,ensure_ascii=False,sort_keys=True).encode()).hexdigest()

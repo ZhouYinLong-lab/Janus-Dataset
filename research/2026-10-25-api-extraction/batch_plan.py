@@ -11,7 +11,7 @@ from prepare import build_jobs
 CODE = ('batch.py', 'batch_plan.py', 'batch_contract.py', 'batch_budget.py',
         'batch_run.py', 'batch_export.py', 'api.py', 'credentials.py',
         'corpus.py', 'prepare.py', 'contract.py', 'two_stage_core.py', 'runner.py', 'export.py',
-        'stream_http.py', 'batch_upgrade.py')
+        'stream_http.py', 'batch_upgrade.py', 'linked_context.py')
 BATCH_SIZE = 8
 
 
