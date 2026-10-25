@@ -93,10 +93,11 @@ def prepare(workspace, papers=None, custom=None, limit=5):
               + '\nAllowed experimental_setting: unperturbed, special_condition, mixed_or_unclear.'
               + '\nAllowed directness: explicit, author_inferred, unclear.'
               + '\nEach evidence entry has exactly field, unit_id, quote. field must be one of fields keys.'
+              + '\nEvery quote must be copied exactly from its cited unit, at least 8 characters after whitespace normalization and at most 3000 characters. For short identifiers such as HF or WDR18, quote the containing clause or sentence, not only the identifier. Never use ellipses to replace source words.'
               + '\nUse molecular_glue only when supported; keep PROTACs and engineered tags separate.'
               + '\nNo significant effect is not zero. Missing residual protein can indicate successful degradation.'
               + '\nKeep unknowns null; use context only for supported interpretation. Do not guess image or SI values.'
-              + '\nCategory no_activity need not mean no_degradation; retain the reported endpoint or use uncertain.')
+              + '\nDiscovery category no_activity is NOT an allowed negative_type. For an undetected non-degradation response use response_not_detected, or uncertain if its endpoint is unclear. Keep the actual endpoint.')
     (workspace / 'record_schema.txt').write_text(schema, encoding='utf-8')
     manifest['file_hashes']['record_schema.txt'] = sha(workspace / 'record_schema.txt')
     save(workspace / 'manifest.json', manifest)
