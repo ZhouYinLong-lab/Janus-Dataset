@@ -65,3 +65,10 @@ class BudgetTests(unittest.TestCase):
     def test_missing_usage_not_claimed_zero(self):
         a = self.reserve(); finish(self.path, a['attempt_id'], 'needs_attention')
         self.assertEqual(status(self.path)['attempts_without_usage'], 1)
+
+    def test_provider_identity_distinguishes_different_endpoints(self):
+        reserve(self.path, self.root, 'one', self.req, 100, provider_identity='https://one.invalid/v1')
+        reserve(self.path, self.root, 'two', self.req, 100, provider_identity='https://two.invalid/v1')
+        self.assertEqual(status(self.path)['requests_reserved'], 2)
+        with self.assertRaises(ValueError):
+            reserve(self.path, self.root, 'same', self.req, 100, provider_identity='https://ONE.invalid/v1/')

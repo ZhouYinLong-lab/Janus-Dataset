@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import time
 import uuid
+from urllib.parse import urlsplit, urlunsplit
 
 from corpus import read, save
 
@@ -41,14 +42,16 @@ def create(path, max_requests, max_reserved_tokens, authorization):
     return read(path)
 
 
-def reserve(path, workspace, task, request, tokens, retry=False):
+def reserve(path, workspace, task, request, tokens, retry=False, provider_identity=''):
     if type(tokens) is not int or tokens < 1:
         raise ValueError('Invalid token reservation')
     with ledger_lock(path):
         ledger = read(path)
         if ledger.get('global_stop'):
             raise ValueError('Global provider stop requires diagnosis: ' + ledger['global_stop'])
-        digest = request_hash(request)
+        parsed = urlsplit(provider_identity)
+        provider = urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path.rstrip('/'), '', ''))
+        digest = request_hash({'provider': provider, 'request': request})
         previous = [a for a in ledger['attempts'] if a['request_sha256'] == digest]
         if previous and (not retry or len(previous) != 1 or previous[-1]['status'] != 'http_failure'
                          or previous[-1].get('http_status') not in {429, 500}):
@@ -61,6 +64,7 @@ def reserve(path, workspace, task, request, tokens, retry=False):
             raise ValueError('Shared request/token budget exhausted')
         attempt = {'attempt_id': uuid.uuid4().hex, 'workspace': str(Path(workspace).resolve()),
                    'task': task, 'request_sha256': digest, 'reserved_tokens': tokens,
+                   'content_sha256': request_hash(request), 'provider_identity': provider,
                    'requested_model': request['model'], 'status': 'in_flight',
                    'explicit_retry': retry, 'started': time.time()}
         ledger['attempts'].append(attempt)
@@ -69,7 +73,7 @@ def reserve(path, workspace, task, request, tokens, retry=False):
 
 
 def finish(path, attempt_id, status, **details):
-    allowed = {'complete', 'http_failure', 'needs_attention', 'invalid_response'}
+    allowed = {'complete', 'http_failure', 'needs_attention', 'invalid_response', 'local_processing_error'}
     if status not in allowed:
         raise ValueError('Invalid ledger final status')
     if set(details) - {'http_status', 'failure_kind', 'usage', 'returned_model', 'global_stop'}:
