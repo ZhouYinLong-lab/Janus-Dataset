@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-26",
+  "expert_gold": false,
+  "ready_for_training": false,
+  "records_sha256": "9bff2d986b8690c70e7ae1a3e58f4d1c5f1290dbff32e9a33aaf9e84cf50717e",
+  "reviewed_records": 11,
+  "decisions": {
+    "supported_core_with_limits": 6,
+    "boundary_only": 4,
+    "quarantine_semantic": 1
+  },
+  "items": [
+    {
+      "record_key": "B013:e5fbc1145bc0e420bf7c",
+      "decision": "supported_core_with_limits",
+      "reason": "已测M12类似物失去DDX18降解作用；对象是类似物类别，不是母体M12。编号与逐剂量结果未恢复，不能展开为若干独立实验。",
+      "source_units": [
+        "B013:a5867dc8dbec2e28",
+        "B013:d4b5c0d39e1ce8a3"
+      ]
+    },
+    {
+      "record_key": "B013:4ba452e466705c43f290",
+      "decision": "supported_core_with_limits",
+      "reason": "HY-06对DDX18未见可检测二元亲和性；不能推成不能募集或降解。149 nM属于DCAF11，不属于DDX18。结合端点及条件仍未充分结构化。",
+      "source_units": [
+        "B013:7043ec4f267f1f17",
+        "B013:d373ea2cdf7199d6",
+        "B013:ef89143486f0297c"
+      ]
+    },
+    {
+      "record_key": "B013:6d3f72b230d7a9d1936c",
+      "decision": "supported_core_with_limits",
+      "reason": "部分M12类似物仍结合DCAF11，但不能介导DDX18募集；无响应只限募集端点，不能泛化为整体无活性。具体类似物身份未恢复。",
+      "source_units": [
+        "B013:7043ec4f267f1f17",
+        "B013:13b2f15032f5e1d9",
+        "B013:9fba4aaa6f345687"
+      ]
+    },
+    {
+      "record_key": "B149:7f6920600436a96d7e83",
+      "decision": "boundary_only",
+      "reason": "改变取代基未得到更有效的降解剂，不足以区分效力相当、较弱或无效；relative_weakening超出这句证据。待具体类似物与补表比较。",
+      "source_units": [
+        "B149:df508e165fd8374d"
+      ]
+    },
+    {
+      "record_key": "B149:d736d30aba964190d15d",
+      "decision": "quarantine_semantic",
+      "reason": "RMND5B敲除未影响BRD4降解，意为该干预未能阻断降解；no_degradation将干预无效反转成药物降解无效。作者提出的RMND5A冗余仅为推测。",
+      "source_units": [
+        "B149:76d321307b744131",
+        "B149:c1ce07939e2afd2b",
+        "B149:172defc97c6e8fb0"
+      ]
+    },
+    {
+      "record_key": "B151:a4c024551cb2ef9a6ead",
+      "decision": "supported_core_with_limits",
+      "reason": "手柄8未改变两个乙酰化标记，是阴性对照；不能据此认定HDAC蛋白无降解或完全无酶抑制。端点与条件字段仍缺。",
+      "source_units": [
+        "B151:6102e6e6e505e7bc",
+        "B151:270a897bda0aa98e"
+      ]
+    },
+    {
+      "record_key": "B165:2748244e0c2ed458cbef",
+      "decision": "supported_core_with_limits",
+      "reason": "HuR(G58A)条件下dHuR-2的下游信号与蛋白下调效应消失；不能替换为HuR无降解，或混入另一24小时降解实验条件。",
+      "source_units": [
+        "B165:6d19b5b76124f31d",
+        "B165:7b71d17bb95eac9a",
+        "B165:8810a7782fb3f87f"
+      ]
+    },
+    {
+      "record_key": "B165:0381f2b44bbaa90196e1",
+      "decision": "boundary_only",
+      "reason": "正文支持Colo205经dHuR-2处理后，剪接改变且潜在HuR结合的288基因中仅4个蛋白显著下降。属于剪接与蛋白丰度关联的群体边界；其余基因未达显著下降不能改成完全无变化，更不能逐个计作药物不降解。原relative_weakening标签不对应一个明确对象的降解减弱；本段未给该组学比较的确切剂量和时长，不套用邻图条件。",
+      "source_units": [
+        "B165:a140ecec4729e753",
+        "B165:3c741ab910676437",
+        "B165:2b05e35b105c63f5"
+      ],
+      "ready_for_training": false
+    },
+    {
+      "record_key": "B201:9b3a83085491bac7e86e",
+      "decision": "boundary_only",
+      "reason": "正文支持PA-1细胞中所设计降解剂在100 μM的存活率测定未见显著毒性，涵盖PROTAC和分子胶两类候选。端点为细胞毒性，不能写成Lin28不降解、普遍无活性或临床安全；同篇另有Lin28下降。毒性测定时长在该句及当前documents未明确，不能借用随后报告基因实验的24 h。",
+      "source_units": [
+        "B201:3d4bf99d36e15064",
+        "B201:69714449b65cca76",
+        "B201:d53dc11d310712c1",
+        "B201:6c3fc799be99461d"
+      ],
+      "ready_for_training": false
+    },
+    {
+      "record_key": "B201:efdbac233d9c8c04f01a",
+      "decision": "boundary_only",
+      "reason": "原句支持单独Lin28母体配体及E3招募组分处理后Lin28蛋白水平未变，属于组分机制阴性对照；不能赋给完整MG-Lin1或PRO-Lin7，后二者另有降解结果。PA-1为正文实验背景，S3对照的具体组分身份、组合方式、剂量和时长未在当前documents展开，保留群组陈述，不拆作独立失败实验或套用主实验48 h、10 μM。",
+      "source_units": [
+        "B201:27d46b1db9d37d0d",
+        "B201:6c3fc799be99461d",
+        "B201:c5d990be7978c03d"
+      ],
+      "ready_for_training": false
+    },
+    {
+      "record_key": "B212:aa9dc1851a2cc4ff2573",
+      "decision": "supported_core_with_limits",
+      "reason": "正文明确报告pyrid-4-one化合物15丧失cyclin K降解能力；同系列采用Western blot，表1及图2对应HEK293T、1 μM、2 h。对象、靶标及端点一致，是结构变更后的降解阴性，而非干预未影响降解；total loss保留定性表述，不补成Dmax精确零，也不外推至其他剂量、时间或CDK12降解。原记录空缺条件仅在此说明，未补改输出。",
+      "source_units": [
+        "B212:dac6cdd3a4cbdc6c",
+        "B212:4d9cf9254840d363",
+        "B212:a4ae56d9169d93cb",
+        "B212:37ceff5fa1db6ae0",
+        "B212:31c8d2aaac87e50d"
+      ],
+      "ready_for_training": false
+    }
+  ],
+  "interpretation": "助手按原文核查核心、端点与条件。boundary_only含类型推断不足、非主线毒性/组分对照等不同情形，不全部代表原句错误；supported_core_with_limits也包含预期阴性对照，不能直接当作最终主线纳入或训练就绪。研究范围仍需统一细分。原始输出未改。"
+}
