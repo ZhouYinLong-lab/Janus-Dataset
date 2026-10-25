@@ -25,6 +25,12 @@ class CitationAliasTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             repair(self.envelope(['raw:B1:other']), {'evidence_ids': ['raw:B1:abc:0:900']})
 
+    def test_literal_empty_only_without_evidence(self):
+        payload, _ = repair(self.envelope(['[]']), {'evidence_ids': []})
+        self.assertEqual(payload['citations'], [])
+        with self.assertRaises(ValueError):
+            repair(self.envelope(['[]']), {'evidence_ids': ['raw:B1:abc:0:900']})
+
 
 if __name__ == '__main__':
     unittest.main()

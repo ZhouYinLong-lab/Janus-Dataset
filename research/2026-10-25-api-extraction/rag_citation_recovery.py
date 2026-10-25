@@ -1,4 +1,4 @@
-"""Separate QA analysis copy: recover only unique supplied raw-chunk ID aliases."""
+"""Separate QA analysis copy: recover unambiguous citation formatting only."""
 import argparse
 import json
 from pathlib import Path
@@ -17,6 +17,8 @@ def repair(envelope, task):
         raise ValueError('Not a citation-only format failure')
     changes = []
     citations = []
+    if payload['citations'] == ['[]'] and not task['evidence_ids']:
+        return dict(payload, citations=[]), [{'from': ['[]'], 'to': [], 'rule': 'empty_evidence_literal_empty_array'}]
     for cite in payload['citations']:
         if cite in task['evidence_ids']:
             citations.append(cite)
@@ -62,7 +64,8 @@ def recover(workspace, out):
     summary = {'strict_complete': sum(a['original_status'] == 'complete' for a in answers),
                'citation_alias_recovered': repaired_count, 'analysis_complete': len(blind),
                'planned': len(answers), 'generation_requests': 0, 'originals_unchanged': True,
-               'scope': 'Unique supplied raw unit alias to chunk only; no new citations, answer '
+               'scope': 'Unique supplied raw unit alias to chunk, or literal ["[]"] to [] when no '
+                        'evidence was supplied; no new citations, answer '
                         'rewriting or semantic validation. Strict and recovered counts reported separately.'}
     save(out / 'recovery_summary.json', summary)
     return summary
