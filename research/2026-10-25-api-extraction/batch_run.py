@@ -162,8 +162,17 @@ def run(workspace, config, ledger_path, live=False, env_file=None, client=None,
             if budget.status(ledger_path)['global_stop']:
                 state['stop_reason'] = 'global_provider_stop'
                 return False
+            work_attempts = [a for a in read(ledger_path)['attempts']
+                             if a['workspace'] == str(workspace.resolve())]
+            if len(work_attempts) >= config['max_requests']:
+                state['stop_reason'] = 'workspace_request_budget'
+                return False
             job = read(workspace / f'jobs/{jid}.json')
             request = request_for(workspace, job, stage, config, candidates, dependency)
+            if (sum(a['reserved_tokens'] for a in work_attempts) + reserve_tokens(request, config)
+                    > config['max_reserved_tokens']):
+                state['stop_reason'] = 'workspace_token_reservation_budget'
+                return False
             if actual_client is None:
                 key = load_key(config['api_key_env'], env_file)
                 actual_client = HTTPClient(config, key)

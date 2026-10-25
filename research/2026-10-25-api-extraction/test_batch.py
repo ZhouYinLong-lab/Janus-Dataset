@@ -284,3 +284,12 @@ class BatchTests(unittest.TestCase):
             capture_output=True, timeout=20)
         self.assertEqual(r.returncode, 3)
         self.assertEqual(status(self.ledger)['requests_reserved'], 0)
+
+    def test_workspace_config_cap_and_global_cap_both_apply(self):
+        self.prepare(); c = Client(); self.cfg['max_requests'] = 1
+        first = self.execute(c)
+        self.assertEqual(c.calls, 1)
+        self.assertEqual(first['stop_reason'], 'workspace_request_budget')
+        self.cfg['max_requests'] = 3
+        self.execute(c)
+        self.assertEqual(c.calls, 2)
