@@ -1,0 +1,2 @@
+# Preserve the upstream skill bytes and recorded SHA-256 across checkouts.
+SKILL.md -text
