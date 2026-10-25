@@ -1,42 +1,239 @@
 {
-  "date": "2026-10-25",
-  "status": "engineering_implemented_live_generation_waiting_for_budget_confirmation",
+  "date": "2026-10-26",
+  "status": "live_engineering_quality_and_RAG_completed_with_reported_gaps_training_not_started",
   "entrypoint": "batch.py",
-  "completed": ["generic_all_body_queue", "discover_then_enrich", "candidate_linkage", "per_field_quote_checks", "per_record_and_per_paper_isolation", "shared_and_workspace_budget_caps", "no_unknown_retries", "offline_response_recovery", "json_csv_exports", "one_command_start_and_resume"],
-  "offline_tests_passed": 117,
+  "offline_tests_passed": 143,
   "offline_tests_failed": 0,
-  "cli_integration": "Local synthetic HTTP server: two-paper full workflow, then identical command repeated with no extra requests",
-  "review": "Independent static review found five recovery/exit/provider-identity issues; fixes have regression tests",
-  "new_external_generation_requests": 0,
-  "new_generated_evidence_records": 0,
-  "diagnostic_get": {"model_list_authenticated": true, "model_count": 62, "elapsed_seconds": 1.16, "generation_requests": 0},
-  "budget_authorization": "A non-blocking question was sent proposing 200 new generation calls and 8000000 reserved token units, with a 40-call engineering-only alternative. No response has been received; no new paid generation budget was created.",
+  "new_external_generation_requests": 132,
+  "budget": {
+    "max_requests": 200,
+    "requests_reserved": 132,
+    "reserved_token_estimate": 3247084,
+    "reported_total_tokens": 561681,
+    "attempts_without_usage": 6,
+    "global_stop": null,
+    "billing": "Reported usage is not a verified bill; missing usage is unknown, not zero."
+  },
+  "budget_authorization": "User explicitly approved full workflow up to 200 generation attempts, 8000000 conservative reserved token units, one shared ledger; 68 attempts remain, no new requests scheduled.",
   "engineering": {
-    "workspace": "local/batch_engineering_02",
-    "papers": ["B046", "B204", "B207", "B228", "B235"],
-    "paper_count": 5,
-    "discovery_jobs": 18,
-    "input_gaps": 0,
-    "manifest_sha256": "05f249539d7b1eff9b0bfc695ce8f1e01c3527fbe5340c2067c20894fe1a2e50",
-    "discovery_reservation_estimate": 405010,
-    "enrichment_reservation_estimate_one_batch_per_job_without_candidates": 775286,
-    "live_run": "not_started"
+    "unique_records": 10,
+    "discovered_candidates": 35,
+    "quarantined_entries": 10,
+    "unresolved_candidates": 17,
+    "failed_tasks": 2,
+    "jobs": 18,
+    "job_status": {
+      "processed_not_semantically_reviewed": 3,
+      "enrichment_incomplete": 2,
+      "processed_no_candidates_found": 8,
+      "processed_with_issues": 5
+    },
+    "workspace_requests": 28,
+    "papers": [
+      {
+        "paper_id": "B046",
+        "doi": "10.1158/2159-8290.cd-26-0040",
+        "source_sha256": "9e25fd723ee7682695464dc4984996d9dc924c4a0de6e95f437caabb0cbcb292",
+        "jobs": 7,
+        "jobs_processed": 5,
+        "input_error": null,
+        "status": "partial"
+      },
+      {
+        "paper_id": "B204",
+        "doi": "10.1021/acsmedchemlett.4c00250",
+        "source_sha256": "823008aed6db80b763eb3d9a83614871821aa7a64285d74fb327c75f826c2aba",
+        "jobs": 2,
+        "jobs_processed": 2,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B207",
+        "doi": "10.1038/s41467-024-50642-0",
+        "source_sha256": "645a290bed5ba68689758c5a8f699bd34dc910650c8d9583f061b86291a9c8d3",
+        "jobs": 4,
+        "jobs_processed": 4,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B228",
+        "doi": "10.1039/d2cb00223j",
+        "source_sha256": "ff1621ef823502ecf24124ba24e96b98e0a140446ccc743785f748f41b7c48b6",
+        "jobs": 2,
+        "jobs_processed": 2,
+        "input_error": null,
+        "status": "processed_not_semantically_reviewed"
+      },
+      {
+        "paper_id": "B235",
+        "doi": "10.1021/acscentsci.2c01317",
+        "source_sha256": "201efc0b987ad0608ba231bb9b43cbd0c4b598b6f9d1c8038702eefeee9dd23a",
+        "jobs": 3,
+        "jobs_processed": 3,
+        "input_error": null,
+        "status": "processed_with_issues"
+      }
+    ],
+    "body_units_total": 207,
+    "body_units_successfully_scanned": 207,
+    "assistant_core_supported": 6,
+    "semantic_quarantine": 4
   },
   "quality": {
-    "workspace": "local/batch_quality_02",
-    "papers": ["B013", "B040", "B127", "B149", "B151", "B165", "B193", "B201", "B209", "B212"],
-    "paper_count": 10,
-    "discovery_jobs": 45,
-    "input_gaps": 0,
-    "manifest_sha256": "60f9796ff251eccb432e638d2f7212d448b6e50df29a0027c6e10a89dbb8f55c",
-    "discovery_reservation_estimate": 996665,
-    "enrichment_reservation_estimate_one_batch_per_job_without_candidates": 1982533,
-    "live_run": "not_started"
+    "unique_records": 11,
+    "discovered_candidates": 40,
+    "quarantined_entries": 32,
+    "unresolved_candidates": 11,
+    "failed_tasks": 2,
+    "jobs": 45,
+    "job_status": {
+      "processed_no_candidates_found": 20,
+      "processed_with_issues": 20,
+      "discovery_failed": 2,
+      "processed_not_semantically_reviewed": 3
+    },
+    "workspace_requests": 64,
+    "papers": [
+      {
+        "paper_id": "B013",
+        "doi": "10.1038/s41586-026-10873-1",
+        "source_sha256": "d616277e1da2bb39a35c6a35da4aee398ffee14e32654c08b9f5170d1b4635e5",
+        "jobs": 7,
+        "jobs_processed": 6,
+        "input_error": null,
+        "status": "partial"
+      },
+      {
+        "paper_id": "B040",
+        "doi": "10.1002/advs.202515970",
+        "source_sha256": "214f4a34abd5f2c682c281784e165f5d933dc620451c13d76e9884b06de30a41",
+        "jobs": 5,
+        "jobs_processed": 5,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B127",
+        "doi": "10.1002/advs.202520237",
+        "source_sha256": "01e983a2340f7db1cad2f2746b54464e074ed7b4d70d5ee7d94d97726e16fd0c",
+        "jobs": 4,
+        "jobs_processed": 4,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B149",
+        "doi": "10.1038/s41589-026-02182-5",
+        "source_sha256": "3b7e4be1532d8f21450125879b1fa94c2f1d966fe1f1e4da9d41d6407deaca38",
+        "jobs": 8,
+        "jobs_processed": 8,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B151",
+        "doi": "10.1002/ardp.70045",
+        "source_sha256": "0e805c1a9363de555243e5f4cb8d0c1aa01b86d6af39e24e490b89eee8411561",
+        "jobs": 5,
+        "jobs_processed": 5,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B165",
+        "doi": "10.1038/s41586-026-10613-5",
+        "source_sha256": "1ea7e954dd111449a444e52503a1d826ba154d9c21e225e9670799090f5366dd",
+        "jobs": 4,
+        "jobs_processed": 4,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B193",
+        "doi": "10.1007/s10637-024-01504-5",
+        "source_sha256": "e2ef7995c9586c932f5256b48894688dd04886cc9cfd2f67bbf7f48489f8216d",
+        "jobs": 3,
+        "jobs_processed": 3,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B201",
+        "doi": "10.1002/mabi.202400427",
+        "source_sha256": "6394050f4f456625e8794576fef8105abe7f5253f767ed544fc93f1753a65a6a",
+        "jobs": 2,
+        "jobs_processed": 2,
+        "input_error": null,
+        "status": "processed_with_issues"
+      },
+      {
+        "paper_id": "B209",
+        "doi": "10.1021/jacsau.4c00762",
+        "source_sha256": "4346bec0ba12ed0f784c80c3f00f91815ec507ad13a3cd33a5b161fbe2d538f5",
+        "jobs": 3,
+        "jobs_processed": 2,
+        "input_error": null,
+        "status": "partial"
+      },
+      {
+        "paper_id": "B212",
+        "doi": "10.1021/acschembio.3c00616",
+        "source_sha256": "bb29fc85916a146842a6d495122981a8c7dcedb6055dc3e4b3f54d95ea2b38b1",
+        "jobs": 4,
+        "jobs_processed": 4,
+        "input_error": null,
+        "status": "processed_with_issues"
+      }
+    ],
+    "semantic_decisions": {
+      "supported_core_with_limits": 6,
+      "boundary_only": 4,
+      "quarantine_semantic": 1
+    },
+    "body_units_total": 461,
+    "body_units_successfully_scanned": 443,
+    "non_null_condition_fields": {
+      "cell_line": 0,
+      "treatment_time": 0,
+      "tested_concentration": 0
+    }
   },
-  "legacy_unknown_B022": "unchanged; not resent",
-  "real_five_paper_acceptance": "not_completed",
-  "semantic_quality_evaluation": "not_started",
-  "rag_evaluation": "not_started",
-  "small_model_training": "not_started",
-  "billing_notice": "Reservation estimates are not actual tokens or guaranteed currency caps; actual billing depends on the provider."
+  "probe": {
+    "workspace": "local/model_probe_01",
+    "attempts": 4,
+    "responses": 3,
+    "unknown": 1,
+    "mechanically_accepted": 4,
+    "core_supported_with_limits": 2,
+    "semantic_quarantine": 2,
+    "status": "partial_B204_B235_not_started_no_model_ranking",
+    "review": "probe_semantic_review.json"
+  },
+  "rag": {
+    "requests": 36,
+    "strict_complete": 19,
+    "format_recovered_in_separate_analysis": 15,
+    "analyzable": 34,
+    "paired_questions": 10,
+    "evaluation_paired_questions": 7,
+    "evaluation_points_out_of_14": {
+      "closed_book": 4,
+      "raw_retrieval": 10,
+      "reviewed_cards": 4
+    },
+    "report": "问答对照结果.md",
+    "details": "rag_trial_result.json",
+    "expert_gold": false
+  },
+  "small_model_training": {
+    "executed": false,
+    "reason": "No matched training/evaluation protocol for small-model condition reasoning; all 11 quality exports lack cell, time and dose fields, scope and endpoint labels still require review. Existing 12 known-paper RAG fact questions are not a paper-isolated training evaluation.",
+    "legacy_classifier_resumed": false
+  },
+  "legacy_unknown_B022": "unchanged; not resent; outside this new ledger",
+  "active_generation_tasks": 0,
+  "billing_notice": "Reservations are not actual tokens or a currency cap; missing usage unknown, reported usage not a verified bill.",
+  "current_record": "运行记录.md"
 }
