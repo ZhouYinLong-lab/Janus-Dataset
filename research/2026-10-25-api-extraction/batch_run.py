@@ -10,6 +10,7 @@ from batch_plan import request_for, verify
 from corpus import read, save, sha
 from credentials import load_key
 from runner import fingerprint, lock
+from stream_http import StreamingClient
 
 
 class DiagnosticOpener:
@@ -175,7 +176,7 @@ def run(workspace, config, ledger_path, live=False, env_file=None, client=None,
                 return False
             if actual_client is None:
                 key = load_key(config['api_key_env'], env_file)
-                actual_client = HTTPClient(config, key)
+                actual_client = StreamingClient(config, key)
                 actual_client.opener = DiagnosticOpener(actual_client.opener)
             try:
                 a = budget.reserve(ledger_path, workspace, tid, request,
@@ -236,6 +237,12 @@ def run(workspace, config, ledger_path, live=False, env_file=None, client=None,
                              failure_kind='response_or_local_processing_failed', exception_type=type(exc).__name__)
                 details.update(failure_kind=entry['failure_kind'])
             entry['finished'] = time.time()
+            if isinstance(actual_client, StreamingClient) and actual_client.wire_events:
+                wire = json.dumps(actual_client.wire_events, ensure_ascii=False)
+                if key: wire = wire.replace(key, '[REDACTED]')
+                wire_path = response_path + '.events.json'
+                save(workspace / wire_path, json.loads(wire))
+                entry.update(stream_events_path=wire_path, stream_events_sha256=sha(workspace / wire_path))
             budget.finish(ledger_path, a['attempt_id'], entry['status'], **details)
             save(path, state)
             print(json.dumps({'paper_id': job['paper_id'], 'stage': stage, 'group': group,

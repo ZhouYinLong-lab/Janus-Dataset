@@ -18,6 +18,10 @@ def main():
     p.add_argument('--max-requests', required=True, type=int)
     p.add_argument('--max-reserved-tokens', required=True, type=int)
     p.add_argument('--authorization', required=True)
+    p = sub.add_parser('upgrade', help='Explicit audited code/transport upgrade without resetting tasks')
+    p.add_argument('--workspace', required=True, type=Path)
+    p.add_argument('--config', required=True, type=Path)
+    p.add_argument('--reason', required=True)
     for name in ['prepare', 'estimate', 'run', 'start', 'status', 'export']:
         p = sub.add_parser(name)
         p.add_argument('--workspace', required=True, type=Path)
@@ -36,6 +40,9 @@ def main():
         if args.command == 'budget':
             batch_budget.create(args.ledger, args.max_requests, args.max_reserved_tokens, args.authorization)
             result = batch_budget.status(args.ledger)
+        elif args.command == 'upgrade':
+            from batch_upgrade import upgrade
+            result = upgrade(args.workspace, read(args.config), args.reason)
         elif args.command == 'prepare':
             m = prepare(args.workspace, args.papers, args.manifest, args.limit)
             result = {'papers': len(m['papers']), 'discovery_jobs': len(m['job_ids']), 'api_requests_sent': 0}

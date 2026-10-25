@@ -10,7 +10,8 @@ from prepare import build_jobs
 
 CODE = ('batch.py', 'batch_plan.py', 'batch_contract.py', 'batch_budget.py',
         'batch_run.py', 'batch_export.py', 'api.py', 'credentials.py',
-        'corpus.py', 'prepare.py', 'contract.py', 'two_stage_core.py', 'runner.py', 'export.py')
+        'corpus.py', 'prepare.py', 'contract.py', 'two_stage_core.py', 'runner.py', 'export.py',
+        'stream_http.py', 'batch_upgrade.py')
 BATCH_SIZE = 8
 
 
@@ -42,7 +43,7 @@ def prepare(workspace, papers=None, custom=None, limit=5):
     if len(set(ids)) != len(ids):
         raise ValueError('Duplicate paper IDs')
     workspace.mkdir(parents=True)
-    manifest = {'version': 1, 'pipeline': 'two_stage_batch_v1', 'parser_version': PARSER_VERSION,
+    manifest = {'version': 1, 'pipeline': 'two_stage_batch_v1', 'transport': 'sse', 'parser_version': PARSER_VERSION,
                 'batch_size': BATCH_SIZE, 'papers': [], 'job_ids': [], 'file_hashes': {},
                 'code_hashes': {n: sha(HERE / n) for n in CODE},
                 'input_manifest_sha256': sha(custom) if custom else None,
@@ -133,7 +134,10 @@ def request_for(workspace, job, stage, config, candidates=None, discovery_hash=N
         raise ValueError('Unknown batch stage')
     payload = {'model': config['model'], 'messages': [{'role': 'system', 'content': prompt},
                {'role': 'user', 'content': json.dumps(user, ensure_ascii=False)}],
-               'stream': False, config['output_token_parameter']: config['max_output_tokens']}
+               'stream': read(workspace / 'manifest.json').get('transport') == 'sse',
+               config['output_token_parameter']: config['max_output_tokens']}
+    if payload['stream']:
+        payload['stream_options'] = {'include_usage': True}
     if config['response_format'] == 'json_object':
         payload['response_format'] = {'type': 'json_object'}
     return payload
