@@ -118,3 +118,55 @@ class TwoStageRunnerTests(unittest.TestCase):
                 outer.assertTrue((outer.work / state['attempts'][0]['request_path']).exists())
                 return super().complete(request)
         run_call(self.work, 'discovery_active', True, client=InspectClient())
+
+    def test_full_workflow_with_synthetic_responses(self):
+        cfg = config(); cfg['max_requests'] = 6
+        save(self.work / 'config.json', cfg); self.freeze()
+        _, discovered, enriched = fixture()
+        baseline = {'schema_version': 1, 'paper_id': 'P',
+                    'records': [enriched['items'][0]['record']],
+                    'coverage_notes': [], 'no_negative_reason': None}
+        empty_discovery = {'paper_id': 'P', 'candidates': [], 'coverage_notes': [],
+                           'no_candidate_reason': 'No result in the selected methods.'}
+        empty_baseline = dict(baseline, records=[], no_negative_reason='Methods only.')
+        replies = [baseline, discovered, empty_discovery, enriched, empty_baseline]
+        class WorkflowClient:
+            calls = 0
+            def complete(self, request):
+                payload = replies[self.calls]; self.calls += 1
+                return {'model': 'fixture-only', 'choices': [{'finish_reason': 'stop',
+                        'message': {'content': json.dumps(payload)}}],
+                        'usage': {'total_tokens': 10}}
+        c = WorkflowClient()
+        for name in CALLS:
+            result = run_call(self.work, name, True, client=c)
+        self.assertEqual(c.calls, 5)
+        self.assertEqual(set(result['calls'].values()), {'complete'})
+        self.assertEqual(result['reported_tokens'], 50)
+        e = read(self.work / 'results/enrich_active.json')
+        self.assertEqual(len(e['accepted']), 1)
+        self.assertEqual(e['accepted'][0]['record']['fields']['perturbation'], 'Z')
+        self.assertFalse(e['accepted'][0]['record']['ready_for_training'])
+
+    def test_no_discoveries_skips_paid_enrichment(self):
+        class EmptyClient:
+            calls = 0
+            def complete(self, request):
+                self.calls += 1
+                payload = {'paper_id': 'P', 'candidates': [], 'coverage_notes': [],
+                           'no_candidate_reason': 'No negatives found.'}
+                return {'choices': [{'finish_reason': 'stop',
+                        'message': {'content': json.dumps(payload)}}]}
+        c = EmptyClient()
+        run_call(self.work, 'discovery_active', True, client=c)
+        s = run_call(self.work, 'enrich_active', True, client=c)
+        self.assertEqual(c.calls, 1)
+        self.assertEqual(s['calls']['enrich_active'], 'skipped_no_candidates')
+
+    def test_workspace_cumulative_limit(self):
+        cfg = config(); cfg['max_requests'] = 1
+        save(self.work / 'config.json', cfg); self.freeze()
+        c = FakeClient()
+        run_call(self.work, 'discovery_active', True, client=c)
+        with self.assertRaises(ValueError): run_call(self.work, 'discovery_empty', True, client=c)
+        self.assertEqual(c.calls, 1)
