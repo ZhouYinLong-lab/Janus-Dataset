@@ -4,7 +4,7 @@ from collections import Counter
 import csv
 from pathlib import Path
 
-from corpus import LEGACY, existing_papers, locate_quote, parse_source, save, sha
+from corpus import LEGACY,PARSER_VERSION,existing_papers,locate_quote,parse_source,save,sha
 
 
 def inventory(legacy=LEGACY):
@@ -33,7 +33,7 @@ def inventory(legacy=LEGACY):
                      'semantic_status':'existing_model_assisted_support_not_expert_gold',
                      'reuse':'source-linked candidate; domain and biological interpretation still require review'})
     strict=[r for r in rows if r['scope_group']=='molecular_glue_degradation' and r['metadata_decision']=='include']
-    summary={'legacy_observations':len(records),'negative_candidates':len(rows),
+    summary={'parser_version':PARSER_VERSION,'legacy_observations':len(records),'negative_candidates':len(rows),
              'papers':len(parsed),'origin_counts':dict(Counter(r['origin'] for r in rows)),
              'scope_counts':dict(Counter(r['scope_group'] for r in rows)),
              'glue_include_candidates':len(strict),'glue_include_papers':len({r['paper_id'] for r in strict}),

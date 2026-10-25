@@ -19,7 +19,7 @@ def main():
             print(log.getvalue())
             raise RuntimeError('Offline tests failed')
         _,summary=inventory()
-        previous=read(HERE/'reuse_inventory/summary.json')
+        previous=read(HERE/'reuse_inventory_v2/summary.json')
         if summary!=previous:raise RuntimeError('Reuse/source snapshot changed; investigate instead of overwriting')
         stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
         workspace=HERE/'local'/('verified_replay_'+stamp)

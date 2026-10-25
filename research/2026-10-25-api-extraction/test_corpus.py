@@ -20,6 +20,19 @@ class CorpusTests(unittest.TestCase):
         d=self.parse('<article><body><sec><title>pdf-only-notice</title></sec></body></article>')
         self.assertEqual(d['status'],'no_structured_body')
 
+    def test_embedded_figure_and_table_not_flattened_into_prose(self):
+        d=self.parse('<article><body><p id="p1">Actual result.<fig id="f1"><caption><p>Caption only negative.</p></caption></fig> More prose.<table-wrap id="t1"><table><tr><td>Table only zero.</td></tr></table></table-wrap> Ending.</p></body></article>')
+        self.assertEqual([u['kind'] for u in d['units']],['body_paragraph','figure_caption','table'])
+        self.assertNotIn('Caption only',d['units'][0]['text'])
+        self.assertNotIn('Table only',d['units'][0]['text'])
+        self.assertIn('More prose.',d['units'][0]['text'])
+        self.assertIn('Ending.',d['units'][0]['text'])
+        self.assertEqual({x['kind'] for x in locate_quote(d['units'],'Caption only negative.')},{'figure_caption'})
+
+    def test_inline_text_and_tails_preserved(self):
+        d=self.parse('<article><body><p>No <italic>significant</italic> effect at 10 <italic>μM</italic>.</p></body></article>')
+        self.assertEqual(d['units'][0]['text'],'No significant effect at 10 μM.')
+
     def test_bioc_roles(self):
         d=self.parse('<collection><document><passage><infon key="section_type">RESULTS</infon><offset>10</offset><text>No effect.</text></passage><passage><infon key="section_type">TABLE</infon><text>A zero</text></passage></document></collection>')
         self.assertEqual([u['kind'] for u in d['units']],['body_paragraph','table'])

@@ -1,7 +1,7 @@
 {
   "status": "offline_validation_passed",
-  "timestamp_utc": "20261025T063125745284Z",
-  "unit_and_integration_tests": 52,
+  "timestamp_utc": "20261025T063559255854Z",
+  "unit_and_integration_tests": 54,
   "test_failures": 0,
   "test_errors": 0,
   "live_provider_requests": 0,
@@ -13,7 +13,7 @@
     "body_quote_matched": 149,
     "body_and_other": 16
   },
-  "replay_workspace": "local/verified_replay_20261025T063125745284Z",
+  "replay_workspace": "local/verified_replay_20261025T063559255854Z",
   "replay_summary": {
     "mode": "offline_legacy_replay_not_model_inference",
     "paid_api_requests": 0,
@@ -77,20 +77,20 @@
   "code_sha256": {
     "api.py": "1c15c8ff18ccad7e8bc6cb895a747d4b4bc177eabceeca75c6e13ffa7fea8992",
     "contract.py": "87722fece3c8f5a5e4e0145385fb964047a97ffb5864b2e65d7c89bcc02bd24b",
-    "corpus.py": "c5bef919fa4483a3dc71042e1271e8b7207b527214885afddfcc1ded44cd1121",
+    "corpus.py": "a06a80cdeaeaa7e33a7ebd46bfc54a7b4052c4cbae88187581e7ad8daa45ed06",
     "credentials.py": "d0f14c569f10280de9de493a129475fdd75983bbacd258da48422ad3305dcb99",
     "estimate.py": "7d4a21c2f6578135272738ce420cb754b180499353f1d2da428dbc633fc73f70",
     "export.py": "b34edcf2300d8e69b1895c7d27dd03c91f883eb36142165c232182c3e482ba81",
     "pipeline.py": "246eb6ad6052af5888b3f3870ce186126c7e3e2ec6b3cebb855a113625fe6a02",
-    "prepare.py": "9acdb95dd94376c56c34ce53eae160543d4d23fccd545d882873da183019b41b",
+    "prepare.py": "91395f434baf79257bcd573b5711ccf188de26f95504027f9d944aa6af4af32e",
     "replay.py": "5f13551e0ea77f7bc36eb44ac9495fabf3eabe8da1a4fd4c351c4afeacf00567",
-    "reuse.py": "359b33c0b53d054b53dc27257d9a4099734131a67bac25d38fcf553f3e07ea6e",
+    "reuse.py": "aed4c7ca024cd03d95cc72a08aff9e3625bb0bace075c6ea6501ca31e67f2962",
     "runner.py": "e102406b7cb9384da5b28d86cb232d4a56abf5a4991c488212e4dde3be0442cc",
     "test_contract.py": "2ed168d34d2418a26ea6a4eff053bae9dc0525a6e6fc2135df7ca2906dd3cc6c",
-    "test_corpus.py": "98d02f52cb5761f626bb66496c8c40bed2c6b46d456968f30d3880fd1fd13d2e",
+    "test_corpus.py": "4bea5f601d2c8058ccafe52c84c20d1f2218405a9bc4df40c1be2194e1a4124f",
     "test_credentials.py": "6994afd1b499d9b8c482c258316367e313a005820fbcd1c19b067df0b738e55f",
     "test_runner.py": "659cbf0a474f71941ca507092797c839039400abcef3dae663a2153b990c0158",
-    "verify.py": "0d5175db94f9ef7290f97f005aaefdd82c420df0d26c88f829e49031473c4129"
+    "verify.py": "2b523c616fdf64c65923ae1c22e6c7905f8479376780ba39feeaa795d15a33ad"
   },
   "prompt_sha256": "957d95f2322c2bae89547adee2e706c108a6f4d465f7ee1c439c101755858ee8",
   "not_yet_validated": [

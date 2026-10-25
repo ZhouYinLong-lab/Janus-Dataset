@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 
-from corpus import HERE, LEGACY, existing_papers, parse_source, read, save, sha
+from corpus import HERE,LEGACY,PARSER_VERSION,existing_papers,parse_source,read,save,sha
 
 
 def split_units(units,cap=7000,overlap=300):
@@ -45,6 +45,7 @@ def build_jobs(document,metadata,primary_cap=10000,context_cap=18000):
             if used+len(unit['text'])<=context_cap:
                 context.append(unit);used+=len(unit['text'])
         canonical={'schema_version':1,'paper_id':document['paper_id'],'source_sha256':document['source_sha256'],
+                   'source_parser_version':document.get('parser_version',1),
                    'source_path':document['source_path'],'doi':metadata.get('doi'),'title':metadata.get('title'),
                    'source_url':metadata.get('url'),'scope_basis':metadata.get('scope_basis'),
                    'scope_hypothesis':'molecular_glue_pending_source_confirmation',
@@ -83,7 +84,7 @@ def prepare(out,papers=None,limit=3,custom=None):
         if not isinstance(m['paper_id'],str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',m['paper_id']):
             raise ValueError('paper_id must be a safe ASCII identifier, not a path')
     prompt=(HERE/'prompt.md').read_text(encoding='utf-8')
-    plan={'schema_version':1,'source_prompt_sha256':sha(HERE/'prompt.md'),'papers':[], 'job_ids':[],
+    plan={'schema_version':1,'source_parser_version':PARSER_VERSION,'source_prompt_sha256':sha(HERE/'prompt.md'),'papers':[], 'job_ids':[],
           'job_sha256':{},
           'coverage':'All parsed body units, including negative-free units; captions/methods contextual, no pixels or independent SI',
           'source_selection':'legacy scope flags or explicit user manifest; metadata is not expert domain confirmation',

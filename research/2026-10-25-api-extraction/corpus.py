@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 LEGACY = ROOT / 'research/2026-10-22-sol-extraction/batch02'
+PARSER_VERSION = 2
 
 
 def sha(path):
@@ -38,6 +39,16 @@ def text(node):
 
 def tag(node):
     return node.tag.rsplit('}', 1)[-1]
+
+
+def narrative_text(node):
+    """JATS can nest figure/table blocks INSIDE a p; exclude them from prose."""
+    parts=[node.text or '']
+    for child in node:
+        if tag(child) not in {'fig','table-wrap','table','supplementary-material'}:
+            parts.append(narrative_text(child))
+        parts.append(child.tail or '')
+    return ''.join(parts)
 
 
 def parse_source(path, paper_id):
@@ -81,7 +92,7 @@ def parse_source(path, paper_id):
                     if kind=='sec':
                         section=next((text(n) for n in node if tag(n)=='title'),section)
                     locator=node.get('id') or address
-                    if kind=='table-wrap':
+                    if kind in {'table-wrap','table'}:
                         add('table',locator,text(node),section)
                         return
                     if kind=='fig':
@@ -91,12 +102,20 @@ def parse_source(path, paper_id):
                     if kind in {'ref-list','ack','permissions','supplementary-material'}:
                         return
                     if kind=='p':
-                        add('body_paragraph',locator,text(node),section)
+                        add('body_paragraph',locator,' '.join(narrative_text(node).split()),section)
+                        def embedded(parent,prefix):
+                            for i,child in enumerate(parent):
+                                address=f'{prefix}/{tag(child)}[{i+1}]'
+                                if tag(child) in {'fig','table-wrap','table'}:
+                                    visit(child,address,section)
+                                elif tag(child)!='supplementary-material':
+                                    embedded(child,address)
+                        embedded(node,address)
                         return
                     for i,child in enumerate(node):
                         visit(child,f'{address}/{tag(child)}[{i+1}]',section)
                 visit(body,'body')
-    return {'paper_id':paper_id,'source_path':str(path.resolve()),'source_sha256':sha(path),
+    return {'paper_id':paper_id,'parser_version':PARSER_VERSION,'source_path':str(path.resolve()),'source_sha256':sha(path),
             'source_bytes':len(raw),'units':units,
             'status':'readable' if any(u['kind']=='body_paragraph' for u in units) else 'no_structured_body',
             'coverage':'XML text and captions only; no figure pixels or independent supplementary files'}
