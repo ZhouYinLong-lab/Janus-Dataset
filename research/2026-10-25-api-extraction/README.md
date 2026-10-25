@@ -65,6 +65,15 @@ $env:JANUS_API_KEY = [System.Net.NetworkCredential]::new('', $janusSecret).Passw
 Remove-Item Env:JANUS_API_KEY
 ```
 
+也可以将密钥保存在本目录被Git忽略的 `.env`，内容为一行 `JANUS_API_KEY=实际密钥`，然后显式指定文件，不需要先设置进程环境变量：
+
+```powershell
+& $janusPython $janusTool models --base-url https://yeysai.com/v1 --env-file research/2026-10-25-api-extraction/.env --live
+& $janusPython $janusTool run --workspace $janusWork --config $janusConfig --env-file research/2026-10-25-api-extraction/.env --live
+```
+
+models只发送一次读取模型目录的GET请求，不生成文本。密钥文件只在显式指定时读取，普通文本解析，不执行文件内容；日志不显示密钥。
+
 ## 三、小批通过后再扩大
 
 若只是继续当前两篇，核查实际费用后提高当前配置的 `max_requests`、`max_reserved_tokens`，再运行同一个工作区。完整两篇需要11个正常请求；发生失败后显式重试的请求也计入累计上限。

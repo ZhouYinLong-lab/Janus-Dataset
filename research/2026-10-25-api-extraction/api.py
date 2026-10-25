@@ -58,10 +58,11 @@ class HTTPClient:
         self.config,self.key=config,key
         self.opener=urllib.request.build_opener(NoRedirect())
 
-    def complete(self,payload):
-        req=urllib.request.Request(self.config['base_url'].rstrip('/')+'/chat/completions',
-            data=json.dumps(payload,ensure_ascii=False).encode('utf-8'),
-            headers={'Authorization':'Bearer '+self.key,'Content-Type':'application/json'},method='POST')
+    def _request(self,path,payload=None):
+        req=urllib.request.Request(self.config['base_url'].rstrip('/')+path,
+            data=json.dumps(payload,ensure_ascii=False).encode('utf-8') if payload is not None else None,
+            headers={'Authorization':'Bearer '+self.key,'Content-Type':'application/json'},
+            method='POST' if payload is not None else 'GET')
         try:
             with self.opener.open(req,timeout=self.config['timeout_seconds']) as response:
                 raw=response.read(16_000_001)
@@ -75,6 +76,17 @@ class HTTPClient:
             return json.loads(raw.decode('utf-8'))
         except (ValueError,UnicodeError):
             raise RequestFailure('non_json_http_response',ambiguous=True) from None
+
+    def complete(self,payload):
+        return self._request('/chat/completions',payload)
+
+    def models(self):
+        envelope=self._request('/models')
+        if not isinstance(envelope,dict) or not isinstance(envelope.get('data'),list):
+            raise ValueError('Model list has an unsupported format')
+        # Save/print only model IDs, never provider raw bodies or credentials.
+        return sorted({r['id'].replace(self.key,'[REDACTED]') for r in envelope['data']
+                       if isinstance(r,dict) and isinstance(r.get('id'),str)})
 
 
 def parse_completion(envelope):

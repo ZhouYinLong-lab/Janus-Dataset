@@ -9,6 +9,7 @@ import time
 from api import HTTPClient,RequestFailure,check_config,make_request,parse_completion,reserve_tokens
 from contract import validate
 from corpus import HERE,read,save,sha
+from credentials import load_key
 
 
 def fingerprint(value):
@@ -57,7 +58,7 @@ def status(workspace):
             'billing_notice':'Reserved units are estimates, not a guaranteed currency cap; provider account caps control billing.'}
 
 
-def run(workspace,config,live=False,retry_failed=False,client=None):
+def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None):
     if not live:raise ValueError('No request sent: use --live explicitly after checking plan and provider')
     check_config(config)
     workspace=Path(workspace)
@@ -65,7 +66,7 @@ def run(workspace,config,live=False,retry_failed=False,client=None):
     prompt=(workspace/'prompt.md').read_text(encoding='utf-8')
     identity=fingerprint({'request_config':{k:v for k,v in config.items() if k not in {'max_requests','max_reserved_tokens'}},
         'manifest_sha256':sha(workspace/'manifest.json'),
-        'code_sha256':{name:sha(HERE/name) for name in ['api.py','runner.py','contract.py','corpus.py']}})
+        'code_sha256':{name:sha(HERE/name) for name in ['api.py','runner.py','contract.py','corpus.py','credentials.py']}})
     with lock(workspace):
         path=workspace/'state.json'
         state=read(path) if path.exists() else {'identity':identity,'attempts':[],'jobs':{}}
@@ -73,8 +74,7 @@ def run(workspace,config,live=False,retry_failed=False,client=None):
         if any(a['status']=='in_flight' for a in state['attempts']):
             raise ValueError('Interrupted in-flight request may have been billed. Inspect state; no automatic resend')
         if client is None:
-            key=os.environ.get(config['api_key_env'])
-            if not key:raise ValueError('API key environment variable is unset; do not paste a key into config')
+            key=load_key(config['api_key_env'],env_file)
             client=HTTPClient(config,key)
         else:key=''  # Dependency injection is for local tests only, never a CLI transport choice.
         for jid in manifest['job_ids']:
