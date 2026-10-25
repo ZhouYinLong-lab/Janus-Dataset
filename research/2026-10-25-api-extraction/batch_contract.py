@@ -5,6 +5,60 @@ import re
 from two_stage_core import validate_discovery, validate_enrichment
 
 
+def _intervention_leaves_degradation_unchanged(quote, perturbation=None, target=None):
+    """Recognise explicit no-effect clauses and the known insensitivity noun phrase."""
+    subject = (r'\b(?:[\w-]+\s+)?(?:knock[ -]?(?:out|down)|KO|deletion|depletion)'
+               r'(?:\s+of\s+[\w-]+)?')
+    if perturbation:
+        subject = rf'(?:{subject}|(?<!\w){re.escape(perturbation)}(?!\w))'
+    no_effect = (
+        r'(?:(?:had|has|have|showed)\s+no\s+(?:(?:significant|detectable)\s+)?'
+        r'(?:effects?|impact)\s+on|(?:did|does|do)\s+not\s+'
+        r'(?:affect|alter|influence|impair|inhibit|block|prevent|reduce)|'
+        r'failed\s+to\s+(?:affect|alter|influence|inhibit|block|prevent))'
+    )
+    # Only a short degradation noun phrase may follow the no-effect predicate.
+    # Binding or a separate clause must not supply a degradation interpretation.
+    endpoint = (r'(?P<endpoint>(?:(?!(?:binding|ternary|NanoBRET|and|but|whereas|not)\b)'
+                r'[\w-]+\s+){0,4}degradation(?:\s+of\s+[\w-]+)?)\b')
+    patterns = (
+        rf'(?P<subject>{subject})\s+{no_effect}\s+{endpoint}',
+        # B149: "the insensitivity of BRD4 degradation to RMND5B knockout".
+        # Capture only this endpoint and intervention, not a later paralog or control.
+        rf'\bthe\s+insensitivity\s+of\s+{endpoint}\s+to\s+(?P<subject>{subject})',
+    )
+    for pattern in patterns:
+        for match in re.finditer(pattern, quote, re.I):
+            if perturbation and not re.search(
+                    rf'(?<!\w){re.escape(perturbation)}(?!\w)', match['subject'], re.I):
+                continue
+            if not target or re.search(rf'(?<!\w){re.escape(target)}(?!\w)',
+                                       match['endpoint'], re.I):
+                return True
+    return False
+
+
+def _observation_scope_errors(record, anchor):
+    """Quarantine explicit known shapes; all other semantics still need review."""
+    fields = record['fields']
+    errors = []
+    # Inspect the selected fields only. A full result anchor can legitimately
+    # mention another endpoint, including a positive binding/degradation result.
+    selected = ' '.join(fields.get(f) or '' for f in ('endpoint', 'assay'))
+    if (re.search(r'\b(?:binding|ternary|NanoBRET)\b', selected, re.I)
+            and re.search(r'\bdegrad(?:ation|e|es|ed|ing)\b', selected, re.I)
+            and any(fields.get(f) for f in
+                    ('treatment_time', 'tested_concentration', 'cell_line', 'perturbation'))):
+        errors.append('mixed_observation_endpoints_share_conditions')
+    if (record['negative_type'] in {'no_degradation', 'no_significant_degradation',
+                                    'no_abundance_change', 'conditional_loss'}
+            and (not fields.get('endpoint') or re.search(r'degrad', fields['endpoint'], re.I))
+            and _intervention_leaves_degradation_unchanged(
+                anchor['quote'], fields.get('perturbation'), fields.get('target'))):
+        errors.append('ineffective_intervention_is_not_degradation_loss')
+    return errors
+
+
 def discovery(payload, job):
     if not isinstance(payload, dict) or not isinstance(payload.get('candidates'), list):
         raise ValueError('Invalid discovery envelope')
@@ -58,7 +112,8 @@ def enrichment(payload, job, candidates):
         try:
             r = validate_enrichment(one, job, [expected[cid]])
             for accepted_item in r['accepted']:
-                record = accepted_item['record']; errors = []
+                record = accepted_item['record']
+                errors = _observation_scope_errors(record, expected[cid])
                 result_quotes = ' '.join(e['quote'] for e in record['evidence'] if e['field'] == 'result_text')
                 endpoint = (record['fields'].get('endpoint') or '').casefold()
                 if record['negative_type'] == 'reported_zero' and not re.search(
