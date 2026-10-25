@@ -1,0 +1,11 @@
+{
+  "base_url": "https://yeysai.com/v1",
+  "model": "REPLACE_WITH_YOUR_PROVIDER_MODEL_ID",
+  "api_key_env": "JANUS_API_KEY",
+  "timeout_seconds": 120,
+  "max_output_tokens": 4096,
+  "output_token_parameter": "max_tokens",
+  "response_format": "json_object",
+  "max_requests": 3,
+  "max_reserved_tokens": 200000
+}

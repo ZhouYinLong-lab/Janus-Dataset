@@ -59,7 +59,14 @@ def build_jobs(document,metadata,primary_cap=10000,context_cap=18000):
 def prepare(out,papers=None,limit=3,custom=None):
     out=Path(out)
     if out.exists():raise ValueError('Workspace already exists; use run to resume, not prepare')
-    _,metadata=existing_papers() if custom is None else ([],{m['paper_id']:m for m in read(custom)})
+    if custom is None:
+        _,metadata=existing_papers()
+    else:
+        items=read(custom)
+        if not isinstance(items,list) or any(not isinstance(m,dict) for m in items):
+            raise ValueError('Custom manifest must be an array of paper objects')
+        if len({m.get('paper_id') for m in items})!=len(items):raise ValueError('Duplicate paper identity')
+        metadata={m['paper_id']:m for m in items}
     if papers:
         missing=set(papers)-set(metadata)
         if missing:raise ValueError('Unknown local papers: '+','.join(sorted(missing)))
@@ -72,6 +79,9 @@ def prepare(out,papers=None,limit=3,custom=None):
     chosen=chosen[:limit]
     if not chosen:raise ValueError('No selected papers')
     if len({m['paper_id'] for m in chosen})!=len(chosen):raise ValueError('Duplicate paper identity')
+    for m in chosen:
+        if not isinstance(m['paper_id'],str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',m['paper_id']):
+            raise ValueError('paper_id must be a safe ASCII identifier, not a path')
     prompt=(HERE/'prompt.md').read_text(encoding='utf-8')
     plan={'schema_version':1,'source_prompt_sha256':sha(HERE/'prompt.md'),'papers':[], 'job_ids':[],
           'job_sha256':{},
