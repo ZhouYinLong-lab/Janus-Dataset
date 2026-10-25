@@ -1,0 +1,99 @@
+{
+  "status": "offline_validation_passed",
+  "timestamp_utc": "20261025T040327885347Z",
+  "unit_and_integration_tests": 42,
+  "test_failures": 0,
+  "test_errors": 0,
+  "live_provider_requests": 0,
+  "http_tests": "Two loopback HTTP scenarios: normal request and blocked redirect; no paid service",
+  "legacy_inventory_reproduced": true,
+  "legacy_negative_candidates": 311,
+  "glue_include_candidates": 165,
+  "glue_include_origin_counts": {
+    "body_quote_matched": 149,
+    "body_and_other": 16
+  },
+  "replay_workspace": "local/verified_replay_20261025T040327885347Z",
+  "replay_summary": {
+    "mode": "offline_legacy_replay_not_model_inference",
+    "paid_api_requests": 0,
+    "expected_legacy_cases": [
+      "B013_004",
+      "B022_010",
+      "B043_004",
+      "B046_010"
+    ],
+    "matched_legacy_cases": [
+      "B013_004",
+      "B022_010",
+      "B043_004",
+      "B046_010"
+    ],
+    "matched_all_cases": true,
+    "jobs_processed": "processed",
+    "export_summary": {
+      "unique_records": 4,
+      "primary_candidates": 4,
+      "quarantined_records": 0,
+      "domain_counts": {
+        "molecular_glue": 4
+      },
+      "papers": [
+        {
+          "paper_id": "B013",
+          "jobs": 7,
+          "completed": 7,
+          "quarantined": 0,
+          "status": "processed_not_semantically_reviewed"
+        },
+        {
+          "paper_id": "B022",
+          "jobs": 4,
+          "completed": 4,
+          "quarantined": 0,
+          "status": "processed_not_semantically_reviewed"
+        },
+        {
+          "paper_id": "B043",
+          "jobs": 8,
+          "completed": 8,
+          "quarantined": 0,
+          "status": "processed_not_semantically_reviewed"
+        },
+        {
+          "paper_id": "B046",
+          "jobs": 7,
+          "completed": 7,
+          "quarantined": 0,
+          "status": "processed_not_semantically_reviewed"
+        }
+      ],
+      "expert_gold": false,
+      "training_ready_records": 0,
+      "interpretation": "Body quote-grounded model candidates; not verified biological negatives, table-unique facts or downstream gains"
+    },
+    "interpretation": "Tests preparation, response parsing, grounding, resume/export with existing cases; does not measure new extraction precision or recall."
+  },
+  "code_sha256": {
+    "api.py": "dd2f77d8d51f94182dfeaf4cf6a8399d6ef1e32a027ca8c18f794e41972b2612",
+    "contract.py": "87722fece3c8f5a5e4e0145385fb964047a97ffb5864b2e65d7c89bcc02bd24b",
+    "corpus.py": "c5bef919fa4483a3dc71042e1271e8b7207b527214885afddfcc1ded44cd1121",
+    "estimate.py": "7d4a21c2f6578135272738ce420cb754b180499353f1d2da428dbc633fc73f70",
+    "export.py": "b34edcf2300d8e69b1895c7d27dd03c91f883eb36142165c232182c3e482ba81",
+    "pipeline.py": "96f8c227d646cf762eabd1e2a538dd9443d211cf112efd23ddf473fbfe6b5593",
+    "prepare.py": "9acdb95dd94376c56c34ce53eae160543d4d23fccd545d882873da183019b41b",
+    "replay.py": "5f13551e0ea77f7bc36eb44ac9495fabf3eabe8da1a4fd4c351c4afeacf00567",
+    "reuse.py": "359b33c0b53d054b53dc27257d9a4099734131a67bac25d38fcf553f3e07ea6e",
+    "runner.py": "a1acc09efddc74d7e8803cabd5144dca515c5f2486342d81c0dc06f7bfcd7696",
+    "test_contract.py": "2ed168d34d2418a26ea6a4eff053bae9dc0525a6e6fc2135df7ca2906dd3cc6c",
+    "test_corpus.py": "98d02f52cb5761f626bb66496c8c40bed2c6b46d456968f30d3880fd1fd13d2e",
+    "test_runner.py": "d6cea3896a9a87558f6e53968d87c042c671957dc977038beaf96e28041ebce7",
+    "verify.py": "0d5175db94f9ef7290f97f005aaefdd82c420df0d26c88f829e49031473c4129"
+  },
+  "prompt_sha256": "5d69cdf4015fee933db0b15e71db3d45419b110686df94fd8b901527d8796a1d",
+  "not_yet_validated": [
+    "actual provider authentication and model compatibility",
+    "fresh model extraction precision/recall",
+    "expert semantics or downstream utility"
+  ]
+}
