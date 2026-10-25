@@ -1,0 +1,5 @@
+local/
+config.local.json
+.env
+*.key
+__pycache__/
