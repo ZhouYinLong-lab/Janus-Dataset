@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "purpose": "Engineering cohort then separate quality cohort; fixed before any new paid batch generation",
+  "engineering": ["B046", "B204", "B207", "B228", "B235"],
+  "quality": ["B013", "B040", "B127", "B149", "B151", "B165", "B193", "B201", "B209", "B212"],
+  "excluded_unresolved_trial_paper": "B022",
+  "selection_basis": "Purposive local queue with readable original research, different targets, conditional outcomes and scope-boundary cases; not random or prevalence-representative",
+  "prior_exposure": "These papers belong to the previously model-processed corpus. The quality cohort was not used for the current B022 prompt debugging, but is not a wholly unseen or expert-gold benchmark.",
+  "scope_screen": "Historical include/molecular-glue metadata only; mechanism and eligibility need source review. Mixed PROTAC/glue and ligand-design papers are deliberate boundary cases.",
+  "expert_gold": false
+}

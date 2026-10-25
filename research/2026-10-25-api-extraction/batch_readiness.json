@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-25",
+  "status": "engineering_implemented_live_generation_waiting_for_budget_confirmation",
+  "entrypoint": "batch.py",
+  "completed": ["generic_all_body_queue", "discover_then_enrich", "candidate_linkage", "per_field_quote_checks", "per_record_and_per_paper_isolation", "shared_and_workspace_budget_caps", "no_unknown_retries", "offline_response_recovery", "json_csv_exports", "one_command_start_and_resume"],
+  "offline_tests_passed": 117,
+  "offline_tests_failed": 0,
+  "cli_integration": "Local synthetic HTTP server: two-paper full workflow, then identical command repeated with no extra requests",
+  "review": "Independent static review found five recovery/exit/provider-identity issues; fixes have regression tests",
+  "new_external_generation_requests": 0,
+  "new_generated_evidence_records": 0,
+  "diagnostic_get": {"model_list_authenticated": true, "model_count": 62, "elapsed_seconds": 1.16, "generation_requests": 0},
+  "budget_authorization": "A non-blocking question was sent proposing 200 new generation calls and 8000000 reserved token units, with a 40-call engineering-only alternative. No response has been received; no new paid generation budget was created.",
+  "engineering": {
+    "workspace": "local/batch_engineering_02",
+    "papers": ["B046", "B204", "B207", "B228", "B235"],
+    "paper_count": 5,
+    "discovery_jobs": 18,
+    "input_gaps": 0,
+    "manifest_sha256": "05f249539d7b1eff9b0bfc695ce8f1e01c3527fbe5340c2067c20894fe1a2e50",
+    "discovery_reservation_estimate": 405010,
+    "enrichment_reservation_estimate_one_batch_per_job_without_candidates": 775286,
+    "live_run": "not_started"
+  },
+  "quality": {
+    "workspace": "local/batch_quality_02",
+    "papers": ["B013", "B040", "B127", "B149", "B151", "B165", "B193", "B201", "B209", "B212"],
+    "paper_count": 10,
+    "discovery_jobs": 45,
+    "input_gaps": 0,
+    "manifest_sha256": "60f9796ff251eccb432e638d2f7212d448b6e50df29a0027c6e10a89dbb8f55c",
+    "discovery_reservation_estimate": 996665,
+    "enrichment_reservation_estimate_one_batch_per_job_without_candidates": 1982533,
+    "live_run": "not_started"
+  },
+  "legacy_unknown_B022": "unchanged; not resent",
+  "real_five_paper_acceptance": "not_completed",
+  "semantic_quality_evaluation": "not_started",
+  "rag_evaluation": "not_started",
+  "small_model_training": "not_started",
+  "billing_notice": "Reservation estimates are not actual tokens or guaranteed currency caps; actual billing depends on the provider."
+}
