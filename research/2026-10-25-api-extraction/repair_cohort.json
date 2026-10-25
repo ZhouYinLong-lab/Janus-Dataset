@@ -1,0 +1,16 @@
+{
+  "purpose": "Engineering regression after three scoped repairs, not unseen-paper evaluation",
+  "papers_in_order": ["B212", "B151", "B149", "B040", "B127", "B235", "B207", "B165", "B201", "B193", "B228"],
+  "selection": "Previously processed papers with no unresolved extraction tasks; prioritize known missing-caption and interpretation cases",
+  "excluded": ["B022", "B046", "B204", "B013", "B209"],
+  "shared_ledger": "local/round_01_budget.json",
+  "generation_attempts_at_start": 132,
+  "shared_attempt_limit": 200,
+  "new_workspace_attempt_limit": 68,
+  "model": "gpt-4.1-2025-04-14",
+  "new_papers": 0,
+  "new_question_sets": 0,
+  "new_training": false,
+  "old_records_and_unknown_requests": "Retained; no unknown retries",
+  "limits": "Changed protocol on known sources. New output rows are not newly discovered independent experiments, expert gold, or a causal demonstration of negative-evidence value."
+}

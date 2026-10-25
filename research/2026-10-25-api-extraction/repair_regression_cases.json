@@ -1,0 +1,362 @@
+{
+  "version": 1,
+  "frozen_date": "2026-10-26",
+  "purpose": "离线审核提取修复后的对象、终点及条件归属，检查非结构化阴性恢复是否可靠。",
+  "regression_review_only": true,
+  "use_in_api_prompts": false,
+  "expert_gold": false,
+  "evaluation_scope": "10个案例均来自历史已接触论文及已有助手原文复核，用于开发回归审核；不是独立新论文基准，也不用于估计新增知识或用途收益。",
+  "source_reviews": [
+    "quality_semantic_review.json",
+    "engineering_semantic_review.json"
+  ],
+  "source_document_paths": {
+    "B212": "local/batch_quality_02/documents/B212.json",
+    "B151": "local/batch_quality_02/documents/B151.json",
+    "B149": "local/batch_quality_02/documents/B149.json",
+    "B165": "local/batch_quality_02/documents/B165.json",
+    "B235": "local/batch_engineering_02/documents/B235.json",
+    "B207": "local/batch_engineering_02/documents/B207.json",
+    "B201": "local/batch_quality_02/documents/B201.json"
+  },
+  "source_locator_convention": "路径相对于本清单所在目录；source_unit_ids对应论文documents内units[].unit_id。",
+  "cases": [
+    {
+      "id": "R01_B212_compound15_cyclinK",
+      "paper_id": "B212",
+      "source_unit_ids": [
+        "B212:dac6cdd3a4cbdc6c",
+        "B212:4d9cf9254840d363",
+        "B212:a4ae56d9169d93cb",
+        "B212:37ceff5fa1db6ae0"
+      ],
+      "expected_core": "pyrid-4-one化合物15在该系列实验中丧失cyclin K降解能力；表1与图2将该测定定位为HEK293T细胞、1 μM、2 h的Western blot。",
+      "forbidden_interpretations": [
+        "将定性丧失降解能力填写为Dmax精确等于0。",
+        "将cyclin K降解终点替换为CDK12降解或结合。",
+        "外推为所有剂量、时长或细胞中均不降解。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "化合物15（pyrid-4-one类似物）",
+        "assays": [
+          {
+            "endpoint": "cyclin K降解",
+            "cell_line": "HEK293T",
+            "concentration": "1 μM",
+            "treatment_duration": "2 h",
+            "method": "Western blot"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B212:aa9dc1851a2cc4ff2573",
+        "condition_limits": "条件来自明确覆盖化合物1–20的表1及图2；不恢复当前文本中未展开的精确蛋白水平。"
+      }
+    },
+    {
+      "id": "R02_B151_handle8_acetylation",
+      "paper_id": "B151",
+      "source_unit_ids": [
+        "B151:6102e6e6e505e7bc",
+        "B151:270a897bda0aa98e"
+      ],
+      "expected_core": "DCAF16靶向化学手柄8在MM.1S细胞中以10 μM处理24 h后，未改变乙酰化组蛋白H3及乙酰化α-tubulin水平；这是乙酰化标记的阴性对照。",
+      "forbidden_interpretations": [
+        "改写为手柄8不降解HDAC1、HDAC6或所有HDAC蛋白。",
+        "据此断言完全没有HDAC酶抑制作用。",
+        "将手柄8的结果赋给降解剂10a。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "DCAF16靶向化学手柄8",
+        "assays": [
+          {
+            "endpoint": "乙酰化组蛋白H3及乙酰化α-tubulin水平",
+            "cell_line": "MM.1S",
+            "concentration": "10 μM",
+            "treatment_duration": "24 h",
+            "method": "Immunoblot",
+            "vehicle_control": "DMSO"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B151:a4c024551cb2ef9a6ead",
+        "condition_limits": "图4图注明确覆盖手柄8；乙酰化标记和HDAC蛋白丰度是不同终点。"
+      }
+    },
+    {
+      "id": "R03_B149_RMND5B_KO_intervention",
+      "paper_id": "B149",
+      "source_unit_ids": [
+        "B149:76d321307b744131",
+        "B149:c1ce07939e2afd2b",
+        "B149:172defc97c6e8fb0"
+      ],
+      "expected_core": "RMND5B敲除未影响ZZ1诱导的BRD4降解，阴性指该遗传干预未能阻断降解；BRD4降解仍然发生。",
+      "forbidden_interpretations": [
+        "将干预无效反转为ZZ1不降解BRD4。",
+        "把WDR26或YPEL5敲除阻断降解的结果赋给RMND5B敲除。",
+        "将RMND5A冗余或不同CTLH复合物解释写成已证实机制。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "ZZ1处理，RMND5B敲除",
+        "assays": [
+          {
+            "endpoint": "RMND5B敲除对ZZ1诱导BRD4稳定性变化的影响",
+            "cell_line": "K562-Cas9（BRD4 BD1–eGFP筛选）",
+            "concentration": "ZZ1 1 μM",
+            "treatment_duration": "16 h",
+            "method": "UPS聚焦的Bison CRISPR筛选，以eGFP/mCherry比值分选"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B149:d736d30aba964190d15d",
+        "condition_limits": "1 μM、16 h来自图1c筛选图注，方法段讨论该筛选中的RMND5B；不套用图1b的Jurkat、预处理1 h和ZZ1处理5 h。"
+      }
+    },
+    {
+      "id": "R04_B165_HuRG58A_downstream",
+      "paper_id": "B165",
+      "source_unit_ids": [
+        "B165:6d19b5b76124f31d",
+        "B165:7b71d17bb95eac9a",
+        "B165:8810a7782fb3f87f"
+      ],
+      "expected_core": "dHuR-2在亲本Colo205细胞中降低ERK磷酸化并下调BRAF、EGFR蛋白；这些下游效应在HuR(G58A)突变细胞中消失。图3h对应0.1或1 μM、6天处理。",
+      "forbidden_interpretations": [
+        "将本例下游信号及蛋白下调终点替换为HuR无降解。",
+        "将图3d的24 h HuR降解测定条件挂到图3h。",
+        "将图3g的1 μM、96 h RNA-seq或图3e的8天球体生长条件挂到本例。",
+        "外推为dHuR-2在亲本细胞或所有细胞中均无效。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "dHuR-2处理，HuR(G58A)突变",
+        "assays": [
+          {
+            "endpoint": "ERK磷酸化及BRAF、EGFR蛋白水平",
+            "cell_line": "Colo205亲本及同源HuR(G58A)突变细胞",
+            "concentration": "0.1或1 μM",
+            "treatment_duration": "6天",
+            "method": "Immunoblot（图3h）"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B165:2748244e0c2ed458cbef",
+        "condition_limits": "Par16与图3h共同定位下游测定；Par14及图3d只用于区分另一个HuR降解实验。"
+      }
+    },
+    {
+      "id": "R05_B235_JP2232_binding_vs_degradation",
+      "paper_id": "B235",
+      "source_unit_ids": [
+        "B235:21e03e331685230c"
+      ],
+      "expected_core": "JP-2-232仍能结合RNF126，结合能力较JP-2-197弱，但未引起BRD4降解；结合与降解分别保留为两个终点。",
+      "forbidden_interpretations": [
+        "因BRD4未降解而改写为JP-2-232不结合RNF126。",
+        "将RNF126结合较弱写成BRD4降解较弱或RNF126基线未检出。",
+        "把JP-2-197的效力、剂量或时长赋给JP-2-232。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "JP-2-232（JP-2-197的非反应性类似物）",
+        "assays": [
+          {
+            "endpoint": "RNF126结合",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null,
+            "comparator": "JP-2-197"
+          },
+          {
+            "endpoint": "BRD4降解",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B235:18ec3aeacb059a25bed2",
+        "condition_limits": "正文指向图S7g–i，当前documents未展开该组测定条件；HEK293T在该段明确用于JP-2-197，未单独确认JP-2-232细胞条件。"
+      }
+    },
+    {
+      "id": "R06_B235_EST1090_CDK4_RNF126",
+      "paper_id": "B235",
+      "source_unit_ids": [
+        "B235:b8d7b0a0f797a7ba",
+        "B235:3c5f4bc2ba9a2c87"
+      ],
+      "expected_core": "palbociclib的cinnamamide衍生物EST1090未在C33A细胞中引起CDK4降解；正文另报告其不结合RNF126。两个结果分别对应CDK4降解与RNF126结合测定。",
+      "forbidden_interpretations": [
+        "将不结合RNF126改写为不降解RNF126或RNF126蛋白未检出。",
+        "将RNF126结合测定也标为C33A细胞降解实验。",
+        "把EST1027或EST1060的剂量、时长和测定条件赋给EST1090。",
+        "外推为所有带该手柄的分子均不能降解CDK4。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "EST1090（带cinnamamide手柄的palbociclib衍生物）",
+        "assays": [
+          {
+            "endpoint": "CDK4降解",
+            "cell_line": "C33A",
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null
+          },
+          {
+            "endpoint": "RNF126结合",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B235:880df8f44e7b37b7bd5d",
+        "condition_limits": "对应图S1d及S3c；当前documents未展开EST1090的剂量、时长及具体方法，不借用相邻主图条件。"
+      }
+    },
+    {
+      "id": "R07_B207_LL_K12_16_17_activity",
+      "paper_id": "B207",
+      "source_unit_ids": [
+        "B207:1ee836a4893aa710",
+        "B207:c28fcc4621d21cf9"
+      ],
+      "expected_core": "LL-K12-16和LL-K12-17相较LL-K12-18的activity下降超过100倍，对应表2的细胞抗增殖EC50比较；该倍数不能作为cyclin K降解效力倍数。",
+      "forbidden_interpretations": [
+        "将超过100倍的activity下降标成cyclin K降解效力下降超过100倍。",
+        "将表2抗增殖EC50改为降解DC50或CDK12激酶抑制IC50。",
+        "把表2降解列的50或5 nM、24 h条件挂到抗增殖测定。",
+        "把16和17写成完全不降解cyclin K。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "LL-K12-16及LL-K12-17",
+        "assays": [
+          {
+            "endpoint": "细胞抗增殖EC50比较",
+            "cell_line": "MDA-MB-231及MDA-MB-468",
+            "concentration": null,
+            "treatment_duration": null,
+            "method": "浓度曲线拟合EC50，每浓度3个复孔（表2脚注b）",
+            "comparator": "LL-K12-18"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B207:3c8478dc48a6e08e0b56",
+        "condition_limits": "表2独立列出抗增殖EC50与cyclin K降解百分比；本文段及该表未给抗增殖测定确切时长和浓度范围。"
+      }
+    },
+    {
+      "id": "R08_B207_LL_K12_19_20_relative_degradation",
+      "paper_id": "B207",
+      "source_unit_ids": [
+        "B207:0719769178894c22"
+      ],
+      "expected_core": "将原胶合位点的二氯苯并咪唑替换为4,5-二氟或5,6-二氟衍生物LL-K12-19和LL-K12-20后，cyclin K降解能力相对降低；保留定性的相对减弱。",
+      "forbidden_interpretations": [
+        "将相对降低写成完全无降解或精确零。",
+        "将16/17相对18的抗增殖下降超过100倍赋给19/20。",
+        "把更强吸电子基团削弱相互作用的推测写成已证实机制。",
+        "沿用其他化合物或主图的细胞、剂量、时长作为19/20的实测条件。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "LL-K12-19（4,5-二氟）及LL-K12-20（5,6-二氟）",
+        "assays": [
+          {
+            "endpoint": "cyclin K降解相对降低",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null,
+            "comparator": "原胶合位点含二氯苯并咪唑的母体结构；本句未单列比较物编号"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B207:fc247eba96f5c467ab82",
+        "condition_limits": "正文指向Table S1，当前documents未展开对应逐化合物数值和条件；保留群组陈述，不拆成精确独立实验。"
+      }
+    },
+    {
+      "id": "R09_B149_substitution_no_improvement",
+      "paper_id": "B149",
+      "source_unit_ids": [
+        "B149:df508e165fd8374d"
+      ],
+      "expected_core": "ZZ1初步构效研究中，更换所述取代基未得到更有效的YPEL5依赖BRD4降解剂；这只支持未改善，不能区分效力相当、减弱或无效。",
+      "forbidden_interpretations": [
+        "将未得到更有效降解剂直接标为relative_weakening。",
+        "将所有替换类似物写成失活或完全不降解BRD4。",
+        "将后续ZZ2结构优化结果混入这组初步替换结论。",
+        "未恢复具体类似物与比较数值便拆成多个独立实验。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "ZZ1初步构效研究中的取代基替换类似物群组",
+        "assays": [
+          {
+            "endpoint": "YPEL5依赖的BRD4降解效力是否改善",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null,
+            "comparator": "ZZ1"
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B149:7f6920600436a96d7e83",
+        "condition_limits": "原句指向补表4，当前documents未展开具体类似物、逐项数值或测定条件；本例审核语义边界。"
+      }
+    },
+    {
+      "id": "R10_B201_components_Lin28_control",
+      "paper_id": "B201",
+      "source_unit_ids": [
+        "B201:27d46b1db9d37d0d",
+        "B201:6c3fc799be99461d",
+        "B201:c5d990be7978c03d"
+      ],
+      "expected_core": "仅用Lin28母体binder及E3 ligase recruiter组分处理的对照未见Lin28蛋白水平变化；该组分对照结果与完整MG-Lin1或PRO-Lin7引起Lin28下降的结果分别记录。",
+      "forbidden_interpretations": [
+        "将组分对照无变化赋给完整MG-Lin1或PRO-Lin7，写成它们不降解Lin28。",
+        "把图3主实验的PA-1、10 μM、48 h作为图S3组分对照的已确认条件。",
+        "补造具体binder或recruiter编号、单用或合用方案，或将群组陈述拆作多个独立失败实验。",
+        "将Lin28蛋白水平未变写成组分不结合Lin28或不结合E3。"
+      ],
+      "reported_condition_fields": {
+        "compound_or_intervention": "仅Lin28母体binder及E3 ligase recruiter组分的机制对照",
+        "assays": [
+          {
+            "endpoint": "Lin28蛋白水平",
+            "cell_line": null,
+            "concentration": null,
+            "treatment_duration": null,
+            "method": null
+          }
+        ]
+      },
+      "notes": {
+        "expert_gold": false,
+        "review_record_key": "B201:efdbac233d9c8c04f01a",
+        "condition_limits": "正文实验背景为PA-1，但图S3对照的具体组分身份、组合方式、细胞条件、剂量、时长及方法未在当前documents展开；主实验及图3仅用于区分完整降解剂结果。"
+      }
+    }
+  ]
+}
