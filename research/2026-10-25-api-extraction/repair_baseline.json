@@ -1,0 +1,44 @@
+{
+  "protocol": "before_three_repairs",
+  "scope": "same known-source engineering regression, not independent experiments",
+  "record_count": 14,
+  "records_by_paper": {
+    "B212": 1,
+    "B151": 1,
+    "B149": 2,
+    "B040": 0,
+    "B127": 0,
+    "B235": 4,
+    "B207": 2,
+    "B165": 2,
+    "B201": 2,
+    "B193": 0,
+    "B228": 0
+  },
+  "non_null_fields": {
+    "cell_line": 0,
+    "treatment_time": 0,
+    "tested_concentration": 0,
+    "endpoint": 8
+  },
+  "quarantine_errors": {
+    "quote_not_in_cited_unit": 7,
+    "ungrounded_field:endpoint": 4,
+    "ungrounded_field:target": 5,
+    "missing_original_discovery_anchor": 10,
+    "mention_not_in_quote:compound_mentions": 6,
+    "invalid_negative_type": 1,
+    "ungrounded_field:perturbation": 1,
+    "mention_not_in_quote:condition_mentions": 6,
+    "invalid_quote": 7,
+    "ungrounded_field:construct": 1,
+    "ungrounded_field:compound": 5,
+    "degradation_endpoint_not_explicit_in_endpoint_evidence": 1,
+    "ungrounded_field:cell_line": 1
+  },
+  "export_sha256": {
+    "batch_engineering_02": "0dd107ad1871056ee8a15c417d004bf29fed90b8fb0bfa5922da9e87e2b958a3",
+    "batch_quality_02": "9bff2d986b8690c70e7ae1a3e58f4d1c5f1290dbff32e9a33aaf9e84cf50717e"
+  },
+  "note": "Counts describe mechanical output and non-null fields, not semantic precision or complete experimental context."
+}
