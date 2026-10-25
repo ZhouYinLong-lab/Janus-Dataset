@@ -6,7 +6,7 @@
 
 已完成原文来源盘点、正文分块、结构化提取约定、兼容Chat Completions的API请求、断点续跑、调用预算保护、原文引用检查、JSON/CSV导出。只用Python标准库，不需要安装SDK。
 
-软件经过离线测试及真实原文旧案例回放，见[验证记录](validation_report.json)。没有读取个人密钥或向真实模型服务发送请求。下一步由你填入模型名和密钥，先试少量请求，核查新输出后再扩大。
+软件经过55项离线测试及真实原文旧案例回放，见[离线验证记录](validation_report.json)。随后用用户授权的密钥实际发送了3次生成请求：1次HTTP500、2次成功响应，出现漏项与字段引用问题，暂不扩量。具体见[API小批实测记录](API小批实测记录.md)；已连通的调试型号为gpt-4.1-2025-04-14，正式批量型号仍待质量比较。
 
 ## 一、已有材料可以怎样用
 
@@ -22,11 +22,11 @@
 Set-Location D:/Projects/Dog/Janus-Dataset
 $janusPython = 'D:/Environment/Miniconda3/python.exe'
 $janusTool = 'research/2026-10-25-api-extraction/pipeline.py'
-$janusWork = 'research/2026-10-25-api-extraction/local/first_api'
+$janusWork = 'research/2026-10-25-api-extraction/local/api_ready_v2'
 $janusConfig = 'research/2026-10-25-api-extraction/config.local.json'
 ```
 
-本机已准备好 `first_api`：B022、B046两篇论文，共11个正文分块，尚未调用API。其他机器需先取得旧原文队列和final_records快照，或使用下方自定义清单；旧输入具备后可按以下命令准备。工作区已存在时不要重复执行prepare。
+本机已准备好 `api_ready_v2`：B022、B046两篇论文，共11个正文分块，尚未调用API，使用修复过的正文/图表解析。旧first_api等目录保留实测历史，不与新工作区混用。其他机器需先取得旧原文队列和final_records快照，或使用下方自定义清单；旧输入具备后可按以下命令准备。工作区已存在时不要重复执行prepare。
 
 ```powershell
 & $janusPython $janusTool prepare --papers B022 B046 --limit 2 --out $janusWork
@@ -34,7 +34,7 @@ $janusConfig = 'research/2026-10-25-api-extraction/config.local.json'
 
 将[config.example.json](config.example.json)复制为同目录的 `config.local.json`。填写你的服务地址和实际模型ID；示例地址来自此前提供的 `https://yeysai.com/v1`，兼容性需实际试跑确认。配置里不放密钥。
 
-默认 `max_requests=3` 是整个工作区累计最多3次请求，**不是3篇论文**。`max_reserved_tokens=200000` 是保守预估量上限。这两项只是首轮保护，不会把11个分块全部处理完。
+示例配置默认 `max_requests=3`，表示整个工作区累计最多3次请求，**不是3篇论文**；本机调试配置当前为1。`max_reserved_tokens=200000` 是保守预估量上限。这些是首轮保护，不会把11个分块全部处理完。
 
 设置当前PowerShell进程的密钥，输入不会回显，也不进入命令历史：
 

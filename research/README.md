@@ -1,6 +1,6 @@
 # Research files
 
-当前主线入口：[分子胶正文阴性证据API提取管线](2026-10-25-api-extraction/README.md)。已核查旧材料复用范围并完成离线软件验证；真实服务连通与新模型小批质量检查待配置API后进行。
+当前主线入口：[分子胶正文阴性证据API提取管线](2026-10-25-api-extraction/README.md)。已完成55项离线检查和3次真实生成请求；接口已连通，当前输出仍有漏项与字段引用问题，详见[API实测](2026-10-25-api-extraction/API小批实测记录.md)，暂不扩量。
 
 This directory contains Janus-Dataset research materials. The latest scope is general-LLM recovery of literature evidence and missing experimental context, followed by separate RAG and small-language-model use; earlier landscape reviews and experiments remain as dated records.
 

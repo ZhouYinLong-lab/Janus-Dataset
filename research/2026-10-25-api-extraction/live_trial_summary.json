@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-25",
+  "base_url": "https://yeysai.com/v1",
+  "authenticated_model_list_gets": 1,
+  "provider_advertised_model_count": 62,
+  "generation_requests_attempted": 3,
+  "generation_request_limit_this_trial": 3,
+  "http_successes": 2,
+  "http_failures": 1,
+  "further_requests_sent": false,
+  "attempts": [
+    {
+      "workspace": "local/first_api",
+      "requested_model_from_session_record": "gpt-5.4-mini",
+      "started_utc": "2026-10-25T06:26:59.852200+00:00",
+      "duration_seconds": 52.55,
+      "outcome": "HTTP500; no extraction or usage received",
+      "returned_model": null,
+      "prompt_sha256": "5d69cdf4015fee933db0b15e71db3d45419b110686df94fd8b901527d8796a1d"
+    },
+    {
+      "workspace": "local/gpt41_probe",
+      "requested_model_from_session_record": "gpt-4.1-2025-04-14",
+      "returned_model": "gpt-4.1-2025-04-14",
+      "duration_seconds": 16.47,
+      "prompt_tokens_reported": 8666,
+      "completion_tokens_reported": 261,
+      "total_tokens_reported": 8927,
+      "raw_records": 1,
+      "quote_checked_candidates": 0,
+      "quarantined_records": 1,
+      "issues": ["result from context rather than current primary units", "missing field-specific citations"],
+      "response_sha256": "e9a225dbfe12401cb483a30b6c3f2165910394264dc752b23ebfa8b3f3a24012",
+      "prompt_sha256": "5d69cdf4015fee933db0b15e71db3d45419b110686df94fd8b901527d8796a1d"
+    },
+    {
+      "workspace": "local/format_probe",
+      "requested_model_from_session_record": "gpt-4.1-2025-04-14",
+      "returned_model": "gpt-4.1-2025-04-14",
+      "duration_seconds": 17.43,
+      "prompt_tokens_reported": 9138,
+      "completion_tokens_reported": 725,
+      "total_tokens_reported": 9863,
+      "raw_records": 2,
+      "quote_checked_candidates": 1,
+      "quarantined_records": 1,
+      "selected_job_id": "B022_cb94708e7c9970a897d8",
+      "issues": ["compound6 cites a real sentence under the wrong unit ID", "compound15 assay name not supported by its cited sentence", "clear compound4/5 negative statements omitted"],
+      "response_sha256": "4a84503923059dd823227580d6e3edd8839dc5e7b77bf58ee55fd02f8d9ca386",
+      "prompt_sha256": "957d95f2322c2bae89547adee2e706c108a6f4d465f7ee1c439c101755858ee8"
+    }
+  ],
+  "successful_responses_reported_total_tokens": 18790,
+  "failed_request_usage": "unknown",
+  "currency_cost": "not obtained; provider billing controls actual cost",
+  "historical_source_parser_version_used_for_live_calls": 1,
+  "current_source_parser_version": 2,
+  "live_calls_after_parser_fix": 0,
+  "current_offline_tests_passed": 55,
+  "mechanically_grounded_candidate_review": {
+    "record_key": "B022:7c3ea0105f89d3a3e4a1",
+    "compound": "compound15",
+    "target": "LCK",
+    "result_source_locator": "B022 p0115",
+    "result_claim_review": "source supports scoped loss of degradation activity; no exact-zero claim",
+    "assay_field_review": "needs evidence correction: cited sentence states degradation but not HiBiT method",
+    "expert_gold": false,
+    "ready_for_training": false
+  },
+  "decision": "Connectivity verified for provider gpt-4.1 snapshot; current extraction quality not sufficient for unattended bulk use",
+  "limits": [
+    "Development probes, one paper, not independent model comparison or recall benchmark",
+    "Model names are provider declarations; backend identity not independently verified",
+    "Original raw responses and runtime state preserved; fixes did not overwrite historical outputs"
+  ]
+}
