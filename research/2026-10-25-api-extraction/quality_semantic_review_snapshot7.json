@@ -1,0 +1,17 @@
+{
+  "snapshot": "first_7_mechanically_accepted_records_before_quality_queue_resume",
+  "records_sha256": "750d7b5208c413153f3ab370903935a95d3f9fcee95dc3baf35728d669359865",
+  "expert_gold": false,
+  "ready_for_training": false,
+  "summary": {"reviewed": 7, "supported_core_with_limits": 5, "boundary_only": 1, "quarantine_semantic": 1},
+  "items": [
+    {"record_key":"B013:e5fbc1145bc0e420bf7c","decision":"supported_core_with_limits","reason":"已测M12类似物失去DDX18降解作用；对象是类似物类别，不是母体M12。编号与逐剂量结果未恢复，不能展开为若干独立实验。","source_units":["B013:a5867dc8dbec2e28","B013:d4b5c0d39e1ce8a3"]},
+    {"record_key":"B013:4ba452e466705c43f290","decision":"supported_core_with_limits","reason":"HY-06对DDX18未见可检测二元亲和性；不能推成不能募集或降解。149 nM属于DCAF11，不属于DDX18。结合端点及条件仍未充分结构化。","source_units":["B013:7043ec4f267f1f17","B013:d373ea2cdf7199d6","B013:ef89143486f0297c"]},
+    {"record_key":"B013:6d3f72b230d7a9d1936c","decision":"supported_core_with_limits","reason":"部分M12类似物仍结合DCAF11，但不能介导DDX18募集；无响应只限募集端点，不能泛化为整体无活性。具体类似物身份未恢复。","source_units":["B013:7043ec4f267f1f17","B013:13b2f15032f5e1d9","B013:9fba4aaa6f345687"]},
+    {"record_key":"B149:7f6920600436a96d7e83","decision":"boundary_only","reason":"改变取代基未得到更有效的降解剂，不足以区分效力相当、较弱或无效；relative_weakening超出这句证据。待具体类似物与补表比较。","source_units":["B149:df508e165fd8374d"]},
+    {"record_key":"B149:d736d30aba964190d15d","decision":"quarantine_semantic","reason":"RMND5B敲除未影响BRD4降解，意为该干预未能阻断降解；no_degradation将干预无效反转成药物降解无效。作者提出的RMND5A冗余仅为推测。","source_units":["B149:76d321307b744131","B149:c1ce07939e2afd2b","B149:172defc97c6e8fb0"]},
+    {"record_key":"B151:a4c024551cb2ef9a6ead","decision":"supported_core_with_limits","reason":"手柄8未改变两个乙酰化标记，是阴性对照；不能据此认定HDAC蛋白无降解或完全无酶抑制。端点与条件字段仍缺。","source_units":["B151:6102e6e6e505e7bc","B151:270a897bda0aa98e"]},
+    {"record_key":"B165:2748244e0c2ed458cbef","decision":"supported_core_with_limits","reason":"HuR(G58A)条件下dHuR-2的下游信号与蛋白下调效应消失；不能替换为HuR无降解，或混入另一24小时降解实验条件。","source_units":["B165:6d19b5b76124f31d","B165:7b71d17bb95eac9a","B165:8810a7782fb3f87f"]}
+  ],
+  "interpretation": "核心支持不等于字段完整或训练就绪。范围包含结合、募集、预期阴性对照与下游条件性失效，不全部是未达到预期的降解失败。完整质量队列后续结果另报，本快照不覆盖漏检评估。"
+}
