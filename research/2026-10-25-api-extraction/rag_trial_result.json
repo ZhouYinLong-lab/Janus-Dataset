@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-26",
+  "model": "gpt-4.1-2025-04-14",
+  "protocol": {
+    "questions": 12,
+    "development_questions": 4,
+    "evaluation_questions": 8,
+    "engineering_papers": 5,
+    "reviewed_cards": 6,
+    "context_character_cap": 6000,
+    "max_contexts": 6,
+    "generation_requests": 36,
+    "same_answerer": true,
+    "negative_content_ablation": false,
+    "question_papers_previously_seen": true
+  },
+  "strict": {
+    "planned": 36,
+    "completed": 19,
+    "statuses": {
+      "complete": 19,
+      "invalid_response": 16,
+      "needs_attention": 1
+    },
+    "requests": 36,
+    "graded": false,
+    "expert_gold": false,
+    "grading_status": "Raw export has graded:false; grading performed in separate, source-preserving analysis workspace."
+  },
+  "citation_recovery": {
+    "strict_complete": 19,
+    "citation_alias_recovered": 15,
+    "analysis_complete": 34,
+    "planned": 36,
+    "generation_requests": 0,
+    "originals_unchanged": true,
+    "scope": "Unique supplied raw unit alias to chunk or exact card ID without card: prefix; or literal [\"[]\"] to [] when no evidence was supplied; no new citations, answer rewriting or semantic validation. Strict and recovered counts reported separately."
+  },
+  "grading": {
+    "expert_gold": false,
+    "generation_requests": 0,
+    "judged_answers": 34,
+    "planned_answers": 36,
+    "unjudged_or_missing_answers": 2,
+    "paired_question_count": 10,
+    "groups": [
+      {
+        "split": "development",
+        "arm": "closed_book",
+        "paired_questions": 3,
+        "rubric_points": 2,
+        "possible_points": 6,
+        "overclaim_answers": 1
+      },
+      {
+        "split": "development",
+        "arm": "raw_retrieval",
+        "paired_questions": 3,
+        "rubric_points": 5,
+        "possible_points": 6,
+        "overclaim_answers": 2
+      },
+      {
+        "split": "development",
+        "arm": "reviewed_cards",
+        "paired_questions": 3,
+        "rubric_points": 5,
+        "possible_points": 6,
+        "overclaim_answers": 1
+      },
+      {
+        "split": "evaluation",
+        "arm": "closed_book",
+        "paired_questions": 7,
+        "rubric_points": 4,
+        "possible_points": 14,
+        "overclaim_answers": 1
+      },
+      {
+        "split": "evaluation",
+        "arm": "raw_retrieval",
+        "paired_questions": 7,
+        "rubric_points": 10,
+        "possible_points": 14,
+        "overclaim_answers": 4
+      },
+      {
+        "split": "evaluation",
+        "arm": "reviewed_cards",
+        "paired_questions": 7,
+        "rubric_points": 4,
+        "possible_points": 14,
+        "overclaim_answers": 4
+      }
+    ],
+    "limitations": "One nonexpert model-assisted judgment per answer; arm labels masked, answer style may reveal retrieval. Purposive known papers, no causal negative-evidence ablation and no statistical significance claim."
+  },
+  "strict_complete_by_arm": {
+    "closed_book": 8,
+    "raw_retrieval": 1,
+    "reviewed_cards": 10
+  },
+  "reference_paragraph_hit_questions": {
+    "raw_retrieval": 12,
+    "reviewed_cards": 4
+  },
+  "missing": [
+    {
+      "question_id": "Q06",
+      "arm": "raw_retrieval",
+      "status": "invalid_response"
+    },
+    {
+      "question_id": "Q10",
+      "arm": "closed_book",
+      "status": "needs_attention"
+    }
+  ],
+  "grading_method": "Two nonexpert assistants graded disjoint question sets with arm names masked. Overclaim flags then checked against full papers; rubric decisions unchanged. One judgment per answer, not expert gold. Citation repairs are post-hoc format-only analysis; originals retained.",
+  "artifact_sha256": {
+    "answers.json": "7ae39a3f98440f5213b3f94896f2e543eb8becef34c6ca2cb2c5e500b8f22fd7",
+    "graded_rows.json": "5d7cff4d1a0a7986f69064c4a8cbb7142704b7a40ec19d3a1f310c85742cad45",
+    "graded_summary.json": "83bfeedc4b2a4e4a1bb8eaaa13e979a84d5bca5b829167ac9b452bb39edfd03e"
+  },
+  "usage": {
+    "reported_total_tokens": 51655,
+    "attempts_without_usage": 1,
+    "reserved_token_estimate": 292424,
+    "actual_currency_cost": "unknown"
+  }
+}
