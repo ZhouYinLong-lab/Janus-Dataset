@@ -22,6 +22,7 @@ def main():
     p.add_argument('--workspace', required=True, type=Path)
     p.add_argument('--config', required=True, type=Path)
     p.add_argument('--reason', required=True)
+    p.add_argument('--refresh-prompts', action='store_true')
     for name in ['prepare', 'estimate', 'run', 'start', 'status', 'export']:
         p = sub.add_parser(name)
         p.add_argument('--workspace', required=True, type=Path)
@@ -42,7 +43,7 @@ def main():
             result = batch_budget.status(args.ledger)
         elif args.command == 'upgrade':
             from batch_upgrade import upgrade
-            result = upgrade(args.workspace, read(args.config), args.reason)
+            result = upgrade(args.workspace, read(args.config), args.reason, args.refresh_prompts)
         elif args.command == 'prepare':
             m = prepare(args.workspace, args.papers, args.manifest, args.limit)
             result = {'papers': len(m['papers']), 'discovery_jobs': len(m['job_ids']), 'api_requests_sent': 0}

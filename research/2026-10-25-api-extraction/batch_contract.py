@@ -1,5 +1,6 @@
 """Isolate malformed individual candidates without discarding valid neighbours."""
 from collections import Counter
+import re
 
 from two_stage_core import validate_discovery, validate_enrichment
 
@@ -56,7 +57,27 @@ def enrichment(payload, job, candidates):
                    unresolved=[item] if kind == 'unresolved' else [])
         try:
             r = validate_enrichment(one, job, [expected[cid]])
-            accepted.extend(r['accepted']); rejected.extend(r['rejected'])
+            for accepted_item in r['accepted']:
+                record = accepted_item['record']; errors = []
+                result_quotes = ' '.join(e['quote'] for e in record['evidence'] if e['field'] == 'result_text')
+                endpoint = (record['fields'].get('endpoint') or '').casefold()
+                if record['negative_type'] == 'reported_zero' and not re.search(
+                        r'(?:\bzero\b|(?<![\d.])0(?:\.0+)?\s*%|\b(?:Dmax|activity|response|degradation)\s*[=:]\s*0(?:\.0+)?(?![\d.]))',
+                        result_quotes, re.I):
+                    errors.append('qualitative_result_is_not_measured_zero')
+                if record['negative_type'] == 'target_not_detected' and any(
+                        x in endpoint for x in ['labeling', 'labelling', 'binding', 'ubiquitination']):
+                    errors.append('assay_response_is_not_baseline_target_absence')
+                endpoint_quotes = ' '.join(e['quote'] for e in record['evidence'] if e['field'] == 'endpoint')
+                if ('degrad' in endpoint and endpoint_quotes and not re.search(
+                        r'degrad|protein|abundance|\blevels?\b|deplet', endpoint_quotes, re.I)):
+                    errors.append('degradation_endpoint_not_explicit_in_endpoint_evidence')
+                if errors:
+                    rejected.append({'candidate_id': accepted_item['candidate_id'],
+                                     'record': record, 'errors': errors})
+                else:
+                    accepted.append(accepted_item)
+            rejected.extend(r['rejected'])
             unresolved.extend(r['unresolved'])
         except (ValueError, TypeError, KeyError):
             rejected.append({'item': item, 'errors': ['invalid_enrichment_contract']})

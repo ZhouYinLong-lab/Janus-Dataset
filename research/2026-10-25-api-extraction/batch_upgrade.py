@@ -8,7 +8,7 @@ from corpus import HERE, read, save, sha
 from runner import fingerprint, lock
 
 
-def upgrade(workspace, config, reason):
+def upgrade(workspace, config, reason, refresh_prompts=False):
     check_config(config); workspace = Path(workspace)
     if not reason or not reason.strip():
         raise ValueError('Explicit upgrade reason required')
@@ -24,6 +24,8 @@ def upgrade(workspace, config, reason):
                 raise ValueError('Original source changed')
         state_path = workspace / 'batch_state.json'
         state = read(state_path) if state_path.exists() else None
+        if refresh_prompts and state and state['attempts']:
+            raise ValueError('Prompt refresh is allowed only before any generation in this workspace')
         config_hash = fingerprint({k: v for k, v in config.items()
                                    if k not in {'max_requests', 'max_reserved_tokens'}})
         old_manifest_hash = sha(workspace / 'manifest.json')
@@ -44,6 +46,12 @@ def upgrade(workspace, config, reason):
         event = {'reason': reason, 'time': time.time(), 'old_manifest_sha256': old_manifest_hash,
                  'old_state_identity': state['identity'] if state else None,
                  'request_config_hash': config_hash, 'budget_path': state['budget_path'] if state else None}
+        if refresh_prompts:
+            for name in ['discovery.md', 'enrichment.md']:
+                (workspace / f'upgrades/{number:03d}_{name}_before').write_bytes((workspace / name).read_bytes())
+                (workspace / name).write_bytes((HERE / name).read_bytes())
+                manifest['file_hashes'][name] = sha(workspace / name)
+            event['prompts_refreshed_before_first_generation'] = True
         manifest.update(transport='sse', code_hashes={n: sha(HERE / n) for n in CODE},
                         upgrade_history=history + [event])
         save(workspace / 'manifest.json', manifest)

@@ -4,6 +4,8 @@ This is statement discovery, not completion of experimental fields. Copy the ful
 
 Distinguish loss/no activity, loss of degradation, a loss under a particular perturbation, relative weakening, and a target not detected at baseline. A weaker but measurable response is relative_weakening, not complete inactivity. Missing residual protein after successful degradation is a positive result. Statistical methods, nonsignificant correlations, background descriptions and cited previous studies are not new compound negative results. Do not turn structural substitutions into an experimental cotreatment. Preserve uncertainty in notes.
 
+Also inspect rescue/competition/knockdown controls, explicit "only A, not B" selectivity comparisons, and reported lower affinity or weaker potency. These can express failure boundaries without negative keywords. Preserve the experimental endpoint: binding, proliferation, labeling and degradation are different. Do not infer a new negative just because another compound is described as better. compound_mentions contains compound mentions, not protein names. Preserve the supporting sentence span when an object or condition is in a neighbouring sentence.
+
 Output exactly:
 {"paper_id":"SUPPLIED_ID","candidates":[{"candidate_id":"C1","unit_id":"SUPPLIED_ID","quote":"EXACT RESULT SENTENCE OR ADJACENT SENTENCES","compound_mentions":[],"condition_mentions":[],"category":"no_activity","notes":[]}],"coverage_notes":[],"no_candidate_reason":null}
 

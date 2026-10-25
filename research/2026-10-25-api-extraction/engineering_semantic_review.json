@@ -1,0 +1,23 @@
+{
+  "version":1,
+  "reviewer":"assistant_source_review_not_expert_gold",
+  "workspace":"local/batch_engineering_02",
+  "raw_records_reviewed":10,
+  "supported_core_records":6,
+  "quarantined_semantic_records":4,
+  "original_records_modified":false,
+  "ready_for_training":false,
+  "items":[
+    {"record_key":"B046:79d8d2ec17adfca15782","decision":"supported_with_limits","reason":"原句支持TNG-6266对GSPT1未见可测降解；Dmax=11%须保留，不能解释为精确零。限定中的最大测试剂量未在所引句中单独证明，后续卡片只取核心字段和原句。"},
+    {"record_key":"B046:f07e46f1de0abc00637f","decision":"supported_with_limits","reason":"正文支持已知新底物未显著受影响的群组描述；目标未逐一列明，不能当作多个独立分子—靶标实验。"},
+    {"record_key":"B204:8346b552750acb9d9034","decision":"supported_with_limits","reason":"复合物6的CK1α降解降低和结合不变有原文支持；记录合并了2小时NanoBRET与最长24小时降解，使用时须保留不同测定，仍为非零相对减弱。"},
+    {"record_key":"B204:d9aa2ca79ed2aea85975","decision":"quarantine","error":"qualitative_inactivity_mislabeled_zero","reason":"inactive up to 10 μM不支持reported_zero的精确数值零语义。原文仍保留作候选，不能按当前标签使用。"},
+    {"record_key":"B207:3c8478dc48a6e08e0b56","decision":"quarantine","error":"endpoint_mismatch","reason":"16/17相较18的activities decreased>100-fold对应表2的细胞活性比较，不能仅靠附近18的Western blot将该记录写成降解效力。"},
+    {"record_key":"B207:fc247eba96f5c467ab82","decision":"supported_with_limits","reason":"原句明确写19/20相对降低cyclin K降解；具体数值在补充材料，未恢复，不填作零或独立精确值。"},
+    {"record_key":"B235:880df8f44e7b37b7bd5d","decision":"supported_with_limits","reason":"原句分别报告EST1090不降解CDK4和不结合RNF126；两端点保持区分，不将结合测试当降解测定。"},
+    {"record_key":"B235:a8dd213fa26c2b0d3a33","decision":"quarantine","error":"labeling_vs_baseline_absence","reason":"no RNF126 labeling是探针标记未观察到，不是基线RNF126蛋白未检出。"},
+    {"record_key":"B235:b1f71d534b836fe44cbe","decision":"quarantine","error":"labeling_vs_baseline_absence","reason":"EST1102未产生RNF126标记不能写作target_not_detected；原文同时含其他分子的正向标记比较。"},
+    {"record_key":"B235:18ec3aeacb059a25bed2","decision":"supported_with_limits","reason":"JP-2-232仍能较弱结合RNF126而不引起BRD4降解，有直接原句支持，不能误写成不结合RNF126。"}
+  ],
+  "interpretation":"机械通过不等于语义正确。6条仅核心陈述获助手支持，未宣称所有方法字段或条件均完整可靠；4条隔离。一次针对性标签/端点规则修正后再检查另10篇，不改写本组原输出。"
+}
