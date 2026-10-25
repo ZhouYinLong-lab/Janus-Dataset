@@ -72,7 +72,9 @@ def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None
         'code_sha256':{name:sha(HERE/name) for name in ['api.py','runner.py','contract.py','corpus.py','credentials.py']}})
     with lock(workspace):
         path=workspace/'state.json'
-        state=read(path) if path.exists() else {'identity':identity,'attempts':[],'jobs':{}}
+        state=read(path) if path.exists() else {'identity':identity,
+            'request_config':{k:v for k,v in config.items() if k not in {'max_requests','max_reserved_tokens'}},
+            'attempts':[],'jobs':{}}
         if state['identity']!=identity:raise ValueError('Model/config/code changed; use a new prepared workspace')
         if any(a['status']=='in_flight' for a in state['attempts']):
             raise ValueError('Interrupted in-flight request may have been billed. Inspect state; no automatic resend')
@@ -95,6 +97,8 @@ def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None
                 sum(a['reserved_tokens'] for a in state['attempts'])+reserved>config['max_reserved_tokens']):
                 state['stop_reason']='budget_limit';save(path,state);break
             attempt={'job_id':jid,'attempt':len(state['attempts'])+1,'reserved_tokens':reserved,
+                     'requested_model':config['model'],
+                     'budget_caps_at_send':{k:config[k] for k in ['max_requests','max_reserved_tokens']},
                      'status':'in_flight','started':time.time()}
             state['attempts'].append(attempt)
             state['jobs'][jid]={'status':'in_flight'}

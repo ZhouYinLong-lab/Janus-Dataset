@@ -1,7 +1,7 @@
 {
   "status": "offline_validation_passed",
-  "timestamp_utc": "20261025T063559255854Z",
-  "unit_and_integration_tests": 54,
+  "timestamp_utc": "20261025T063654403247Z",
+  "unit_and_integration_tests": 55,
   "test_failures": 0,
   "test_errors": 0,
   "live_provider_requests": 0,
@@ -13,7 +13,7 @@
     "body_quote_matched": 149,
     "body_and_other": 16
   },
-  "replay_workspace": "local/verified_replay_20261025T063559255854Z",
+  "replay_workspace": "local/verified_replay_20261025T063654403247Z",
   "replay_summary": {
     "mode": "offline_legacy_replay_not_model_inference",
     "paid_api_requests": 0,
@@ -85,11 +85,11 @@
     "prepare.py": "91395f434baf79257bcd573b5711ccf188de26f95504027f9d944aa6af4af32e",
     "replay.py": "5f13551e0ea77f7bc36eb44ac9495fabf3eabe8da1a4fd4c351c4afeacf00567",
     "reuse.py": "aed4c7ca024cd03d95cc72a08aff9e3625bb0bace075c6ea6501ca31e67f2962",
-    "runner.py": "e102406b7cb9384da5b28d86cb232d4a56abf5a4991c488212e4dde3be0442cc",
+    "runner.py": "a53f4c8dc4d4d2fadad669aea2e164b8d6b6b8877e9987dce560b3afe9cb063c",
     "test_contract.py": "2ed168d34d2418a26ea6a4eff053bae9dc0525a6e6fc2135df7ca2906dd3cc6c",
     "test_corpus.py": "4bea5f601d2c8058ccafe52c84c20d1f2218405a9bc4df40c1be2194e1a4124f",
     "test_credentials.py": "6994afd1b499d9b8c482c258316367e313a005820fbcd1c19b067df0b738e55f",
-    "test_runner.py": "659cbf0a474f71941ca507092797c839039400abcef3dae663a2153b990c0158",
+    "test_runner.py": "f94d645895074fa020a24e155479dd08ddc06be9579406bc47c2a0370e037b49",
     "verify.py": "2b523c616fdf64c65923ae1c22e6c7905f8479376780ba39feeaa795d15a33ad"
   },
   "prompt_sha256": "957d95f2322c2bae89547adee2e706c108a6f4d465f7ee1c439c101755858ee8",

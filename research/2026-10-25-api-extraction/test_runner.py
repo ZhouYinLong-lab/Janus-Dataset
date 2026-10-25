@@ -81,6 +81,14 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(c.calls,1)
         self.assertEqual(export(self.workspace)['primary_candidates'],1)
 
+    def test_nonsecret_request_configuration_preserved(self):
+        self.prepare();c=Client(self.workspace);run(self.workspace,config(),True,client=c)
+        s=read(self.workspace/'state.json')
+        self.assertEqual(s['request_config']['model'],'fixture-only')
+        self.assertEqual(s['attempts'][0]['requested_model'],'fixture-only')
+        self.assertEqual(s['attempts'][0]['budget_caps_at_send']['max_requests'],3)
+        self.assertNotIn('api_key',s['request_config'])
+
     def test_selected_validation_chunk_does_not_complete_paper(self):
         plan=self.prepare(long=True);c=Client(self.workspace)
         run(self.workspace,config(),True,client=c,job_ids=[plan['job_ids'][1]])
