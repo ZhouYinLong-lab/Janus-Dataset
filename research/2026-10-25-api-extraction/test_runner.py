@@ -81,6 +81,18 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(c.calls,1)
         self.assertEqual(export(self.workspace)['primary_candidates'],1)
 
+    def test_selected_validation_chunk_does_not_complete_paper(self):
+        plan=self.prepare(long=True);c=Client(self.workspace)
+        run(self.workspace,config(),True,client=c,job_ids=[plan['job_ids'][1]])
+        self.assertEqual(c.calls,1)
+        self.assertEqual(status(self.workspace)['completion_status'],'incomplete')
+        self.assertEqual(export(self.workspace)['papers'][0]['status'],'partial')
+
+    def test_unknown_selected_job_refuses_before_request(self):
+        self.prepare();c=Client(self.workspace)
+        with self.assertRaises(ValueError):run(self.workspace,config(),True,client=c,job_ids=['unknown'])
+        self.assertEqual(c.calls,0)
+
     def test_workspace_lifetime_request_budget(self):
         self.prepare(long=True);c=Client(self.workspace);cfg=config();cfg['max_requests']=1
         run(self.workspace,cfg,True,client=c);run(self.workspace,cfg,True,client=c)

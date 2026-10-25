@@ -58,11 +58,14 @@ def status(workspace):
             'billing_notice':'Reserved units are estimates, not a guaranteed currency cap; provider account caps control billing.'}
 
 
-def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None):
+def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None,job_ids=None):
     if not live:raise ValueError('No request sent: use --live explicitly after checking plan and provider')
     check_config(config)
     workspace=Path(workspace)
     manifest=verify_workspace(workspace)
+    if job_ids is not None and (not job_ids or len(job_ids)!=len(set(job_ids)) or
+                                set(job_ids)-set(manifest['job_ids'])):
+        raise ValueError('Selected job IDs must be unique known jobs')
     prompt=(workspace/'prompt.md').read_text(encoding='utf-8')
     identity=fingerprint({'request_config':{k:v for k,v in config.items() if k not in {'max_requests','max_reserved_tokens'}},
         'manifest_sha256':sha(workspace/'manifest.json'),
@@ -78,6 +81,7 @@ def run(workspace,config,live=False,retry_failed=False,client=None,env_file=None
             client=HTTPClient(config,key)
         else:key=''  # Dependency injection is for local tests only, never a CLI transport choice.
         for jid in manifest['job_ids']:
+            if job_ids is not None and jid not in job_ids:continue
             old=state['jobs'].get(jid,{})
             if old.get('status') in {'complete','complete_with_quarantine'}:
                 if sha(workspace/old['result_path'])!=old['result_sha256']:

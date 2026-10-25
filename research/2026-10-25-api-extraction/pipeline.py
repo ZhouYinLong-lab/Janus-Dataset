@@ -30,6 +30,7 @@ def main():
             cmd.add_argument('--config',type=Path,required=True)
         if name=='run':
             cmd.add_argument('--env-file',type=Path,help='Explicit local .env; value is never logged')
+            cmd.add_argument('--job-ids',nargs='+',help='Only selected validation jobs; unselected jobs remain pending')
             cmd.add_argument('--live',action='store_true',help='Explicit authorization to send charged provider requests')
             cmd.add_argument('--retry-failed',action='store_true',help='Explicitly retry known failures; counts against lifetime workspace budget')
     args=parser.parse_args()
@@ -49,7 +50,7 @@ def main():
         elif args.command=='status':result=status(args.workspace)
         elif args.command=='export':result=export(args.workspace)
         elif args.command=='estimate':result=estimate(args.workspace,read(args.config))
-        else:result=run(args.workspace,read(args.config),args.live,args.retry_failed,env_file=args.env_file)
+        else:result=run(args.workspace,read(args.config),args.live,args.retry_failed,env_file=args.env_file,job_ids=args.job_ids)
     except RequestFailure as exc:
         parser.exit(3,f'Provider request failed: {exc.kind}; HTTP status={exc.http_status}. No key or error body displayed.\n')
     except (ValueError,OSError,KeyError,TypeError) as exc:
