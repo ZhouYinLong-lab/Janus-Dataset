@@ -1,0 +1,64 @@
+{
+  "expert_gold": false,
+  "training_ready": false,
+  "snapshot": {
+    "records_sha256": "5a95c982db0921593845be94ee8c3f63474ccca71defd44a34f65248580e9aba",
+    "calls": 4,
+    "returned": 3,
+    "unknown": 1,
+    "B204": "仅部分补全；旧进程结束后1次补全结果未知",
+    "B235_scans": 0,
+    "model": "gpt-6.1-sol",
+    "model_identity": "第三方声明",
+    "fair_ranking": false
+  },
+  "items": [
+    {
+      "record_key": "B204:f9285f43a0837ff077d4",
+      "decision": "supported_core_with_limits",
+      "reason": "化合物6对CK1α/HEK293、IKZF1/Jurkat的降解减弱及Dmax 23%/57%获支持；10 μM、24 h内最大降解由表注补充，非24 h单点或完全无效。",
+      "source_units": [
+        "B204:5882683d8f4c32d3",
+        "B204:94a661b658d1f6c8",
+        "B204:75bc8e26b13b6293",
+        "B204:b2d6de825e21227e"
+      ]
+    },
+    {
+      "record_key": "B204:9accf27e88b2e0d5aea3",
+      "decision": "supported_core_with_limits",
+      "reason": "化合物7对Jurkat中IKZF1的低降解获支持，Dmax为12%，88%属于CK1α；10 μM、24 h内最大降解由表注补充，保留非零语义。",
+      "source_units": [
+        "B204:b1fcbb2786f140bb",
+        "B204:94a661b658d1f6c8",
+        "B204:75bc8e26b13b6293",
+        "B204:b2d6de825e21227e"
+      ]
+    },
+    {
+      "record_key": "B204:c9b72089fc1f8675841a",
+      "decision": "quarantine_semantic",
+      "reason": "化合物11的CK1α Dmax 10%及NanoBRET 0.3倍信号有依据；24 h观察窗、10 μM仅证实对应降解，却共用于两端点，NanoBRET条件未恢复。",
+      "source_units": [
+        "B204:acc0053c45ec6441",
+        "B204:6215487166f5d594",
+        "B204:b9f01d31b8f37b7b",
+        "B204:94a661b658d1f6c8",
+        "B204:b2d6de825e21227e",
+        "B204:75bc8e26b13b6293"
+      ]
+    },
+    {
+      "record_key": "B204:443ecd6e80e533d44d0a",
+      "decision": "quarantine_semantic",
+      "reason": "化合物12的CK1α Dmax 38%及NanoBRET 3.1倍信号有依据；24 h观察窗、10 μM仅证实对应降解，却共用于两端点，NanoBRET条件未恢复。",
+      "source_units": [
+        "B204:acc0053c45ec6441",
+        "B204:6215487166f5d594",
+        "B204:b9f01d31b8f37b7b",
+        "B204:94a661b658d1f6c8",
+        "B204:b2d6de825e21227e"
+      ]
+    }
+  ]
+}
