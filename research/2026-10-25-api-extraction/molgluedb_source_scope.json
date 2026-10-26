@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-26T13:49:07.868043+00:00",
+  "export_sha256": "cf1d0d61b889539d56b250f5adeb7652ef1a25ebe5008110db86bd28328a1d48",
+  "export_rows": 1840,
+  "distinct_data_ids": 1629,
+  "source_count": 193,
+  "doi_sources": 192,
+  "url_only_sources": 1,
+  "legacy_reused_papers": 23,
+  "reported241": {
+    "publication_doi": "10.1093/nar/gkaf811",
+    "reported_publications": 241,
+    "reported_window": "January 2001–May 2025",
+    "basis": "MolGlueDB paper abstract and data-collection methods",
+    "comparison": "Export-linked distinct DOI sources versus paper collection scope; the export is not the complete 241-item bibliography.",
+    "reported_minus_export_doi_count": 49,
+    "reported_minus_export_source_count": 48,
+    "missing_publication_identities": "unresolved; full 241-item list not supplied",
+    "set_difference_verified": false
+  },
+  "raw_export_is_local_only": true
+}
