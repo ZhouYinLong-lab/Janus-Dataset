@@ -1,0 +1,84 @@
+{
+  "reviewer_kind": "assistant_offline_source_review",
+  "expert_gold": false,
+  "reference_sha256": "ee262a0d394c93630178cf245d01199e060f426efef167378a48a5f007c5fd67",
+  "input_manifest_sha256": "d77ed0c2d7e69ef2b708e6bc1c6094064d0cf8b2bc11cc71158686b5cb8567e5",
+  "candidate_count": 24,
+  "candidate_decisions": {
+    "uncertain": 2,
+    "supported": 13,
+    "partial": 6,
+    "incorrect": 3
+  },
+  "reference_coverage": {
+    "missed": 50,
+    "matched": 14,
+    "partial": 8,
+    "unprocessed": 27
+  },
+  "core_reference_coverage": {
+    "matched": 13,
+    "partial": 8,
+    "missed": 19,
+    "unprocessed": 19
+  },
+  "strict_discovery_precision": 0.5416666666666666,
+  "strict_scanned_reference_recall": 0.19444444444444445,
+  "strict_scanned_core_reference_recall": 0.325,
+  "sources": [
+    {
+      "paper_id": "B212",
+      "body_units_total": 25,
+      "fully_scanned_body_units": 25,
+      "completed_discovery_jobs": 4,
+      "reference_status": {
+        "missed": 12,
+        "matched": 1,
+        "partial": 4
+      }
+    },
+    {
+      "paper_id": "B207",
+      "body_units_total": 56,
+      "fully_scanned_body_units": 29,
+      "completed_discovery_jobs": 3,
+      "reference_status": {
+        "missed": 9,
+        "matched": 1
+      }
+    },
+    {
+      "paper_id": "B235",
+      "body_units_total": 22,
+      "fully_scanned_body_units": 22,
+      "completed_discovery_jobs": 3,
+      "reference_status": {
+        "missed": 12,
+        "matched": 11,
+        "partial": 2
+      }
+    },
+    {
+      "paper_id": "B203",
+      "body_units_total": 90,
+      "fully_scanned_body_units": 16,
+      "completed_discovery_jobs": 2,
+      "reference_status": {
+        "missed": 17,
+        "matched": 1,
+        "partial": 2,
+        "unprocessed": 9
+      }
+    },
+    {
+      "paper_id": "B296",
+      "body_units_total": 65,
+      "fully_scanned_body_units": 0,
+      "completed_discovery_jobs": 0,
+      "reference_status": {
+        "unprocessed": 18
+      }
+    }
+  ],
+  "scope": "Returned discovery candidates and references visible in successful discovery requests; unprocessed text is excluded from recall, partial matches excluded from strict numerator"
+}

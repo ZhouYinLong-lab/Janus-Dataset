@@ -1,0 +1,135 @@
+[
+  {
+    "paper_id": "B207",
+    "job_id": "B207_940c05f949c9eba8e131",
+    "group": 0,
+    "candidate_id": "C1",
+    "raw_destination": "rejected",
+    "decision": "partial",
+    "reason": "相对变弱的原句有据，但把混合段potency唯一归为降解效力缺乏唯一依据。",
+    "response_sha256": "aa616f5b2b01c23ab39301bcf7b9ee43bd185eb92a3e722f077cc3e3cdd015ff",
+    "standalone_contract_errors": [
+      "invalid_field_value:compound"
+    ]
+  },
+  {
+    "paper_id": "B207",
+    "job_id": "B207_940c05f949c9eba8e131",
+    "group": 0,
+    "candidate_id": "C2",
+    "raw_destination": "unresolved",
+    "decision": "abstention_reason_incorrect",
+    "reason": "原始请求确实包含1020字符anchor且context_complete=true，声称锚点被裁掉不符合请求。原文只说没有提高活性，不能反写无活性。",
+    "response_sha256": "aa616f5b2b01c23ab39301bcf7b9ee43bd185eb92a3e722f077cc3e3cdd015ff"
+  },
+  {
+    "paper_id": "B207",
+    "job_id": "B207_940c05f949c9eba8e131",
+    "group": 0,
+    "candidate_id": "C3",
+    "raw_destination": "unresolved",
+    "decision": "response_entry_omitted",
+    "reason": "响应正常stop，但未返回该候选，机械层补记为未解决。",
+    "response_sha256": "aa616f5b2b01c23ab39301bcf7b9ee43bd185eb92a3e722f077cc3e3cdd015ff"
+  },
+  {
+    "paper_id": "B207",
+    "job_id": "B207_940c05f949c9eba8e131",
+    "group": 0,
+    "candidate_id": "C4",
+    "raw_destination": "unresolved",
+    "decision": "response_entry_omitted",
+    "reason": "响应正常stop，但未返回该候选，机械层补记为未解决。",
+    "response_sha256": "aa616f5b2b01c23ab39301bcf7b9ee43bd185eb92a3e722f077cc3e3cdd015ff"
+  },
+  {
+    "paper_id": "B207",
+    "job_id": "B207_940c05f949c9eba8e131",
+    "group": 0,
+    "candidate_id": "C5",
+    "raw_destination": "unresolved",
+    "decision": "response_entry_omitted",
+    "reason": "响应正常stop，但未返回该候选，机械层补记为未解决。",
+    "response_sha256": "aa616f5b2b01c23ab39301bcf7b9ee43bd185eb92a3e722f077cc3e3cdd015ff"
+  },
+  {
+    "paper_id": "B235",
+    "job_id": "B235_4fdee8305c49edc77182",
+    "group": 0,
+    "candidate_id": "C1",
+    "raw_destination": "unresolved",
+    "decision": "unsupported_abstention",
+    "reason": "正文已明确EST1090未结合RNF126；缺补充图只限制额外条件，不取消已报告的核心阴性。",
+    "response_sha256": "ee8e166341613c51d3fb702d5610d94f408ce3a941d577ac2fbe5ea958165a6c"
+  },
+  {
+    "paper_id": "B235",
+    "job_id": "B235_4fdee8305c49edc77182",
+    "group": 1,
+    "candidate_id": "C2",
+    "raw_destination": "rejected",
+    "decision": "supported_core_invalid_record",
+    "reason": "正文支持KN1026未标记RNF126；字段值却为引文对象，no_binding也不是允许类型，且标记阴性不等价所有结合阴性。",
+    "response_sha256": "85702cdc5d1aedf75c413d686580fc67c045415167ff0c4706a7b1e4f4b70993",
+    "standalone_contract_errors": [
+      "invalid_field_value:assay",
+      "invalid_field_value:compound",
+      "invalid_field_value:endpoint",
+      "invalid_field_value:result_text",
+      "invalid_field_value:target",
+      "invalid_negative_type"
+    ]
+  },
+  {
+    "paper_id": "B235",
+    "job_id": "B235_4fdee8305c49edc77182",
+    "group": 2,
+    "candidate_id": "C3",
+    "raw_destination": "rejected",
+    "decision": "supported_core_invalid_record",
+    "reason": "EST1102未标记RNF126有正文依据；多个字段值却为引文对象，无法作为实验记录。",
+    "response_sha256": "c1e0ea02c845949de90b16093f2a04dac4897be7db7d3ab4ab74c1e8b841aff9",
+    "standalone_contract_errors": [
+      "invalid_field_value:assay",
+      "invalid_field_value:compound",
+      "invalid_field_value:endpoint",
+      "invalid_field_value:result_text",
+      "invalid_field_value:target"
+    ]
+  },
+  {
+    "paper_id": "B235",
+    "job_id": "B235_4fdee8305c49edc77182",
+    "group": 3,
+    "candidate_id": "C5",
+    "raw_destination": "rejected",
+    "decision": "supported_core_invalid_record",
+    "reason": "JP-2-232未降解BRD4有正文依据；字段值为引文对象且evidence为空，不能自动导出。",
+    "response_sha256": "159eb3e2d3d7ab2360ad5d9cb30dac0ef34f6317c7e8ed74c41cbf61c17e52af",
+    "standalone_contract_errors": [
+      "invalid_evidence",
+      "invalid_field_value:assay",
+      "invalid_field_value:compound",
+      "invalid_field_value:endpoint",
+      "invalid_field_value:result_text",
+      "invalid_field_value:target",
+      "missing_result_evidence",
+      "result_not_in_scanned_primary_body",
+      "ungrounded_field:assay",
+      "ungrounded_field:compound",
+      "ungrounded_field:endpoint",
+      "ungrounded_field:result_text",
+      "ungrounded_field:target"
+    ]
+  },
+  {
+    "paper_id": "B235",
+    "job_id": "B235_4fdee8305c49edc77182",
+    "group": 4,
+    "candidate_id": "C6",
+    "raw_destination": "unresolved",
+    "decision": "unsupported_abstention",
+    "reason": "正文明确JP-2-196不改变BRD4水平；缺Figure S7i不妨碍保留这条正文报告，未知条件应留空。",
+    "response_sha256": "3a8e27b17f20e8d1bfebe7281046ecf48c39aa9d24285b265a9361107da5891c"
+  }
+]
