@@ -11,6 +11,8 @@ from candidate_export import export, snapshot
 from candidate_runtime import run
 from contract import FIELDS
 from corpus import read, save
+from corpus import sha
+from runner import fingerprint
 
 
 TEXT = ('HeLa cells received compound X at 10 microM for 24 h. '
@@ -121,6 +123,44 @@ class CandidatePipelineTests(unittest.TestCase):
         from candidate_acceptance import require_acceptance
         with self.assertRaises(ValueError):
             require_acceptance(None, self.workspace, self.config)
+
+    def test_acceptance_is_bound_to_review_and_saved_outputs(self):
+        from candidate_workspace import PILOT_PAPERS
+        from candidate_acceptance import assess, require_acceptance
+        source = read(self.manifest)[0]['path']
+        manifest = self.root/'five.json'
+        save(manifest, [{'paper_id': pid, 'path': source, 'doi': '10.1/'+pid}
+                        for pid in PILOT_PAPERS])
+        work = self.root/'five'
+        prepare(work, manifest_path=manifest, phase='pilot')
+        references = []
+        for pid in PILOT_PAPERS:
+            doc = read(work/'documents'/f'{pid}.json')
+            references.append({'paper_id': pid, 'source_sha256': doc['source_sha256'],
+                'units_reviewed': [{'unit_id': u['unit_id'], 'decision': 'has_negative'}
+                                   for u in doc['units'] if u['kind'] == 'body_paragraph'],
+                'negatives': []})
+        save(work/'acceptance_reference.json', {'expert_gold': False,
+             'full_body_reference_complete': True, 'papers': references})
+        self.execute(Provider(), workspace=work)
+        _, records, audit, _ = snapshot(work)
+        review = self.root/'review.json'
+        save(review, {'reference_sha256': sha(work/'acceptance_reference.json'),
+            'output_fingerprint': fingerprint({'records': records, 'audit': audit}),
+            'records': [{'record_key': r['record_key'], 'decision': 'supported'} for r in records],
+            'missed_references': [], 'critical_errors_unresolved': 0,
+            'quote_location_pass': True, 'known_regressions_pass': True,
+            'engineering_checks_pass': True})
+        report = self.root/'acceptance.json'
+        assessment = assess(work, review, report)
+        self.assertTrue(assessment['passed'], assessment['blockers'])
+        require_acceptance(report, work, self.config)
+        state = read(work/'candidate_state.json')
+        entry = next(e for e in state['tasks'].values() if e['stage'] == 'enrichment')
+        target = work/entry['result_path']
+        target.write_text('{}', encoding='utf-8')
+        with self.assertRaises(ValueError):
+            require_acceptance(report, work, self.config)
 
 
 if __name__ == '__main__':

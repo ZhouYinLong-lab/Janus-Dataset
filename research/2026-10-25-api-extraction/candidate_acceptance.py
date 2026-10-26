@@ -89,6 +89,7 @@ def assess(workspace, review_path, out_path):
     report = {'passed': not blockers, 'blockers': blockers, 'created': time.time(),
               'pilot_workspace': str(workspace.resolve()), 'pilot_manifest_sha256': sha(workspace/'manifest.json'),
               'output_fingerprint': result_hash, 'review_sha256': sha(review_path),
+              'review_path': str(Path(review_path).resolve()),
               'binding': binding(workspace, state['config']) if state.get('config') else None,
               'reviewer_kind': review.get('reviewer_kind', 'assistant'), 'expert_gold': False,
               'summary': summary, 'precision': review.get('precision'), 'recall': review.get('recall')}
@@ -105,4 +106,12 @@ def require_acceptance(path, workspace, config):
     pilot = Path(report['pilot_workspace'])
     if sha(pilot/'manifest.json') != report['pilot_manifest_sha256']:
         raise ValueError('Full extraction locked: acceptance pilot inputs changed')
+    if not report.get('review_path') or sha(report['review_path']) != report['review_sha256']:
+        raise ValueError('Full extraction locked: acceptance review changed')
+    from candidate_runtime import _check_state
+    _check_state(pilot, read(pilot/'candidate_state.json'))
+    from candidate_export import snapshot
+    _, records, audit, _ = snapshot(pilot)
+    if fingerprint({'records': records, 'audit': audit}) != report['output_fingerprint']:
+        raise ValueError('Full extraction locked: reviewed pilot outputs changed')
     return report

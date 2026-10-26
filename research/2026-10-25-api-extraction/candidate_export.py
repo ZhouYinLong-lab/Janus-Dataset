@@ -100,6 +100,8 @@ def snapshot(workspace):
         'paper_status': dict(Counter(row['status'] for row in paper_rows)),
         'candidate_destinations': dict(Counter(row['destination'] for row in audits)),
         'failed_tasks': len(failures), 'workspace_requests': len(state['attempts']),
+        'reused_tasks': sum(bool(e.get('reused_from')) for e in tasks.values()),
+        'task_status': dict(Counter(e['status'] for e in tasks.values())),
         'stop_reason': state.get('stop_reason'), 'expert_gold': False, 'training_ready_records': 0,
         'all_sources_processed': bool(paper_rows) and all(
             row['status'].startswith('processed') for row in paper_rows),
@@ -148,8 +150,14 @@ def export(workspace):
                  f'来源状态：{summary["paper_status"]}。', '',
                  f'候选去向：{summary["candidate_destinations"]}。', '',
                  f'停止原因：{summary["stop_reason"] or "尚未运行或已到达队列末尾"}。', '',
+                 f'本工作区新请求：{summary["workspace_requests"]}；复用任务：{summary["reused_tasks"]}。', '',
                  '自动记录均待内容复核；没有发现候选不代表文献没有阴性结果。', '',
                  '逐篇范围见 paper_coverage.csv；逐候选依据见 candidate_audit.csv。', '']
+        if summary.get('shared_budget'):
+            b = summary['shared_budget']
+            lines.extend([f'共享生成预算：{b["requests_reserved"]}/{b["max_requests"]}次；'
+                f'保守token预留：{b["reserved_token_estimate"]}；已上报用量：{b["reported_total_tokens"]}。', '',
+                f'用量未上报的请求：{b["attempts_without_usage"]}次；未知不计为零，费用以服务账单为准。', ''])
         import os
         tmp = out / 'summary.md.tmp'
         tmp.write_text('\n'.join(lines), encoding='utf-8')

@@ -1,0 +1,10 @@
+{
+  "tests_run": 296,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "elapsed_seconds": 7.15,
+  "real_generation_requests": 0,
+  "scope": "Offline parsing, context, recovery, route diagnosis, unattended driver and acceptance gates; not scientific extraction accuracy"
+}
