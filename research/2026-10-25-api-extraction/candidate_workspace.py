@@ -15,7 +15,7 @@ PIPELINE = 'molgluedb_candidates_v2'
 PILOT_PAPERS = ('B212', 'B207', 'B235', 'B203', 'B296')
 RUNTIME_FILES = (*CODE, 'batch_candidate.py', 'candidate_context.py',
                  'candidate_workspace.py', 'candidate_runtime.py', 'candidate_export.py',
-                 'candidate_acceptance.py', 'source_formats.py', 'molglue_sources.py')
+                 'candidate_acceptance.py', 'candidate_transport.py', 'source_formats.py', 'molglue_sources.py')
 
 
 def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'):
@@ -32,7 +32,12 @@ def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'
                 p.get('paper_id') in requested or p.get('legacy_paper_id') in requested]
     if requested - {p.get('paper_id') for p in selected} - {p.get('legacy_paper_id') for p in selected}:
         raise ValueError('Required pilot/selected papers missing from source inventory')
-    selected = sorted(selected, key=lambda p: p['paper_id'])
+    if phase == 'pilot':
+        rank = {pid: index for index, pid in enumerate(PILOT_PAPERS)}
+        selected = sorted(selected, key=lambda p: (rank.get(p.get('legacy_paper_id') or p['paper_id'],
+                                                         len(rank)), p['paper_id']))
+    else:
+        selected = sorted(selected, key=lambda p: p['paper_id'])
     if limit is not None:
         if type(limit) is not int or limit < 1:
             raise ValueError('Positive limit required')

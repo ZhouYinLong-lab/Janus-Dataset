@@ -172,6 +172,14 @@ def _legacy_export_context_audit(workspace):
     return summary
 
 
+def _print_summary(result):
+    compact = dict(result)
+    for key in ('papers', 'input_gap_papers'):
+        if isinstance(compact.get(key), list):
+            compact[key + '_count'] = len(compact.pop(key))
+    print(json.dumps(compact, ensure_ascii=False, indent=2))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -197,6 +205,7 @@ def main():
     p.add_argument('--max-new-requests', type=int)
     p.add_argument('--phase', choices=['pilot', 'full'], default='full')
     p.add_argument('--resume-operator-pause', action='store_true')
+    p.add_argument('--network-route', choices=['environment', 'direct'], default='environment')
     p.add_argument('--acceptance', type=Path)
     p = sub.add_parser('check')
     p.add_argument('--workspace', required=True, type=Path)
@@ -226,7 +235,7 @@ def main():
     from candidate_workspace import verify, check
     manifest = verify(workspace)
     if args.command == 'check':
-        print(json.dumps(check(workspace, read(args.config), args.ledger), ensure_ascii=False, indent=2))
+        _print_summary(check(workspace, read(args.config), args.ledger))
         return
     if args.command == 'acceptance':
         from candidate_acceptance import assess
@@ -234,10 +243,10 @@ def main():
         return
     if args.command == 'status':
         from candidate_export import snapshot
-        print(json.dumps(snapshot(workspace)[0], ensure_ascii=False, indent=2))
+        _print_summary(snapshot(workspace)[0])
         return
     if args.command == 'export':
-        print(json.dumps(export_context_audit(workspace), ensure_ascii=False, indent=2))
+        _print_summary(export_context_audit(workspace))
         return
     config = read(args.config)
     check_config(config)
@@ -248,9 +257,9 @@ def main():
     run(workspace, config, args.ledger, candidate_request_for, candidate_enrichment,
         live=args.live, env_file=args.env_file, max_new_requests=args.max_new_requests,
         resume_operator_pause=args.resume_operator_pause, phase=args.phase,
-        on_progress=export_context_audit)
+        on_progress=export_context_audit, network_route=args.network_route)
     result = export_context_audit(workspace)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    _print_summary(result)
 
 
 if __name__ == '__main__':

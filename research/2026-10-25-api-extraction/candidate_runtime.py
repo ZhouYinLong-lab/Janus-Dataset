@@ -459,7 +459,7 @@ def _legacy_discovery(workspace, entry, request, job, ledger_path, provider):
 
 def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         live=False, env_file=None, client=None, max_new_requests=None,
-        resume_operator_pause=False, phase='pilot', on_progress=None):
+        resume_operator_pause=False, phase='pilot', on_progress=None, network_route='environment'):
     """Return candidate_state.json state; live=False permits only offline work.
 
     on_progress(workspace) runs after each paper and in finally. Integrity and
@@ -470,6 +470,8 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
     check_config(config)
     if phase not in {'pilot', 'full'}:
         raise ValueError('phase must be pilot or full')
+    if network_route not in {'environment', 'direct'}:
+        raise ValueError('Invalid network route')
     if max_new_requests is not None and (type(max_new_requests) is not int or max_new_requests < 0):
         raise ValueError('Nonnegative invocation request limit required')
     workspace, ledger_path = Path(workspace).resolve(), Path(ledger_path).resolve()
@@ -486,12 +488,12 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         identity = _digest({'manifest': sha(workspace / 'manifest.json'),
                             'config': {k: v for k, v in config.items()
                                        if k not in {'max_requests', 'max_reserved_tokens'}},
-                            'budget_path': str(ledger_path)})
+                            'budget_path': str(ledger_path), 'network_route': network_route})
         reference_path = workspace / 'acceptance_reference.json'
         reference_hash = sha(reference_path) if reference_path.is_file() else None
         state = read(state_path) if state_path.exists() else {
             'version': 2, 'pipeline': manifest['pipeline'], 'identity': identity,
-            'config': deepcopy(config), 'reference_sha256': reference_hash,
+            'config': deepcopy(config), 'reference_sha256': reference_hash, 'network_route': network_route,
             'budget_path': str(ledger_path), 'tasks': {}, 'attempts': [],
             'groups': {}, 'stop_reason': None, 'audit': []}
         if state['identity'] != identity or state['budget_path'] != str(ledger_path):
@@ -584,9 +586,9 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                 return False
             if actual_client is None:
                 from credentials import load_key
-                from stream_http import StreamingClient
+                from candidate_transport import DiagnosticStreamingClient
                 secret = load_key(config['api_key_env'], env_file)
-                actual_client = StreamingClient(config, secret)
+                actual_client = DiagnosticStreamingClient(config, secret, network_route)
             # Write request and intended response location before reservation.
             nonce = uuid.uuid4().hex
             request_path = f'requests/{nonce}.json'
@@ -631,12 +633,32 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                 if entry['status'] == 'in_flight':
                     entry.update(status='needs_attention', failure_kind='interrupted_request_outcome_unknown')
                 entry['finished'] = time.time()
+                diagnostic = getattr(getattr(actual_client, 'opener', None), 'diagnostic', None)
+                if diagnostic:
+                    entry['transport_diagnostic'] = deepcopy(diagnostic)
+                events = getattr(actual_client, 'wire_events', None)
+                if events:
+                    encoded = json.dumps(events, ensure_ascii=False)
+                    if secret:
+                        encoded = encoded.replace(secret, '[REDACTED]')
+                    trace_path = response_path + '.events.json'
+                    save(_path(workspace, trace_path), json.loads(encoded))
+                    entry['stream_events_path'] = trace_path
+                    entry['stream_events_sha256'] = sha(_path(workspace, trace_path))
                 index['tasks'][logical] = _record(workspace, tid, entry, job)
                 persist()
                 _finish(ledger_path, entry)
                 _refresh_index(index, ledger_path)
                 persist()
-            return not bool(read(ledger_path).get('global_stop'))
+                print(json.dumps({'paper_id': job['paper_id'], 'stage': stage,
+                    'group': group, 'status': entry['status'], 'accepted': entry.get('accepted'),
+                    'rejected': entry.get('rejected'), 'new_requests_this_run': sent},
+                    ensure_ascii=False), flush=True)
+            stopped = read(ledger_path).get('global_stop')
+            if stopped:
+                state['stop_reason'] = stopped
+                persist()
+            return not bool(stopped)
 
         try:
             _recover(workspace, state, ledger_path, enrichment_validator)
