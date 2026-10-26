@@ -1,0 +1,34 @@
+{
+  "frozen_manifest_sha256": "847999550bda54b95e67266cf8f2d631370838399b179e877f107e608bf80001",
+  "planned_requests": 15,
+  "questions": 20,
+  "planned_conservative_reserved_tokens": 376651,
+  "contexts": {
+    "structured": {
+      "mean_base_characters": 1321.2,
+      "mean_additional_characters": 0,
+      "questions_with_reference_unit_retrieved": 0
+    },
+    "structured_raw": {
+      "mean_base_characters": 1321.2,
+      "mean_additional_characters": 5104.4,
+      "questions_with_reference_unit_retrieved": 19
+    },
+    "structured_cards": {
+      "mean_base_characters": 1321.2,
+      "mean_additional_characters": 1125.6,
+      "questions_with_reference_unit_retrieved": 20
+    }
+  },
+  "shared_budget_before": {
+    "max_requests": 200,
+    "requests_reserved": 168,
+    "reserved_token_estimate": 4360782,
+    "reported_total_tokens": 751212,
+    "attempts_without_usage": 7,
+    "global_stop": "operator_pause",
+    "billing": "Reported usage is not a verified bill; missing usage is unknown, not zero."
+  },
+  "offline_safeguard_tests": 4,
+  "generation_calls_sent": 0
+}
