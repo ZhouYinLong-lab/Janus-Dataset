@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "source_pointers_resolved": 4638,
+  "inventory_rows": 1983,
+  "distinct_versioned_observation_ids": 1983,
+  "benchmark_labels_checked": 1159,
+  "sample_recalculation_rows": 7,
+  "exact_identity_matches": 53,
+  "matched_body_negative_rows": 3,
+  "matched_body_negative_test_rows": 0,
+  "fine_test_reproduced": 73,
+  "grouped_observations_not_promoted_to_individual_identities": true,
+  "expert_gold_flags_not_added": true,
+  "full_inputs_distinguish_WT_and_Q147E": true,
+  "model_training_runs": 0,
+  "new_paid_generation_requests": 0,
+  "existing_budget_requests_reserved": 168
+}

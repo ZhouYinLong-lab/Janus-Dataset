@@ -1,0 +1,128 @@
+﻿benchmark_uid,id,target,Score,molecule_seen_trainval,distinct_trainval_scores,same_molecule_score_seen_trainval,excluded_by_published_constant_activity_rule,included_in_reproduced_fine_test
+test:1:18,18,CK1α,0,False,[],False,False,True
+test:2:25,25,CK1α,0.8,False,[],False,False,True
+test:3:42,42,CK1α,0.5,True,[0.6],False,False,True
+test:4:153,153,CK1α,0,True,[0.333333333],False,False,True
+test:5:168,168,CK1α,0.2,True,[1.0],False,False,True
+test:6:147,147,CK1α,0.8,True,[0.666666667],False,False,True
+test:7:194,194,CK1α,0.4,True,"[0.2, 0.6]",False,False,True
+test:8:81,81,CK1α,0.6,False,[],False,False,True
+test:9:208,208,CK1α,0.5,True,[0.5],True,True,False
+test:10:56,56,CK1α,0,True,[0.0],True,True,False
+test:11:17,17,CK1α,0.8,False,[],False,False,True
+test:12:27,27,CK1α,0.6,False,[],False,False,True
+test:13:109,109,CK1α,0.6,False,[],False,False,True
+test:14:76,76,CK1α,0.2,True,[0.2],True,True,False
+test:15:31,31,CK1α,0,False,[],False,False,True
+test:16:206,206,CK1α,0.266666667,True,[0.266666667],True,True,False
+test:17:122,122,CK1α,0.4,True,[0.4],True,True,False
+test:18:190,190,CK1α,0.5,True,[0.5],True,True,False
+test:19:232,232,E4F1,0.6,True,[0.6],True,True,False
+test:20:237,237,E4F1,0.6,True,[0.6],True,True,False
+test:21:301,301,GSPT1,0,False,[],False,False,True
+test:22:399,399,GSPT1,0.266666667,False,[],False,False,True
+test:23:351,351,GSPT1,0.8,True,[0.8],True,True,False
+test:24:417,417,GSPT1,0.2,False,[],False,False,True
+test:25:322,322,GSPT1,0.2,True,[0.2],True,True,False
+test:26:309,309,GSPT1,0.6,False,[],False,False,True
+test:27:434,434,GSPT1,0.6,False,[],False,False,True
+test:28:282,282,GSPT1,0,False,[],False,False,True
+test:29:324,324,GSPT1,0.8,True,[0.4],False,False,True
+test:30:383,383,GSPT1,0.266666667,False,[],False,False,True
+test:31:444,444,GSPT1,0.4,True,"[0.4, 0.6]",True,False,True
+test:32:319,319,GSPT1,0.6,False,[],False,False,True
+test:33:432,432,GSPT1,0.6,False,[],False,False,True
+test:34:392,392,GSPT1,0.6,False,[],False,False,True
+test:35:332,332,GSPT1,0.133333333,True,"[0.0, 0.6, 0.8]",False,False,True
+test:36:323,323,GSPT1,0.2,True,[0.2],True,True,False
+test:37:312,312,GSPT1,0.6,False,[],False,False,True
+test:38:395,395,GSPT1,0.5,False,[],False,False,True
+test:39:425,425,GSPT1,0.6,False,[],False,False,True
+test:40:463,463,IKZF1,0.6,True,[0.6],True,True,False
+test:41:492,492,IKZF1,0,True,[0.0],True,True,False
+test:42:579,579,IKZF1,0,True,[0.0],True,True,False
+test:43:509,509,IKZF1,0.8,True,[0.8],True,True,False
+test:44:570,570,IKZF1,0,True,[0.0],True,True,False
+test:45:562,562,IKZF1,0.6,True,[0.6],True,True,False
+test:46:545,545,IKZF1,0.6,True,[0.6],True,True,False
+test:47:498,498,IKZF1,0,True,[0.0],True,True,False
+test:48:517,517,IKZF1,0.4,True,[0.2],False,False,True
+test:49:475,475,IKZF1,0.2,True,[0.0],False,False,True
+test:50:590,590,IKZF1,0.6,True,[0.8],False,False,True
+test:51:535,535,IKZF1,0.2,False,[],False,False,True
+test:52:598,598,IKZF1,0.4,True,"[0.2, 0.5]",False,False,True
+test:53:569,569,IKZF1,0,True,[0.0],True,True,False
+test:54:690,690,IKZF2,0.5,True,[0.266666667],False,False,True
+test:55:612,612,IKZF2,0.6,True,[0.5],False,False,True
+test:56:667,667,IKZF2,1,False,[],False,False,True
+test:57:686,686,IKZF2,0.8,True,[0.4],False,False,True
+test:58:699,699,IKZF2,0.4,False,[],False,False,True
+test:59:635,635,IKZF2,0.6,True,[0.5],False,False,True
+test:60:622,622,IKZF2,0.666666667,True,[0.8],False,False,True
+test:61:693,693,IKZF2,0.8,True,[0.0],False,False,True
+test:62:685,685,IKZF2,0.5,True,[0.2],False,False,True
+test:63:740,740,IKZF2,0,True,[0.0],True,True,False
+test:64:660,660,IKZF2,0.8,True,"[0.5, 0.8]",True,False,True
+test:65:665,665,IKZF2,0.6,False,[],False,False,True
+test:66:716,716,IKZF2,0.4,True,[0.5],False,False,True
+test:67:620,620,IKZF2,0.266666667,True,[0.266666667],True,True,False
+test:68:815,815,IKZF3,0.4,True,[0.2],False,False,True
+test:69:745,745,IKZF3,0.6,False,[],False,False,True
+test:70:824,824,IKZF3,0.8,False,[],False,False,True
+test:71:754,754,IKZF3,1,False,[],False,False,True
+test:72:835,835,IKZF3,1,False,[],False,False,True
+test:73:770,770,IKZF3,0.8,True,"[0.6, 0.8]",True,False,True
+test:74:773,773,IKZF3,0.1,False,[],False,False,True
+test:75:837,837,IKZF3,1,False,[],False,False,True
+test:76:751,751,IKZF3,0.4,True,[0.4],True,True,False
+test:77:845,845,IKZF3,0.6,True,[0.6],True,True,False
+test:78:792,792,IKZF3,0,False,[],False,False,True
+test:79:862,862,IKZF3Q147E,0,True,[0.0],True,True,False
+test:80:865,865,IKZF3Q147E,0.4,True,[0.4],True,True,False
+test:81:881,881,NEK7,0.133333333,False,[],False,False,True
+test:82:885,885,NEK7,0.1,False,[],False,False,True
+test:83:899,899,PATZ1,0.4,True,[0.4],True,True,False
+test:84:908,908,PATZ1,0.4,True,[0.4],True,True,False
+test:85:937,937,SALL4,0.4,False,[],False,False,True
+test:86:969,969,SALL4,0,True,"[0.0, 0.2]",True,False,True
+test:87:950,950,SALL4,0,True,"[0.0, 0.2, 0.5]",True,False,True
+test:88:932,932,SALL4,0,False,[],False,False,True
+test:89:931,931,SALL4,0,True,[0.0],True,True,False
+test:90:964,964,SALL4,0.666666667,True,"[0.666666667, 0.8]",True,False,True
+test:91:991,991,WEE1,0.6,True,[0.6],True,True,False
+test:92:990,990,WEE1,0.6,False,[],False,False,True
+test:93:1001,1001,WIZ,0,True,[0.0],True,True,False
+test:94:1031,1031,ZFP91,0.6,True,[0.6],True,True,False
+test:95:1025,1025,ZFP91,0,True,[0.0],True,True,False
+test:96:1032,1032,ZFP91,0.6,True,[0.6],True,True,False
+test:97:1038,1038,ZKSC5,0.4,True,[0.4],True,True,False
+test:98:1044,1044,ZKSC5,0.4,False,[],False,False,True
+test:99:1078,1078,ZNF276,0.6,True,[0.6],True,True,False
+test:100:1090,1090,ZNF276,0.6,True,[0.6],True,True,False
+test:101:1092,1092,ZNF276,0.6,True,[0.6],True,True,False
+test:102:1060,1060,ZNF276,0.4,True,[0.0],False,False,True
+test:103:1104,1104,ZNF517,0.4,True,"[0.0, 0.2, 0.4, 0.6, 0.8]",True,False,True
+test:104:1109,1109,ZNF517,0.6,True,[0.6],True,True,False
+test:105:1096,1096,ZNF517,0.2,True,"[0.0, 0.2]",True,False,True
+test:106:1094,1094,ZNF517,0.4,True,[0.4],True,True,False
+test:107:1136,1136,ZNF582,0.6,True,[0.6],True,True,False
+test:108:1131,1131,ZNF582,0,True,[0.0],True,True,False
+test:109:1149,1149,ZNF582,0.6,True,[0.6],True,True,False
+test:110:1152,1152,ZNF653,0.6,True,[0.6],True,True,False
+test:111:1174,1174,ZNF653,0.4,False,[],False,False,True
+test:112:1187,1187,ZNF653,0.6,True,[0.6],True,True,False
+test:113:1158,1158,ZNF653,0.2,True,"[0.0, 0.2]",True,False,True
+test:114:1190,1190,ZNF654,0.6,False,[],False,False,True
+test:115:1208,1208,ZNF654,0.4,True,[0.4],True,True,False
+test:116:1192,1192,ZNF654,0,True,[0.0],True,True,False
+test:117:1215,1215,ZNF654,0,True,[0.0],True,True,False
+test:118:1227,1227,ZNF787,0.6,False,[],False,False,True
+test:119:1248,1248,ZNF787,0.6,True,[0.6],True,True,False
+test:120:1259,1259,ZNF787,0.6,True,[0.6],True,True,False
+test:121:1237,1237,ZNF787,0.4,True,[0.4],True,True,False
+test:122:1276,1276,ZNF827,0.4,True,"[0.0, 0.2]",False,False,True
+test:123:1271,1271,ZNF827,0,True,[0.0],True,True,False
+test:124:1285,1285,ZNF827,0.6,True,[0.6],True,True,False
+test:125:999,999,WIZ,0.8,True,[0.0],False,False,True
+test:126:1002,1002,WIZ,0.5,True,[0.0],False,False,True
+test:127:874,874,IKZF3Q147E,0.4,True,[0.4],True,True,False

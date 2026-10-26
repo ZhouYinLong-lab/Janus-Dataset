@@ -42,14 +42,27 @@ def sample_recalculation(rows):
                         'status': 'matches_published_precision' if abs(value - score) < .0005 else 'mismatch',
                         'source': SUPPLEMENT + ' [S8 Table7]',
                         'note': 'Published rounded penalties .33/.67; means retained; uncertainty available in SI.'})
+    source_cases = ROOT / 'source_readout_checks.json'
+    has_qualitative_example = source_cases.exists()
+    if has_qualitative_example:
+        case = next(c for c in json.loads(source_cases.read_text(encoding='utf-8'))['cases'] if c['benchmark_id'] == '111')
+        r = next(r for r in rows if r['id'] == '111')
+        value = float(r['sDC']) * (1 - .5 * float(r['pD']) * float(r['I']))
+        samples.append({'category': 'explicit_inactive_qualitative_only', 'origin': 'released_benchmark_with_source_association',
+                        'id': r['id'], 'target': r['PrimaryTarget'], 'split': r['split'],
+                        'DC50_nM': '', 'Dmax_percent': '', 'potency_score': r['sDC'], 'penalty': r['pD'],
+                        'reported_score': r['Score'], 'recalculated_score': value,
+                        'status': 'codes_match_qualitative_to_numeric_rule_unresolved',
+                        'source': case['source_url'] + ' [' + case['source_locator'] + ']',
+                        'note': 'Source prose supports inactivity up to 10 uM, not exact measured Dmax=0; no raw-to-code inference applied.'})
     save_csv('sample_recalculation.csv', samples)
     categories = [
         {'category': 'DC50_and_Dmax', 'selected': 2, 'availability': 'SI_Table7_raw_values', 'reason': 'Two finite-valued YFC-208 target records.'},
         {'category': 'DC50_only', 'selected': 2, 'availability': 'codes_only_raw_DC50_unresolved', 'reason': 'Earliest benchmark IDs with missing Dmax code; raw DC50 not released.'},
         {'category': 'Dmax_only', 'selected': 0, 'availability': 'not_identifiable', 'reason': 'No released flag differentiates measured vs curator-inferred potency.'},
         {'category': 'inequality', 'selected': 2, 'availability': 'SI_Table7_raw_values', 'reason': 'First two compound IDs with >10000 nM values.'},
-        {'category': 'explicit_inactive', 'selected': 0, 'availability': 'not_identifiable', 'reason': 'Activity code 0 is not evidence that the original experiment was explicitly inactive.'},
-        {'category': 'qualitative_only', 'selected': 0, 'availability': 'not_identifiable', 'reason': 'No qualitative-source provenance or equivalent-value inference rule is released.'},
+        {'category': 'explicit_inactive', 'selected': int(has_qualitative_example), 'availability': 'source_associated_example_id111' if has_qualitative_example else 'not_identifiable', 'reason': 'Primary prose example separately checked; activity code 0 alone is not evidence of experimental inactivity.'},
+        {'category': 'qualitative_only', 'selected': 0, 'availability': 'covered_by_same_id111_sample' if has_qualitative_example else 'not_identifiable', 'reason': 'Do not count the same inactive prose sample twice; equivalent-value inference rule remains unreleased.'},
     ]
     save_csv('sample_categories.csv', categories)
     return samples

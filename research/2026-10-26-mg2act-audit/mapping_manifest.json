@@ -1,0 +1,74 @@
+{
+  "inputs": [
+    {
+      "path": "local\\source_mapping\\benchmark_provenance.csv",
+      "sha256": "f38af6df88e2d80762c682656e24bfe0a4da65dcfdfba5ea675b81eb5d6ff68e",
+      "rows": 1239
+    },
+    {
+      "path": "local\\source_mapping\\local_identity_provenance.csv",
+      "sha256": "fde3a455b17001428237e38585c838822c5c794c8019d9e5de6bc7dd9107e8f9",
+      "rows": 53
+    }
+  ],
+  "source_mapping_summary": {
+    "revision": "d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065",
+    "benchmark_rows": 1159,
+    "benchmark_split_counts": {
+      "train": 907,
+      "val": 125,
+      "test": 127
+    },
+    "benchmark_min_id": 7,
+    "benchmark_max_id": 1296,
+    "benchmark_csv_sha256": {
+      "train": "2143e5c1dfa7a79c47be35fc24f650e78f2a0ff20f096b99d1d34bd6d1c9482d",
+      "val": "57b22e3b60d7133403bbe6204c3d68bb20f27c3d0d8cdb5916bd8853b424fce8",
+      "test": "ede542844a40cbbf6f9b8eda08b6e664febe3f17267504996b5d3e82edb52770"
+    },
+    "database_rows": 1840,
+    "database_distinct_DATAID": 1629,
+    "additional_public_api_source_rows": 1,
+    "database_csv_sha256": "cf1d0d61b889539d56b250f5adeb7652ef1a25ebe5008110db86bd28328a1d48",
+    "database_archive_sha256": "8ec9b2d51cdaff471e183073731e3e3464684494adba025738b7843ac6b84f15",
+    "exact_structure_matched_benchmark_rows": 1159,
+    "single_source_row_matches": 1097,
+    "benchmark_mapping_status_counts": {
+      "verified_structure_target_e3_unique_source": 1098,
+      "verified_structure_target_e3_multiple_sources": 60,
+      "verified_structure_target_e3_source_without_doi": 1
+    },
+    "benchmark_doi_candidate_count_distribution": {
+      "0": 1,
+      "1": 1098,
+      "2": 53,
+      "3": 1,
+      "4": 3,
+      "5": 1,
+      "6": 2
+    },
+    "benchmark_name_matched_doi_count_distribution": {
+      "0": 1,
+      "1": 1138,
+      "2": 17,
+      "4": 1,
+      "5": 1,
+      "6": 1
+    },
+    "output_rows": 1239,
+    "unresolved_placeholder_rows": 0,
+    "output_sha256": "f38af6df88e2d80762c682656e24bfe0a4da65dcfdfba5ea675b81eb5d6ff68e",
+    "output_rows_with_rawDC50_mentions": 320,
+    "output_rows_with_rawDmax_mentions": 226,
+    "benchmark_rows_with_any_rawDC50_mentions": 292,
+    "benchmark_rows_with_any_rawDmax_mentions": 221,
+    "source_DOI_is_original_benchmark_assay_provenance": false,
+    "supplement_zip_sha256": "c51f8f1660d172033daa6739766dd9665a9b06d8678b40be47beadecc1171e19",
+    "supplement_docx_sha256": "3b1768b25c74519e42414be6219a4014dd07e54033c833ab49d372aabe19bcf8",
+    "supplement_scope": "field_schema_Table_S1_and_figures; no_compound_level_table_or_embedded_dataset"
+  },
+  "published_rows": 1292,
+  "published_sha256": "f7e7b577b0a8adb0e53250f58fb1e1e596c27d18414c4ce3ea6f9dc7e70bfaa7",
+  "scope": "Database-source associations and separately resolved local identities; benchmark original assay provenance remains unknown.",
+  "excluded": "Raw assay descriptions, paper full text, original database export and protein sequences."
+}

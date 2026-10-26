@@ -1,0 +1,10 @@
+{
+  "test_rows": 127,
+  "molecule_seen_trainval": 87,
+  "same_molecule_score_seen_trainval": 63,
+  "constant_activity_rows_excluded": 54,
+  "fine_test_reproduced": 73,
+  "paper_fine_test_rows": 73,
+  "rule_source": "MG2Act Supplementary Information S6 Table6: exclude identical-activity molecules across train/validation, retain molecules showing activity variance.",
+  "interpretation": "These flags reproduce author protocol; they do not establish independent paper/assay provenance."
+}

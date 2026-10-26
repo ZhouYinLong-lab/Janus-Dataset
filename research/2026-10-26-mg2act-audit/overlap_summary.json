@@ -1,0 +1,446 @@
+{
+  "generated_at_utc": "2026-10-26T02:55:30.823779+00:00",
+  "script_sha256": "c0f3ba2b380816c3931de108b278bf5ca3596321b6d8be77a9f48144d7e877c5",
+  "benchmark_revision": "d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065",
+  "rdkit_version": "2026.09.1",
+  "normalization": "RDKit Cleanup; canonical isomeric SMILES; retain fragments/charge/tautomers. Separate RemoveStereochemistry candidate key. UniProt accessions plus explicit substitution annotations; split comparisons also require target/E3 sequence hashes. WT and IKZF3-Q147E remain distinct despite shared accession.",
+  "research_question": "Evidence identity and provenance overlap relevant to reliability and independent use evaluation.",
+  "inventory_scope": [
+    {
+      "version": "frozen_2026-10-24",
+      "path": "research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/final_records.json",
+      "sha256": "f971058ff6fa0449a749d72ecc3f43d9b1ee3572aa81a6edef0783e32bb41505",
+      "status": "loaded",
+      "raw_count": 1947,
+      "included_count": 1947,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "missing_evidence_final",
+      "path": "research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/missing_evidence_final.json",
+      "sha256": "c5f1e61c714ffa0d46ea32ebddd08dc5a7ac552860f11768c487193e1ac0c2b9",
+      "status": "loaded",
+      "raw_count": 4,
+      "included_count": 4,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "batch_engineering_02",
+      "path": "research/2026-10-25-api-extraction/local/batch_engineering_02/exports/records.json",
+      "sha256": "0dd107ad1871056ee8a15c417d004bf29fed90b8fb0bfa5922da9e87e2b958a3",
+      "status": "loaded",
+      "raw_count": 10,
+      "included_count": 10,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "batch_quality_02",
+      "path": "research/2026-10-25-api-extraction/local/batch_quality_02/exports/records.json",
+      "sha256": "9bff2d986b8690c70e7ae1a3e58f4d1c5f1290dbff32e9a33aaf9e84cf50717e",
+      "status": "loaded",
+      "raw_count": 11,
+      "included_count": 11,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "model_probe_01",
+      "path": "research/2026-10-25-api-extraction/local/model_probe_01/exports/records.json",
+      "sha256": "5a95c982db0921593845be94ee8c3f63474ccca71defd44a34f65248580e9aba",
+      "status": "loaded",
+      "raw_count": 4,
+      "included_count": 4,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "repair_regression_01",
+      "path": "research/2026-10-25-api-extraction/local/repair_regression_01/exports/records.json",
+      "sha256": "6f5d330b6cd64ba04bfe3db1cae1959e15085a6c37610d104100261db8b01015",
+      "status": "loaded",
+      "raw_count": 2,
+      "included_count": 2,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    },
+    {
+      "version": "repair_citation_recovery",
+      "path": "research/2026-10-25-api-extraction/local/repair_regression_01/citation_recovery/combined_records.json",
+      "sha256": "fac263559344325a67a70f5d797b45525f67d89948fa93cda76c830eae30c84f",
+      "status": "loaded",
+      "raw_count": 5,
+      "included_count": 5,
+      "excluded_simulation_replay_count": 0,
+      "excluded_row_indices": []
+    }
+  ],
+  "review_inputs": {
+    "research/2026-10-25-api-extraction/engineering_semantic_review.json": "63b1169d5c0ef1a8b4a24a13bbc8975baf0b8e062ec7e507bf5df7cb91ee4da1",
+    "research/2026-10-25-api-extraction/quality_semantic_review.json": "b196754d9d9ad7599563317aa14f8d1b1794279ff787a446b183f5b0699650a0",
+    "research/2026-10-25-api-extraction/probe_semantic_review.json": "f9157ba51e910808813d344c6bef62a21747fad2f937b685aaf147cea0fac68e",
+    "research/2026-10-25-api-extraction/local/repair_regression_01/review_snapshots/001_review.json": "90d4db54ad718873c9bb65f69c35819ea14a36e641ef4211c9a19d37c95d97e4"
+  },
+  "provenance_mapping": {
+    "status": "loaded",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-26-mg2act-audit\\source_associations.csv",
+    "sha256": "f7e7b577b0a8adb0e53250f58fb1e1e596c27d18414c4ce3ea6f9dc7e70bfaa7",
+    "entries": 1292,
+    "applied_entries": 1292,
+    "additional_mappings": [],
+    "local_identity_derivation": {
+      "status": "not_derived; explicit_overlay_or_no_database_associations"
+    },
+    "entry_status_counts": {
+      "source_association_only": 1239,
+      "applied": 53
+    },
+    "exceptional_entries": []
+  },
+  "inventory": {
+    "observations_including_versions": 1983,
+    "papers": 64,
+    "doi_count": 64,
+    "evidence_classes": {
+      "body_narrative_negative": 367,
+      "table_negative": 0,
+      "figure_caption_negative": 6,
+      "mixed_negative": 49,
+      "unknown_negative": 75,
+      "positive": 1103,
+      "other": 0,
+      "uncertain": 383
+    },
+    "negative_with_body_narrative_locator_including_mixed": 415,
+    "negative_with_table_locator_including_mixed": 15,
+    "review_status": {
+      "model_reviewed_supported_not_gold": 31,
+      "uncertain": 42,
+      "unreviewed_after_field_overlay": 15,
+      "model_audit_supported_not_gold": 335,
+      "needs_correction": 37,
+      "unreviewed": 1487,
+      "not_present": 36
+    },
+    "supplemental_review": {
+      "not_present": 1954,
+      "supported_with_limits": 6,
+      "quarantine": 4,
+      "supported_core_with_limits": 11,
+      "boundary_only": 4,
+      "quarantine_semantic": 3,
+      "uncertain": 1
+    },
+    "negative_evidence_status": {
+      "not_classified_as_negative": 1532,
+      "model_supported_scoped_negative_claim": 311,
+      "excluded_pending_review": 82,
+      "not_eligible_as_negative": 22,
+      "not_present": 36
+    },
+    "grouped_statements": 155,
+    "complete_explicit_identities": 53,
+    "valid_smiles": 53,
+    "target_uniprot_known": 53,
+    "e3_uniprot_known": 53,
+    "unique_original_id_keys": 1981,
+    "context_signatures_not_experiments": 1975,
+    "independent_experiment_count": null,
+    "by_version": {
+      "frozen_2026-10-24": {
+        "observations": 1947,
+        "evidence_classes": {
+          "body_narrative_negative": 350,
+          "table_negative": 0,
+          "figure_caption_negative": 6,
+          "mixed_negative": 49,
+          "unknown_negative": 75,
+          "positive": 1103,
+          "other": 0,
+          "uncertain": 364
+        }
+      },
+      "missing_evidence_final": {
+        "observations": 4,
+        "evidence_classes": {
+          "body_narrative_negative": 4,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 0
+        }
+      },
+      "batch_engineering_02": {
+        "observations": 10,
+        "evidence_classes": {
+          "body_narrative_negative": 6,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 4
+        }
+      },
+      "batch_quality_02": {
+        "observations": 11,
+        "evidence_classes": {
+          "body_narrative_negative": 3,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 8
+        }
+      },
+      "model_probe_01": {
+        "observations": 4,
+        "evidence_classes": {
+          "body_narrative_negative": 2,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 2
+        }
+      },
+      "repair_regression_01": {
+        "observations": 2,
+        "evidence_classes": {
+          "body_narrative_negative": 0,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 2
+        }
+      },
+      "repair_citation_recovery": {
+        "observations": 5,
+        "evidence_classes": {
+          "body_narrative_negative": 2,
+          "table_negative": 0,
+          "figure_caption_negative": 0,
+          "mixed_negative": 0,
+          "unknown_negative": 0,
+          "positive": 0,
+          "other": 0,
+          "uncertain": 3
+        }
+      }
+    }
+  },
+  "benchmark": {
+    "inputs": [
+      {
+        "split": "train",
+        "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-26-mg2act-audit\\local\\upstream\\MG_data\\train.csv",
+        "sha256": "2143e5c1dfa7a79c47be35fc24f650e78f2a0ff20f096b99d1d34bd6d1c9482d",
+        "rows": 907
+      },
+      {
+        "split": "val",
+        "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-26-mg2act-audit\\local\\upstream\\MG_data\\val.csv",
+        "sha256": "57b22e3b60d7133403bbe6204c3d68bb20f27c3d0d8cdb5916bd8853b424fce8",
+        "rows": 125
+      },
+      {
+        "split": "test",
+        "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-26-mg2act-audit\\local\\upstream\\MG_data\\test.csv",
+        "sha256": "ede542844a40cbbf6f9b8eda08b6e664febe3f17267504996b5d3e82edb52770",
+        "rows": 127
+      }
+    ],
+    "rows": 1159,
+    "splits": {
+      "train": 907,
+      "val": 125,
+      "test": 127
+    },
+    "valid_smiles": 1159,
+    "structure_statuses": {
+      "valid": 1159
+    },
+    "unique_target_names": 21,
+    "unique_target_uniprot": 20,
+    "unique_e3_uniprot": [
+      "Q96SW2"
+    ],
+    "rows_with_doi": 0,
+    "rows_without_doi": 1159,
+    "rows_with_database_source_associations": 1159,
+    "rows_with_candidate_source_dois": 1158,
+    "rows_with_multiple_candidate_source_dois": 60,
+    "unique_isomeric_molecules": 625,
+    "unique_exact_combinations": 1159,
+    "id_duplicates": {}
+  },
+  "split_overlap": [
+    {
+      "left_split": "train",
+      "right_split": "val",
+      "level": "molecule",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 58,
+      "row_pairs": 299,
+      "left_rows": 184,
+      "right_rows": 78
+    },
+    {
+      "left_split": "train",
+      "right_split": "val",
+      "level": "molecule",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 2,
+      "row_pairs": 5,
+      "left_rows": 5,
+      "right_rows": 2
+    },
+    {
+      "left_split": "train",
+      "right_split": "val",
+      "level": "molecule_target_e3",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 0,
+      "row_pairs": 0,
+      "left_rows": 0,
+      "right_rows": 0
+    },
+    {
+      "left_split": "train",
+      "right_split": "val",
+      "level": "molecule_target_e3",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 2,
+      "row_pairs": 3,
+      "left_rows": 3,
+      "right_rows": 2
+    },
+    {
+      "left_split": "train",
+      "right_split": "test",
+      "level": "molecule",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 70,
+      "row_pairs": 233,
+      "left_rows": 178,
+      "right_rows": 83
+    },
+    {
+      "left_split": "train",
+      "right_split": "test",
+      "level": "molecule",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 5,
+      "row_pairs": 11,
+      "left_rows": 9,
+      "right_rows": 6
+    },
+    {
+      "left_split": "train",
+      "right_split": "test",
+      "level": "molecule_target_e3",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 0,
+      "row_pairs": 0,
+      "left_rows": 0,
+      "right_rows": 0
+    },
+    {
+      "left_split": "train",
+      "right_split": "test",
+      "level": "molecule_target_e3",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 5,
+      "row_pairs": 7,
+      "left_rows": 6,
+      "right_rows": 6
+    },
+    {
+      "left_split": "val",
+      "right_split": "test",
+      "level": "molecule",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 19,
+      "row_pairs": 32,
+      "left_rows": 25,
+      "right_rows": 24
+    },
+    {
+      "left_split": "val",
+      "right_split": "test",
+      "level": "molecule",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 1,
+      "row_pairs": 1,
+      "left_rows": 1,
+      "right_rows": 1
+    },
+    {
+      "left_split": "val",
+      "right_split": "test",
+      "level": "molecule_target_e3",
+      "match_mode": "exact_isomeric",
+      "shared_keys": 0,
+      "row_pairs": 0,
+      "left_rows": 0,
+      "right_rows": 0
+    },
+    {
+      "left_split": "val",
+      "right_split": "test",
+      "level": "molecule_target_e3",
+      "match_mode": "no_stereo_candidate",
+      "shared_keys": 0,
+      "row_pairs": 0,
+      "left_rows": 0,
+      "right_rows": 0
+    }
+  ],
+  "local_overlap": {
+    "audit_rows": 5010,
+    "outcome_audit_rows": {
+      "identity_or_conditions_unresolved": 2450,
+      "same_paper_only": 2560
+    },
+    "best_outcome_observations": {
+      "same_experiment": 0,
+      "same_combination_different_conditions": 0,
+      "same_paper_only": 155,
+      "identity_or_conditions_unresolved": 1828,
+      "no_match_found": 0
+    },
+    "confirmed_same_experiment_observations": 0,
+    "confirmed_exact_combination_observations": 53,
+    "confirmed_exact_combination_row_pairs": 53,
+    "unresolved_experiment_overlap_observations": 1983,
+    "observations_with_any_benchmark_lead": 292,
+    "candidate_benchmark_rows": 124,
+    "confirmed_nonoverlapping_independent_experiments": null
+  },
+  "interpretation": [
+    "All scoped observations and versions are enumerated; grouped statements remain single observations.",
+    "Existing labels/reviews are retained; classification is a conservative inventory rule, not expert adjudication.",
+    "Frozen negative_evidence_status preserves the original 311 model-supported scoped claims independently of origin/type classification.",
+    "Only actual input records are included; planned candidates are absent from this inventory.",
+    "No DOI, identity, condition or absence of a match is imputed from missing information.",
+    "Database source associations remain candidate DOI lists; they never populate definitive benchmark DOI or establish assay provenance. same_paper_only includes an explicitly scoped associated-source-paper lead.",
+    "Local identities are a separate overlay based on same DOI, scoped compound name and exact target name with a unique full identity. Target tags, original evidence/reviews and grouped observations are preserved; no condition transfer is performed.",
+    "No-stereo overlap rows contain only additional row pairs excluded from exact-isomeric pairs; shared-key counts are not independent experiments.",
+    "Numeric compound labels are never cross-paper match keys; named-compound leads require identity/source confirmation.",
+    "Same-experiment matching requires sourced DOI, explicit chemical/protein identities and complete matching conditions, including explicitly stated perturbation/control state.",
+    "No quotations or result-text strings are exported; source JSON pointers provide traceability."
+  ]
+}
