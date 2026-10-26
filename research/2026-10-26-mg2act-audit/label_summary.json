@@ -1,0 +1,91 @@
+{
+  "input_rows": 1159,
+  "split_counts": {
+    "train": 907,
+    "val": 125,
+    "test": 127
+  },
+  "targets": 21,
+  "score_zero_rows": 269,
+  "score_zero_by_split": {
+    "train": 206,
+    "val": 39,
+    "test": 24
+  },
+  "dmax_code_present": 445,
+  "dmax_code_missing": 714,
+  "encoded_formula_mismatches": 0,
+  "observed_code_relation_mismatches": 0,
+  "max_absolute_difference": 4.99999930347883e-10,
+  "distributions": {
+    "activity": {
+      "2": 198,
+      "4": 135,
+      "3": 400,
+      "0": 269,
+      "1": 118,
+      "5": 39
+    },
+    "Dmax_Sc": {
+      "1": 156,
+      "": 714,
+      "2": 122,
+      "4": 101,
+      "3": 66
+    },
+    "sDC": {
+      "0.4": 198,
+      "0.8": 135,
+      "0.6": 400,
+      "0": 269,
+      "0.2": 118,
+      "1": 39
+    },
+    "pD": {
+      "0": 156,
+      "-0.333333333": 714,
+      "0.333333333": 122,
+      "1": 101,
+      "0.666666667": 66
+    },
+    "I": {
+      "1": 445,
+      "0": 714
+    },
+    "Score": {
+      "0.4": 152,
+      "0.8": 123,
+      "0.5": 77,
+      "0": 269,
+      "0.6": 307,
+      "0.266666667": 24,
+      "0.2": 102,
+      "0.666666667": 9,
+      "0.333333333": 15,
+      "0.166666667": 4,
+      "0.1": 19,
+      "0.533333333": 3,
+      "1": 37,
+      "0.133333333": 14,
+      "0.3": 2,
+      "0.833333333": 2
+    }
+  },
+  "published_rule": "ScoreDC50 * (1 - 0.5 * PenaltyDmax); omit Dmax penalty when Dmax unavailable",
+  "observed_release_formula": "sDC * (1 - 0.5 * pD * I)",
+  "raw_assay_columns_present": false,
+  "raw_assay_provenance_columns_present": false,
+  "source_locations": {
+    "potency_and_penalty_bins": "article.pdf pp6,23; supplement.pdf S8,S18",
+    "alpha": "supplement.pdf S5 Table4",
+    "dmax_missing": "supplement.pdf S6 Table5"
+  },
+  "uncertainties": [
+    "activity/Dmax_Sc/sDC/pD/I CSV names have no explicit published data dictionary; their algebraic relations are verified empirically.",
+    "Methods p23 says curators inferred equivalent DC50 values if unreported; row-specific inference criteria and input evidence are not provided in the release.",
+    "Published bin endpoints overlap at exact threshold values; do not select a boundary convention without original source or code.",
+    "Paper uses rounded penalties .33/.67; released codes use thirds; keep this distinction for raw-to-score reproduction.",
+    "No general mapping from non-significant, undetected, or qualitative no-degradation prose to Score is specified.",
+    "Score zero is a potency-score category, not an assertion of zero measured degradation."
+  ]
+}

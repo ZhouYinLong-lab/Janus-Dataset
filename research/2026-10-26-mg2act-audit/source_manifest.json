@@ -1,0 +1,69 @@
+{
+  "repository": "https://github.com/Zzy522/MG2Act",
+  "revision": "d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065",
+  "retrieved_on": "2026-10-26",
+  "files": [
+    {
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/README.md",
+      "bytes": 4469,
+      "sha256": "e077b9b0e451c2dce661b04fda5cee75fe936f3a8ac9cc85877717e4f363e7c4"
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/LICENSE",
+      "bytes": 1063,
+      "sha256": "767b83f1e8d2c02ce2648f6f458446b31ac3c635e5eb01169f23a4d372d3dbd4"
+    },
+    {
+      "path": "MG2Act/dataset.py",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG2Act/dataset.py",
+      "bytes": 2910,
+      "sha256": "7a17ef8f2e92e72a562751e99cd0decd815be3c386422744afcbefc284ae0b6c"
+    },
+    {
+      "path": "MG2Act/evaluate.py",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG2Act/evaluate.py",
+      "bytes": 2934,
+      "sha256": "460badf1447d837f7e5d5163ff65270ed324631eb4bcab08e8e3b062f9847d54"
+    },
+    {
+      "path": "MG2Act/train.py",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG2Act/train.py",
+      "bytes": 12932,
+      "sha256": "637b3a30c784d1d027d5c1f966899417ac878bbdaed3f9b67f7de1d06f959448"
+    },
+    {
+      "path": "MG_data/train.csv",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG_data/train.csv",
+      "bytes": 730712,
+      "sha256": "2143e5c1dfa7a79c47be35fc24f650e78f2a0ff20f096b99d1d34bd6d1c9482d"
+    },
+    {
+      "path": "MG_data/val.csv",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG_data/val.csv",
+      "bytes": 102847,
+      "sha256": "57b22e3b60d7133403bbe6204c3d68bb20f27c3d0d8cdb5916bd8853b424fce8"
+    },
+    {
+      "path": "MG_data/test.csv",
+      "url": "https://raw.githubusercontent.com/Zzy522/MG2Act/d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065/MG_data/test.csv",
+      "bytes": 105535,
+      "sha256": "ede542844a40cbbf6f9b8eda08b6e664febe3f17267504996b5d3e82edb52770"
+    }
+  ],
+  "paper_sources": [
+    {
+      "path": "article.pdf",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.08.08.739980v1.full.pdf",
+      "bytes": 2616082,
+      "sha256": "4064ddcda96db0d6487e54b247613f3148d2867dd6d878ed69ea6b66c9f958d3"
+    },
+    {
+      "path": "supplement.pdf",
+      "url": "https://www.biorxiv.org/content/biorxiv/early/2026/08/13/2026.08.08.739980/DC1/embed/media-1.pdf?download=true",
+      "bytes": 7005013,
+      "sha256": "24c64ceb9d1669784020cbaacc5e504864624453857d867d5234d515132edb25"
+    }
+  ]
+}

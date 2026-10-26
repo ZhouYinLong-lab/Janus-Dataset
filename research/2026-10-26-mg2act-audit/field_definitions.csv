@@ -1,0 +1,7 @@
+﻿field,definition,evidence_status,source
+activity,0-5 ordinal potency code; sDC=activity/5 in all released rows,observed_release_relation,"https://www.biorxiv.org/content/10.64898/2026.08.08.739980v1.full.pdf [p6,p23 for potency bins; column name mapping not documented]"
+Dmax_Sc,Codes 1->0; 2->1/3; 3->2/3; 4->1 penalty; blank when unavailable,observed_release_relation,https://www.biorxiv.org/content/biorxiv/early/2026/08/13/2026.08.08.739980/DC1/embed/media-1.pdf?download=true [S6 Table5 for missingness; CSV code dictionary not documented]
+sDC,"Normalized potency score, dimensionless 0 to 1, observed as activity/5",paper_rule_with_empirical_column_mapping,"https://www.biorxiv.org/content/10.64898/2026.08.08.739980v1.full.pdf [p6,p23]"
+pD,Dmax penalty observed as (Dmax_Sc-1)/3; missing code gives -1/3 placeholder,observed_release_relation,"https://www.biorxiv.org/content/10.64898/2026.08.08.739980v1.full.pdf [p6,p23; published rounded penalties .33/.67]"
+I,"Observed availability indicator: 1 if Dmax_Sc exists, else 0",observed_release_relation,https://www.biorxiv.org/content/biorxiv/early/2026/08/13/2026.08.08.739980/DC1/embed/media-1.pdf?download=true [S6 Table5; column symbol not defined in paper]
+Score,Dimensionless composite potency/efficacy score; released calculation sDC*(1-0.5*pD*I),paper_formula_with_empirical_column_mapping,https://www.biorxiv.org/content/biorxiv/early/2026/08/13/2026.08.08.739980/DC1/embed/media-1.pdf?download=true [S5 Table4; S8 Table7; S18 Table9]

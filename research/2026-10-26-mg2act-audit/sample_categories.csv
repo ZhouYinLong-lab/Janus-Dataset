@@ -1,0 +1,7 @@
+﻿category,selected,availability,reason
+DC50_and_Dmax,2,SI_Table7_raw_values,Two finite-valued YFC-208 target records.
+DC50_only,2,codes_only_raw_DC50_unresolved,Earliest benchmark IDs with missing Dmax code; raw DC50 not released.
+Dmax_only,0,not_identifiable,No released flag differentiates measured vs curator-inferred potency.
+inequality,2,SI_Table7_raw_values,First two compound IDs with >10000 nM values.
+explicit_inactive,0,not_identifiable,Activity code 0 is not evidence that the original experiment was explicitly inactive.
+qualitative_only,0,not_identifiable,No qualitative-source provenance or equivalent-value inference rule is released.
