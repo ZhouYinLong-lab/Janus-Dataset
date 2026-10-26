@@ -1,0 +1,27 @@
+{
+  "citation_counts": {
+    "exact": 83,
+    "unique_missing_window_suffix_same_question": 24,
+    "only_other_question_same_batch": 2
+  },
+  "nonexact_questions": [
+    "Q204B",
+    "Q209A",
+    "Q209B",
+    "Q209C",
+    "Q209D",
+    "Q251A",
+    "Q251B",
+    "Q251C",
+    "Q251D",
+    "Q280A",
+    "Q280B",
+    "Q280C",
+    "Q280D"
+  ],
+  "other_question_references": [
+    "Q280D"
+  ],
+  "responses_modified": false,
+  "scope": "Identity tracing only. Does not establish that every factual assertion is supported."
+}

@@ -1,0 +1,57 @@
+﻿question_id,paper_id,arm,kind,point1,point2,score,overclaim,fully_correct,citation_ids_valid,reason
+Q204A,B204,structured,negative,0,1,1,False,False,True,只答GSPT1边界，未恢复IKZF1组级观察；保留测试范围。
+Q204B,B204,structured,relative_negative,1,0,1,True,False,True,结合与Dmax数值正确；将24h窗口内最大降解定义成24h终点读数。
+Q204C,B204,structured,positive,0,0,0,False,False,True,检索未提供已知CK1alpha记录，回答信息不足。
+Q204D,B204,structured,insufficient_precision,0,1,1,False,False,True,未答正文10uM定性失活，但正确拒绝宣称精确测得零。
+Q204A,B204,structured_raw,negative,1,1,2,True,False,True,两靶点组级结果和范围已答；将具体分子及24h/HEK293条件扩展到整组叙述，逐分子归属未确认。
+Q204B,B204,structured_raw,relative_negative,1,1,2,False,True,False,结合、降解差异及24h窗口最大值/10uM定义正确；原始引用ID有误另记。
+Q204C,B204,structured_raw,positive,1,1,2,False,True,True,正文4nM/89%及24h初筛对应正确。
+Q204D,B204,structured_raw,insufficient_precision,1,1,2,False,True,True,正确保留定性失活、10uM边界和无精确Dmax。
+Q204A,B204,structured_cards,negative,1,1,2,True,False,True,组级阴性与范围已答；仍把24h作为整组叙述条件，卡片未确认各阴性臂时间。
+Q204B,B204,structured_cards,relative_negative,1,1,2,False,True,True,保留结合但变弱，Dmax定义正确，没有混成2h。
+Q204C,B204,structured_cards,positive,1,1,2,False,True,True,正文4nM/89%及24h初筛对应正确。
+Q204D,B204,structured_cards,insufficient_precision,1,1,2,False,True,True,正确保留定性失活、10uM边界和无精确Dmax。
+Q209A,B209,structured,negative,0,0,0,False,False,True,仅有CK1alpha数据，未恢复GSPT1/IKZF2和24h比较。
+Q209B,B209,structured,insufficient_evidence,0,1,1,False,False,True,未找到WEE1未检出观察，但正确不认定已证明无活性。
+Q209C,B209,structured,positive,1,1,2,False,True,True,12nM/90%、MOLT4 HiBiT24h均正确。
+Q209D,B209,structured,conditional_negative,0,0,0,False,False,True,组合效应无资料，未回答细胞边界和具体端点。
+Q209A,B209,structured_raw,negative,1,1,2,False,True,False,选择性和24h蛋白比较正确；引用格式另记。
+Q209B,B209,structured_raw,insufficient_evidence,1,1,2,False,True,False,正确识别未检出和判定限制。
+Q209C,B209,structured_raw,positive,1,1,2,False,True,False,12nM/90%、MOLT4 HiBiT24h均正确；引用格式另记。
+Q209D,B209,structured_raw,conditional_negative,1,1,2,True,False,False,MOLM13与其余三细胞系的差异正确；不确定性栏将负例臂也赋成相同终点时长，正文未确认。
+Q209A,B209,structured_cards,negative,1,1,2,False,True,True,选择性及24h蛋白比较正确，浓度未补写。
+Q209B,B209,structured_cards,insufficient_evidence,1,1,2,True,False,True,核心限制正确；将图1C的24h直接用于未确认的WEE1测定，且不确定性栏把可能低表达写成确定原因。
+Q209C,B209,structured_cards,positive,1,1,2,False,True,True,12nM/90%、MOLT4 HiBiT24h均正确。
+Q209D,B209,structured_cards,conditional_negative,1,1,2,False,True,True,联合抗增殖边界正确，未把不显著改成精确零或全局无活性。
+Q236A,B236,structured,conditional_negative,0,0,0,True,False,True,把CRBN FB自行解释为CRBN缺失细胞，编出基于该细胞的活性比较；未答真实敲除证据。
+Q236B,B236,structured,negative_boundary,1,1,2,False,True,True,IKZF1<10%与IKZF2约40%及各自条件正确。
+Q236C,B236,structured,positive,1,1,2,False,True,True,MOLM13 WB4h3.7nM与HEK293 HiBiT4h6nM正确。
+Q236D,B236,structured,endpoint_boundary,1,0,1,False,False,True,正确区分细胞毒性和降解；仅给HEK293 HiBiT，未恢复MOLM13 WB100uM/24h对照。
+Q236A,B236,structured_cards,conditional_negative,1,1,2,False,True,True,敲除蛋白/存活区别及1uM/72h存活条件正确，明确降解条件未详列。
+Q236B,B236,structured_cards,negative_boundary,1,1,2,False,True,True,IKZF1<10%与IKZF2约40%及各自条件正确。
+Q236C,B236,structured_cards,positive,1,1,2,False,True,True,两测定的读数、细胞和4h正确。
+Q236D,B236,structured_cards,endpoint_boundary,1,1,2,False,True,True,MOLM13蛋白降解对照及细胞毒性边界正确。
+Q251A,B251,structured,negative,0,0,0,True,False,True,把20b/22a/22b自行归为6-/7-取代Len并据其降解推论，混淆原文通常不降解的化学分组。
+Q251B,B251,structured,positive,0,0,0,False,False,True,仅给19a一个EC50，缺配对完整读数和Ymin定义；13a活性表述沿用库内inactive标记。
+Q251C,B251,structured,insufficient_precision,0,0,0,False,False,True,正确拒绝全蛋白精确零，但未恢复不显著描述及四靶点范围，两个具体评分点未满足。
+Q251D,B251,structured,negative_positive_pair,0,0,0,False,False,True,库内22a EC50=1.1uM与正文1.4不同，未恢复16a、Ymin与方向定义；不擅自裁定数据库数值错误。
+Q251A,B251,structured_raw,negative,1,1,2,False,True,False,保留CRBN结合、通常不降解，并把不形成有效复合物写为推测。原始引用ID格式另记。
+Q251B,B251,structured_raw,positive,1,1,2,False,True,False,19a/13a四个读数及Ymin方向正确。原始引用ID格式另记。
+Q251C,B251,structured_raw,insufficient_precision,1,1,2,False,True,False,不显著、四个受测靶点及非全蛋白精确零的限制正确。原始引用ID格式另记。
+Q251D,B251,structured_raw,negative_positive_pair,1,1,2,False,True,False,16a/22a四个读数和Ymin100%为无蛋白降低的方向正确。原始引用ID格式另记。
+Q251A,B251,structured_cards,negative,1,1,2,False,True,True,保留CRBN结合、通常不降解，并把不形成有效复合物写为推测。
+Q251B,B251,structured_cards,positive,1,1,2,False,True,True,19a/13a四个读数及Ymin方向正确。
+Q251C,B251,structured_cards,insufficient_precision,1,1,2,False,True,True,不显著、四个受测靶点及非全蛋白精确零的限制正确。
+Q251D,B251,structured_cards,negative_positive_pair,1,1,2,False,True,True,16a/22a四个读数和Ymin100%为无蛋白降低的方向正确。
+Q280A,B280,structured,negative,0,0,0,False,False,True,未取得比较结果，保留信息不足。
+Q280B,B280,structured,endpoint_boundary,0,1,1,True,False,True,未答3–72h蛋白降低；将未定义的IsActive=0直接解释成CRBN募集无活性。
+Q280C,B280,structured,positive,0,0,0,True,False,True,缺剂量和DC50答案；额外将库内IsActive=0解释成CRBN募集失活。
+Q280D,B280,structured,insufficient_evidence,0,1,1,False,False,True,承认未取得正文，不能证实正文具体缺项；提出需查方法/图注的途径。
+Q280A,B280,structured_raw,negative,1,1,2,False,True,False,正确恢复UDP-glucose阳性及其余比较阴性，保留受测范围。
+Q280B,B280,structured_raw,endpoint_boundary,1,1,2,False,True,False,3–72h蛋白降低和转录不变的端点区别正确。
+Q280C,B280,structured_raw,positive,1,0,1,True,False,False,10mM/1mM及非DC50正确，但把有效剂量示例称作阈值浓度，原文未证实最低阈值。
+Q280D,B280,structured_raw,insufficient_evidence,1,1,2,False,True,False,正确保留负例剂量和时间缺口；引用指向同批其他题原文，单独核查。
+Q280A,B280,structured_cards,negative,1,1,2,False,True,True,比较对象和范围正确，负例条件未知未补写。
+Q280B,B280,structured_cards,endpoint_boundary,1,1,2,False,True,True,蛋白降低与转录不变的区别、时间范围正确。
+Q280C,B280,structured_cards,positive,1,1,2,False,True,True,10mM/1mM为给药示例，明确非DC50或普遍最低阈值。
+Q280D,B280,structured_cards,insufficient_evidence,1,1,2,False,True,True,正确指出正文条件缺失及回查图注/补充方法。

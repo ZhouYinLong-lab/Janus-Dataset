@@ -1,0 +1,185 @@
+{
+  "graded": true,
+  "subsets": {
+    "all": {
+      "paired_questions": 16,
+      "arms": {
+        "structured": {
+          "score": 8,
+          "max_score": 32,
+          "fully_correct": 1,
+          "overclaim": 4,
+          "valid_citation_ids": 16
+        },
+        "structured_raw": {
+          "score": 31,
+          "max_score": 32,
+          "fully_correct": 13,
+          "overclaim": 3,
+          "valid_citation_ids": 3
+        },
+        "structured_cards": {
+          "score": 32,
+          "max_score": 32,
+          "fully_correct": 14,
+          "overclaim": 2,
+          "valid_citation_ids": 16
+        }
+      }
+    },
+    "generic_processed": {
+      "paired_questions": 8,
+      "arms": {
+        "structured": {
+          "score": 6,
+          "max_score": 16,
+          "fully_correct": 1,
+          "overclaim": 1,
+          "valid_citation_ids": 8
+        },
+        "structured_raw": {
+          "score": 16,
+          "max_score": 16,
+          "fully_correct": 6,
+          "overclaim": 2,
+          "valid_citation_ids": 3
+        },
+        "structured_cards": {
+          "score": 16,
+          "max_score": 16,
+          "fully_correct": 6,
+          "overclaim": 2,
+          "valid_citation_ids": 8
+        }
+      }
+    },
+    "generic_cohort_unconfirmed": {
+      "paired_questions": 8,
+      "arms": {
+        "structured": {
+          "score": 2,
+          "max_score": 16,
+          "fully_correct": 0,
+          "overclaim": 3,
+          "valid_citation_ids": 8
+        },
+        "structured_raw": {
+          "score": 15,
+          "max_score": 16,
+          "fully_correct": 7,
+          "overclaim": 1,
+          "valid_citation_ids": 0
+        },
+        "structured_cards": {
+          "score": 16,
+          "max_score": 16,
+          "fully_correct": 8,
+          "overclaim": 0,
+          "valid_citation_ids": 8
+        }
+      }
+    },
+    "audited_missing_content": {
+      "paired_questions": 2,
+      "arms": {
+        "structured": {
+          "score": 0,
+          "max_score": 4,
+          "fully_correct": 0,
+          "overclaim": 0,
+          "valid_citation_ids": 2
+        },
+        "structured_raw": {
+          "score": 4,
+          "max_score": 4,
+          "fully_correct": 1,
+          "overclaim": 1,
+          "valid_citation_ids": 0
+        },
+        "structured_cards": {
+          "score": 4,
+          "max_score": 4,
+          "fully_correct": 2,
+          "overclaim": 0,
+          "valid_citation_ids": 2
+        }
+      }
+    },
+    "core_degradation_missing_content": {
+      "paired_questions": 1,
+      "arms": {
+        "structured": {
+          "score": 0,
+          "max_score": 2,
+          "fully_correct": 0,
+          "overclaim": 0,
+          "valid_citation_ids": 1
+        },
+        "structured_raw": {
+          "score": 2,
+          "max_score": 2,
+          "fully_correct": 1,
+          "overclaim": 0,
+          "valid_citation_ids": 0
+        },
+        "structured_cards": {
+          "score": 2,
+          "max_score": 2,
+          "fully_correct": 1,
+          "overclaim": 0,
+          "valid_citation_ids": 1
+        }
+      }
+    }
+  },
+  "trial_attempts": 15,
+  "all_available_by_arm": {
+    "structured": {
+      "answers": 20,
+      "score": 13,
+      "overclaim": 5,
+      "valid_citation_ids": 20
+    },
+    "structured_raw": {
+      "answers": 16,
+      "score": 31,
+      "overclaim": 3,
+      "valid_citation_ids": 3
+    },
+    "structured_cards": {
+      "answers": 20,
+      "score": 40,
+      "overclaim": 2,
+      "valid_citation_ids": 20
+    }
+  },
+  "reported_trial_tokens": 84599,
+  "trial_attempts_without_usage": 1,
+  "trial_reserved_tokens": 376651,
+  "budget_after": {
+    "max_requests": 200,
+    "requests_reserved": 183,
+    "reserved_token_estimate": 4737433,
+    "reported_total_tokens": 835811,
+    "attempts_without_usage": 8,
+    "global_stop": "operator_pause",
+    "billing": "Reported usage is not a verified bill; missing usage is unknown, not zero."
+  },
+  "response_hashes": {
+    "B204_structured": "ee7a57681717a1c9c076c66a686ff05838be7b4e069b3fc86be5ed52affc64c1",
+    "B204_structured_raw": "d99e2fdcd3ff81e61c8a419f98aa613a2e422d76368c4c39b88c72a9ab55d143",
+    "B204_structured_cards": "f7882ef7c79b24ba9ce998da419a16daf0e18fcf87dc19a217b97d2063b3bf0b",
+    "B209_structured": "e569af69b2f7d27c2fd52d23d59b9203719dc512917f6b628ad6b731c00642e5",
+    "B209_structured_raw": "0a44e6c5dbe294647a708b3019bc79ae8ac049e819ca0d95a75566f4fc1ac718",
+    "B209_structured_cards": "3fe3902b26b6088f790a671ec1b7a10019be8c2751217ed3db6adc153eb0f41d",
+    "B236_structured": "422981f8610337600b07c6d36490613941826aafeb9a113b1162821f29647f90",
+    "B236_structured_cards": "118c7d19b2839e3eb1b092d5f747b54e499f8ffe0623df7c5a0bd3f103b59162",
+    "B251_structured": "5628f02bb04d9b215e6ee1e6a8018ed78a4f597d1eb94d8950da1c22bbfbf3a6",
+    "B251_structured_raw": "622a81762ef84e93c8262146649e2aa8aa2cfb926dfeecb71555297851b0412f",
+    "B251_structured_cards": "bc598ce5eb59cbe3addc12a567bda0ec25391776da92874cf137a3811682a4cc",
+    "B280_structured": "1483127d1a32bd40837188cc19461aad4966fd4f21c7762f585ebd1baeca8563",
+    "B280_structured_raw": "99339305e3ee53b17886c9ea143ea0dbb4b20e099440beee676a4e82caf30f52",
+    "B280_structured_cards": "4cdb6401402a00f1dadb909433e2b829bb54a2e8319868cfa883b10ab567950c"
+  },
+  "grading": "Non-blind assistant review of fixed development rubrics; no expert gold or uncertainty significance claim."
+}
