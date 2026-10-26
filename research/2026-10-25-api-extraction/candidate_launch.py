@@ -53,10 +53,19 @@ def action(name, settings_path=None):
         command('check', '--workspace', s['workspace'], '--config', s['config'], '--ledger', s['ledger'])
         print('准备结束。全库启动仍需固定五篇验收通过；设置保存在：' + str(path))
     elif name == 'run':
+        if not Path(s['acceptance']).is_file():
+            raise ValueError('固定五篇验收尚未通过，全库启动保持锁定。请查看验收报告。')
+        from candidate_acceptance import require_acceptance
+        require_acceptance(s['acceptance'], s['workspace'], read(s['config']))
         command('run', '--workspace', s['workspace'], '--config', s['config'],
                 '--ledger', s['ledger'], '--env-file', s['env_file'], '--phase', 'full',
                 '--acceptance', s['acceptance'], '--resume-operator-pause', '--live')
     else:
+        active = HERE/'local/active_autorun.json'
+        if active.is_file():
+            progress = read(active)
+            print(json.dumps({k: progress.get(k) for k in ('stage', 'status', 'run_dir', 'updated')},
+                             ensure_ascii=False, indent=2))
         if not Path(s['workspace']).exists():
             inventory_summary = Path(s['inventory'])/'source_inventory.json'
             if inventory_summary.exists():

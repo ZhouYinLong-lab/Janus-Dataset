@@ -26,13 +26,21 @@ class LaunchTests(unittest.TestCase):
         command.assert_not_called()
 
     def test_run_passes_full_acceptance_and_explicit_live(self):
-        with patch('candidate_launch.command') as command:
+        save(self.settings['acceptance'], {'passed': True})
+        save(self.settings['config'], {})
+        with patch('candidate_launch.command') as command, patch('candidate_acceptance.require_acceptance'):
             candidate_launch.action('run', self.path)
         args = command.call_args.args
         self.assertIn('--live', args)
         self.assertIn('--acceptance', args)
         self.assertEqual(args[args.index('--phase')+1], 'full')
         self.assertIn('--resume-operator-pause', args)
+
+    def test_missing_acceptance_stops_before_any_child_process(self):
+        with patch('candidate_launch.command') as command:
+            with self.assertRaises(ValueError):
+                candidate_launch.action('run', self.path)
+        command.assert_not_called()
 
     def test_changed_inventory_creates_new_workspace_without_overwriting_old(self):
         old = Path(self.settings['workspace'])
