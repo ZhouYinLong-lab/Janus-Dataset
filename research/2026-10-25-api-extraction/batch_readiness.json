@@ -1,20 +1,20 @@
 {
   "date": "2026-10-26",
-  "status": "live_engineering_quality_and_RAG_completed_with_reported_gaps_training_not_started",
+  "status": "three_repairs_implemented_regression_incomplete_paused_at_168",
   "entrypoint": "batch.py",
-  "offline_tests_passed": 143,
+  "offline_tests_passed": 193,
   "offline_tests_failed": 0,
-  "new_external_generation_requests": 132,
+  "new_external_generation_requests": 168,
   "budget": {
     "max_requests": 200,
-    "requests_reserved": 132,
-    "reserved_token_estimate": 3247084,
-    "reported_total_tokens": 561681,
-    "attempts_without_usage": 6,
-    "global_stop": null,
+    "requests_reserved": 168,
+    "reserved_token_estimate": 4360782,
+    "reported_total_tokens": 751212,
+    "attempts_without_usage": 7,
+    "global_stop": "operator_pause",
     "billing": "Reported usage is not a verified bill; missing usage is unknown, not zero."
   },
-  "budget_authorization": "User explicitly approved full workflow up to 200 generation attempts, 8000000 conservative reserved token units, one shared ledger; 68 attempts remain, no new requests scheduled.",
+  "budget_authorization": "Original 200-call/8000000-reservation authorization retained; 168 used, 32 remain. Operator pause at request boundary; no active generation.",
   "engineering": {
     "unique_records": 10,
     "discovered_candidates": 35,
@@ -235,5 +235,24 @@
   "legacy_unknown_B022": "unchanged; not resent; outside this new ledger",
   "active_generation_tasks": 0,
   "billing_notice": "Reservations are not actual tokens or a currency cap; missing usage unknown, reported usage not a verified bill.",
-  "current_record": "运行记录.md"
+  "current_record": "运行记录.md",
+  "repair_regression": {
+    "workspace": "local/repair_regression_01",
+    "model": "gpt-4.1-2025-04-14",
+    "requests": 36,
+    "strict_records": 2,
+    "combined_records_after_audited_provenance": 5,
+    "new_records_from_provenance_repair": 3,
+    "job_status": {
+      "processed_with_issues": 12,
+      "processed_no_candidates_found": 13,
+      "enrichment_incomplete": 2,
+      "pending": 17
+    },
+    "review_scope": "Known-source regression; not independent new experiments. Source-grounding is not semantic correctness.",
+    "report": "修复进展_2026-10-26.md",
+    "fallback_model_run": "not_started",
+    "old_code": "local/code_before_repairs_376ea97/research/2026-10-25-api-extraction",
+    "old_results": "Kept unchanged; verify with exact byte-preserved old code, not the modified current code."
+  }
 }
