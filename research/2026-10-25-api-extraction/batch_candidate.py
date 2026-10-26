@@ -1,4 +1,4 @@
-"""Candidate-scoped enrichment runner; body discovery and shared budget stay unchanged."""
+"""MolGlueDB inventory, checked preparation, resumable extraction and exports."""
 import argparse
 import csv
 import json
@@ -24,7 +24,11 @@ STATUS_VALUES = {'supported', 'not_found_in_supplied_context', 'ambiguous_in_sup
 def candidate_request_for(workspace, job, stage, config, candidates=None, discovery_hash=None):
     if stage == 'discovery':
         return batch_plan.request_for(workspace, job, stage, config, candidates, discovery_hash)
-    contexts, context_units = build_candidate_contexts(job, candidates or [])
+    frozen = job.get('frozen_context')
+    if frozen:
+        contexts, context_units = frozen['candidate_contexts'], frozen['context_units']
+    else:
+        contexts, context_units = build_candidate_contexts(job, candidates or [])
     user = {
         'paper_id': job['paper_id'], 'doi': job.get('doi'), 'title': job.get('title'),
         'candidates': candidates or [], 'candidate_contexts': contexts,
@@ -73,7 +77,11 @@ def candidate_enrichment(payload, job, candidates):
             continue
         status_by_candidate[cid] = statuses
 
-    candidate_contexts, shared_units = build_candidate_contexts(job, candidates)
+    frozen = job.get('frozen_context')
+    if frozen:
+        candidate_contexts, shared_units = frozen['candidate_contexts'], frozen['context_units']
+    else:
+        candidate_contexts, shared_units = build_candidate_contexts(job, candidates)
     for candidate in candidates:
         if not any(u['unit_id'] == candidate['unit_id'] for u in job['primary_units']):
             raise ValueError('Candidate anchor is absent from the frozen primary job')
@@ -83,6 +91,9 @@ def candidate_enrichment(payload, job, candidates):
 
     cleaned = dict(payload)
     cleaned['items'] = clean_items
+    if isinstance(payload.get('unresolved'), list):
+        cleaned['unresolved'] = [{k: item[k] for k in ('candidate_id', 'reason') if k in item}
+                                 if isinstance(item, dict) else item for item in payload['unresolved']]
     base = batch_contract.enrichment(cleaned, validation_job, candidates)
     allowed = {x['candidate_id']: set(x['allowed_evidence_unit_ids']) for x in candidate_contexts}
     candidates_by_id = {candidate['candidate_id']: candidate for candidate in candidates}
@@ -95,6 +106,7 @@ def candidate_enrichment(payload, job, candidates):
         candidate_quote = normal(candidates_by_id[cid]['quote'])
         anchor_quotes_outside = [e for e in record['evidence']
                                  if e['unit_id'] == candidates_by_id[cid]['unit_id']
+                                 and e['field'] == 'result_text'
                                  and normal(e['quote']) not in candidate_quote]
         if wrong_scope or anchor_quotes_outside:
             rejected.append({'candidate_id': cid, 'record': record,
@@ -109,6 +121,8 @@ def candidate_enrichment(payload, job, candidates):
             statuses = {field: ('supported' if record['fields'].get(field) is not None
                                 else 'ambiguous_in_supplied_context') for field in FIELDS}
         record['field_search_status'] = statuses
+        context = next(c for c in candidate_contexts if c['candidate_id'] == cid)
+        record['context_complete'] = context.get('context_complete', not context['omitted_context_unit_ids'])
         candidate_issues = [issue for issue in status_errors if issue.get('candidate_id') == cid]
         if candidate_issues:
             record['field_search_status_issues'] = candidate_issues
@@ -126,21 +140,17 @@ def candidate_enrichment(payload, job, candidates):
     return base
 
 
-def prepare(workspace, papers=None, manifest_path=None, limit=5):
-    workspace = Path(workspace)
-    manifest = batch_plan.prepare(workspace, papers, manifest_path, limit)
-    prompt_path = workspace / 'enrichment.md'
-    prompt_path.write_bytes((HERE / 'enrichment_candidate.md').read_bytes())
-    manifest['file_hashes']['enrichment.md'] = sha(prompt_path)
-    manifest['candidate_context_version'] = 1
-    for filename in ('batch_candidate.py', 'candidate_context.py'):
-        manifest['code_hashes'][filename] = sha(HERE / filename)
-    save(workspace / 'manifest.json', manifest)
-    batch_plan.verify(workspace)
-    return manifest
+def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'):
+    from candidate_workspace import prepare as prepare_v2
+    return prepare_v2(workspace, papers, manifest_path, limit, phase)
 
 
 def export_context_audit(workspace):
+    from candidate_export import export
+    return export(workspace)
+
+
+def _legacy_export_context_audit(workspace):
     workspace = Path(workspace)
     summary = batch_export.export(workspace)
     records_path = workspace / 'exports' / 'records.json'
@@ -165,11 +175,18 @@ def export_context_audit(workspace):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
+    p = sub.add_parser('sources')
+    p.add_argument('--database', required=True, type=Path)
+    p.add_argument('--out', required=True, type=Path)
+    p = sub.add_parser('fetch')
+    p.add_argument('--inventory', required=True, type=Path)
+    p.add_argument('--limit', type=int)
     p = sub.add_parser('prepare')
     p.add_argument('--workspace', required=True, type=Path)
     p.add_argument('--papers', nargs='+')
     p.add_argument('--manifest', type=Path)
-    p.add_argument('--limit', type=int, default=5)
+    p.add_argument('--limit', type=int)
+    p.add_argument('--phase', choices=['pilot', 'full'], default='full')
     p = sub.add_parser('run')
     p.add_argument('--workspace', required=True, type=Path)
     p.add_argument('--config', required=True, type=Path)
@@ -178,29 +195,61 @@ def main():
     p.add_argument('--live', action='store_true')
     p.add_argument('--retry-known', action='store_true')
     p.add_argument('--max-new-requests', type=int)
+    p.add_argument('--phase', choices=['pilot', 'full'], default='full')
+    p.add_argument('--resume-operator-pause', action='store_true')
+    p.add_argument('--acceptance', type=Path)
+    p = sub.add_parser('check')
+    p.add_argument('--workspace', required=True, type=Path)
+    p.add_argument('--config', required=True, type=Path)
+    p.add_argument('--ledger', required=True, type=Path)
+    p = sub.add_parser('acceptance')
+    p.add_argument('--workspace', required=True, type=Path)
+    p.add_argument('--review', required=True, type=Path)
+    p.add_argument('--out', required=True, type=Path)
     for name in ('status', 'export'):
         sub.add_parser(name).add_argument('--workspace', required=True, type=Path)
     args = parser.parse_args()
+    if args.command == 'sources':
+        from molglue_sources import inventory
+        print(json.dumps(inventory(args.database, args.out), ensure_ascii=False, indent=2))
+        return
+    if args.command == 'fetch':
+        from molglue_sources import fetch_sources
+        print(json.dumps(fetch_sources(args.inventory, args.limit), ensure_ascii=False, indent=2))
+        return
     if args.command == 'prepare':
-        result = prepare(args.workspace, args.papers, args.manifest, args.limit)
+        result = prepare(args.workspace, args.papers, args.manifest, args.limit, args.phase)
         print(json.dumps({'papers': len(result['papers']), 'discovery_jobs': len(result['job_ids']),
-                          'api_requests_sent': 0, 'candidate_context_version': 1}, ensure_ascii=False))
+                          'api_requests_sent': 0, 'candidate_context_version': 2}, ensure_ascii=False))
         return
     workspace = args.workspace
-    manifest = batch_plan.verify(workspace)
-    if manifest.get('candidate_context_version') != 1:
-        parser.error('Workspace was not prepared with batch_candidate.py prepare')
-    if args.command in {'status', 'export'}:
+    from candidate_workspace import verify, check
+    manifest = verify(workspace)
+    if args.command == 'check':
+        print(json.dumps(check(workspace, read(args.config), args.ledger), ensure_ascii=False, indent=2))
+        return
+    if args.command == 'acceptance':
+        from candidate_acceptance import assess
+        print(json.dumps(assess(workspace, args.review, args.out), ensure_ascii=False, indent=2))
+        return
+    if args.command == 'status':
+        from candidate_export import snapshot
+        print(json.dumps(snapshot(workspace)[0], ensure_ascii=False, indent=2))
+        return
+    if args.command == 'export':
         print(json.dumps(export_context_audit(workspace), ensure_ascii=False, indent=2))
         return
     config = read(args.config)
     check_config(config)
-    batch_run.request_for = candidate_request_for
-    batch_run.enrichment = candidate_enrichment
-    result = batch_run.run(workspace, config, args.ledger, live=args.live,
-                           env_file=args.env_file, retry_known=args.retry_known,
-                           max_new_requests=args.max_new_requests)
-    export_context_audit(workspace)
+    if args.phase == 'full':
+        from candidate_acceptance import require_acceptance
+        require_acceptance(args.acceptance, workspace, config)
+    from candidate_runtime import run
+    run(workspace, config, args.ledger, candidate_request_for, candidate_enrichment,
+        live=args.live, env_file=args.env_file, max_new_requests=args.max_new_requests,
+        resume_operator_pause=args.resume_operator_pause, phase=args.phase,
+        on_progress=export_context_audit)
+    result = export_context_audit(workspace)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
