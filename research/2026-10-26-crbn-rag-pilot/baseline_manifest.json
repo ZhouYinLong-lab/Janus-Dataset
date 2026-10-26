@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-26",
+  "generic_repository_revision": "80606e50cf8cb66ab6268178ef29e23735ffb368",
+  "sources": [
+    {
+      "path": "local\\baselines\\README.md",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/80606e50cf8cb66ab6268178ef29e23735ffb368/README.md",
+      "sha256": "9cc74a58f94debf77c34fa80a87e56ae4f4fc5dc5433d3f24c2433a628249667",
+      "bytes": 9877
+    },
+    {
+      "path": "local\\baselines\\baseline-molgluedb-70.csv",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/80606e50cf8cb66ab6268178ef29e23735ffb368/data/molecular_glues/baseline/baseline-molgluedb-70.csv",
+      "sha256": "78e7cedf31239f4dd468f8a11133eda2f3d02e3e4946447b2cf62cb108f0cb97",
+      "bytes": 235702
+    },
+    {
+      "path": "local\\baselines\\baseline-molgluedb-processed.csv",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/80606e50cf8cb66ab6268178ef29e23735ffb368/data/molecular_glues/baseline/baseline-molgluedb-processed.csv",
+      "sha256": "6bd9d1dc8ba96e361afed099f5e3f08dbdb2177aea071d3fe883143def11b46f",
+      "bytes": 48656
+    },
+    {
+      "path": "local\\baselines\\glue_data_llm.csv",
+      "url": "https://raw.githubusercontent.com/yaochenr/LLM-TPD-Extraction/80606e50cf8cb66ab6268178ef29e23735ffb368/data/molecular_glues/llm/glue_data_llm.csv",
+      "sha256": "6193f20a56d7b68235cd76ae269e6d6a0bcb2bcc03c32aedeed1083951ad032e",
+      "bytes": 72669
+    },
+    {
+      "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-26-mg2act-audit\\local\\source_mapping\\MolGlueDB_full.csv",
+      "url": "https://www.molgluedb.com/api/export_bj_data",
+      "sha256": "cf1d0d61b889539d56b250f5adeb7652ef1a25ebe5008110db86bd28328a1d48",
+      "bytes": 1249154
+    }
+  ],
+  "paper_coverage": [
+    {
+      "paper_id": "B204",
+      "doi": "10.1021/acsmedchemlett.4c00250",
+      "molgluedb_rows": 20,
+      "generic_rows": 36,
+      "published_baseline_rows": 41,
+      "processed_baseline_rows": 23,
+      "generic_coverage_status": "published_output_present"
+    },
+    {
+      "paper_id": "B209",
+      "doi": "10.1021/jacsau.4c00762",
+      "molgluedb_rows": 19,
+      "generic_rows": 8,
+      "published_baseline_rows": 19,
+      "processed_baseline_rows": 19,
+      "generic_coverage_status": "published_output_present"
+    },
+    {
+      "paper_id": "B236",
+      "doi": "10.1038/s41467-024-44698-1",
+      "molgluedb_rows": 3,
+      "generic_rows": 18,
+      "published_baseline_rows": 7,
+      "processed_baseline_rows": 4,
+      "generic_coverage_status": "published_output_present"
+    },
+    {
+      "paper_id": "B251",
+      "doi": "10.1021/acsmedchemlett.4c00297",
+      "molgluedb_rows": 24,
+      "generic_rows": 0,
+      "published_baseline_rows": 46,
+      "processed_baseline_rows": 0,
+      "generic_coverage_status": "no_processed_baseline_or_output_cohort_unconfirmed"
+    },
+    {
+      "paper_id": "B280",
+      "doi": "10.3390/ijms23169094",
+      "molgluedb_rows": 1,
+      "generic_rows": 0,
+      "published_baseline_rows": 1,
+      "processed_baseline_rows": 0,
+      "generic_coverage_status": "no_processed_baseline_or_output_cohort_unconfirmed"
+    }
+  ],
+  "generic_columns": [
+    "DOI",
+    "Compound_Name",
+    "IUPAC_Name",
+    "SMILES",
+    "SMILES_Source",
+    "Degradation_Target",
+    "Recruiter",
+    "Assay",
+    "Cell_Line",
+    "DC50",
+    "DC50_units",
+    "DC50_h",
+    "Dmax",
+    "Dmax_h",
+    "Dmax_conc",
+    "Standard_InChIKey",
+    "Standard_InChIKey_Source",
+    "IUPAC_Name_Source",
+    "Connectivity_Key"
+  ],
+  "gold_annotations_read": false,
+  "limits": "Absence from published outputs does not establish omission by an extractor if processed-cohort membership is unconfirmed."
+}

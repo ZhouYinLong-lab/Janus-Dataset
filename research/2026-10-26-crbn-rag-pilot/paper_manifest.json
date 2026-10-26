@@ -1,0 +1,92 @@
+[
+  {
+    "paper_id": "B204",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-22-sol-extraction\\batch02\\sources\\B204_PMC11472389.xml",
+    "doi": "10.1021/acsmedchemlett.4c00250",
+    "title": "Structure-Activity Relationship of Potent, Selective, and Orally Bioavailable Molecular Glue Degraders of CK1α.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11472389/fullTextXML",
+    "source_license": "Made available for a limited time for personal research and study only License.",
+    "legacy_scope_groups": [
+      "molecular_glue_degradation"
+    ],
+    "legacy_metadata_decisions": [
+      "include"
+    ],
+    "scope_basis": "Inherited paper screening, not newly verified glue-specific membership",
+    "source_sha256": "823008aed6db80b763eb3d9a83614871821aa7a64285d74fb327c75f826c2aba",
+    "units": 57,
+    "body_units": 49
+  },
+  {
+    "paper_id": "B209",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-22-sol-extraction\\batch02\\sources\\B209_PMC11600170.xml",
+    "doi": "10.1021/jacsau.4c00762",
+    "title": "Development of Oral, Potent, and Selective CK1α Degraders for AML Therapy.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11600170/fullTextXML",
+    "source_license": "Permits non-commercial access and re-use, provided that author attribution and integrity are maintained; but does not permit creation of adaptations or other derivative works (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "legacy_scope_groups": [
+      "molecular_glue_degradation"
+    ],
+    "legacy_metadata_decisions": [
+      "include"
+    ],
+    "scope_basis": "Inherited paper screening, not newly verified glue-specific membership",
+    "source_sha256": "4346bec0ba12ed0f784c80c3f00f91815ec507ad13a3cd33a5b161fbe2d538f5",
+    "units": 36,
+    "body_units": 27
+  },
+  {
+    "paper_id": "B236",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-22-sol-extraction\\batch02\\sources\\B236_PMC10791743.xml",
+    "doi": "10.1038/s41467-024-44698-1",
+    "title": "Selective CK1α degraders exert antiproliferative activity against a broad range of human cancer cell lines.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10791743/fullTextXML",
+    "source_license": "Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. The images or other third party material in this article are included in the article’s Creative Commons license, unless indicated otherwise in a credit line to the material. If material is not included in the article’s Creative Commons license and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.",
+    "legacy_scope_groups": [
+      "molecular_glue_degradation"
+    ],
+    "legacy_metadata_decisions": [
+      "include"
+    ],
+    "scope_basis": "Inherited paper screening, not newly verified glue-specific membership",
+    "source_sha256": "c1543be284c719015eeab04cde3e6dac8ed0bdc4763e9cb760109df9edb60cb1",
+    "units": 92,
+    "body_units": 83
+  },
+  {
+    "paper_id": "B251",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-22-sol-extraction\\batch02\\sources\\B251_PMC11403733.xml",
+    "doi": "10.1021/acsmedchemlett.4c00297",
+    "title": "Asymmetric Dirhodium-Catalyzed Modification of Immunomodulatory Imide Drugs and Their Biological Assessment.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11403733/fullTextXML",
+    "source_license": "Permits the broadest form of re-use including for commercial purposes, provided that author attribution and integrity are maintained (https://creativecommons.org/licenses/by/4.0/).",
+    "legacy_scope_groups": [
+      "molecular_glue_degradation"
+    ],
+    "legacy_metadata_decisions": [
+      "include"
+    ],
+    "scope_basis": "Inherited paper screening, not newly verified glue-specific membership",
+    "source_sha256": "fba304a0bec15d29317bd4642189838bf47a60a88f415cb8c20aa541d69416f4",
+    "units": 49,
+    "body_units": 43
+  },
+  {
+    "paper_id": "B280",
+    "path": "D:\\Projects\\Dog\\Janus-Dataset\\research\\2026-10-22-sol-extraction\\batch02\\sources\\B280_PMC9409010.xml",
+    "doi": "10.3390/ijms23169094",
+    "title": "UDP-Glucose: A Cereblon-Dependent Glucokinase Protein Degrader.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9409010/fullTextXML",
+    "source_license": "https://creativecommons.org/licenses/by/4.0/Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license (https://creativecommons.org/licenses/by/4.0/).",
+    "legacy_scope_groups": [
+      "molecular_glue_degradation"
+    ],
+    "legacy_metadata_decisions": [
+      "include"
+    ],
+    "scope_basis": "Inherited paper screening, not newly verified glue-specific membership",
+    "source_sha256": "efce18d9aa4b65c0e96e63e7e7d5ddddee154ecde40891fb021a0d48d8ab1682",
+    "units": 36,
+    "body_units": 36
+  }
+]

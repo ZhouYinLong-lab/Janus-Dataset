@@ -1,0 +1,597 @@
+[
+  {
+    "paper_id": "B204",
+    "scope_note": "CK1alpha medicinal chemistry; known structured results and representation controls.",
+    "cards": [
+      {
+        "id": "B204-N1",
+        "scope": "grouped_negative",
+        "source_unit_ids": [
+          "B204:6b62cfa156191ac1"
+        ],
+        "text": "Selected compounds in the amide-bioisostere series were reported not to degrade GSPT1 or IKZF1. The body directs readers to supplementary Table S1 and Figure S5; the sentence does not enumerate every selected compound or its individual conditions. Keep this as a group statement.",
+        "resource_coverage": "partly_already_covered",
+        "coverage_reason": "Generic extraction has individual GSPT1 and IKZF1 rows with >10000 nM bounds. No claim of a wholly new negative result."
+      },
+      {
+        "id": "B204-N2",
+        "scope": "relative_negative_with_positive_context",
+        "source_unit_ids": [
+          "B204:5882683d8f4c32d3",
+          "B204:75bc8e26b13b6293",
+          "B204:b2d6de825e21227e",
+          "B204:94a661b658d1f6c8"
+        ],
+        "text": "Compounds 5 and 6 bind CRBN similarly (FP 1.3 and 1.4 uM), yet CK1alpha Dmax falls from 82% to 23%; IKZF1 Dmax falls from 84% to 57%. HiBiT CK1alpha uses HEK293 and IKZF1 uses Jurkat cells. Dmax is maximum degradation over 24 h at 10 uM. NanoBRET complex formation is a separate 2 h experiment. Compound 6 is weaker, not non-binding or an exact zero.",
+        "resource_coverage": "already_covered_numeric_context_combination",
+        "coverage_reason": "Both resources contain degradation; MolGlueDB includes binding and time. Useful only as endpoint/context control."
+      },
+      {
+        "id": "B204-N3",
+        "scope": "qualitative_negative_with_positive_context",
+        "source_unit_ids": [
+          "B204:6b62cfa156191ac1",
+          "B204:011d0f37f0a955af"
+        ],
+        "text": "Benzimidazole compound 20 was reported inactive up to 10 uM in degradation and antiproliferation assays. The sentence supplies no exact measured Dmax. Compound 21 instead has CK1alpha DC50 0.004 uM (4 nM), Dmax 89%, antiproliferation IC50 0.022 uM. Initial endpoint CK1alpha HiBiT screening of this series was at 24 h; MOLM-13 antiproliferation at 72 h. Potent compounds subsequently received kinetic profiling.",
+        "resource_coverage": "known_result_representation_issue",
+        "coverage_reason": "MolGlueDB contains compound20 Dmax=0 and compound21 DC50=2 nM; narrative gives qualitative20 and endpoint21=4 nM. Different assay/curation representations are not automatically errors."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q204A",
+        "paper_id": "B204",
+        "kind": "negative",
+        "question": "What does the study establish about GSPT1 and IKZF1 degradation for selected amide-bioisostere compounds, and what is the scope of that conclusion?",
+        "rubric": [
+          "No observed GSPT1 or IKZF1 degradation for selected compounds.",
+          "Preserves selected/tested scope, without extending to all compounds and conditions."
+        ],
+        "source_unit_ids": [
+          "B204:6b62cfa156191ac1"
+        ],
+        "overclaim_errors": [
+          "Universal no degradation; exact zeros for every unlisted compound."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q204B",
+        "paper_id": "B204",
+        "kind": "relative_negative",
+        "question": "How did changing compound 5 to compound 6 affect CRBN binding and CK1alpha removal, and how was the degradation maximum defined?",
+        "rubric": [
+          "Binding similar 1.3 vs1.4 uM; CK1alpha Dmax82% vs23%.",
+          "Dmax over24h at10uM, distinct from2h NanoBRET."
+        ],
+        "source_unit_ids": [
+          "B204:5882683d8f4c32d3",
+          "B204:75bc8e26b13b6293",
+          "B204:b2d6de825e21227e"
+        ],
+        "overclaim_errors": [
+          "Non-binding; exact no degradation; uses2h forDmax."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q204C",
+        "paper_id": "B204",
+        "kind": "positive",
+        "question": "What CK1alpha endpoint-screen degradation potency and Dmax did the narrative report for compound 21, and how long was the initial screen?",
+        "rubric": [
+          "Narrative endpoint DC50 4nM (0.004uM), Dmax89%.",
+          "Initial endpoint HiBiT screen24h; separates72h proliferation."
+        ],
+        "source_unit_ids": [
+          "B204:6b62cfa156191ac1",
+          "B204:011d0f37f0a955af"
+        ],
+        "overclaim_errors": [
+          "Uses72h fordegradation; treats a different assay DC50 as the narrative value."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q204D",
+        "paper_id": "B204",
+        "kind": "insufficient_precision",
+        "question": "Does the narrative for compound 20 establish an exact measured Dmax of zero? State the supported activity conclusion and its tested range.",
+        "rubric": [
+          "Narrative qualitative inactivity up to10uM.",
+          "Exact measured Dmax zero is not established by that statement; retains assay/range scope."
+        ],
+        "source_unit_ids": [
+          "B204:6b62cfa156191ac1",
+          "B204:011d0f37f0a955af"
+        ],
+        "overclaim_errors": [
+          "Exact numerical zero claimed as measured in prose; universal inactivity."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      }
+    ]
+  },
+  {
+    "paper_id": "B209",
+    "scope_note": "CK1alpha degraders; source conflict in CRBN-null cell identity retained.",
+    "cards": [
+      {
+        "id": "B209-N1",
+        "scope": "selectivity_negative_and_measurement_limit",
+        "source_unit_ids": [
+          "B209:2f948f4aa6034ed6",
+          "B209:9e0114d992117533"
+        ],
+        "text": "LC-02-105 induces CK1alpha degradation in MOLM13; GSPT1 is spared and IKZF2 effects are minimal. Figure1C immunoblots used24h treatment, with concentrations not enumerated in the caption text. WEE1 was not detected; authors suggest low basal expression. This does not establish that the compound cannot degrade measurable WEE1.",
+        "resource_coverage": "absent_in_both_exports",
+        "coverage_reason": "MolGlueDB19 source rows listCK1alpha, no GSPT1/IKZF2/WEE1 observations. Generic8 rows are quantitativeCK1alpha only."
+      },
+      {
+        "id": "B209-N2",
+        "scope": "conditional_negative",
+        "source_unit_ids": [
+          "B209:bc201fcc98c07d77",
+          "B209:c9ae69757646a5b6"
+        ],
+        "text": "dCK1alpha-1 degrades CK1alpha in wild-type cells but spares CRBN-null cells. The body names MOLM13 for the null comparison, while Figure3C caption names MOLT4 parental/CRBN-null cells and 6h. This cell-line discrepancy remains unresolved. Separately, Figure3D specifies MOLM13 pretreatment 1h with MLN4924, bortezomib or pomalidomide followed by 100nM degrader 6h; these treatments rescue degradation. In MOLM13, 100nM causes degradation from 2h through at least 24h. Do not merge these separate assays.",
+        "resource_coverage": "absent_in_both_exports",
+        "coverage_reason": "No CRBN-null/rescue records in the source-filtered exports; retain source cell-line discrepancy."
+      },
+      {
+        "id": "B209-N3",
+        "scope": "phenotype_boundary",
+        "source_unit_ids": [
+          "B209:46f95977ba352390",
+          "B209:62822d9ac71062a0"
+        ],
+        "text": "dCK1alpha-1 combined with navtemadlin (AMG-232) shows antiproliferative synergy in MOLM13 over3days, evaluated with HSA. No significant combinatorial effect was observed in DLD-1, T98G or HEK293T. This is a combination/viability endpoint, not evidence that either compound has zero degradation or no individual activity. Exact doses for those negative cell lines are not given in the body passage.",
+        "resource_coverage": "absent_in_both_exports",
+        "coverage_reason": "Both exports omit combination-response boundaries. Auxiliary phenotype, not a direct degradation failure."
+      },
+      {
+        "id": "B209-P1",
+        "scope": "positive_context",
+        "source_unit_ids": [
+          "B209:a489875398e42139",
+          "B209:97dc52ea79da031d"
+        ],
+        "text": "LC-04-087, renamed dCK1alpha-1, has CK1alpha DC50=12nM andDmax=90%. Table2 degradation uses CK1alpha-HiBiT MOLT4,24h; proliferation usesMOLM13,72h. The WB and HiBiT experiments should not be conflated.",
+        "resource_coverage": "already_covered",
+        "coverage_reason": "Generic output contains the assay/cell/time; positive control."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q209A",
+        "paper_id": "B209",
+        "kind": "negative",
+        "question": "For LC-02-105 in MOLM13, how do the CK1alpha, GSPT1 and IKZF2 results compare, and what treatment time supports that protein comparison?",
+        "rubric": [
+          "CK1alpha degraded; GSPT1 spared; IKZF2 minimally affected.",
+          "Immunoblot comparison Figure1C uses24h; does not generalize beyond it."
+        ],
+        "source_unit_ids": [
+          "B209:2f948f4aa6034ed6",
+          "B209:9e0114d992117533"
+        ],
+        "overclaim_errors": [
+          "Universal selectivity or exact zero;72hviability transferred toWB."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q209B",
+        "paper_id": "B209",
+        "kind": "insufficient_evidence",
+        "question": "Does the WEE1 result establish that LC-02-105 is inactive against WEE1? Explain what was measured and the interpretation limit.",
+        "rubric": [
+          "WEE1 was not detected, potentially low basal expression.",
+          "Cannot infer demonstrated WEE1 non-degradation from missing detectable protein."
+        ],
+        "source_unit_ids": [
+          "B209:2f948f4aa6034ed6"
+        ],
+        "overclaim_errors": [
+          "Non-detection called proven resistance/inactivity."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q209C",
+        "paper_id": "B209",
+        "kind": "positive",
+        "question": "What quantitative CK1alpha degradation results are reported for dCK1alpha-1 (LC-04-087), and in which cell line and time was the tabulated HiBiT assay performed?",
+        "rubric": [
+          "DC50 12nM andDmax90%.",
+          "MOLT4 CK1alpha-HiBiT24h, separate fromMOLM13 proliferation72h."
+        ],
+        "source_unit_ids": [
+          "B209:a489875398e42139",
+          "B209:97dc52ea79da031d"
+        ],
+        "overclaim_errors": [
+          "MOLM13WB substituted for tabulatedMOLT4HiBiT."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q209D",
+        "paper_id": "B209",
+        "kind": "conditional_negative",
+        "question": "Is the dCK1alpha-1/navtemadlin combination effect equally supported in MOLM13, DLD-1, T98G and HEK293T? State the endpoint and scope.",
+        "rubric": [
+          "MOLM13 synergy but no significant combinatorial effect inDLD-1,T98G,HEK293T.",
+          "This is combination/antiproliferation, not all individual activity or degradation being absent."
+        ],
+        "source_unit_ids": [
+          "B209:46f95977ba352390",
+          "B209:62822d9ac71062a0"
+        ],
+        "overclaim_errors": [
+          "Non-significance converted into exact zero or universal degradation failure."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      }
+    ]
+  },
+  {
+    "paper_id": "B236",
+    "scope_note": "SJ3149 series; generic extraction already covers low IKZF1 and partialIKZF2.",
+    "cards": [
+      {
+        "id": "B236-N1",
+        "scope": "known_selectivity_negative",
+        "source_unit_ids": [
+          "B236:74e5a65121a03bfb",
+          "B236:3a1abd820192eb5f",
+          "B236:a7a3a53a01a8088d"
+        ],
+        "text": "SJ0040 and SJ3149 show IKZF1 Dmax <10% in Jurkat HiBiT. Here Dmax is maximum over 24h at 10uM; DC50 is measured at 4h. SJ3149 is not devoid of IKZF2 effects: MOLM13 WB 4h shows ~40% IKZF2 reduction at 10uM, while CK1alpha reaches 50% degradation at 4nM. Keep cell, protein, time and dose separate.",
+        "resource_coverage": "generic_already_covered",
+        "coverage_reason": "Generic output includes bothIKZF1<10% rows andIKZF2~40%4h10uM; not newly recovered results."
+      },
+      {
+        "id": "B236-N2",
+        "scope": "conditional_negative",
+        "source_unit_ids": [
+          "B236:e512d87b6acecae3",
+          "B236:475359069ba4bf53"
+        ],
+        "text": "SJ0040 and SJ3149 do not affect CK1alpha levels in CRBN-knockout MOLM13 as reported in Supplementary Fig1c,d; exact degradation conditions are not specified in that body statement. For viability, WT and CRBN-null MOLM13 were treated with 1uM SJ7095, SJ0040 or SJ3149 at 24/72h; at 72h WT death increases (~80% dead/dying for SJ3149), but CRBN-null viability is unaffected. A separate G40N CK1alpha overexpression experiment in MOLM13 confirms degradation resistance and reduced 72h viability response, not necessarily zero cytotoxicity.",
+        "resource_coverage": "absent_in_both_exports",
+        "coverage_reason": "No CRBN-knockout or G40N experimental boundary in either source-filtered export."
+      },
+      {
+        "id": "B236-N3",
+        "scope": "phenotype_boundary_with_positive_context",
+        "source_unit_ids": [
+          "B236:31e7aecc9e329e1b",
+          "B236:c51ddcd3356441b3",
+          "B236:48fbbc0ae511cd77",
+          "B236:231a1850e9def516"
+        ],
+        "text": "Lenalidomide did not show appreciable cytotoxicity in MOLM13 even at high concentrations. This does not mean inability to degrade CK1alpha: 100uM for 24h gave a degradation effect comparable to 100nM SJ7095 for 4h in MOLM13 WB. The screening viability endpoint is 72h CellTiterGlo. Protein removal and cell death are separate endpoints.",
+        "resource_coverage": "context_not_in_export",
+        "coverage_reason": "Generic data contain lenalidomideCK1alphaHEK293HiBiT42%, but not this MOLM13WB100uM24h/viability boundary."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q236A",
+        "paper_id": "B236",
+        "kind": "conditional_negative",
+        "question": "What evidence tests whether SJ0040/SJ3149 activity depends on CRBN in MOLM13, and what can be concluded separately about protein levels and viability?",
+        "rubric": [
+          "CRBN-nullMOLM13: neither compound affectsCK1alpha levels.",
+          "Viability contrast:1uM24/72hdesign, WTdeath at72h vsCRBN-null unaffected; no exact degradation conditions invented."
+        ],
+        "source_unit_ids": [
+          "B236:e512d87b6acecae3"
+        ],
+        "overclaim_errors": [
+          "Transfers viability1uM72h to degradation assay; claims constitutive inactivity inWT."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q236B",
+        "paper_id": "B236",
+        "kind": "negative_boundary",
+        "question": "Does the paper support describing SJ3149 as having no IKZF1 or IKZF2 effects? Give the measured limits and distinguish the assays.",
+        "rubric": [
+          "IKZF1 Dmax<10%JurkatHiBiT over24h at10uM.",
+          "IKZF2~40%reductionMOLM13WB4h10uM, so not zero effects."
+        ],
+        "source_unit_ids": [
+          "B236:74e5a65121a03bfb",
+          "B236:3a1abd820192eb5f",
+          "B236:a7a3a53a01a8088d"
+        ],
+        "overclaim_errors": [
+          "Equates<10%orpartial40% with exact no degradation; mergesassays."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q236C",
+        "paper_id": "B236",
+        "kind": "positive",
+        "question": "What CK1alpha DC50 was measured for SJ3149 by immunoblotting versus the HiBiT assay, and what cell and time identify each?",
+        "rubric": [
+          "ImmunoblotMOLM13,4h,3.7nM.",
+          "HiBiTHEK293,4h,6nM; distinguishes these assays."
+        ],
+        "source_unit_ids": [
+          "B236:e512d87b6acecae3",
+          "B236:74e5a65121a03bfb",
+          "B236:3a1abd820192eb5f",
+          "B236:231a1850e9def516"
+        ],
+        "overclaim_errors": [
+          "Single universalDC50 or24h for4hDC50."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q236D",
+        "paper_id": "B236",
+        "kind": "endpoint_boundary",
+        "question": "Because lenalidomide showed little MOLM13 cytotoxicity, can it be called unable to degrade CK1alpha? Explain the protein and viability observations.",
+        "rubric": [
+          "Little appreciableMOLM13cytotoxicity does not imply noCK1alphaDEG.",
+          "100uM24h lenalidomideWB comparable to100nMSJ7095at4h; separates72hviability."
+        ],
+        "source_unit_ids": [
+          "B236:31e7aecc9e329e1b",
+          "B236:231a1850e9def516"
+        ],
+        "overclaim_errors": [
+          "Calls lenalidomide incapable ofCK1alphaDEG; mergesviabilityandprotein."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      }
+    ]
+  },
+  {
+    "paper_id": "B251",
+    "scope_note": "CRBN-binding analogues; no processed generic rows, so compare database only for coverage.",
+    "cards": [
+      {
+        "id": "B251-N1",
+        "scope": "grouped_negative",
+        "source_unit_ids": [
+          "B251:e2edd608742e8460",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "text": "6- and 7-substituted Len cores are generally inactive in degradation despite retaining CRBN binding. The tested G-loop neosubstrates are IKZF3, CK1alpha, GSPT1, SALL4. The authors propose failure to form a productive ternary complex as an explanation; this is not a direct measurement proving zero complex formation. Four of 24 compounds had CRBN binding IC50 >10uM. Ymin 100%=no protein reduction, 0%=complete degradation.",
+        "resource_coverage": "database_context_loss_generic_unassessed",
+        "coverage_reason": "MolGlueDB has inactiveflags but no retainedCRBNbinding/context here. Genericprocessed/outputhasnoDOIrows; cannot call an extractor miss."
+      },
+      {
+        "id": "B251-N2",
+        "scope": "paired_negative_positive",
+        "source_unit_ids": [
+          "B251:23196ad2241a6dd5",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "text": "For GSPT1, 16a has EC50 >10uM, Ymin 100%; 22a has EC50 1.4uM, Ymin 2.3%. Ymin is remaining protein, not percent degraded, so 22a induces much deeper degradation. For IKZF3, 13a EC50 1.86uM, Ymin 79%; 19a EC50 0.012uM, Ymin 9.2%. These are tested endpoint-specific results, not all proteins.",
+        "resource_coverage": "database_depth_loss_generic_unassessed",
+        "coverage_reason": "MolGlueDB retains someEC50s/inactiveflags but dropsYmin; genericnotassessedonthisDOI."
+      },
+      {
+        "id": "B251-N3",
+        "scope": "non_significant_group",
+        "source_unit_ids": [
+          "B251:23196ad2241a6dd5",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "text": "Compound 21a is the outlier among 4-/5-substituted cyclopropenes: no significant degradation of any of the tested neosubstrates IKZF3, CK1alpha, GSPT1, SALL4. This phrasing does not give an exact 0% degradation, individual assay conditions or activity against untested proteins.",
+        "resource_coverage": "database_scope_loss_generic_unassessed",
+        "coverage_reason": "MolGlueDB21aIsActive0butnoindividualtargets/conditions. Genericcohortnotconfirmed."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q251A",
+        "paper_id": "B251",
+        "kind": "negative",
+        "question": "Why are 6-/7-substituted Len cores not simply non-binders, and how firmly does the study establish the proposed reason for their lack of degradation?",
+        "rubric": [
+          "GenerallyinactivebutretainCRBNbinding.",
+          "Unproductivecomplexisanexplanationauthorssuggest,notdirectproof;scopeinvestigatedneosubstrates."
+        ],
+        "source_unit_ids": [
+          "B251:e2edd608742e8460",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "overclaim_errors": [
+          "NoCRBNbinding;provenzeroternarycomplexformation;allproteins."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q251B",
+        "paper_id": "B251",
+        "kind": "positive",
+        "question": "For IKZF3, how did compound 19a compare with 13a in potency and depth, and what does Ymin mean?",
+        "rubric": [
+          "19aEC500.012uM,Ymin9.2%vs13a1.86uM,79%.",
+          "Yminisremainingprotein;19adeeper/morepotent,0complete100noreduction."
+        ],
+        "source_unit_ids": [
+          "B251:23196ad2241a6dd5",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "overclaim_errors": [
+          "Ymininterpretedaspercentdegradation;wrongdirection."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q251C",
+        "paper_id": "B251",
+        "kind": "insufficient_precision",
+        "question": "Does the compound 21a result establish zero degradation of every protein? State the actual reported result and its scope.",
+        "rubric": [
+          "No significantdegradationamongtestedneosubstrates.",
+          "IKZF3,CK1alpha,GSPT1,SALL4scope;notexactzerooruntestedproteome."
+        ],
+        "source_unit_ids": [
+          "B251:23196ad2241a6dd5",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "overclaim_errors": [
+          "Exactzero;universalproteomeclaim."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q251D",
+        "paper_id": "B251",
+        "kind": "negative_positive_pair",
+        "question": "Compare the GSPT1 effects of 16a and 22a using EC50 and Ymin. Does a Ymin of 100% mean complete degradation?",
+        "rubric": [
+          "16a>10uM/Ymin100%;22a1.4uM/Ymin2.3%.",
+          "100%Ymin=no proteinreduction;22a muchdeeperdegradation."
+        ],
+        "source_unit_ids": [
+          "B251:23196ad2241a6dd5",
+          "B251:e6c376c1b95f59d9"
+        ],
+        "overclaim_errors": [
+          "ReversesYmin;100%completeDEG."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      }
+    ]
+  },
+  {
+    "paper_id": "B280",
+    "scope_note": "Reported endogenousCRBN-dependentGCKdegrader; atypical mechanistic claim, kept separate from CK1alpha series. Reports are source-based, not independently replicated here.",
+    "cards": [
+      {
+        "id": "B280-N1",
+        "scope": "grouped_negative_with_positive_context",
+        "source_unit_ids": [
+          "B280:aba3ca36aa5e7932",
+          "B280:6b508047162e5ab3"
+        ],
+        "text": "Figure3g comparison tested UDP-glucose, UDP-NAG, UDP-galactose and IMiDs thalidomide, lenalidomide, pomalidomide for glucokinase degradation. Only UDP-glucose was reported to induce glucokinase degradation among those compounds. This is a group-level tested comparison; the body passage does not list dose, time, cell line for each negative arm. It does not establish universal IMiD inactivity.",
+        "resource_coverage": "database_missing_comparator_results_generic_unassessed",
+        "coverage_reason": "MolGlueDBonlyUDP-glucoseIsActive0,nocomparators/targets/conditions. Genericnotprocessedhere;noextractorfailureclaim."
+      },
+      {
+        "id": "B280-N2",
+        "scope": "endpoint_boundary",
+        "source_unit_ids": [
+          "B280:7ef76f74cc013653"
+        ],
+        "text": "In pancreatic NIT-1 cells, the paper reports UDP-glucose dose-dependent endogenous glucokinase protein reduction and a degradation time course 3–72h. Glucokinase transcription was unchanged over that period. Unchanged RNA is not absence of protein reduction. No exact DC50 or Dmax is given in this body passage.",
+        "resource_coverage": "database_missing_endpoint_context_generic_unassessed",
+        "coverage_reason": "OnlyanIsActiveflagintheDB,withoutprotein/transcriptcomparison;genericunassessed."
+      },
+      {
+        "id": "B280-P1",
+        "scope": "positive_context",
+        "source_unit_ids": [
+          "B280:2f2a1141d05b7c23"
+        ],
+        "text": "The paper reports WB glucokinase protein reduction after 10mM UDP-glucose in HEK293 and 1mM in NCI-H929-1a. Intracellular UDP-glucose was comparatively high in HEK293 and low in NCI-H929-1a. These are administered concentration examples, not measured DC50 values or universal minimum thresholds.",
+        "resource_coverage": "database_polarity_unresolved_generic_unassessed",
+        "coverage_reason": "DBUDP-glucoseIsActive0contrastswithpaperreportedpositiveGCKresult;do notdeclareDBwrongwithoutcurationdefinition."
+      }
+    ],
+    "questions": [
+      {
+        "id": "Q280A",
+        "paper_id": "B280",
+        "kind": "negative",
+        "question": "Which tested UDP-monosaccharides and IMiDs induced glucokinase degradation in the Figure3g comparison, and how broadly can the result be generalized?",
+        "rubric": [
+          "OnlyUDP-glucose;notUDP-NAG,UDP-galactose,thalidomide,lenalidomide,pomalidomide.",
+          "Preservestestedcomparison/contextscope;nouniversalinactivity."
+        ],
+        "source_unit_ids": [
+          "B280:aba3ca36aa5e7932"
+        ],
+        "overclaim_errors": [
+          "UniversalnoeffectofIMiDs/analoguesatallconditions."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q280B",
+        "paper_id": "B280",
+        "kind": "endpoint_boundary",
+        "question": "In NIT-1, does unchanged glucokinase transcription mean UDP-glucose failed to reduce the protein? State what the paper reports over time.",
+        "rubric": [
+          "Proteinreduction/degradationreported3–72h.",
+          "Transcriptionunchanged;RNAandproteinendpointsdistinct."
+        ],
+        "source_unit_ids": [
+          "B280:7ef76f74cc013653"
+        ],
+        "overclaim_errors": [
+          "UnchangedRNAconvertedtofailedproteindegradation."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q280C",
+        "paper_id": "B280",
+        "kind": "positive",
+        "question": "What administered UDP-glucose concentrations were reported to reduce glucokinase in HEK293 versus NCI-H929-1a, and are these DC50 estimates?",
+        "rubric": [
+          "HEK29310mM,NCI-H929-1a1mM.",
+          "Observedadministrationexamples,notDC50oruniversalminimumthresholds."
+        ],
+        "source_unit_ids": [
+          "B280:2f2a1141d05b7c23"
+        ],
+        "overclaim_errors": [
+          "CallsvaluesDC50orexactminimalnecessarydoses."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      },
+      {
+        "id": "Q280D",
+        "paper_id": "B280",
+        "kind": "insufficient_evidence",
+        "question": "Can the accessible body text assign an exact concentration and duration to each negative comparator in Figure3g? What details would need checking?",
+        "rubric": [
+          "Noexactdose/durationforeachnegativecomparatorinthebodytext.",
+          "NeedFigure3g/fullcaption/supplementaryorprotocol;donotborrowpositivecell/time/dose."
+        ],
+        "source_unit_ids": [
+          "B280:aba3ca36aa5e7932"
+        ],
+        "overclaim_errors": [
+          "InventsnegativeconditionsbyborrowingNIT1/HEK293positiveassays."
+        ],
+        "reference_status": "assistant_source_review_not_expert_gold",
+        "split": "development"
+      }
+    ]
+  }
+]
