@@ -59,7 +59,10 @@ def prepare(release, workspaces, out, supplements=None, seed=20261027, split_pla
         _, units = docs[(r['paper_id'], r['source_sha256'])]
         for e in r['field_evidence']:
             check_locator(e, units)
-        if not any(r['original_quote'] in u['text'] for u in units.values()):
+        # original_quote newline-joins one anchor sentence per candidate span;
+        # every segment must still be a literal substring of the frozen text.
+        segments = [s for s in (r['original_quote'] or '').split('\n') if s.strip()]
+        if not segments or not all(any(s in u['text'] for u in units.values()) for s in segments):
             raise ValueError('Original quote is not in the frozen source')
         if not r.get('sources') or any(not s.get('task_id') or not s.get('response_sha256')
                                        for s in r['sources']):
