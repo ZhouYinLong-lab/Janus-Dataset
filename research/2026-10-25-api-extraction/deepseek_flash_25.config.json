@@ -6,6 +6,9 @@
   "max_output_tokens": 4096,
   "output_token_parameter": "max_tokens",
   "response_format": "json_object",
+  "thinking": {
+    "type": "disabled"
+  },
   "max_requests": 25,
   "max_reserved_tokens": 600000
 }

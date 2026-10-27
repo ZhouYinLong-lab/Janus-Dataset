@@ -14,7 +14,9 @@ class RequestFailure(Exception):
 def check_config(config):
     expected={'base_url','model','api_key_env','timeout_seconds','max_output_tokens',
               'output_token_parameter','response_format','max_requests','max_reserved_tokens'}
-    if set(config)!=expected:raise ValueError('Config has missing/unknown keys; secrets belong only in environment')
+    optional = {'thinking'}
+    if set(config)-expected-optional or expected-set(config):
+        raise ValueError('Config has missing/unknown keys; secrets belong only in environment')
     url=urllib.parse.urlsplit(config['base_url'])
     local=url.hostname in {'localhost','127.0.0.1','::1'}
     if (url.scheme!='https' and not (url.scheme=='http' and local)) or not url.hostname:
@@ -30,6 +32,11 @@ def check_config(config):
     if config['output_token_parameter'] not in {'max_tokens','max_completion_tokens'}:
         raise ValueError('Unsupported output token parameter')
     if config['response_format'] not in {'json_object','none'}:raise ValueError('Unsupported response_format')
+    if 'thinking' in config:
+        thinking = config['thinking']
+        if (not isinstance(thinking, dict) or set(thinking) != {'type'}
+                or thinking['type'] not in {'enabled', 'disabled'}):
+            raise ValueError('thinking must be {type: enabled|disabled}')
 
 
 def make_request(job,prompt,config):

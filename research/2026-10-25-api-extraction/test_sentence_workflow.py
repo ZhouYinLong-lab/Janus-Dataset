@@ -165,6 +165,14 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(request['max_tokens'], cap)
         self.assertNotIn('candidate_id', workflow.request_for(self.root, self.effective, 'facts', config)['messages'][1]['content'])
 
+    def test_provider_thinking_toggle_is_forwarded(self):
+        (self.root/'discovery_v3.md').write_text('Return JSON.', encoding='utf-8')
+        config = {'model': 'deepseek-flash', 'output_token_parameter': 'max_tokens',
+                  'max_output_tokens': 2048, 'response_format': 'json_object',
+                  'thinking': {'type': 'disabled'}}
+        request = workflow.request_for(self.root, self.effective, 'discovery', config)
+        self.assertEqual(request['thinking'], {'type': 'disabled'})
+
 
 if __name__ == '__main__':
     unittest.main()

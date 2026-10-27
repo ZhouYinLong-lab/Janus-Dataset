@@ -192,6 +192,12 @@ class RunnerTests(unittest.TestCase):
         cfg=config();cfg['api_key']='do-not-log'
         with self.assertRaises(ValueError):check_config(cfg)
 
+    def test_config_accepts_provider_thinking_toggle_without_secret(self):
+        cfg=config();cfg['thinking']={'type':'disabled'}
+        check_config(cfg)
+        cfg['thinking']={'type':'invalid'}
+        with self.assertRaises(ValueError):check_config(cfg)
+
     def test_config_rejects_remote_http_and_url_credentials(self):
         for url in ['http://example.org/v1','https://user:secret@example.org/v1']:
             cfg=config();cfg['base_url']=url

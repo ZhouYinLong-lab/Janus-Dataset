@@ -174,6 +174,8 @@ def request_for(workspace, job, stage, config, candidates=None, discovery_hash=N
                config['output_token_parameter']: min(config['max_output_tokens'], TOKEN_CAPS[stage])}
     if config['response_format'] == 'json_object':
         request['response_format'] = {'type': 'json_object'}
+    if config.get('thinking') is not None:
+        request['thinking'] = deepcopy(config['thinking'])
     request['stream_options'] = {'include_usage': True}
     return request
 
