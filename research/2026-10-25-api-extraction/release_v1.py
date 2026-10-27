@@ -230,16 +230,39 @@ def mg2act_doi_splits(source_associations: Path) -> dict[str, set[str]]:
 
 def make_paper_splits(paper_ids: list[str], doi_by_paper: dict[str, str],
                       blocked_dois: set[str], seed: str = "20261027") -> dict[str, str]:
-    ranked = sorted(paper_ids, key=lambda pid: hashlib.sha256(f"{seed}:{pid}".encode()).hexdigest())
+    blocked_dois = {doi.lower().strip() for doi in blocked_dois}
+    grouped = defaultdict(list)
+    for paper_id in paper_ids:
+        doi = doi_by_paper.get(paper_id, "").lower().strip()
+        grouped[f"doi:{doi}" if doi else f"paper:{paper_id}"].append(paper_id)
+
+    def rank(group_key: str) -> str:
+        return min(hashlib.sha256(f"{seed}:{pid}".encode()).hexdigest()
+                   for pid in grouped[group_key])
+
+    ranked_groups = sorted(grouped, key=rank)
+    target_train = round(len(paper_ids) * .70)
+    target_validation = round(len(paper_ids) * .15)
+    train_groups, train_count = set(), 0
+    for group_key in ranked_groups:
+        doi = group_key[4:] if group_key.startswith("doi:") else ""
+        if doi in blocked_dois or train_count >= target_train:
+            continue
+        train_groups.add(group_key)
+        train_count += len(grouped[group_key])
+
+    validation_groups, validation_count = set(), 0
+    for group_key in ranked_groups:
+        if group_key in train_groups or validation_count >= target_validation:
+            continue
+        validation_groups.add(group_key)
+        validation_count += len(grouped[group_key])
+
     result = {}
-    blocked_dois = {doi.lower() for doi in blocked_dois}
-    target_train, target_validation = round(len(ranked) * .70), round(len(ranked) * .15)
-    train_candidates = [pid for pid in ranked if doi_by_paper.get(pid, "").lower() not in blocked_dois]
-    train = set(train_candidates[:target_train])
-    remaining = [pid for pid in ranked if pid not in train]
-    validation = set(remaining[:target_validation])
-    for pid in ranked:
-        result[pid] = "train" if pid in train else "validation" if pid in validation else "test"
+    for group_key, group_papers in grouped.items():
+        split = ("train" if group_key in train_groups else
+                 "validation" if group_key in validation_groups else "test")
+        result.update({paper_id: split for paper_id in group_papers})
     return result
 
 

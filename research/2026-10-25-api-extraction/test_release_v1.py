@@ -56,6 +56,14 @@ def test_split_keeps_blocked_benchmark_doi_out_of_train():
     assert splits["P1"] != "train"
 
 
+def test_split_keeps_duplicate_doi_papers_together():
+    papers = [f"P{i}" for i in range(10)]
+    dois = {pid: f"10.1/{pid}" for pid in papers}
+    dois["P1"] = dois["P0"]
+    splits = release_v1.make_paper_splits(papers, dois, set())
+    assert splits["P0"] == splits["P1"]
+
+
 def test_manifest_hashes_only_existing_files(tmp_path):
     first = tmp_path / "first.json"
     second = tmp_path / "second.json"
