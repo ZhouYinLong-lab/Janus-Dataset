@@ -144,6 +144,39 @@ def _unique(rows, key, label):
     return result
 
 
+def _coalesce_records(rows):
+    """Collapse repeated mentions for review while retaining provenance.
+
+    Export keeps every raw observation.  The acceptance denominator must use
+    one evidence record per record_key, otherwise repeated prose can make the
+    same claim count several times.  A same-key disagreement is still a gate
+    error rather than silently choosing one version.
+    """
+    merged, conflicts = {}, []
+    volatile = {'sources', 'raw_record_indexes', 'raw_observation_count',
+                'source_occurrences', 'source_occurrence_count', 'duplicate_observation'}
+    for row in rows:
+        _need(isinstance(row, dict) and _text(row.get('record_key')), 'output_records_invalid_row')
+        key = row['record_key']
+        if key not in merged:
+            merged[key] = json.loads(json.dumps(row, ensure_ascii=False, sort_keys=True))
+            merged[key]['sources'] = list(row.get('sources', []))
+            continue
+        current = merged[key]
+        left = {k: v for k, v in current.items() if k not in volatile}
+        right = {k: v for k, v in row.items() if k not in volatile}
+        if left != right:
+            conflicts.append(key)
+            continue
+        for source in row.get('sources', []):
+            if source not in current['sources']:
+                current['sources'].append(source)
+    for key, row in merged.items():
+        row['raw_observation_count'] = sum(1 for item in rows if item.get('record_key') == key)
+        row['duplicate_observation'] = row['raw_observation_count'] > 1
+    return merged, conflicts
+
+
 def _verify(workspace):
     """Independently verify v3 inputs, without importing a sending runtime."""
     w = Path(workspace).resolve()
@@ -504,10 +537,17 @@ def _evaluate(workspace, review_path):
                   'paper_processing_incomplete:' + row['paper_id'])
             _need(row.get('unscanned_sentences', 0) == 0, 'paper_unscanned_sentences:' + row['paper_id'])
     attempt('source_coverage_invalid', coverage)
-    actual = attempt('records_invalid', lambda: _unique(records, 'record_key', 'output_records')) or {}
+    if isinstance(summary.get('evidence_records'), int):
+        coalesced = attempt('records_invalid', lambda: _coalesce_records(records)) or ({}, [])
+        actual, conflicts = coalesced if isinstance(coalesced, tuple) else ({}, [])
+        for key in conflicts:
+            blockers.append('duplicate_record_conflict:' + key)
+    else:
+        actual = attempt('records_invalid', lambda: _unique(records, 'record_key', 'output_records')) or {}
+        conflicts = []
     rows = attempt('record_review_invalid', lambda: _unique(review.get('records'), 'record_key', 'review_records')) or {}
-    metrics['records'] = len(records)
-    if set(actual) != set(rows) or len(rows) != len(records):
+    metrics['records'] = len(actual)
+    if set(actual) != set(rows) or len(rows) != len(actual):
         blockers.append('record_level_review_incomplete')
     locations, supported = {}, set()
     for key, record in actual.items():
@@ -535,9 +575,9 @@ def _evaluate(workspace, review_path):
     if metrics['severe_errors']:
         blockers.append('severe_content_errors_present')
     metrics['supported'] = len(supported)
-    if records:
-        metrics['support_rate'] = len(supported) / len(records)
-    if not records or len(supported) * 10 < len(records) * 9:
+    if actual:
+        metrics['support_rate'] = len(supported) / len(actual)
+    if not actual or len(supported) * 10 < len(actual) * 9:
         blockers.append('support_rate_below_0.9_or_empty_output')
     reviewed_refs = attempt('reference_review_invalid', lambda: _unique(
         review.get('references'), 'reference_id', 'review_references')) or {}

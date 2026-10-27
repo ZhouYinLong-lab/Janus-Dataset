@@ -2,6 +2,7 @@
 from collections import Counter
 from copy import deepcopy
 import csv
+import json
 import os
 from pathlib import Path
 import uuid
@@ -57,6 +58,49 @@ def _needs_conditions(record):
                 (record['outcome_type'] == 'conditional_loss' and not record['values'].get('scope_condition')))
 
 
+def _merge_evidence_records(records):
+    """Build the unique evidence layer without deleting raw observations.
+
+    The raw ``records`` export remains lossless.  The evidence layer groups
+    repeated record keys and keeps every provenance occurrence so downstream
+    review and RAG do not count repeated mentions as independent evidence.
+    """
+    merged = {}
+    occurrences = {}
+    for index, record in enumerate(records):
+        key = record.get('record_key')
+        if not key:
+            continue
+        occurrences.setdefault(key, []).append(index)
+        if key not in merged:
+            merged[key] = deepcopy(record)
+            merged[key]['raw_record_indexes'] = [index]
+            merged[key]['raw_observation_count'] = 1
+            merged[key]['source_occurrences'] = deepcopy(record.get('sources', []))
+            continue
+        target = merged[key]
+        target['raw_record_indexes'].append(index)
+        target['raw_observation_count'] += 1
+        for source in record.get('sources', []):
+            if source not in target['source_occurrences']:
+                target['source_occurrences'].append(deepcopy(source))
+    for key, record in merged.items():
+        record['duplicate_observation'] = len(occurrences[key]) > 1
+        record['source_occurrence_count'] = len(record['source_occurrences'])
+    return list(merged.values())
+
+
+def _input_gap_classification(paper):
+    """Separate absent full text from local parsing/chunking failures."""
+    source = paper.get('source_path')
+    if not source or not Path(source).is_file():
+        return 'fulltext_missing', 'source_not_available'
+    expected = paper.get('source_sha256')
+    if expected and sha(Path(source)) != expected:
+        return 'parse_or_chunk_failure', 'source_hash_mismatch'
+    return 'parse_or_chunk_failure', paper.get('input_error') or 'no_scannable_jobs'
+
+
 def snapshot(workspace):
     """Return (summary, records, audit, failures); never merge observations or write files."""
     workspace = Path(workspace).resolve()
@@ -76,8 +120,9 @@ def snapshot(workspace):
                            'details': deepcopy(gap), **{key: deepcopy(gap[key]) for key in
                            ('sentence_id', 'unit_id', 'char_start', 'char_end', 'status', 'reason') if key in gap}})
         if not paper['job_ids']:
+            gap_type, gap_reason = _input_gap_classification(paper)
             audits.append({'paper_id': pid, 'stage': 'prepare', 'destination': 'input_gap',
-                           'reason': paper.get('input_error', 'no_scannable_jobs')})
+                           'gap_type': gap_type, 'reason': gap_reason})
         job_statuses = []
         for jid in paper['job_ids']:
             job = read(workspace / f'jobs/{jid}.json')
@@ -175,8 +220,26 @@ def snapshot(workspace):
                                            'stage': 'conditions', 'destination': 'optional_conditions_gap',
                                            'status': 'context_gap', 'record_ids': needed_ids,
                                            'reason': status_row['conditions_reason']})
+                        audits.append({'paper_id': pid, 'job_id': jid, 'candidate_id': cid,
+                                       'stage': 'conditions', 'destination': 'context_coverage',
+                                       'context_complete': not context_gap,
+                                       'selected_unit_ids': [], 'omitted_unit_ids': [],
+                                       'omission_reason': status_row.get('conditions_reason'),
+                                       'references': []})
                     else:
                         status_row['conditions_status'] = condition_entry.get('status', 'pending')
+                        for context in plan.get('candidate_contexts', []):
+                            if context.get('candidate_id') != cid:
+                                continue
+                            audits.append({'paper_id': pid, 'job_id': jid, 'candidate_id': cid,
+                                           'stage': 'conditions', 'destination': 'context_coverage',
+                                           'context_complete': context.get('context_complete', False),
+                                           'anchor_unit_id': context.get('anchor_unit_id'),
+                                           'selected_unit_ids': deepcopy(context.get('context_unit_ids', [])),
+                                           'allowed_evidence_unit_ids': deepcopy(context.get('allowed_evidence_unit_ids', [])),
+                                           'omitted_unit_ids': deepcopy(context.get('omitted_context_unit_ids', [])),
+                                           'omission_reason': context.get('omission_reason'),
+                                           'references': deepcopy(context.get('references', []))})
                     if plan is not None:
                         if condition_entry.get('status') == 'complete':
                             if condition_entry.get('facts_result_sha256') != facts['result_sha256']:
@@ -205,6 +268,11 @@ def snapshot(workspace):
                                    'status': 'not_planned', 'reason': 'conditions_plan_not_frozen',
                                    'stop_reason': state.get('stop_reason'),
                                    'exception_type': state.get('exception_type'), 'record_ids': needed_ids})
+                    audits.append({'paper_id': pid, 'job_id': jid, 'candidate_id': cid,
+                                   'stage': 'conditions', 'destination': 'context_coverage',
+                                   'context_complete': False, 'selected_unit_ids': [],
+                                   'omitted_unit_ids': [], 'omission_reason': 'conditions_plan_not_frozen',
+                                   'references': []})
                 revisions = {}
                 for revised_index, item in enumerate((condition_result or {}).get('accepted', [])):
                     revised = item['record']
@@ -239,6 +307,7 @@ def snapshot(workspace):
                                 else 'processed_pending_review' if d.get('accepted')
                                 else 'processed_no_candidates_found')
         processed = sum(status.startswith('processed') for status in job_statuses)
+        gap_type, gap_reason = _input_gap_classification(paper) if not paper['job_ids'] else (None, None)
         paper_rows.append({'paper_id': pid, 'doi': paper.get('doi'), 'url': paper.get('url'),
                            'source_sha256': paper.get('source_sha256'),
                            'jobs': len(job_statuses), 'jobs_processed': processed,
@@ -246,6 +315,7 @@ def snapshot(workspace):
                            'status': 'input_gap' if not job_statuses else 'partial' if processed < len(job_statuses)
                            else 'processed_with_issues' if gaps or 'processed_with_issues' in job_statuses
                            else 'processed_pending_review', 'input_error': paper.get('input_error'),
+                           'input_gap_type': gap_type, 'input_gap_reason': gap_reason,
                            'coverage': paper.get('parsed_coverage')})
     failures = [dict(deepcopy(entry), task_id=tid) for tid, entry in tasks.items()
                 if entry.get('status') != 'complete']
@@ -254,10 +324,12 @@ def snapshot(workspace):
     semantic_pending = statuses['semantic_pending'] + statuses['quarantine']
     unresolved_candidates = sum(a['destination'] == 'unresolved' and a.get('stage') == 'facts' for a in audits)
     condition_gaps = sum(a['destination'] == 'optional_conditions_gap' for a in audits)
+    evidence_records = _merge_evidence_records(records)
     buckets = {'成功': [], '失败': [], '缺少全文': [], '未完成': []}
     for row in paper_rows:
         if row['status'] == 'input_gap':
-            buckets['缺少全文'].append(row['paper_id'])
+            bucket = '缺少全文' if row.get('input_gap_type') == 'fulltext_missing' else '失败'
+            buckets[bucket].append(row['paper_id'])
         elif row['status'] == 'partial':
             buckets['未完成'].append(row['paper_id'])
         elif row['status'] == 'processed_with_issues':
@@ -267,12 +339,20 @@ def snapshot(workspace):
     summary = {'pipeline': PIPELINE, 'protocol': 'sentence_v3', 'records': len(records),
                'paper_buckets': buckets,
                'unique_records': len({r['record_key'] for r in records}),
+               'evidence_records': len(evidence_records),
+               'duplicate_record_keys': sum(r.get('raw_observation_count', 1) > 1
+                                            for r in evidence_records),
                'record_status': dict(statuses), 'core_usable_records': statuses['core_usable'],
                'semantic_pending_records': statuses['semantic_pending'], 'quarantine_records': statuses['quarantine'],
                'papers': paper_rows, 'paper_status': dict(Counter(p['status'] for p in paper_rows)),
                'candidate_destinations': dict(Counter(a['destination'] for a in audits)),
                'unscanned_sentences': unscanned, 'unresolved_paragraphs': unresolved_paragraphs,
                'optional_conditions_gaps': condition_gaps,
+               'context_coverage_rows': sum(a['destination'] == 'context_coverage' for a in audits),
+               'context_omissions': sum(bool(a.get('omitted_unit_ids')) for a in audits
+                                        if a['destination'] == 'context_coverage'),
+               'input_gap_classification': {p['paper_id']: p.get('input_gap_type')
+                                            for p in paper_rows if p.get('input_gap_type')},
                'failed_tasks': len(failures), 'workspace_requests': len(state.get('attempts', [])),
                'reused_tasks': sum(bool(e.get('reused_from')) for e in tasks.values()),
                'task_status': dict(Counter(e['status'] for e in tasks.values())),
@@ -313,9 +393,11 @@ def export(workspace):
         out = workspace / 'exports'
         datasets = {'records': records, 'candidate_audit': audits, 'failures': failures,
                     'paper_coverage': summary['papers'],
+                    'evidence_records': _merge_evidence_records(records),
                     'paragraph_coverage': [a for a in audits if a['destination'] == 'paragraph_coverage'],
                     'candidate_status': [a for a in audits if a['destination'] == 'candidate_status'],
-                    'coverage_gaps': [a for a in audits if a['destination'] in {'input_gap', 'unscanned'}]}
+                    'coverage_gaps': [a for a in audits if a['destination'] in {'input_gap', 'unscanned'}],
+                    'context_coverage': [a for a in audits if a['destination'] == 'context_coverage']}
         for name, rows in datasets.items():
             save(out / (name + '.json'), rows)
             csv_rows = rows
@@ -335,7 +417,8 @@ def _summary_markdown(path, summary, audits):
     condition_status = Counter(a['conditions_status'] for a in audits if a['destination'] == 'candidate_status')
     lines = ['# 句段提取进度（sentence_v3）', '',
              f'来源：{len(summary["papers"])}；观察记录：{summary["records"]}；'
-             f'不同 record_key：{summary["unique_records"]}。多观察逐条保留。', '',
+             f'不同 record_key：{summary["unique_records"]}；唯一证据记录：{summary.get("evidence_records", summary["unique_records"])}。'
+             '原始观察逐条保留，重复提及在证据层合并。', '',
              '成功 / 失败 / 缺少全文 / 未完成：']
     buckets = summary.get('paper_buckets', {})
     for label in ('成功', '失败', '缺少全文', '未完成'):
@@ -346,6 +429,8 @@ def _summary_markdown(path, summary, audits):
              f'未解决正文段落：{summary["unresolved_paragraphs"]}。', '',
              f'全部来源处理完整：{summary["all_sources_processed"]}；'
              f'条件补充缺口：{summary["optional_conditions_gaps"]}。', '',
+             f'上下文审计行：{summary.get("context_coverage_rows", 0)}；'
+             f'存在裁剪的候选：{summary.get("context_omissions", 0)}。', '',
              f'候选事实阶段状态：{dict(candidate_status)}；条件阶段状态：{dict(condition_status)}。', '',
              f'候选去向：{summary["candidate_destinations"]}。', '',
              f'记录状态：{summary["record_status"]}；核心可用：{summary["core_usable_records"]}；'
