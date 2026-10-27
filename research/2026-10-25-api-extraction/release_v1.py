@@ -316,6 +316,33 @@ def unresolved_duplicate_groups(records: list[dict]) -> list[dict]:
     return result
 
 
+def audit_metrics(audit_rows: list[dict], baseline_records: list[dict] | None = None) -> dict:
+    """Summarize an omission audit without treating recovered candidates as gold."""
+
+    paper_ids = {row["paper_id"] for row in audit_rows}
+    recovered = sum(int(row.get("recovered_count", 0)) for row in audit_rows)
+    result = {
+        "papers": len(paper_ids),
+        "recovered_candidates": recovered,
+        "document_units_scanned": sum(int(row.get("document_units_scanned", 0)) for row in audit_rows),
+        "sentences_scanned": sum(int(row.get("sentences_scanned", 0)) for row in audit_rows),
+        "reviewer_kind": "model_assisted_not_expert_gold",
+        "expert_gold": False,
+    }
+    if baseline_records is not None:
+        baseline_mentions = sum(row.get("paper_id") in paper_ids for row in baseline_records)
+        denominator = baseline_mentions + recovered
+        result.update({
+            "baseline_candidate_mentions": baseline_mentions,
+            "candidate_mentions_after_audit": denominator,
+            "new_candidate_fraction": recovered / denominator if denominator else None,
+            "new_candidate_fraction_numerator": recovered,
+            "new_candidate_fraction_denominator": denominator,
+            "scope": "fixed sampled papers; candidate mentions, not independently confirmed recall",
+        })
+    return result
+
+
 def build(args) -> dict:
     run, workspace, output = args.run.resolve(), args.workspace.resolve(), args.output.resolve()
     inventory = read(args.inventory)
@@ -472,6 +499,33 @@ def build(args) -> dict:
         },
         "expert_gold": False,
     }
+    comparable_reviews = [decision for decision in decisions
+                          if decision["reviewer_a_status"] and decision["reviewer_b_status"]]
+    exact_agreements = sum(decision["reviewer_a_status"] == decision["reviewer_b_status"]
+                           for decision in comparable_reviews)
+    resolved_agreements = sum(decision["basis"] == "two_review_agreement"
+                              for decision in decisions)
+    metrics["blind_review_exact_agreement"] = {
+        "numerator": exact_agreements, "denominator": len(comparable_reviews),
+        "rate": exact_agreements / len(comparable_reviews) if comparable_reviews else None,
+        "includes_joint_pending": True,
+    }
+    metrics["blind_review_resolved_agreement"] = {
+        "numerator": resolved_agreements, "denominator": len(comparable_reviews),
+        "rate": resolved_agreements / len(comparable_reviews) if comparable_reviews else None,
+        "scope": "agreements resolving a record to reliable or excluded",
+    }
+    metrics["adjudicated_records"] = sum(decision["basis"] == "adjudicated"
+                                           for decision in decisions)
+    metrics["scope_counts"] = dict(Counter(row["scope_class"] for row in records))
+    metrics["evidence_origin_counts"] = dict(Counter(row["evidence_origin"] for row in records))
+    metrics["model_eligible"] = {
+        "training": sum(bool(row["model_eligibility"]["training"]) for row in records),
+        "rag": sum(bool(row["model_eligibility"]["rag"]) for row in records),
+    }
+    metrics["zero_candidate_fulltext_audit"] = audit_metrics(read(args.zero_audit), baseline)
+    if args.sample_audit and args.sample_audit.is_file():
+        metrics["stratified_fulltext_audit"] = audit_metrics(read(args.sample_audit), baseline)
     reference_rows, reference_summary = reference_recall_v1.audit(records, read(args.reference))
     write_json(output / "reference_coverage.json", reference_rows)
     write_csv(output / "reference_coverage.csv", reference_rows)

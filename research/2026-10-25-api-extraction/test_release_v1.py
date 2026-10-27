@@ -87,3 +87,18 @@ def test_linked_mentions_are_not_reported_as_possible_duplicates():
     groups = release_v1.unresolved_duplicate_groups(unresolved)
     assert len(groups) == 1
     assert groups[0]["experiment_ids"] == ["X1", "X2"]
+
+
+def test_audit_metrics_preserve_candidate_denominator_and_scope():
+    audit = [{"paper_id": "P1", "recovered_count": 2,
+              "document_units_scanned": 4, "sentences_scanned": 10},
+             {"paper_id": "P2", "recovered_count": 1,
+              "document_units_scanned": 6, "sentences_scanned": 20}]
+    baseline = [{"paper_id": "P1"}, {"paper_id": "P1"}, {"paper_id": "P3"}]
+    metrics = release_v1.audit_metrics(audit, baseline)
+    assert metrics["recovered_candidates"] == 3
+    assert metrics["baseline_candidate_mentions"] == 2
+    assert metrics["new_candidate_fraction_numerator"] == 3
+    assert metrics["new_candidate_fraction_denominator"] == 5
+    assert metrics["new_candidate_fraction"] == 0.6
+    assert metrics["expert_gold"] is False
