@@ -78,3 +78,12 @@ def test_add_record_requires_new_stable_id():
     assert [MODULE.record_id(row) for row in records] == ["E1", "E2"]
     with pytest.raises(ValueError, match="already exists"):
         MODULE.apply_ledger([base_record(), added], [entry])
+
+
+def test_append_entries_is_idempotent(tmp_path):
+    path = tmp_path / "history.jsonl"
+    entry = {"revision_id": "R1", "operation": "add_record"}
+    assert MODULE.append_entries(path, [entry])["appended"] == 1
+    assert MODULE.append_entries(path, [entry])["appended"] == 0
+    with pytest.raises(ValueError, match="Conflicting duplicate revision"):
+        MODULE.append_entries(path, [dict(entry, operation="patch_record")])

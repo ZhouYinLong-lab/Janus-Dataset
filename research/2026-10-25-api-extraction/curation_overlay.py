@@ -45,6 +45,32 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def append_entries(path: Path, entries: Iterable[dict[str, Any]]) -> dict[str, int]:
+    """Append new revisions without rewriting or duplicating existing lines."""
+
+    existing = read_jsonl(path)
+    seen = {row.get("revision_id"): sha256_json(row) for row in existing}
+    appended = 0
+    additions = []
+    for entry in entries:
+        revision_id = entry.get("revision_id")
+        if not revision_id:
+            raise ValueError("Every ledger entry needs revision_id")
+        entry_hash = sha256_json(entry)
+        if revision_id in seen:
+            if seen[revision_id] != entry_hash:
+                raise ValueError(f"Conflicting duplicate revision: {revision_id}")
+            continue
+        seen[revision_id] = entry_hash
+        additions.append(json.dumps(entry, ensure_ascii=False, sort_keys=True) + "\n")
+        appended += 1
+    if additions:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8", newline="") as handle:
+            handle.writelines(additions)
+    return {"existing": len(existing), "appended": appended, "total": len(existing) + appended}
+
+
 def _set_path(target: dict[str, Any], dotted_path: str, value: Any) -> None:
     if not dotted_path or dotted_path.startswith(".") or dotted_path.endswith("."):
         raise ValueError(f"Invalid change path: {dotted_path!r}")
