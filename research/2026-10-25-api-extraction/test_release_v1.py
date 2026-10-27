@@ -102,3 +102,10 @@ def test_audit_metrics_preserve_candidate_denominator_and_scope():
     assert metrics["new_candidate_fraction_denominator"] == 5
     assert metrics["new_candidate_fraction"] == 0.6
     assert metrics["expert_gold"] is False
+
+
+def test_completed_coverage_status_tracks_recovered_candidates():
+    assert release_v1.refreshed_coverage_status("completed_no_candidates", 2) == "completed_with_candidates"
+    assert release_v1.refreshed_coverage_status("completed_with_candidates", 0) == "completed_no_candidates"
+    assert release_v1.refreshed_coverage_status("fulltext_missing", 0) == "fulltext_missing"
+    assert release_v1.refreshed_coverage_status("html_pending_format", 0) == "html_pending_format"

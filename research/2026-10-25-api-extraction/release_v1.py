@@ -343,6 +343,12 @@ def audit_metrics(audit_rows: list[dict], baseline_records: list[dict] | None = 
     return result
 
 
+def refreshed_coverage_status(status: str, candidate_count: int) -> str:
+    if str(status).startswith("completed"):
+        return "completed_with_candidates" if candidate_count else "completed_no_candidates"
+    return status
+
+
 def build(args) -> dict:
     run, workspace, output = args.run.resolve(), args.workspace.resolve(), args.output.resolve()
     inventory = read(args.inventory)
@@ -439,10 +445,12 @@ def build(args) -> dict:
     paper_coverage = []
     for source in baseline_coverage:
         row = dict(source); count = counts[row["paper_id"]]
+        candidate_count = sum(count.values())
         row.update({"raw_candidate_count": source.get("raw_candidate_count", source.get("candidate_count", 0)),
-                    "candidate_count": sum(count.values()), "reliable_count": count["reliable"],
+                    "candidate_count": candidate_count, "reliable_count": count["reliable"],
                     "pending_count": count["pending_review"], "excluded_count": count["excluded"],
-                    "partition_total": sum(count.values()), "split": split_by_paper.get(row["paper_id"])})
+                    "partition_total": candidate_count, "split": split_by_paper.get(row["paper_id"]),
+                    "status": refreshed_coverage_status(source.get("status"), candidate_count)})
         paper_coverage.append(row)
     write_json(output / "paper_coverage.json", paper_coverage); write_csv(output / "paper_coverage.csv", paper_coverage)
     context_coverage = read(run / "exports" / "context_coverage.json")
