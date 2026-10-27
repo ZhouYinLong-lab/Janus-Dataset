@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-27T14:05:48+08:00",
+  "pipeline": "molgluedb_sentence_v3",
+  "workspace_manifest_sha256": "bb853fda2f73c9674ebb1e3c869e3790efa4b4c08e340db27634aae33ef6e9bc",
+  "review_is_complete": false,
+  "snapshot": {
+    "records": 85,
+    "record_status": {
+      "core_usable": 73,
+      "semantic_pending": 10,
+      "quarantine": 2
+    },
+    "unresolved_paragraphs": 126,
+    "workspace_requests": 169,
+    "paper_buckets": {
+      "成功": [],
+      "失败": [
+        "MG_51cc8beb041f311c9f9c6a7c",
+        "MG_7483136d16dced0733a36f6e"
+      ],
+      "缺少全文": [],
+      "未完成": [
+        "MG_5cf5ae284fe057161ed1f3e2",
+        "MG_1601b48e6bb99dc76c546cfc",
+        "B296"
+      ]
+    }
+  },
+  "jobs_processed": 75,
+  "jobs": 120,
+  "requests_at_ledger_read": 170,
+  "global_stop_at_ledger_read": null,
+  "original_unknowns_preserved": 3,
+  "selected_case_count": 7,
+  "selected_case_citations_verified": true,
+  "context_note": "Tasks and ledger can advance between snapshot reads; counts are a timestamped development checkpoint."
+}

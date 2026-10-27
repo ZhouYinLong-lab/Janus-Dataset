@@ -1,0 +1,148 @@
+{
+  "reviewer_kind": "assistant",
+  "expert_gold": false,
+  "scope": "Seven selected failure examples from a running pilot; not full content acceptance or a performance sample",
+  "cases": [
+    {
+      "case_id": "C01",
+      "title": "普通性质描述被当成未观察到结果",
+      "record_key": "b8ee41417e77b3798313a0287e90b7cb60e1841088ef166374fc45cf249d9656",
+      "paper_id": "MG_5cf5ae284fe057161ed1f3e2",
+      "doi": "10.1002/advs.202104344",
+      "source_sha256": "213b45133b41ad5445b1643abd14b212c163611e079150c35b7073f0d590c15a",
+      "anchor_sentence_ids": [
+        "S:1aa8f828ea1ec567091f7783c93dda1b1784b58b442ef089723ee711dc22f7aa"
+      ],
+      "evidence_unit_ids": [
+        "MG_5cf5ae284fe057161ed1f3e2:58bf3292e15b4092"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "not_observed",
+      "observed_endpoint": "water solubility",
+      "review_decision": "exclude",
+      "reason": "原文只陈述WBC100在酸性条件下可溶，没有报告该终点的实验失败。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C02",
+      "title": "阴性锚句与生成观察终点不对应",
+      "record_key": "bb656d3aa45569cf606cabb881680a9134f6d4645ab843935a0bc6367483c593",
+      "paper_id": "MG_51cc8beb041f311c9f9c6a7c",
+      "doi": "10.1002/advs.202412985",
+      "source_sha256": "4276f71afa87e13a235f1f6ca9098375580f4f2bb5c591c360eb3c6cb1063cd2",
+      "anchor_sentence_ids": [
+        "S:e177772824cd3066fed88bde6f1eb923cfd511f84bf527e544ef2d0697b64829"
+      ],
+      "evidence_unit_ids": [
+        "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc"
+      ],
+      "observed_status": "semantic_pending",
+      "observed_outcome_type": "reduced",
+      "observed_endpoint": "eEF2K degradation",
+      "review_decision": "quarantine",
+      "reason": "锚句报告MCF-10A细胞无毒性；生成观察却描述C4对eEF2K降解更强，不能以引文共现认定阴性恢复正确。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C03",
+      "title": "结合增强被标为相对减弱",
+      "record_key": "91ae9c10fcce087ad787b1c32b8d81ee762360fe6da4b4d9c27198fc1d9b250d",
+      "paper_id": "MG_7483136d16dced0733a36f6e",
+      "doi": "10.1002/advs.202413676",
+      "source_sha256": "b7cd36671f5dbced95e2af41b6c069b393fc0d57d245331a5f5d0a9bd7c1f4d8",
+      "anchor_sentence_ids": [
+        "S:81f30aacc47f7de857742541605fa271e4cc9d4cd2cdd9d5c81fb9e99cd52b81"
+      ],
+      "evidence_unit_ids": [
+        "MG_7483136d16dced0733a36f6e:99e5c828ca29944c"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "reduced",
+      "observed_endpoint": "binding interaction",
+      "review_decision": "quarantine",
+      "reason": "Mei增强TRIM25与PKMYT1结合；整条生成观察保留增强事实，却标为reduced，与方向不符。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C04",
+      "title": "处置规则被当成实际观察结果",
+      "record_key": "c2c6cc02ff20515edf7a8bdc6af30d9b2735a0ca3e8dcfb24f499aed56fb431b",
+      "paper_id": "MG_7483136d16dced0733a36f6e",
+      "doi": "10.1002/advs.202413676",
+      "source_sha256": "b7cd36671f5dbced95e2af41b6c069b393fc0d57d245331a5f5d0a9bd7c1f4d8",
+      "anchor_sentence_ids": [
+        "S:3cf4c7ee9c868b2306e3c0f72b6f9a02578c18cd2e4899a3e5f7f3b0c363b4c3"
+      ],
+      "evidence_unit_ids": [
+        "MG_7483136d16dced0733a36f6e:9427b208fe09f80a"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "not_observed",
+      "observed_endpoint": "body weight loss or near death",
+      "review_decision": "exclude",
+      "reason": "达到失重或临终条件时处死小鼠是方法条款，未报告实际发生的阴性结果。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C05",
+      "title": "mRNA未下降被挂到蛋白降解终点",
+      "record_key": "d43d3ae20fc05ffba007d1af78ac7978081fe96c9deeee31a1daf4336411338c",
+      "paper_id": "MG_1601b48e6bb99dc76c546cfc",
+      "doi": "10.1002/ctm2.881",
+      "source_sha256": "83d5870458da261e13c49f23a78e9e29947037ff11ba10107a4d1186e884c27a",
+      "anchor_sentence_ids": [
+        "S:a6d1b9ec463ce916371fcd2e681eb215e1811895db4d09d63557ca4a951b2685"
+      ],
+      "evidence_unit_ids": [
+        "MG_1601b48e6bb99dc76c546cfc:7489b73860eebe2e"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "not_improved",
+      "observed_endpoint": "DDX5 protein degradation",
+      "review_decision": "quarantine",
+      "reason": "应保留DDX5蛋白下降与mRNA未下降的终点差别；当前endpoint为蛋白降解，类型为not_improved。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C06",
+      "title": "定性消失被升级成数值零",
+      "record_key": "871c6b8b3fedd1451a2ec46552f80e2869f7f978eafd26695fda7303d8c15a27",
+      "paper_id": "MG_1601b48e6bb99dc76c546cfc",
+      "doi": "10.1002/ctm2.881",
+      "source_sha256": "83d5870458da261e13c49f23a78e9e29947037ff11ba10107a4d1186e884c27a",
+      "anchor_sentence_ids": [
+        "S:5bd796d0618be22cc1481f33856393264c5ff8f59a4ae3ca72fca49f45f028d7"
+      ],
+      "evidence_unit_ids": [
+        "MG_1601b48e6bb99dc76c546cfc:3567497c64df40f6"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "reported_zero",
+      "observed_endpoint": "mKras expression",
+      "review_decision": "quarantine",
+      "reason": "原文使用完全消失的定性表达，没有提供与该观察对应的明确数字零，违反reported_zero合约。",
+      "source_offsets_verified": true
+    },
+    {
+      "case_id": "C07",
+      "title": "混合句中丢失实际阴性终点",
+      "record_key": "968e771d4d3abd35300300581d192da2d3c520e54bcc29588336c7c9d7bea13e",
+      "paper_id": "MG_1601b48e6bb99dc76c546cfc",
+      "doi": "10.1002/ctm2.881",
+      "source_sha256": "83d5870458da261e13c49f23a78e9e29947037ff11ba10107a4d1186e884c27a",
+      "anchor_sentence_ids": [
+        "S:048e565903888957080fbadc5b52b326ff529d2fc0a6e3d92b47905557e8b012"
+      ],
+      "evidence_unit_ids": [
+        "MG_1601b48e6bb99dc76c546cfc:8a003b10325c0c7c",
+        "MG_1601b48e6bb99dc76c546cfc:53017a1caf317079"
+      ],
+      "observed_status": "core_usable",
+      "observed_outcome_type": "reduced",
+      "observed_endpoint": "c-Myc and survivin mRNA and protein levels",
+      "review_decision": "quarantine",
+      "reason": "句中DDX5 mRNA未被抑制的边界没有形成对应终点；记录主要描述c-Myc和survivin下降，不能当作该阴性已恢复。",
+      "source_offsets_verified": true
+    }
+  ]
+}
