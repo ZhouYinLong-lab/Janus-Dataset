@@ -1,0 +1,75 @@
+{
+  "release_id": "molglue_negative_v1_20261027",
+  "status": "candidate_blocked_second_review",
+  "expert_gold": false,
+  "external_generation_api_requests": 0,
+  "inventory_papers": 193,
+  "paper_coverage": {
+    "completed_with_candidates": 67,
+    "completed_no_candidates": 3,
+    "fulltext_missing": 107,
+    "html_pending_format": 16
+  },
+  "records": {
+    "baseline": 429,
+    "recovered": 35,
+    "total": 464,
+    "reliable": 155,
+    "pending_review": 307,
+    "excluded": 2,
+    "evidence_mentions": 465,
+    "independent_experiments": 451,
+    "possible_duplicate_groups": 4
+  },
+  "quality": {
+    "citation_exact": {"numerator": 464, "denominator": 464},
+    "second_review_complete": {"numerator": 286, "denominator": 464},
+    "reviewer_b_citation_support": {"numerator": 254, "denominator": 286},
+    "required_field_support": {"numerator": 283, "denominator": 286},
+    "blind_review_exact_agreement": {"numerator": 172, "denominator": 286},
+    "blind_review_resolved_agreement": {"numerator": 157, "denominator": 286},
+    "adjudicated_records": 0,
+    "fixed_reference_discovery_strict": {"numerator": 30, "denominator": 59},
+    "fixed_reference_discovery_including_partial": {"numerator": 57, "denominator": 59},
+    "fixed_reference_reliable_strict": {"numerator": 6, "denominator": 59},
+    "sample_new_candidate_fraction": {"numerator": 17, "denominator": 105}
+  },
+  "scope_counts": {
+    "molecular_glue_degradation_negative": 228,
+    "mechanism_or_control": 21,
+    "other_endpoint": 144,
+    "out_of_scope": 71
+  },
+  "evidence_origin_counts": {
+    "primary_report": 456,
+    "secondary_report": 8
+  },
+  "model_eligible_if_release_gate_passes": {
+    "training": 37,
+    "rag": 52,
+    "positive_candidates_ready": 0,
+    "positive_candidates_pending_review": 24
+  },
+  "splits": {
+    "seed": "20261027",
+    "unit": "normalized_doi_or_paper_id",
+    "train_papers": 49,
+    "validation_papers": 10,
+    "test_papers": 11,
+    "doi_cross_split_collisions": 0,
+    "mg2act_validation_test_training_violations": 0
+  },
+  "remaining": {
+    "records_without_second_review": 178,
+    "reviewed_records_with_disagreement": 114,
+    "reviewed_records_jointly_pending": 15,
+    "possible_duplicate_groups": 4,
+    "positive_candidates_without_two_reviews": 24
+  },
+  "tests": {
+    "pytest_passed": 193,
+    "subtests_passed": 91
+  },
+  "release_manifest_sha256": "86dc951e2e7c991175ce03605f2197ce425d63837b0be2790c95d372df9fc4d4",
+  "curation_history_sha256": "9c90ca7850762e015413ca4db481e5a2808ad0361ea7030ea757ae33af479555"
+}
