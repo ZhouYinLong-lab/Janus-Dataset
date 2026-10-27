@@ -44,6 +44,34 @@ class SentenceLaunchTests(unittest.TestCase):
     def test_first_run_keeps_configured_ledger(self):
         self.assertEqual(launch._bound_ledger(self.settings), self.settings['ledger'])
 
+    def test_failed_acceptance_keeps_pilot_resumable(self):
+        self.bind()
+        save(self.settings['acceptance'], {'passed': False, 'blockers': ['incomplete']})
+        with patch.object(launch, 'command') as command, \
+                patch('sentence_acceptance.require_acceptance') as require, \
+                redirect_stdout(StringIO()):
+            launch.action('run', self.settings_path)
+        args = command.call_args.args
+        self.assertEqual(args[args.index('--phase') + 1], 'pilot')
+        self.assertNotIn('--acceptance', args)
+        require.assert_not_called()
+
+    def test_truthy_nonboolean_acceptance_cannot_start_full_run(self):
+        self.bind()
+        save(self.settings['acceptance'], {'passed': 'false'})
+        with patch.object(launch, 'command') as command, redirect_stdout(StringIO()):
+            launch.action('run', self.settings_path)
+        args = command.call_args.args
+        self.assertEqual(args[args.index('--phase') + 1], 'pilot')
+
+    def test_invalid_acceptance_type_stops_before_subprocess(self):
+        self.bind()
+        save(self.settings['acceptance'], [])
+        with patch.object(launch, 'command') as command, redirect_stdout(StringIO()):
+            with self.assertRaisesRegex(ValueError, 'must be an object'):
+                launch.action('run', self.settings_path)
+        command.assert_not_called()
+
     def test_run_passes_diagnosed_child_environment_and_invocation_limit(self):
         self.bind()
         with patch.object(launch, 'command') as command, \

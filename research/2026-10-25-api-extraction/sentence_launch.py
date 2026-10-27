@@ -5,7 +5,7 @@ public full text and checks the budget without sending generation requests.
 run drives the pilot first, then the full extraction only after the frozen
 five-paper acceptance passes. status prints the four paper buckets (成功 / 失败
 / 缺少全文 / 未完成) and opens the generated summary. Full extraction is locked
-until the acceptance file exists and the shared budget permits new requests.
+until content acceptance passes and the shared budget permits new requests.
 """
 import argparse
 import os
@@ -110,7 +110,13 @@ def action(name, settings_path=None, max_new_requests=None):
         limit_args = [] if max_new_requests is None else ['--max-new-requests', max_new_requests]
         if env is not None:
             print('API连接使用已验证的直连；系统代理设置保持原样。')
-        if not Path(s['acceptance']).is_file():
+        acceptance_path = Path(s['acceptance'])
+        acceptance = read(acceptance_path) if acceptance_path.is_file() else {}
+        if not isinstance(acceptance, dict):
+            raise ValueError('Acceptance report must be an object')
+        if acceptance.get('passed') is not True:
+            if acceptance_path.is_file():
+                print('验收尚未通过，继续五篇试跑；全库保持锁定。')
             command('run', '--workspace', s['pilot_workspace'], '--config', s['config'],
                     '--ledger', ledger, '--env-file', s['env_file'], '--phase', 'pilot',
                     '--resume-operator-pause', '--live', *limit_args, env=env)
