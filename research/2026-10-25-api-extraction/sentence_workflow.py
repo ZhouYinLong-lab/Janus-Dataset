@@ -245,7 +245,7 @@ def validate_conditions(payload, job):
         old_endpoint, new_endpoint = record['values'].get('endpoint'), values['endpoint_resolution']
         if new_endpoint and old_endpoint and normal(old_endpoint) not in {'uncertain','unknown','activity','potency','ec50','待定'} and normal(old_endpoint) != normal(new_endpoint):
             record['record_status'] = 'quarantine'
-            record['condition_conflicts'] = ['endpoint_resolution_conflicts_with_core']
+            record['condition_conflicts'] = ['endpoint_resolution_differs_from_core_requires_review']
         elif new_endpoint:
             record['values']['endpoint'] = new_endpoint
             record['field_evidence'] = [e for e in record['field_evidence'] if e['field'] != 'endpoint'] + [
