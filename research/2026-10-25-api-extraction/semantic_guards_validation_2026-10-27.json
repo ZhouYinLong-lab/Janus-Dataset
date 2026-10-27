@@ -1,0 +1,43 @@
+{
+  "offline_checks_passed": 87,
+  "saved_response_revalidation": {
+    "scope": "Offline mechanical revalidation of saved responses; not content acceptance",
+    "source_manifest_sha256": "3959debaa1d28ca7031c4ac023d239cf861586bdf305c439ae0c9756e5af443d",
+    "source_state_sha256": "fc99ccaf21c964b2222ad4362bdc0c2e99da947ad9e613bcd9f7c97c3407bb73",
+    "validator_hashes": {
+      "facts_v3.py": "3e4fb172a4ab06671e4edad517711b798ce98dfff15cfbc93c0b7253fff49cf0",
+      "sentence_workflow.py": "67a740c7e41ae95def6698be93648cdf8e3d7c2e4a11412452fd313167479ea5"
+    },
+    "records_before": 89,
+    "records_after": 89,
+    "status_before": {
+      "core_usable": 77,
+      "semantic_pending": 10,
+      "quarantine": 2
+    },
+    "status_after": {
+      "core_usable": 75,
+      "semantic_pending": 12,
+      "quarantine": 2
+    },
+    "changed_status_records": 2,
+    "response_tasks_revalidated": 95,
+    "generation_requests": 0,
+    "expert_gold": false,
+    "content_acceptance_complete": false
+  },
+  "current_workspace": "local\\sentence_v3_ws_pilot_semantic_20261027",
+  "migration_elapsed_seconds": 7.788,
+  "paid_attempts": 182,
+  "ledger_unchanged": true,
+  "status_after": {
+    "core_usable": 75,
+    "semantic_pending": 12,
+    "quarantine": 2
+  },
+  "reused_tasks": 176,
+  "stop_reason": "provider_http_403",
+  "generation_requests": 0,
+  "content_acceptance_complete": false,
+  "numeric_zero_policy": "Free text alone does not verify object/readout attribution; keep all reported_zero candidates pending explicit review"
+}

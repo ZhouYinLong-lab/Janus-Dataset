@@ -208,14 +208,24 @@ def _observation_errors(row, supplied, anchors):
     return errors
 
 
+def endpoint_is_specific(value):
+    return (_text(value) and not _UNCERTAIN.search(value)
+            and value.strip().casefold() not in {'activity', 'potency', 'ec50'})
+
+
+def core_is_usable(values, outcome_type):
+    """One readiness rule for original facts and later condition revisions."""
+    return (outcome_type != 'uncertain'
+            and all(_text(values.get(f)) and not _UNCERTAIN.search(values[f])
+                    for f in ('subject', 'endpoint', 'observation'))
+            and endpoint_is_specific(values.get('endpoint')))
+
+
 def _record(row, job, candidate, supplied, anchors):
     values = deepcopy(row['values'])
     field_evidence = [dict(field=field, **supplied[sid])
                       for field in FIELDS for sid in row['evidence'][field]]
-    core_fields = ('subject', 'endpoint', 'observation')
-    clear = (row['outcome_type'] != 'uncertain'
-             and all(_text(values[f]) and not _UNCERTAIN.search(values[f]) for f in core_fields)
-             and values['endpoint'].strip().casefold() not in {'activity', 'potency', 'ec50'})
+    clear = core_is_usable(values, row['outcome_type'])
     identity = {'source_sha256': job['source_sha256'], 'paper_id': job['paper_id'],
                 'candidate_id': candidate['candidate_id'], 'values': values,
                 'outcome_type': row['outcome_type']}

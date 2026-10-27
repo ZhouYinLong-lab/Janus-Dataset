@@ -5,11 +5,17 @@ import re
 
 from corpus import read, normal
 from linked_context import LinkedContext
+from facts_v3 import core_is_usable, endpoint_is_specific
 
 TEXT_CAP = 8000
 CONDITION_FIELDS = ('cell_line', 'treatment_time', 'tested_concentration', 'assay',
                     'perturbation', 'endpoint_resolution')
 TOKEN_CAPS = {'discovery': 2048, 'facts': 4096, 'conditions': 2048}
+_NO_IMPROVEMENT = re.compile(
+    r'\b(?:did|does|do)\s+not\s+(?:(?:significantly|substantially|further)\s+)?'
+    r'(?:improve|enhance|increase)\b|\bfailed\s+to\s+(?:significantly\s+)?'
+    r'(?:improve|enhance|increase)\b|\b(?:showed\s+)?no\s+(?:significant\s+)?'
+    r'(?:improvement|enhancement|increase)\b', re.I)
 CONDITION_EXAMPLE = {'items': [{'record_id': 'synthetic-record',
     'values': dict.fromkeys(CONDITION_FIELDS),
     'evidence': {field: [] for field in CONDITION_FIELDS}}]}
@@ -187,7 +193,7 @@ def validate_response(payload, job, candidates):
             observation_text = ' '.join(e['quote'] for e in r['field_evidence']
                                         if e['field'] == 'observation')
             flags = []
-            if (re.search(r'\b(?:did|does|do) not (?:improve|enhance|increase)\b', observation_text, re.I)
+            if (_NO_IMPROVEMENT.search(observation_text)
                     and r['outcome_type'] in {'not_observed', 'reported_zero'}):
                 flags.append('not_improved_must_not_become_inactive')
             if (re.search(r'\b(?:not significant|no significant|not significantly)\b', observation_text, re.I)
@@ -196,6 +202,14 @@ def validate_response(payload, job, candidates):
             if flags:
                 r['record_status'] = 'quarantine'
                 r['semantic_flags'] = flags
+            if r['outcome_type'] == 'reported_zero':
+                # Exact zero also needs object/readout attribution. Free-text
+                # number matching cannot verify that a zero belongs to this
+                # experiment, so retain the fact pending explicit content review.
+                r['semantic_flags'] = list(dict.fromkeys(r.get('semantic_flags', []) +
+                    ['reported_zero_requires_readout_review']))
+                if r['record_status'] != 'quarantine':
+                    r['record_status'] = 'semantic_pending'
         return result
     return validate_conditions(payload, job)
 
@@ -250,10 +264,12 @@ def validate_conditions(payload, job):
             record['values']['endpoint'] = new_endpoint
             record['field_evidence'] = [e for e in record['field_evidence'] if e['field'] != 'endpoint'] + [
                 dict(e, field='endpoint') for e in citations if e['field'] == 'endpoint_resolution']
-            record['endpoint_verification_required'] = False
+            record['endpoint_verification_required'] = not endpoint_is_specific(new_endpoint)
             if (record['record_status'] != 'quarantine' and not record.get('semantic_flags') and
-                    all(record['values'].get(k) for k in ('subject','endpoint','observation')) and record['outcome_type'] != 'uncertain'):
+                    core_is_usable(record['values'], record['outcome_type'])):
                 record['record_status'] = 'core_usable'
+            elif record['record_status'] != 'quarantine':
+                record['record_status'] = 'semantic_pending'
         accepted.append({'candidate_id': record['candidate_id'], 'record': record})
     represented = set(counts) & expected
     unresolved.extend({'record_id': rid, 'reason': 'missing_response'} for rid in sorted(expected-represented))
