@@ -1,0 +1,13 @@
+{
+  "model_path": "../2026-10-25-small-lm-pilot/local_model",
+  "seed": 20261027,
+  "max_steps": 100,
+  "seq_length": 512,
+  "micro_batch_size": 1,
+  "gradient_accumulation_steps": 4,
+  "learning_rate": 0.0001,
+  "lora_r": 8,
+  "lora_alpha": 16,
+  "target_modules": ["q_proj", "v_proj"],
+  "min_source_groups": 10
+}

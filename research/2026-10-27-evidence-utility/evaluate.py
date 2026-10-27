@@ -97,10 +97,12 @@ def score(trial, packet, judgments, out, bootstrap=2000):
                            'overclaim_rate_judged': sum(r['overclaim'] for r in js) / len(js) if js else None,
                            'citation_support_rate_judged': sum(r['citation_supported'] for r in js) / len(js) if js else None}
         comparisons = {}
-        for left in ('structured', 'raw', 'background_ablation'):
+        pairs = [('recovered', left) for left in ('structured', 'raw', 'background_ablation')]
+        pairs += [('balanced_negative', left) for left in ('base', 'positive_only', 'domain_control')]
+        for right, left in pairs:
             deltas = defaultdict(list)
             for qid in {r['question_id'] for r in subset}:
-                a, b = scores.get((qid, left)), scores.get((qid, 'recovered'))
+                a, b = scores.get((qid, left)), scores.get((qid, right))
                 if a and b and a['judged'] and b['judged']:
                     deltas[groups[qid]].append(b['score'] - a['score'])
             means = [sum(v) / len(v) for v in deltas.values()]
@@ -109,10 +111,10 @@ def score(trial, packet, judgments, out, bootstrap=2000):
                 rng = random.Random(71)
                 samples = sorted(sum(rng.choices(means, k=len(means))) / len(means) for _ in range(bootstrap))
                 ci = [samples[int(.025 * (bootstrap - 1))], samples[int(.975 * (bootstrap - 1))]]
-            comparisons[left] = {'paired_questions': sum(map(len, deltas.values())), 'source_groups': len(means),
+            comparisons[right + '_minus_' + left] = {'paired_questions': sum(map(len, deltas.values())), 'source_groups': len(means),
                                   'macro_source_delta': sum(means) / len(means) if means else None,
                                   'bootstrap_95pct_ci': ci}
-        reports[split + ':' + protocol] = {'arms': report, 'recovered_minus': comparisons}
+        reports[split + ':' + protocol] = {'arms': report, 'comparisons': comparisons}
     out = fresh(out)
     write(out / 'per_question.json', rows)
     result = {'strata': reports, 'metric': 'Rubric fraction; missing/unjudged contributes zero in all-expected denominator.',
