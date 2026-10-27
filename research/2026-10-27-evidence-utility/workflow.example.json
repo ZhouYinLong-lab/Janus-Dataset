@@ -1,0 +1,16 @@
+{
+  "release": "local/inputs/release",
+  "workspaces": ["local/inputs/sentence_workspace"],
+  "questions": "local/inputs/questions.json",
+  "supplements": null,
+  "split_plan": null,
+  "api_config": "api.example.json",
+  "train_config": "train.example.json",
+  "out": "local/utility_run_01",
+  "mg2act": {
+    "data_dir": "../2026-10-26-mg2act-audit/local/upstream/MG_data",
+    "flags": "../2026-10-26-mg2act-audit/benchmark_test_flags.csv",
+    "associations": "../2026-10-26-mg2act-audit/source_associations.csv",
+    "source_manifest": "../2026-10-26-mg2act-audit/source_manifest.json"
+  }
+}

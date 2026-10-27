@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "stage": "framework_preparation",
+  "test_command": "python -m unittest discover -q",
+  "test_workdir": "research/2026-10-27-evidence-utility",
+  "tests_passed": 27,
+  "tests_failed": 0,
+  "test_seconds": 9.292,
+  "fixtures": "Invented source documents, invented questions and randomly initialized tiny GPT2 models in temporary directories",
+  "validated": [
+    "Content acceptance and exact source-quote-offset admission",
+    "Connected source groups and explicit DOI holdout plans",
+    "Pending evidence excluded from training",
+    "Gold answers absent from inference requests",
+    "Successful responses reused across identical arms without another paid call",
+    "Saved-response recovery and orphan-request stop",
+    "Unknown outcomes and HTTP 429 stop without automatic retry",
+    "Complete expected-task denominators despite missing outputs",
+    "Balanced positive-negative record selection and fixed token budgets",
+    "Frozen question and MG2Act holdout-source overlap gates",
+    "Tiny-model optimizer updates and checkpoint resume",
+    "Tiny LoRA checkpoint roundtrip",
+    "Local weight loading, generation, invalid-output retention and resume",
+    "MG2Act label withholding, fine-test identities, missing predictions and numeric scoring",
+    "External benchmark prediction import rejects non-finite values",
+    "Offline workflow preparation and missing-input reporting"
+  ],
+  "cli_check": "workflow.py check reports missing release, workspace and questions as expected before data intake",
+  "generation_requests_sent": 0,
+  "real_research_data_imported": false,
+  "real_model_training_executed": false,
+  "scientific_utility_evaluated": false,
+  "training_dependencies_tested": {
+    "torch": "2.8.0+cu129",
+    "transformers": "5.13.0",
+    "peft": "0.19.1"
+  },
+  "next_inputs": [
+    "Content-accepted sentence_v3 evidence release with original correction provenance",
+    "Source-reviewed positive and ordinary-background material",
+    "Frozen development/test questions, source references and rubrics",
+    "DOI split plan that excludes question and benchmark holdouts from training"
+  ]
+}

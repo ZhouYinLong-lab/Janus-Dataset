@@ -1,0 +1,6 @@
+[
+  {"name": "base", "model_path": "../2026-10-25-small-lm-pilot/local_model"},
+  {"name": "positive_only", "model_path": "../2026-10-25-small-lm-pilot/local_model", "adapter_path": "local/train_positive/adapter"},
+  {"name": "domain_control", "model_path": "../2026-10-25-small-lm-pilot/local_model", "adapter_path": "local/train_domain/adapter"},
+  {"name": "balanced_negative", "model_path": "../2026-10-25-small-lm-pilot/local_model", "adapter_path": "local/train_negative/adapter"}
+]
