@@ -140,13 +140,16 @@ def candidate_enrichment(payload, job, candidates):
     return base
 
 
-def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'):
+def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full', protocol='candidate_v2'):
     from candidate_workspace import prepare as prepare_v2
-    return prepare_v2(workspace, papers, manifest_path, limit, phase)
+    return prepare_v2(workspace, papers, manifest_path, limit, phase, protocol=protocol)
 
 
 def export_context_audit(workspace):
-    from candidate_export import export
+    if read(Path(workspace) / 'manifest.json').get('pipeline') == 'molgluedb_sentence_v3':
+        from sentence_export import export
+    else:
+        from candidate_export import export
     return export(workspace)
 
 
@@ -195,6 +198,7 @@ def main():
     p.add_argument('--manifest', type=Path)
     p.add_argument('--limit', type=int)
     p.add_argument('--phase', choices=['pilot', 'full'], default='full')
+    p.add_argument('--protocol', choices=['candidate_v2', 'sentence_v3'], default='candidate_v2')
     p = sub.add_parser('run')
     p.add_argument('--workspace', required=True, type=Path)
     p.add_argument('--config', required=True, type=Path)
@@ -227,22 +231,30 @@ def main():
         print(json.dumps(fetch_sources(args.inventory, args.limit), ensure_ascii=False, indent=2))
         return
     if args.command == 'prepare':
-        result = prepare(args.workspace, args.papers, args.manifest, args.limit, args.phase)
+        result = prepare(args.workspace, args.papers, args.manifest, args.limit, args.phase, args.protocol)
         print(json.dumps({'papers': len(result['papers']), 'discovery_jobs': len(result['job_ids']),
-                          'api_requests_sent': 0, 'candidate_context_version': 2}, ensure_ascii=False))
+                          'api_requests_sent': 0,
+                          'candidate_context_version': result['candidate_context_version']}, ensure_ascii=False))
         return
     workspace = args.workspace
     from candidate_workspace import verify, check
     manifest = verify(workspace)
+    sentence_protocol = manifest.get('pipeline') == 'molgluedb_sentence_v3'
     if args.command == 'check':
         _print_summary(check(workspace, read(args.config), args.ledger))
         return
     if args.command == 'acceptance':
-        from candidate_acceptance import assess
+        if sentence_protocol:
+            from sentence_acceptance import assess
+        else:
+            from candidate_acceptance import assess
         print(json.dumps(assess(workspace, args.review, args.out), ensure_ascii=False, indent=2))
         return
     if args.command == 'status':
-        from candidate_export import snapshot
+        if sentence_protocol:
+            from sentence_export import snapshot
+        else:
+            from candidate_export import snapshot
         _print_summary(snapshot(workspace)[0])
         return
     if args.command == 'export':
@@ -251,10 +263,17 @@ def main():
     config = read(args.config)
     check_config(config)
     if args.phase == 'full':
-        from candidate_acceptance import require_acceptance
+        if sentence_protocol:
+            from sentence_acceptance import require_acceptance
+        else:
+            from candidate_acceptance import require_acceptance
         require_acceptance(args.acceptance, workspace, config)
     from candidate_runtime import run
-    run(workspace, config, args.ledger, candidate_request_for, candidate_enrichment,
+    if sentence_protocol:
+        from sentence_workflow import request_for, validate_response
+    else:
+        request_for, validate_response = candidate_request_for, candidate_enrichment
+    run(workspace, config, args.ledger, request_for, validate_response,
         live=args.live, env_file=args.env_file, max_new_requests=args.max_new_requests,
         resume_operator_pause=args.resume_operator_pause, phase=args.phase,
         on_progress=export_context_audit, network_route=args.network_route)

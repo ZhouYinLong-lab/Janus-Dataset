@@ -18,7 +18,12 @@ RUNTIME_FILES = (*CODE, 'batch_candidate.py', 'candidate_context.py',
                  'candidate_acceptance.py', 'candidate_transport.py', 'source_formats.py', 'molglue_sources.py')
 
 
-def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'):
+def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full', protocol='candidate_v2'):
+    if protocol == 'sentence_v3':
+        from sentence_workspace import prepare as prepare_sentences
+        return prepare_sentences(workspace, papers, manifest_path, limit, phase)
+    if protocol != 'candidate_v2':
+        raise ValueError('Unknown extraction protocol: ' + str(protocol))
     workspace = Path(workspace).resolve()
     if workspace.exists():
         raise ValueError('Workspace exists; resume it instead of replacing inputs')
@@ -119,6 +124,9 @@ def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'
 def verify(workspace):
     workspace = Path(workspace)
     m = read(workspace / 'manifest.json')
+    if m.get('pipeline') == 'molgluedb_sentence_v3':
+        from sentence_workspace import verify as verify_sentences
+        return verify_sentences(workspace)
     if m.get('pipeline') != PIPELINE:
         raise ValueError('This entry requires a v2 MolGlueDB workspace')
     for name, digest in m['file_hashes'].items():
@@ -137,6 +145,9 @@ def check(workspace, config, ledger_path):
     import batch_budget
     check_config(config)
     m = verify(workspace)
+    if m.get('pipeline') == 'molgluedb_sentence_v3':
+        from sentence_workspace import check as check_sentences
+        return check_sentences(workspace, config, ledger_path)
     total = sum(reserve_tokens(request_for(workspace,
                     read(Path(workspace) / f'jobs/{jid}.json'), 'discovery', config), config)
                 for jid in m['job_ids'])

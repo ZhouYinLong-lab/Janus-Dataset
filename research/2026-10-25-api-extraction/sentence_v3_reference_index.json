@@ -1,0 +1,601 @@
+{
+  "protocol": "sentence_v3",
+  "expert_gold": false,
+  "reviewer_kind": "assistant",
+  "reference_sha256": "b0b466b10404c2d60021040790586fe55595f58a99f25c1c164007419b4cd160",
+  "private_reference_path": "local/sentence_v3_evaluation/acceptance_reference.json",
+  "inventory_sha256": "5ca18ad9945f9443b0f58ecbddaa9bfd50d63cb6cd2de470b4b397c228f2426e",
+  "papers": [
+    {
+      "paper_id": "MG_5cf5ae284fe057161ed1f3e2",
+      "doi": "10.1002/advs.202104344",
+      "source_sha256": "213b45133b41ad5445b1643abd14b212c163611e079150c35b7073f0d590c15a",
+      "document_sha256": "54b354d1c7219013d25f53cf3bfd1ace003b4f1ef4ab8d62f588abab325c4eb2",
+      "body_units_reviewed": 62,
+      "negative_reference_count": 21,
+      "core_reference_count": 17,
+      "uncertain_count": 0,
+      "references": [
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N01",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:ae74318271ed4ce7",
+          "core_case": false
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N02",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:ae74318271ed4ce7",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N03",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:0f81d9f78c73a45f",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N04",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:733be5f2c0c6ed22",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N05",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:733be5f2c0c6ed22",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N06",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:a646a79b2328e69a",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N07",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:e31479795cf4b6ce",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N08",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:558ce3c205eb22f2",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N09",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:ac07546cd256e753",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N10",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:ac07546cd256e753",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N11",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:ac07546cd256e753",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N12",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:b430caff157681c5",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N13",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:b430caff157681c5",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N14",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:b430caff157681c5",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N15",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:eff80aa5d17d6fef",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N16",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:eff80aa5d17d6fef",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N17",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:eff80aa5d17d6fef",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N18",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:b94d8a4f52fad5f9",
+          "core_case": true
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N19",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:0928ccac17a662d9",
+          "core_case": false
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N20",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:047bf123d3a9d95e",
+          "core_case": false
+        },
+        {
+          "id": "MG_5cf5ae284fe057161ed1f3e2-N21",
+          "unit_id": "MG_5cf5ae284fe057161ed1f3e2:047bf123d3a9d95e",
+          "core_case": false
+        }
+      ]
+    },
+    {
+      "paper_id": "MG_51cc8beb041f311c9f9c6a7c",
+      "doi": "10.1002/advs.202412985",
+      "source_sha256": "4276f71afa87e13a235f1f6ca9098375580f4f2bb5c591c360eb3c6cb1063cd2",
+      "document_sha256": "4bb624b3d9073eaaa5425d76e2f860da7db5a27aca2d50430e4be8948c393966",
+      "body_units_reviewed": 56,
+      "negative_reference_count": 28,
+      "core_reference_count": 24,
+      "uncertain_count": 1,
+      "references": [
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N01",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:98473e490a58884f",
+          "core_case": false
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N02",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:93636f25f62dea3b",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N03",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:93636f25f62dea3b",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N04",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:22337dceaa24f379",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N05",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:22337dceaa24f379",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N06",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:22337dceaa24f379",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N07",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:22337dceaa24f379",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N08",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:cdbd87ae0428e5ab",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N09",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:37ca0c93f0d2b785",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N10",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:37ca0c93f0d2b785",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N11",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:37ca0c93f0d2b785",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N12",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:37ca0c93f0d2b785",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N13",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:76e458894062fb28",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N14",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:76e458894062fb28",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N15",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:76e458894062fb28",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N16",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:69bc1d2a3a4ba576",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N17",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:69bc1d2a3a4ba576",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N18",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:69bc1d2a3a4ba576",
+          "core_case": false
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N19",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:69bc1d2a3a4ba576",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N20",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:69bc1d2a3a4ba576",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N21",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:f346c9b320c1d468",
+          "core_case": false
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N22",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:6b3ae215f8214247",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N23",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N24",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N25",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N26",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N27",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:3dfae3cdfa364fcc",
+          "core_case": true
+        },
+        {
+          "id": "MG_51cc8beb041f311c9f9c6a7c-N28",
+          "unit_id": "MG_51cc8beb041f311c9f9c6a7c:02ff3d17837d4281",
+          "core_case": false
+        }
+      ]
+    },
+    {
+      "paper_id": "MG_7483136d16dced0733a36f6e",
+      "doi": "10.1002/advs.202413676",
+      "source_sha256": "b7cd36671f5dbced95e2af41b6c069b393fc0d57d245331a5f5d0a9bd7c1f4d8",
+      "document_sha256": "6355144cd7a949700c23c7ae95282ddb31319880a393c3f8356907cbf9e5049e",
+      "body_units_reviewed": 77,
+      "negative_reference_count": 22,
+      "core_reference_count": 19,
+      "uncertain_count": 1,
+      "references": [
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N01",
+          "unit_id": "MG_7483136d16dced0733a36f6e:8af7922c92d62ac3",
+          "core_case": false
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N02",
+          "unit_id": "MG_7483136d16dced0733a36f6e:99b086358769b3f8",
+          "core_case": false
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N03",
+          "unit_id": "MG_7483136d16dced0733a36f6e:5fb352215fddb7ac",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N04",
+          "unit_id": "MG_7483136d16dced0733a36f6e:5fb352215fddb7ac",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N05",
+          "unit_id": "MG_7483136d16dced0733a36f6e:80a5709d86fc1ae2",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N06",
+          "unit_id": "MG_7483136d16dced0733a36f6e:80a5709d86fc1ae2",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N07",
+          "unit_id": "MG_7483136d16dced0733a36f6e:80a5709d86fc1ae2",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N08",
+          "unit_id": "MG_7483136d16dced0733a36f6e:816fea502e3de141",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N09",
+          "unit_id": "MG_7483136d16dced0733a36f6e:816fea502e3de141",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N10",
+          "unit_id": "MG_7483136d16dced0733a36f6e:78e7a9dceb1008d7",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N11",
+          "unit_id": "MG_7483136d16dced0733a36f6e:78e7a9dceb1008d7",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N12",
+          "unit_id": "MG_7483136d16dced0733a36f6e:78e7a9dceb1008d7",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N13",
+          "unit_id": "MG_7483136d16dced0733a36f6e:fe5b742628aad3f5",
+          "core_case": false
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N14",
+          "unit_id": "MG_7483136d16dced0733a36f6e:fe5b742628aad3f5",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N15",
+          "unit_id": "MG_7483136d16dced0733a36f6e:fe5b742628aad3f5",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N16",
+          "unit_id": "MG_7483136d16dced0733a36f6e:a9331538b367c33a",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N17",
+          "unit_id": "MG_7483136d16dced0733a36f6e:a9331538b367c33a",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N18",
+          "unit_id": "MG_7483136d16dced0733a36f6e:3d4d15bc0e3771f5",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N19",
+          "unit_id": "MG_7483136d16dced0733a36f6e:3d4d15bc0e3771f5",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N20",
+          "unit_id": "MG_7483136d16dced0733a36f6e:7fcc71956978c423",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N21",
+          "unit_id": "MG_7483136d16dced0733a36f6e:7fcc71956978c423",
+          "core_case": true
+        },
+        {
+          "id": "MG_7483136d16dced0733a36f6e-N22",
+          "unit_id": "MG_7483136d16dced0733a36f6e:7fcc71956978c423",
+          "core_case": true
+        }
+      ]
+    },
+    {
+      "paper_id": "MG_1601b48e6bb99dc76c546cfc",
+      "doi": "10.1002/ctm2.881",
+      "source_sha256": "83d5870458da261e13c49f23a78e9e29947037ff11ba10107a4d1186e884c27a",
+      "document_sha256": "62d198aaba46609c81d448d5366ede63573e4ea3e54efc5f3799f033933bf731",
+      "body_units_reviewed": 61,
+      "negative_reference_count": 16,
+      "core_reference_count": 11,
+      "uncertain_count": 2,
+      "references": [
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N01",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:83281718caabe1aa",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N02",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:83281718caabe1aa",
+          "core_case": false
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N03",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:07d1a2af0ac4863c",
+          "core_case": false
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N04",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:7489b73860eebe2e",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N05",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:7489b73860eebe2e",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N06",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:8a003b10325c0c7c",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N07",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:53017a1caf317079",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N08",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:53017a1caf317079",
+          "core_case": false
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N09",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:489ca124081f7a4a",
+          "core_case": false
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N10",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:489ca124081f7a4a",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N11",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:8fc3c5c7be23e190",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N12",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:c26ab0a7c4f971e9",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N13",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:edbb5bb43ef95e80",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N14",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:7eeaaded2c1f6d1f",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N15",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:a20f3ba28b9ad76b",
+          "core_case": true
+        },
+        {
+          "id": "MG_1601b48e6bb99dc76c546cfc-N16",
+          "unit_id": "MG_1601b48e6bb99dc76c546cfc:95d6a797cd4648e6",
+          "core_case": false
+        }
+      ]
+    },
+    {
+      "paper_id": "B296",
+      "doi": "10.1038/s41586-020-2374-x",
+      "source_sha256": "75c9f1ec1d7877608339a36b01d836760aec62d13a4399ae65c0005583942d03",
+      "document_sha256": "d4d6db3c5cf9087b23917a53e73084f9af3d93e35267a335529c718fb812edfa",
+      "body_units_reviewed": 65,
+      "negative_reference_count": 18,
+      "core_reference_count": 13,
+      "uncertain_count": 2,
+      "references": [
+        {
+          "id": "B296-N01",
+          "unit_id": "B296:b2425b4bedcc1ee5",
+          "core_case": true
+        },
+        {
+          "id": "B296-N02",
+          "unit_id": "B296:b2425b4bedcc1ee5",
+          "core_case": true
+        },
+        {
+          "id": "B296-N03",
+          "unit_id": "B296:c1ae5af1eeb20774",
+          "core_case": true
+        },
+        {
+          "id": "B296-N04",
+          "unit_id": "B296:681dbb8996509478",
+          "core_case": true
+        },
+        {
+          "id": "B296-N05",
+          "unit_id": "B296:c2af853647fb8ec1",
+          "core_case": true
+        },
+        {
+          "id": "B296-N06",
+          "unit_id": "B296:de3434cb15298d34",
+          "core_case": true
+        },
+        {
+          "id": "B296-N07",
+          "unit_id": "B296:de3434cb15298d34",
+          "core_case": false
+        },
+        {
+          "id": "B296-N08",
+          "unit_id": "B296:de3434cb15298d34",
+          "core_case": true
+        },
+        {
+          "id": "B296-N09",
+          "unit_id": "B296:1740dc8960a64e4e",
+          "core_case": false
+        },
+        {
+          "id": "B296-N10",
+          "unit_id": "B296:1740dc8960a64e4e",
+          "core_case": false
+        },
+        {
+          "id": "B296-N11",
+          "unit_id": "B296:1740dc8960a64e4e",
+          "core_case": true
+        },
+        {
+          "id": "B296-N12",
+          "unit_id": "B296:da645ade73c4c20f",
+          "core_case": true
+        },
+        {
+          "id": "B296-N13",
+          "unit_id": "B296:da645ade73c4c20f",
+          "core_case": true
+        },
+        {
+          "id": "B296-N14",
+          "unit_id": "B296:da645ade73c4c20f",
+          "core_case": true
+        },
+        {
+          "id": "B296-N15",
+          "unit_id": "B296:da645ade73c4c20f",
+          "core_case": true
+        },
+        {
+          "id": "B296-N16",
+          "unit_id": "B296:25ad74edfeab4299",
+          "core_case": false
+        },
+        {
+          "id": "B296-N17",
+          "unit_id": "B296:25ad74edfeab4299",
+          "core_case": false
+        },
+        {
+          "id": "B296-N18",
+          "unit_id": "B296:25ad74edfeab4299",
+          "core_case": true
+        }
+      ]
+    }
+  ],
+  "core_reference_count": 84,
+  "body_units_reviewed": 321,
+  "real_generation_completed": false,
+  "release_status": "blocked_budget_200_of_200",
+  "scope": "Narrative body only; includes explicit group/boundary and rescue controls. Uncertain entries excluded from scored core.",
+  "independence": "Source-first assistant reference; B296 reuses documented development-exposed review, not blind expert gold."
+}

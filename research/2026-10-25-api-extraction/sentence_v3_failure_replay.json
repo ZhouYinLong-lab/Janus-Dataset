@@ -1,0 +1,98 @@
+{
+  "replay_kind": "offline_scalar_contract_only",
+  "api_requests_sent": 0,
+  "recovered_extractions": 0,
+  "old_invalid_records": 4,
+  "passed": true,
+  "source_workspace_manifest_sha256": "d77ed0c2d7e69ef2b708e6bc1c6094064d0cf8b2bc11cc71158686b5cb8567e5",
+  "rows": [
+    {
+      "job_id": "B207_940c05f949c9eba8e131",
+      "candidate_id": "C1",
+      "source_result_sha256": "eb7822542dd2e0df14be2bc79170f9a5094e59c74102397cfbc665fac1c1cbef",
+      "invalid_fields": [
+        "subject"
+      ],
+      "actual_value_types": {
+        "subject": "list"
+      },
+      "still_rejected_without_coercion": true,
+      "errors": [
+        "invalid_value_type:subject"
+      ]
+    },
+    {
+      "job_id": "B235_4fdee8305c49edc77182",
+      "candidate_id": "C2",
+      "source_result_sha256": "0b24c899d033585e3499ddee21d901809ebf1bed9127cdba9061d5a413447650",
+      "invalid_fields": [
+        "subject",
+        "target",
+        "endpoint",
+        "observation"
+      ],
+      "actual_value_types": {
+        "subject": "dict",
+        "target": "dict",
+        "endpoint": "dict",
+        "observation": "dict"
+      },
+      "still_rejected_without_coercion": true,
+      "errors": [
+        "invalid_value_type:subject",
+        "invalid_value_type:target",
+        "invalid_value_type:endpoint",
+        "invalid_value_type:observation"
+      ]
+    },
+    {
+      "job_id": "B235_4fdee8305c49edc77182",
+      "candidate_id": "C3",
+      "source_result_sha256": "68f61cf48b6312ff2a2b32795d5c68630ca5f7ae864247fe8678ed1156e1987a",
+      "invalid_fields": [
+        "subject",
+        "target",
+        "endpoint",
+        "observation"
+      ],
+      "actual_value_types": {
+        "subject": "dict",
+        "target": "dict",
+        "endpoint": "dict",
+        "observation": "dict"
+      },
+      "still_rejected_without_coercion": true,
+      "errors": [
+        "invalid_value_type:subject",
+        "invalid_value_type:target",
+        "invalid_value_type:endpoint",
+        "invalid_value_type:observation"
+      ]
+    },
+    {
+      "job_id": "B235_4fdee8305c49edc77182",
+      "candidate_id": "C5",
+      "source_result_sha256": "11cf1f93a32dd2f9f2a9cd692c86b314557fec44e3068fd461280c0bd05f6bd5",
+      "invalid_fields": [
+        "subject",
+        "target",
+        "endpoint",
+        "observation"
+      ],
+      "actual_value_types": {
+        "subject": "dict",
+        "target": "dict",
+        "endpoint": "dict",
+        "observation": "dict"
+      },
+      "still_rejected_without_coercion": true,
+      "errors": [
+        "invalid_value_type:subject",
+        "invalid_value_type:target",
+        "invalid_value_type:endpoint",
+        "invalid_value_type:observation"
+      ]
+    }
+  ],
+  "limitation": "Original object/list values are kept intact and rejected. Evidence IDs are rebound only to exercise the scalar contract; this is not a content-supported extraction or a model improvement measurement."
+}

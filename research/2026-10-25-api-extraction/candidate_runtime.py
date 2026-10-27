@@ -1,4 +1,4 @@
-"""Serial v2 runner. All sends require live=True; injected clients need no key.
+"""Serial v2/v3 runner. All sends require live=True; injected clients need no key.
 
 The original batch_budget owns reservations and final accounting. The adjacent
 *.candidate_index.json and *.candidate_run.lock files provide v2 identity and
@@ -25,6 +25,14 @@ import candidate_context
 from corpus import read, save, sha
 
 
+SENTENCE_PIPELINE = 'molgluedb_sentence_v3'
+_SENTENCE_PROTOCOL_FILES = frozenset({
+    'discovery_v3.md', 'facts_v3.md', 'conditions_v3.md',
+    'discovery_schema.json', 'discovery_example.json',
+    'facts_schema.json', 'facts_example.json',
+    'conditions_schema.json', 'conditions_example.json', 'sentence_protocol.json'})
+
+
 class IntegrityError(ValueError):
     """Frozen input, dependency or saved artifact failed verification."""
 
@@ -46,6 +54,22 @@ def _checked(workspace, name, digest):
     if not digest or not path.is_file() or sha(path) != digest:
         raise IntegrityError('Saved artifact hash mismatch: ' + str(name))
     return path
+
+
+def _verify_workspace(workspace):
+    from candidate_workspace import verify
+    manifest = read(Path(workspace) / 'manifest.json')
+    if manifest.get('pipeline') != SENTENCE_PIPELINE:
+        return verify(workspace)
+    from sentence_workspace import verify as verify_sentence
+    try:
+        return verify_sentence(workspace)
+    except ValueError as exc:
+        raise IntegrityError(str(exc)) from exc
+
+
+def _task_key(jid, stage, group=0):
+    return jid + ':' + stage + (f':{group:03d}' if stage in {'enrichment', 'facts', 'conditions'} else '')
 
 
 def _audit(path, event):
@@ -165,14 +189,23 @@ def _portable(value):
 
 
 def _logical(job, stage, candidates, request, config, manifest):
-    return _digest({'scope': _scope(job), 'paper_id': job['paper_id'],
+    sentence = manifest['pipeline'] == SENTENCE_PIPELINE
+    prompts = {k: v for k, v in manifest['file_hashes'].items()
+               if (k in _SENTENCE_PROTOCOL_FILES if sentence else
+                   not k.startswith(('jobs/', 'documents/')))}
+    identity = {'scope': _scope(job), 'paper_id': job['paper_id'],
                     'stage': stage, 'candidates': _portable(candidates),
                     'request': _portable(request),
                     'config': {k: v for k, v in config.items()
                                if k not in {'max_requests', 'max_reserved_tokens', 'api_key_env'}},
-                    'prompts': {k: v for k, v in manifest['file_hashes'].items()
-                                if not k.startswith(('jobs/', 'documents/'))},
-                    'code_hashes': manifest['code_hashes']})
+                    'prompts': prompts,
+                    'code_hashes': manifest['code_hashes']}
+    if sentence:
+        identity.update(pipeline=SENTENCE_PIPELINE, protocol=job['protocol'],
+                        discovery_result_sha256=job.get('discovery_result_sha256'),
+                        facts_result_sha256=job.get('facts_result_sha256'),
+                        frozen_context=_portable(job.get('frozen_context')))
+    return _digest(identity)
 
 
 def _entry(jid, stage, group, dependency=None):
@@ -184,7 +217,12 @@ def _entry(jid, stage, group, dependency=None):
 
 
 def _check_state(workspace, state):
-    for entry in state['tasks'].values():
+    sentence = state.get('pipeline') == SENTENCE_PIPELINE
+    for tid, entry in state['tasks'].items():
+        if sentence and (entry['stage'] not in {'discovery', 'facts', 'conditions'} or
+                         type(entry['group']) is not int or entry['group'] < 0 or
+                         tid != _task_key(entry['job_id'], entry['stage'], entry['group'])):
+            raise IntegrityError('Invalid sentence task identity')
         for kind in ('request', 'response', 'result'):
             if entry.get(kind + '_sha256'):
                 _checked(workspace, entry[kind + '_path'], entry[kind + '_sha256'])
@@ -192,19 +230,54 @@ def _check_state(workspace, state):
             _checked(workspace, entry['result_path'], entry['result_sha256'])
             _checked(workspace, entry['response_path'], entry['response_sha256'])
             _checked(workspace, entry['request_path'], entry['request_sha256'])
-        if entry['stage'] == 'enrichment':
+        if entry['stage'] in {'enrichment', 'facts', 'conditions'}:
             discovery_entry = state['tasks'].get(entry['job_id'] + ':discovery', {})
             if (discovery_entry.get('status') != 'complete' or
                     discovery_entry.get('result_sha256') != entry['discovery_result_sha256']):
                 raise IntegrityError('Enrichment discovery dependency changed')
             if entry['job_id'] not in state.get('groups', {}):
                 raise IntegrityError('Enrichment has no frozen context groups')
+            if sentence:
+                descriptor = (state.get('condition_groups', {}).get(tid)
+                              if entry['stage'] == 'conditions' else state['groups'][entry['job_id']])
+                if not descriptor or entry.get('context_plan_sha256') != descriptor['sha256']:
+                    raise IntegrityError('Sentence context plan dependency changed')
+                if entry['stage'] == 'conditions':
+                    if entry.get('facts_result_sha256') != descriptor['facts_result_sha256']:
+                        raise IntegrityError('Conditions facts dependency changed')
     for jid, descriptor in state.get('groups', {}).items():
         frozen = read(_checked(workspace, descriptor['path'], descriptor['sha256']))
         dependency = state['tasks'][jid + ':discovery']['result_sha256']
         if (frozen['discovery_result_sha256'] != dependency
                 or descriptor['discovery_result_sha256'] != dependency):
             raise IntegrityError('Frozen groups discovery dependency changed')
+        if sentence:
+            for entry in state['tasks'].values():
+                if entry['job_id'] == jid and entry['stage'] in {'facts', 'conditions'}:
+                    _group_at(frozen['groups'], entry['group'])
+    for tid, descriptor in state.get('condition_groups', {}).items():
+        frozen = read(_checked(workspace, descriptor['path'], descriptor['sha256']))
+        jid, group = descriptor['job_id'], descriptor['group']
+        facts = state['tasks'].get(_task_key(jid, 'facts', group), {})
+        groups = state.get('groups', {}).get(jid, {})
+        if (tid != _task_key(jid, 'conditions', group) or facts.get('status') != 'complete' or
+                descriptor['facts_result_sha256'] != facts.get('result_sha256') or
+                frozen['facts_result_sha256'] != facts.get('result_sha256') or
+                frozen['facts_context_sha256'] != groups.get('sha256') or
+                descriptor['facts_context_sha256'] != groups.get('sha256') or
+                frozen['discovery_result_sha256'] != facts.get('discovery_result_sha256')):
+            raise IntegrityError('Frozen conditions dependency changed')
+        condition = state['tasks'].get(tid)
+        if condition and frozen['group'] is None:
+            raise IntegrityError('Conditions task has no planned context')
+        if frozen['group'] is None and descriptor.get('reason') != frozen.get('reason'):
+            raise IntegrityError('Frozen conditions reason changed')
+
+
+def _group_at(groups, group):
+    if type(group) is not int or not 0 <= group < len(groups):
+        raise IntegrityError('Frozen group index changed')
+    return groups[group]
 
 
 def _groups(workspace, state, job):
@@ -217,13 +290,29 @@ def _groups(workspace, state, job):
         frozen = read(_checked(workspace, descriptor['path'], descriptor['sha256']))
     else:
         candidates = read(_checked(workspace, entry['result_path'], dependency))['accepted']
-        groups = candidate_context.plan_candidate_groups(deepcopy(job), deepcopy(candidates))
+        sentence = job.get('protocol') == 'sentence_v3'
+        if sentence:
+            from sentence_workflow import plan_facts
+            groups = plan_facts(deepcopy(job), deepcopy(candidates))
+        else:
+            groups = candidate_context.plan_candidate_groups(deepcopy(job), deepcopy(candidates))
         if not isinstance(groups, list) or any(
                 not isinstance(g, dict) or not all(k in g for k in
                     ('candidates', 'candidate_contexts', 'context_units')) for g in groups):
             raise ValueError('Invalid candidate group plan')
+        if sentence and any(len(g['candidates']) != 1 or any(
+                not isinstance(g.get(k), list) for k in
+                ('candidates', 'sentences', 'candidate_contexts', 'context_units')) for g in groups):
+            raise ValueError('Facts require one candidate and sentence context per group')
         planned = [c for g in groups for c in g['candidates']]
-        if sorted(map(_digest, planned)) != sorted(map(_digest, candidates)):
+        expected = candidates
+        if sentence:
+            # The facts adapter may add the explicit anchor alias required by
+            # its validator, while all discovery evidence must stay identical.
+            expected = [dict(c, anchor_sentence_ids=c['sentence_ids']) for c in candidates]
+            planned = [dict(c, anchor_sentence_ids=c.get('anchor_sentence_ids', c.get('sentence_ids')))
+                       for c in planned]
+        if sorted(map(_digest, planned)) != sorted(map(_digest, expected)):
             raise IntegrityError('Group plan lost or duplicated discovery candidates')
         frozen = {'discovery_result_sha256': dependency, 'groups': groups}
         if _path(workspace, path).exists():
@@ -241,25 +330,92 @@ def _groups(workspace, state, job):
     return frozen['groups']
 
 
+def _condition_group(workspace, state, job, group):
+    """Freeze one optional conditions plan per facts group, including None."""
+    jid = job['job_id']
+    tid = _task_key(jid, 'conditions', group)
+    descriptors = state.setdefault('condition_groups', {})
+    descriptor = descriptors.get(tid)
+    facts = state['tasks'][_task_key(jid, 'facts', group)]
+    if facts['status'] != 'complete':
+        raise IntegrityError('Conditions require complete facts')
+    if descriptor:
+        frozen = read(_checked(workspace, descriptor['path'], descriptor['sha256']))
+    else:
+        from sentence_workflow import plan_conditions
+        context = _group_at(_groups(workspace, state, job), group)
+        result = read(_checked(workspace, facts['result_path'], facts['result_sha256']))
+        effective = dict(deepcopy(job), frozen_context=deepcopy(context), active_stage='conditions',
+                         facts_result_sha256=facts['result_sha256'],
+                         discovery_result_sha256=facts['discovery_result_sha256'])
+        plan = plan_conditions(effective, deepcopy(result), deepcopy(context['candidates'][0]))
+        if plan is not None and (not isinstance(plan, dict) or any(
+                not isinstance(plan.get(k), list) for k in
+                ('candidates', 'sentences', 'candidate_contexts', 'context_units')) or
+                plan['candidates'] != context['candidates']):
+            raise ValueError('Invalid conditions group plan')
+        frozen = {'group': plan, 'facts_result_sha256': facts['result_sha256'],
+                  'discovery_result_sha256': facts['discovery_result_sha256'],
+                  'facts_context_sha256': state['groups'][jid]['sha256']}
+        if plan is None:
+            required = any(
+                record.get('endpoint_verification_required') or
+                record.get('record_status') == 'semantic_pending' or
+                (record.get('outcome_type') == 'conditional_loss' and
+                 not record.get('values', {}).get('scope_condition'))
+                for record in (item['record'] for item in result['accepted']))
+            frozen['reason'] = ('required_context_unavailable_or_already_supplied'
+                                if required else 'not_needed')
+        path = f'groups/{jid}_conditions_{group:03d}.json'
+        if _path(workspace, path).exists():
+            if read(_path(workspace, path)) != frozen:
+                raise IntegrityError('Unbound frozen conditions plan changed')
+        else:
+            save(_path(workspace, path), frozen)
+        descriptors[tid] = {'path': path, 'sha256': sha(_path(workspace, path)),
+                            'job_id': jid, 'group': group,
+                            'facts_result_sha256': facts['result_sha256'],
+                            'facts_context_sha256': state['groups'][jid]['sha256']}
+        if plan is None:
+            descriptors[tid]['reason'] = frozen['reason']
+        save(Path(workspace) / 'candidate_state.json', state)
+    if (frozen['facts_result_sha256'] != facts['result_sha256'] or
+            frozen['discovery_result_sha256'] != facts['discovery_result_sha256'] or
+            frozen['facts_context_sha256'] != state['groups'][jid]['sha256']):
+        raise IntegrityError('Conditions plan dependency changed')
+    return frozen['group']
+
+
 def _material(workspace, state, entry):
     job = read(_path(workspace, f'jobs/{entry["job_id"]}.json'))
     candidates = None
-    if entry['stage'] == 'enrichment':
+    job['active_stage'] = entry['stage']
+    if entry['stage'] in {'enrichment', 'facts', 'conditions'}:
         groups = _groups(workspace, state, job)
-        try:
-            frozen = groups[entry['group']]
-        except IndexError:
-            raise IntegrityError('Frozen group index changed') from None
+        frozen = (_condition_group(workspace, state, job, entry['group'])
+                  if entry['stage'] == 'conditions' else _group_at(groups, entry['group']))
+        if frozen is None:
+            raise IntegrityError('Missing frozen conditions context')
         job['frozen_context'] = deepcopy(frozen)
         candidates = deepcopy(frozen['candidates'])
+        job['discovery_result_sha256'] = entry['discovery_result_sha256']
+        if entry['stage'] == 'conditions':
+            job['facts_result_sha256'] = entry['facts_result_sha256']
     return job, candidates
 
 
 def _validate(workspace, entry, job, candidates, validator):
     envelope = read(_checked(workspace, entry['response_path'], entry['response_sha256']))
     payload = parse_completion(envelope)
-    result = (discovery(payload, job) if entry['stage'] == 'discovery'
-              else validator(payload, job, candidates))
+    job['active_stage'] = entry['stage']
+    if entry['stage'] == 'discovery':
+        if job.get('protocol') == 'sentence_v3':
+            from sentence_v3 import validate_discovery
+            result = validate_discovery(payload, job)
+        else:
+            result = discovery(payload, job)
+    else:
+        result = validator(payload, job, candidates)
     if not isinstance(result, dict) or any(not isinstance(result.get(k, []), list)
                                           for k in ('accepted', 'rejected', 'unresolved')):
         raise ValueError('Invalid validator result contract')
@@ -368,7 +524,7 @@ def _refresh_index(index, ledger_path):
                 _checked(workspace, entry['response_path'], entry['response_sha256'])
                 continue
             jid = (entry['job_id'] if entry else
-                   re.split(r':(?:discovery|enrichment)(?::\d+)?$', tid)[0])
+                   re.split(r':(?:discovery|enrichment|facts|conditions)(?::\d+)?$', tid)[0])
             job = read(_path(workspace, f'jobs/{jid}.json'))
             unknowns.append({'attempt_id': attempt['attempt_id'], 'scope': _scope(job),
                              'workspace': str(workspace), 'task': tid})
@@ -409,7 +565,7 @@ def _legacy_discovery(workspace, entry, request, job, ledger_path, provider):
     request, envelope and result files remain untouched, with all three hashes
     checked before copying. Old enrichment never enters this path.
     """
-    if entry['stage'] != 'discovery':
+    if entry['stage'] != 'discovery' or job.get('protocol') == 'sentence_v3':
         return False
     parsed = urlsplit(provider)
     normalized = urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(),
@@ -466,7 +622,6 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
     callback errors propagate. max_new_requests=0 is an offline invocation cap.
     No client or credentials are constructed until a permitted send is needed.
     """
-    from candidate_workspace import verify
     check_config(config)
     if phase not in {'pilot', 'full'}:
         raise ValueError('phase must be pilot or full')
@@ -482,9 +637,10 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
     with ExitStack() as stack:
         stack.enter_context(RunLock(str(ledger_path) + '.candidate_run.lock'))
         stack.enter_context(RunLock(workspace / '.candidate_run.lock'))
-        manifest = verify(workspace)
-        if manifest.get('pipeline') != 'molgluedb_candidates_v2':
-            raise IntegrityError('Expected molgluedb_candidates_v2 manifest')
+        manifest = _verify_workspace(workspace)
+        if manifest.get('pipeline') not in {'molgluedb_candidates_v2', SENTENCE_PIPELINE}:
+            raise IntegrityError('Expected a v2 or sentence_v3 MolGlueDB manifest')
+        sentence = manifest['pipeline'] == SENTENCE_PIPELINE
         identity = _digest({'manifest': sha(workspace / 'manifest.json'),
                             'config': {k: v for k, v in config.items()
                                        if k not in {'max_requests', 'max_reserved_tokens'}},
@@ -492,11 +648,12 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         reference_path = workspace / 'acceptance_reference.json'
         reference_hash = sha(reference_path) if reference_path.is_file() else None
         state = read(state_path) if state_path.exists() else {
-            'version': 2, 'pipeline': manifest['pipeline'], 'identity': identity,
+            'version': 3 if sentence else 2, 'pipeline': manifest['pipeline'], 'identity': identity,
             'config': deepcopy(config), 'reference_sha256': reference_hash, 'network_route': network_route,
             'budget_path': str(ledger_path), 'tasks': {}, 'attempts': [],
             'groups': {}, 'stop_reason': None, 'audit': []}
-        if state['identity'] != identity or state['budget_path'] != str(ledger_path):
+        if (state['identity'] != identity or state['budget_path'] != str(ledger_path) or
+                state.get('pipeline') != manifest['pipeline']):
             raise IntegrityError('Workspace/config/budget identity changed')
         if state.get('config') != config:
             raise IntegrityError('Stored config changed')
@@ -517,18 +674,28 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         def process(job, stage, group=0, candidates=None, dependency=None, frozen=None):
             nonlocal sent, actual_client, secret
             jid = job['job_id']
-            tid = jid + ':' + stage + (f':{group:03d}' if stage == 'enrichment' else '')
+            tid = _task_key(jid, stage, group)
             previous = state['tasks'].get(tid)
             if previous and previous['status'] not in {'pending', 'blocked_unknown_scope',
                                                        'blocked_unknown_mapping'}:
                 return True  # Completed and uncertain tasks are never resent.
             effective_job = deepcopy(job)
+            effective_job['active_stage'] = stage
             if frozen is not None:
                 effective_job['frozen_context'] = deepcopy(frozen)
+            if sentence:
+                effective_job['discovery_result_sha256'] = dependency
+                if stage == 'conditions':
+                    effective_job['facts_result_sha256'] = state['tasks'][_task_key(jid, 'facts', group)]['result_sha256']
             request = request_builder(workspace, effective_job, stage, config,
                                       candidates=deepcopy(candidates), discovery_hash=dependency)
             logical = _logical(effective_job, stage, candidates, request, config, manifest)
             entry = _entry(jid, stage, group, dependency)
+            if sentence and stage in {'facts', 'conditions'}:
+                descriptor = (state['condition_groups'][tid] if stage == 'conditions' else state['groups'][jid])
+                entry['context_plan_sha256'] = descriptor['sha256']
+                if stage == 'conditions':
+                    entry['facts_result_sha256'] = descriptor['facts_result_sha256']
             entry['logical_id'] = logical
             record = index['tasks'].get(logical)
             if record and record['status'] == 'complete':
@@ -541,7 +708,7 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                 state['tasks'][tid] = entry
                 persist()
                 return True
-            if _legacy_discovery(workspace, entry, request, effective_job,
+            if not sentence and _legacy_discovery(workspace, entry, request, effective_job,
                                  ledger_path, config['base_url']):
                 state['tasks'][tid] = entry
                 index['tasks'][logical] = _record(workspace, tid, entry, job)
@@ -583,6 +750,11 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                 return False
             if sum(a['reserved_tokens'] for a in attempts) + tokens > config['max_reserved_tokens']:
                 state['stop_reason'] = 'workspace_token_reservation_budget'
+                return False
+            ledger = read(ledger_path)
+            if (len(ledger['attempts']) >= ledger['max_requests'] or
+                    sum(a['reserved_tokens'] for a in ledger['attempts']) + tokens > ledger['max_reserved_tokens']):
+                state['stop_reason'] = 'Shared request/token budget exhausted'
                 return False
             if actual_client is None:
                 from credentials import load_key
@@ -697,9 +869,19 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                             continue
                         groups = _groups(workspace, state, job)
                         for n, frozen in enumerate(groups):
-                            if not process(job, 'enrichment', n, frozen['candidates'],
+                            stage = 'facts' if sentence else 'enrichment'
+                            if not process(job, stage, n, frozen['candidates'],
                                            discovered['result_sha256'], frozen):
                                 return state
+                            if sentence:
+                                facts = state['tasks'][_task_key(jid, 'facts', n)]
+                                if facts['status'] != 'complete':
+                                    continue
+                                condition = _condition_group(workspace, state, job, n)
+                                if condition is not None and not process(
+                                        job, 'conditions', n, condition['candidates'],
+                                        discovered['result_sha256'], condition):
+                                    return state
                 finally:
                     persist()
                     progress()
