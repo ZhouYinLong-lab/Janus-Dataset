@@ -64,8 +64,17 @@ def prepare(release, workspaces, out, supplements=None, seed=20261027, split_pla
         segments = [s for s in (r['original_quote'] or '').split('\n') if s.strip()]
         if not segments or not all(any(s in u['text'] for u in units.values()) for s in segments):
             raise ValueError('Original quote is not in the frozen source')
-        if not r.get('sources') or any(not s.get('task_id') or not s.get('response_sha256')
-                                       for s in r['sources']):
+        # Two provenance classes are accepted and never conflated: API responses
+        # carry response_sha256; subagent-written rows declare provenance_kind and
+        # a worker/generation method. Missing both is still held out.
+        sources = r.get('sources') or []
+        if not sources or any(not s.get('task_id') for s in sources):
+            held.append({'record_key': r.get('record_key'), 'reason': 'response_provenance_missing'})
+            continue
+        api_provenance = all(s.get('response_sha256') for s in sources)
+        subagent_provenance = (r.get('provenance_kind') == 'subagent' and
+                               all(s.get('worker_id') or s.get('generation_method') for s in sources))
+        if not (api_provenance or subagent_provenance):
             held.append({'record_key': r.get('record_key'), 'reason': 'response_provenance_missing'})
             continue
         # Explicit curator decision governs admission; stale mechanical flags are preserved below.
