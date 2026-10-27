@@ -29,6 +29,13 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def sha256_files(paths) -> dict[str, str]:
+    """Hash existing files with stable, collision-free path keys."""
+
+    files = sorted({Path(path).resolve() for path in paths if Path(path).is_file()})
+    return {path.as_posix(): sha256_file(path) for path in files}
+
+
 def stable_id(prefix: str, value) -> str:
     return prefix + curation_overlay.sha256_json(value)[:20]
 
@@ -370,6 +377,8 @@ def build(args) -> dict:
     write_json(output / "paper_coverage.json", paper_coverage); write_csv(output / "paper_coverage.csv", paper_coverage)
     context_coverage = read(run / "exports" / "context_coverage.json")
     write_json(output / "context_coverage.json", context_coverage); write_csv(output / "context_coverage.csv", context_coverage)
+    failures = read(run / "exports" / "failures.json")
+    write_json(output / "failures.json", failures); write_csv(output / "failures.csv", failures)
 
     overlap = [{"evidence_id": curation_overlay.record_id(row), "paper_id": row.get("paper_id"),
                 "doi": row.get("doi"), "database_overlap": row["database_overlap"],
@@ -433,6 +442,8 @@ def build(args) -> dict:
         "review_b_complete": second_reviewed, "review_b_required": len(records),
         "external_generation_api_requests": 0, "expert_gold": False,
         "zero_candidate_audit": str(args.zero_audit), "positive_candidates": len(positives),
+        "sample_omission_audit": str(args.sample_audit) if args.sample_audit else None,
+        "failure_count": len(failures),
         "split_counts": dict(Counter(split_by_paper.values())),
     }
     write_json(output / "run_report.json", report)
@@ -448,18 +459,38 @@ def build(args) -> dict:
 
     output_files = sorted(path for path in output.iterdir() if path.is_file()
                           and path.name != "release_manifest.json")
+    input_files = [
+        args.inventory, args.workspace_manifest, args.ledger,
+        args.mg2act_associations, args.reference, args.zero_audit,
+        run / "exports" / "run_report.json",
+        run / "exports" / "reliable_evidence.json",
+        run / "exports" / "pending_review.json",
+        run / "exports" / "excluded_records.json",
+        run / "exports" / "paper_coverage.json",
+        run / "exports" / "context_coverage.json",
+        run / "exports" / "failures.json",
+    ]
+    if args.sample_audit:
+        input_files.append(args.sample_audit)
+    if args.adjudications.is_file():
+        input_files.append(args.adjudications)
+    input_files.extend(args.review_b.glob("*.jsonl"))
+    input_files.extend(args.positive_inputs.glob("positive_*.json"))
+    schema_files = list(workspace.glob("*_schema.json")) + list(workspace.glob("*_example.json"))
+    code_files = [
+        Path(__file__), Path(__file__).with_name("curation_overlay.py"),
+        Path(__file__).with_name("known_corrections_v1.py"),
+        Path(__file__).with_name("zero_candidate_audit_v1.py"),
+        Path(__file__).with_name("sample_omission_audit_v1.py"),
+        Path(__file__).with_name("reference_recall_v1.py"),
+    ]
     manifest = {
         "release_id": "molglue_negative_v1_20261027", "status": release_status,
         "created_utc": time.time(), "expert_gold": False,
-        "input_hashes": {
-            "inventory": sha256_file(args.inventory),
-            "workspace_manifest": sha256_file(args.workspace_manifest),
-            "baseline_run_report": sha256_file(run / "exports" / "run_report.json"),
-            "curation_history": sha256_file(args.ledger),
-        },
+        "input_hashes": sha256_files(input_files),
         "output_hashes": {path.name: sha256_file(path) for path in output_files},
-        "code_hashes": {path.name: sha256_file(path) for path in
-                        (Path(__file__), Path(__file__).with_name("curation_overlay.py"))},
+        "schema_hashes": sha256_files(schema_files),
+        "code_hashes": sha256_files(code_files),
         "external_generation_api_requests": 0,
     }
     write_json(output / "release_manifest.json", manifest)
@@ -478,6 +509,7 @@ if __name__ == "__main__":
     parser.add_argument("--mg2act-associations", required=True, type=Path)
     parser.add_argument("--positive-inputs", required=True, type=Path)
     parser.add_argument("--zero-audit", required=True, type=Path)
+    parser.add_argument("--sample-audit", type=Path)
     parser.add_argument("--reference", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     arguments = parser.parse_args()

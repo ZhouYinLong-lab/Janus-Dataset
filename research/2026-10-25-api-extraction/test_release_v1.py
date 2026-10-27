@@ -54,3 +54,14 @@ def test_split_keeps_blocked_benchmark_doi_out_of_train():
     splits = release_v1.make_paper_splits(papers, dois, blocked)
     assert splits["P0"] != "train"
     assert splits["P1"] != "train"
+
+
+def test_manifest_hashes_only_existing_files(tmp_path):
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    missing = tmp_path / "missing.json"
+    first.write_text("one", encoding="utf-8")
+    second.write_text("two", encoding="utf-8")
+    hashes = release_v1.sha256_files([second, missing, first, first])
+    assert list(hashes) == sorted([first.resolve().as_posix(), second.resolve().as_posix()])
+    assert len(set(hashes.values())) == 2
