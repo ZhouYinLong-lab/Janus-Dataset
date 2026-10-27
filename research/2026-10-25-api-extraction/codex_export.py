@@ -171,6 +171,11 @@ def export(run_dir, inventory_path, workspace_manifest_path):
     records_by_paper = defaultdict(list)
     for row in raw_records:
         records_by_paper[row.get("paper_id")].append(row)
+    partition_by_paper = defaultdict(Counter)
+    for status, rows in (("reliable", reliable), ("pending_review", pending),
+                         ("excluded", excluded)):
+        for row in rows:
+            partition_by_paper[row.get("paper_id")][status] += 1
     for paper in inventory:
         pid = paper.get("paper_id")
         mp = manifest_papers.get(pid, {})
@@ -186,23 +191,31 @@ def export(run_dir, inventory_path, workspace_manifest_path):
             status = "ready_unprocessed"
         else:
             status = "input_gap"
+        partition = partition_by_paper[pid]
+        partition_total = sum(partition.values())
         paper_rows.append({"paper_id": pid, "doi": paper.get("doi"), "title": paper.get("title"),
                            "status": status, "source_kind": source_kind,
                            "source_sha256": paper.get("source_sha256") or mp.get("source_sha256"),
                            "task_count": summary.get("task_count", len(mp.get("job_ids", []))),
                            "completed_tasks": summary.get("completed_tasks", 0),
-                           "candidate_count": summary.get("candidate_count", 0),
-                           "reliable_count": summary.get("reliable_evidence_count", summary.get("reliable_count", 0)),
-                           "pending_count": summary.get("pending_review_count", 0),
+                           "raw_candidate_count": summary.get("candidate_count", 0),
+                           "candidate_count": partition_total,
+                           "reliable_count": partition["reliable"],
+                           "pending_count": partition["pending_review"],
+                           "excluded_count": partition["excluded"],
+                           "partition_total": partition_total,
                            "failed_tasks": summary.get("failed_tasks", 0)})
         if pid in summaries:
             context_rows.append({"paper_id": pid, "source_sha256": summary.get("source_sha256"),
                                  "task_count": summary.get("task_count", 0),
                                  "completed_tasks": summary.get("completed_tasks", 0),
                                  "failed_tasks": summary.get("failed_tasks", 0),
-                                 "candidate_count": summary.get("candidate_count", 0),
-                                 "reliable_count": summary.get("reliable_evidence_count", summary.get("reliable_count", 0)),
-                                 "pending_count": summary.get("pending_review_count", 0),
+                                 "raw_candidate_count": summary.get("candidate_count", 0),
+                                 "candidate_count": partition_total,
+                                 "reliable_count": partition["reliable"],
+                                 "pending_count": partition["pending_review"],
+                                 "excluded_count": partition["excluded"],
+                                 "partition_total": partition_total,
                                  "api_requests": summary.get("api_requests", 0),
                                  "usage": summary.get("usage"),
                                  "review_status": "model_assisted_not_expert_gold"})
@@ -213,6 +226,9 @@ def export(run_dir, inventory_path, workspace_manifest_path):
                        ("failures", failures)):
         (out / f"{name}.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
         _write_csv(out / f"{name}.csv", rows)
+    coverage_violations = [row["paper_id"] for row in paper_rows
+                           if row["candidate_count"] != row["reliable_count"] +
+                           row["pending_count"] + row["excluded_count"]]
     report = {"run_id": "codex_luna_run_20261027", "generation_method": "Codex subagent",
               "model_label": "Luna High; worker metadata authoritative when available",
               "external_generation_api_used": False, "api_requests_sent": 0,
@@ -220,6 +236,7 @@ def export(run_dir, inventory_path, workspace_manifest_path):
               "records_raw": len(raw_records), "records_deduplicated": len(reliable) + len(pending) + len(excluded),
               "reliable_count": len(reliable), "pending_review_count": len(pending),
               "excluded_count": len(excluded), "failure_count": len(failures),
+              "coverage_partition_violations": coverage_violations,
               "paper_status_counts": dict(Counter(row["status"] for row in paper_rows)),
               "source_inventory_sha256": hashlib.sha256(Path(inventory_path).read_bytes()).hexdigest(),
               "workspace_manifest_sha256": hashlib.sha256(Path(workspace_manifest_path).read_bytes()).hexdigest(),

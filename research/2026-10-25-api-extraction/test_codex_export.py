@@ -35,6 +35,13 @@ class CodexExportTests(unittest.TestCase):
             self.assertEqual(report["records_raw"], 2)
             self.assertEqual(report["records_deduplicated"], 1)
             self.assertEqual(report["paper_status_counts"]["fulltext_missing"], 1)
+            self.assertEqual(report["coverage_partition_violations"], [])
+            coverage = json.loads((run / "exports" / "paper_coverage.json").read_text(encoding="utf-8"))
+            p1 = next(row for row in coverage if row["paper_id"] == "P1")
+            self.assertEqual(p1["raw_candidate_count"], 2)
+            self.assertEqual(p1["candidate_count"], 1)
+            self.assertEqual(p1["partition_total"], 1)
+            self.assertEqual(p1["excluded_count"], 0)
             self.assertTrue((run / "exports" / "reliable_evidence.json").is_file())
 
     def test_reads_partitioned_worker_outputs(self):
