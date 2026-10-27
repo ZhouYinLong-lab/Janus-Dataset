@@ -26,7 +26,8 @@ def _write_csv(path, rows):
                              for key, value in row.items()})
 
 
-def build(papers_path, workspace_path, out_path):
+def build(papers_path, workspace_path, out_path, baseline_report=None,
+          baseline_inventory=None, baseline_workspace_manifest=None):
     papers_path = Path(papers_path).resolve()
     workspace_path = Path(workspace_path).resolve()
     out_path = Path(out_path).resolve()
@@ -77,6 +78,18 @@ def build(papers_path, workspace_path, out_path):
 
     dois = [row.get('doi', '').strip().lower() for row in rows if row.get('doi')]
     source_ids = [row.get('source_id') for row in rows if row.get('source_id')]
+    baseline = None
+    if baseline_report:
+        baseline = json.loads(Path(baseline_report).read_text(encoding='utf-8'))
+    old_inventory_unchanged = True
+    old_workspace_unchanged = True
+    if baseline:
+        old_inventory_unchanged = (
+            _sha(Path(baseline_inventory)) == baseline['inventory_sha256']
+            if baseline_inventory else True)
+        old_workspace_unchanged = (
+            _sha(Path(baseline_workspace_manifest)) == baseline['workspace_manifest_sha256']
+            if baseline_workspace_manifest else True)
     report = {
         'schema_version': 1,
         'inventory_sha256': _sha(papers_path),
@@ -91,8 +104,8 @@ def build(papers_path, workspace_path, out_path):
                                       for row in rows if row['fulltext_status'] == 'local_fulltext'),
         'sentence_job_count': sum(row['sentence_job_count'] for row in rows),
         'api_requests_sent': 0,
-        'old_inventory_unchanged': True,
-        'old_workspace_unchanged': True,
+        'old_inventory_unchanged': old_inventory_unchanged,
+        'old_workspace_unchanged': old_workspace_unchanged,
     }
     if report['paper_count'] != 193 or report['paper_id_duplicates'] or report['doi_duplicates'] \
             or report['source_id_duplicates'] or report['source_hash_mismatches']:
@@ -111,5 +124,10 @@ if __name__ == '__main__':
     parser.add_argument('--papers', required=True, type=Path)
     parser.add_argument('--workspace', required=True, type=Path)
     parser.add_argument('--out', required=True, type=Path)
+    parser.add_argument('--baseline-report', type=Path)
+    parser.add_argument('--baseline-inventory', type=Path)
+    parser.add_argument('--baseline-workspace-manifest', type=Path)
     args = parser.parse_args()
-    print(json.dumps(build(args.papers, args.workspace, args.out), ensure_ascii=False, indent=2))
+    print(json.dumps(build(args.papers, args.workspace, args.out, args.baseline_report,
+                           args.baseline_inventory, args.baseline_workspace_manifest),
+                     ensure_ascii=False, indent=2))
