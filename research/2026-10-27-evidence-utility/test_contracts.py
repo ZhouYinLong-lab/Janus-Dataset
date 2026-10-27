@@ -107,6 +107,18 @@ class Contracts(unittest.TestCase):
         assign_splits(original)
         self.assertEqual(rows, original)
 
+    def test_explicit_holdout_plan_and_source_tampering(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            release, ws, sup = fixture(root)
+            write(root / 'splits.json', {'10.0000/synthetic0': 'test'})
+            prepare(release, [ws], root / 'bundle', sup, split_plan=root / 'splits.json')
+            self.assertTrue(all(r['split'] == 'test' for r in read(root / 'bundle/evidence.json')
+                                if r['doi'] == '10.0000/synthetic0'))
+            (root / 'SYNTHETIC_0.txt').write_text('Changed content', encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'hash mismatch'):
+                verify(root / 'bundle')
+
 
 if __name__ == '__main__':
     unittest.main()

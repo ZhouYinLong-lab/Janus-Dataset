@@ -59,6 +59,11 @@ def validate_questions(questions):
                 not isinstance(q.get('rubric'), list) or not q['rubric'] or
                 q.get('gold_status') not in {'assistant_reviewed', 'expert_reviewed'}):
             raise ValueError('Question needs identity/protocol/split/source_dois/rubric/gold_status')
+        criteria = q['rubric']
+        if (any(not isinstance(c, dict) or not isinstance(c.get('id'), str) or not c['id'] or
+                not isinstance(c.get('text'), str) or not c['text'] for c in criteria) or
+                len({c['id'] for c in criteria}) != len(criteria)):
+            raise ValueError('Rubric needs unique criterion IDs and descriptions')
         ids.append(q['question_id'])
     if not ids or len(ids) != len(set(ids)):
         raise ValueError('Missing/duplicate question IDs')
@@ -82,7 +87,7 @@ def prepare_rag(bundle, questions, config, out, base_chars=3000, extra_chars=600
 
         def eligible(r):
             if q['protocol'] == 'new_combination':
-                return r.get('split') == 'train' and doi(r.get('doi')) not in excluded
+                return r.get('split') == 'train' and bool(r.get('doi')) and doi(r['doi']) not in excluded
             allowed = {doi(d) for d in q.get('retrieval_dois', [])}
             return not allowed or doi(r.get('doi')) in allowed
 

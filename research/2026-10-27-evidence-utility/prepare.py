@@ -7,7 +7,7 @@ from common import (assign_splits, check_locator, digest, fresh, norm, read, sea
                     sha, source_check, write)
 
 
-def prepare(release, workspaces, out, supplements=None, seed=20261027):
+def prepare(release, workspaces, out, supplements=None, seed=20261027, split_plan=None):
     release = Path(release)
     report = release / 'acceptance_report.json'
     evidence = release / 'reliable_evidence.json'
@@ -88,6 +88,8 @@ def prepare(release, workspaces, out, supplements=None, seed=20261027):
             if key not in docs or not row.get('text') or not row.get('evidence_id'):
                 raise ValueError('Supplement identity/source missing')
             check_locator(row, docs[key][1])
+            for locator in row.get('field_evidence', []):
+                check_locator(locator, docs[key][1])
             rows.append(dict(row, original_quote=row['quote']))
     if not rows:
         raise ValueError('No reviewed evidence admitted')
@@ -95,6 +97,21 @@ def prepare(release, workspaces, out, supplements=None, seed=20261027):
     if len(ids) != len(set(ids)):
         raise ValueError('Duplicate evidence IDs')
     groups = assign_splits(rows, seed)
+    if split_plan:
+        from common import doi
+        inputs.append(Path(split_plan))
+        plan = {doi(k): v for k, v in read(split_plan).items()}
+        if any(v not in {'train', 'val', 'test'} for v in plan.values()):
+            raise ValueError('Split plan values must be train/val/test')
+        overrides = {}
+        for r in rows:
+            requested = plan.get(doi(r.get('doi')))
+            if requested:
+                if r['group_id'] in overrides and overrides[r['group_id']] != requested:
+                    raise ValueError('Conflicting split assignments within one connected source group')
+                overrides[r['group_id']] = requested
+        for r in rows:
+            r['split'] = overrides.get(r['group_id'], r['split'])
     # Raw records use the split of their source, even when there are paper aliases.
     splits = {r['source_sha256']: (r['split'], r['group_id']) for r in rows}
     for r in raw:
@@ -130,4 +147,5 @@ if __name__ == '__main__':
     p.add_argument('--supplements', type=Path)
     p.add_argument('--out', required=True, type=Path)
     p.add_argument('--seed', type=int, default=20261027)
+    p.add_argument('--split-plan', type=Path)
     print(prepare(**vars(p.parse_args())))

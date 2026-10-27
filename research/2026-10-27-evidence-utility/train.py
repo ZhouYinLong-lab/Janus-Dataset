@@ -11,7 +11,14 @@ from rag import validate_questions
 ARMS = ('positive_only', 'domain_control', 'balanced_negative')
 
 
-def prepare_training(bundle, questions, config, out):
+def training_passage(row):
+    # Identical representation for all arms; retain the original and contextual support quotes.
+    quotes = [row.get('original_quote') or row.get('quote')]
+    quotes.extend(e['quote'] for e in row.get('field_evidence', []))
+    return '\n'.join(dict.fromkeys(q for q in quotes if q))
+
+
+def prepare_training(bundle, questions, config, out, benchmark=None):
     verify(bundle)
     rows, cfg, qs = read(Path(bundle) / 'evidence.json'), read(config), read(questions)
     validate_questions(qs)
@@ -42,6 +49,13 @@ def prepare_training(bundle, questions, config, out):
     trainval_dois = {doi(r['doi']) for r in rows if r['split'] in {'train', 'val'} and r.get('doi')}
     if trainval_dois & test_dois:
         blockers.append('test_question_source_overlaps_train_or_val')
+    benchmark_overlaps = []
+    if benchmark:
+        verify(benchmark)
+        benchmark_excluded = set(read(Path(benchmark) / 'overlap_audit.json')['training_excluded_source_dois'])
+        benchmark_overlaps = sorted(trainval_dois & benchmark_excluded)
+        if benchmark_overlaps:
+            blockers.append('mg2act_val_or_test_source_overlaps_train_or_val')
     corpus, stats = {}, {}
     for split in ('train', 'val'):
         kinds = {k: sorted([r for r in rows if r['split'] == split and r['kind'] == k and
@@ -60,22 +74,30 @@ def prepare_training(bundle, questions, config, out):
         for arm, rs in arms.items():
             items = [dict(evidence_id=r['evidence_id'], paper_id=r['paper_id'], doi=r.get('doi'),
                           source_sha256=r['source_sha256'], group_id=r['group_id'], kind=r['kind'],
-                          text=r['text'], review_kind=r.get('review_kind')) for r in rs]
+                          text=training_passage(r), review_kind=r.get('review_kind')) for r in rs]
             random.Random(cfg['seed']).shuffle(items)
             corpus[arm + ':' + split] = items
+            if len({r['group_id'] for r in items}) < (3 if split == 'train' else 1):
+                blockers.append(arm + '_' + split + '_too_few_selected_source_groups')
             stats[arm + ':' + split] = {'records': len(items), 'kind_counts': dict(Counter(r['kind'] for r in items)),
                                          'unique_sources': len({r['source_sha256'] for r in items})}
     out = fresh(out)
     write(out / 'corpora.json', corpus)
     write(out / 'config.json', cfg)
     summary = {'ready': not blockers, 'blockers': sorted(set(blockers)), 'arms': stats,
+               'benchmark_overlapping_dois': benchmark_overlaps,
+               'benchmark_overlap_check_performed': benchmark is not None,
                'training_executed': False, 'base_arm': 'unmodified pretrained model',
                'objective': 'continued causal language modeling of evidence text, not polarity classification',
+               'representation': 'Same verbatim support-quote format in every arm; contextual quotes retained.',
                'balance': '1:1 positive/negative evidence records in balanced_negative; token composition reported at tokenization',
                'tokens_per_arm': cfg['max_steps'] * cfg['micro_batch_size'] * cfg['gradient_accumulation_steps'] * cfg['seq_length'],
                'loss_target_tokens_per_arm': cfg['max_steps'] * cfg['micro_batch_size'] * cfg['gradient_accumulation_steps'] * (cfg['seq_length'] - 1)}
     write(out / 'readiness.json', summary)
-    seal(out, [Path(bundle) / 'manifest.json', questions, config], {'artifact': 'training_material'})
+    inputs = [Path(bundle) / 'manifest.json', questions, config]
+    if benchmark:
+        inputs.append(Path(benchmark) / 'manifest.json')
+    seal(out, inputs, {'artifact': 'training_material'})
     return summary
 
 
@@ -227,6 +249,7 @@ if __name__ == '__main__':
     a = sub.add_parser('prepare')
     for name in ('bundle', 'questions', 'config', 'out'):
         a.add_argument('--' + name, required=True, type=Path)
+    a.add_argument('--benchmark', type=Path)
     a = sub.add_parser('run')
     a.add_argument('--material', type=Path, required=True)
     a.add_argument('--arm', choices=ARMS, required=True)

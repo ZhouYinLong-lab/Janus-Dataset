@@ -82,7 +82,7 @@ class BenchmarkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             fixture(root)
-            with self.assertRaisesRegex(ValueError, 'split counts'):
+            with self.assertRaisesRegex(ValueError, 'input hash'):
                 prepare_benchmark(root / 'data', root / 'flags.csv', root / 'associations.csv',
                                   HERE / 'api.example.json', root / 'official')
             flags = read(root / 'benchmark/labels.json')

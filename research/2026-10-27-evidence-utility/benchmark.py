@@ -6,7 +6,7 @@ import json
 import math
 from pathlib import Path
 
-from common import CORE, digest, doi, finite, fresh, read, seal, verify, write
+from common import CORE, HERE, digest, doi, finite, fresh, read, seal, sha, verify, write
 from rag import retrieve
 
 FEATURES = ('Molecule_SMILES', 'PrimaryTarget', 'PrimaryTarget_UniProtID', 'Target_seq',
@@ -28,10 +28,18 @@ def csv_rows(path):
         return list(csv.DictReader(f))
 
 
-def prepare_benchmark(data_dir, flags, associations, config, out, bundle=None, official=True):
+def prepare_benchmark(data_dir, flags, associations, config, out, bundle=None, official=True, source_manifest=None):
     data_dir = Path(data_dir)
     inputs = [data_dir / (s + '.csv') for s in ('train', 'val', 'test')] + [Path(flags), Path(associations), Path(config)]
     splits = {s: csv_rows(data_dir / (s + '.csv')) for s in ('train', 'val', 'test')}
+    if official:
+        source_manifest = Path(source_manifest) if source_manifest else HERE.parent / '2026-10-26-mg2act-audit/source_manifest.json'
+        frozen = read(source_manifest)
+        expected = {x['path']: x['sha256'] for x in frozen['files']}
+        for s in splits:
+            if sha(data_dir / (s + '.csv')) != expected['MG_data/' + s + '.csv']:
+                raise ValueError('Official benchmark input hash differs: ' + s)
+        inputs.append(source_manifest)
     for split, rows in splits.items():
         if not rows or len({r['id'] for r in rows}) != len(rows):
             raise ValueError('Empty split/duplicate benchmark IDs: ' + split)
@@ -212,6 +220,7 @@ if __name__ == '__main__':
     for name in ('data-dir', 'flags', 'associations', 'config', 'out'):
         a.add_argument('--' + name, type=Path, required=True)
     a.add_argument('--bundle', type=Path)
+    a.add_argument('--source-manifest', type=Path)
     a = sub.add_parser('score')
     for name in ('benchmark', 'predictions', 'out'):
         a.add_argument('--' + name, type=Path, required=True)

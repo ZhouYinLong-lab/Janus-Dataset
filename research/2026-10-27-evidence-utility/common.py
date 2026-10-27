@@ -110,6 +110,8 @@ def assign_splits(rows, seed=20261027):
             keys.append(('doi', doi(r['doi'])))
         if r.get('experiment_id'):
             keys.append(('experiment', r['experiment_id']))
+        if r.get('duplicate_group'):
+            keys.append(('duplicate_group', r['duplicate_group']))
         for key in keys:
             if key in owners:
                 parent[root(i)] = root(owners[key])
