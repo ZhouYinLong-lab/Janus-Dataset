@@ -1,5 +1,6 @@
 import copy
 
+import curation_overlay
 import known_corrections_v1 as known
 
 
@@ -43,3 +44,15 @@ def test_est1036_body_and_caption_are_two_mentions_of_one_experiment():
     assert len({record["experiment_id"] for _ in record["evidence_spans"]}) == 1
     assert record["conditions"]["items"][0]["values"]["tested_concentration"] == "5 μM"
     assert record["final_status"] == "pending_review"
+    assert record["doi"] == "10.1021/acscentsci.2c01317"
+
+
+def test_est1036_wrong_doi_is_repaired_append_only():
+    record = {"evidence_id": known.EST1036_EVIDENCE_ID, "paper_id": "B235",
+              "source_sha256": "s", "doi": "10.1021/jacsau.4c00762"}
+    entry = known.est1036_doi_repair_entry(record)
+    corrected, audit = curation_overlay.apply_ledger(
+        [record], [entry], source_hashes={"B235": "s"})
+    assert corrected[0]["doi"] == known.EST1036_DOI
+    assert audit[0]["before_sha256"] == curation_overlay.sha256_json(record)
+    assert known.est1036_doi_repair_entry(corrected[0]) is None

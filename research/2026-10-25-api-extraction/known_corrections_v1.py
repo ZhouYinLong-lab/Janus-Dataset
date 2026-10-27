@@ -10,6 +10,10 @@ from pathlib import Path
 import curation_overlay
 
 
+EST1036_EVIDENCE_ID = "E_REC_bdbebdfb7c97513258df"
+EST1036_DOI = "10.1021/acscentsci.2c01317"
+
+
 def _read(path: Path):
     return json.loads(path.read_text(encoding="utf-8-sig"))
 
@@ -86,7 +90,7 @@ def est1036_entry(document: dict, sentences: list[dict], task_id: str) -> dict:
         "evidence_id": evidence_id,
         "record_id": evidence_id,
         "paper_id": "B235",
-        "doi": "10.1021/jacsau.4c00762",
+        "doi": EST1036_DOI,
         "task_id": task_id,
         "source_sha256": document["source_sha256"],
         "generation_method": "manual_recovery_from_frozen_source",
@@ -163,6 +167,23 @@ def est1036_entry(document: dict, sentences: list[dict], task_id: str) -> dict:
         "curator": "codex-main-v1",
         "expert_gold": False,
     }
+
+
+def est1036_doi_repair_entry(record: dict) -> dict | None:
+    """Create the append-only repair needed by ledgers made before the DOI fix."""
+
+    if curation_overlay.record_id(record) != EST1036_EVIDENCE_ID:
+        raise ValueError("Unexpected EST1036 record identity")
+    if record.get("paper_id") != "B235":
+        raise ValueError("EST1036 DOI repair may only target B235")
+    if record.get("doi") == EST1036_DOI:
+        return None
+    return _patch(
+        record,
+        "REV-B235-EST1036-DOI-FIX-v1",
+        {"doi": EST1036_DOI},
+        "Correct DOI to the frozen B235 inventory identity; the prior add-record entry copied B209's DOI.",
+    )
 
 
 def b236_entries(records: list[dict]) -> list[dict]:
