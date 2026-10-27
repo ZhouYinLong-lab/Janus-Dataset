@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import curation_overlay
+import reference_recall_v1
 
 
 PARTITIONS = ("reliable_evidence", "pending_review", "excluded_records")
@@ -392,6 +393,12 @@ def build(args) -> dict:
 
     citation_ok = sum(row["citation_exact"] for row in records)
     second_reviewed = sum(bool(decision["reviewer_b_status"]) for decision in decisions)
+    review_b_rows = [review_b[curation_overlay.record_id(row)] for row in records
+                     if curation_overlay.record_id(row) in review_b]
+    review_b_field_supported = sum(bool(row.get("required_fields_supported"))
+                                   for row in review_b_rows)
+    review_b_citation_supported = sum(bool(row.get("citation_direct_support"))
+                                      for row in review_b_rows)
     metrics = {
         "baseline_records": 429, "recovered_records": len(records) - 429,
         "evidence_records": len(records), "evidence_mentions": len(mentions),
@@ -401,12 +408,22 @@ def build(args) -> dict:
                            "rate": citation_ok / len(records) if records else None},
         "second_review_complete": {"numerator": second_reviewed, "denominator": len(records),
                                    "rate": second_reviewed / len(records) if records else None},
-        "required_field_support": {"numerator": None, "denominator": None,
-                                   "rate": None, "reason": "second blind review incomplete"},
-        "fixed_reference_recall": {"numerator": None, "denominator": 59, "rate": None,
-                                   "reason": "reference-to-v1 experiment mapping not yet completed"},
+        "reviewer_b_citation_support": {
+            "numerator": review_b_citation_supported, "denominator": len(review_b_rows),
+            "rate": review_b_citation_supported / len(review_b_rows) if review_b_rows else None,
+            "scope": "records with completed second blind review",
+        },
+        "required_field_support": {
+            "numerator": review_b_field_supported, "denominator": len(review_b_rows),
+            "rate": review_b_field_supported / len(review_b_rows) if review_b_rows else None,
+            "scope": "records with completed second blind review",
+        },
         "expert_gold": False,
     }
+    reference_rows, reference_summary = reference_recall_v1.audit(records, read(args.reference))
+    write_json(output / "reference_coverage.json", reference_rows)
+    write_csv(output / "reference_coverage.csv", reference_rows)
+    metrics["fixed_reference_recall"] = reference_summary
     write_json(output / "quality_metrics.json", metrics)
     review_complete = second_reviewed == len(records)
     release_status = "candidate_blocked_second_review" if not review_complete else "candidate_requires_adjudication"
@@ -461,6 +478,7 @@ if __name__ == "__main__":
     parser.add_argument("--mg2act-associations", required=True, type=Path)
     parser.add_argument("--positive-inputs", required=True, type=Path)
     parser.add_argument("--zero-audit", required=True, type=Path)
+    parser.add_argument("--reference", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     arguments = parser.parse_args()
     print(json.dumps(build(arguments), ensure_ascii=False, indent=2))
