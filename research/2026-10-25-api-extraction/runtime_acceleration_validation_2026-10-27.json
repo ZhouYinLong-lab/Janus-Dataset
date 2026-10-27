@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-27",
+  "scope": "runtime acceleration and exact paid-response reuse; scientific extraction prompts unchanged",
+  "offline_checks": {
+    "passed": 98,
+    "failed": 0
+  },
+  "migration": {
+    "elapsed_seconds": 6.369,
+    "paid_attempts_before": 179,
+    "paid_attempts_after": 179,
+    "tasks_reused": 175,
+    "successful_raw_responses_revalidated": 174,
+    "known_http_failures_preserved": 1,
+    "blocked_unknown_tasks": 4,
+    "stop_reason": "live_required"
+  },
+  "performance": {
+    "ledger_requests": 179,
+    "before_full_state_check_calls": 177,
+    "after_full_state_check_calls": 1,
+    "new_refresh_elapsed_seconds": 0.4434,
+    "old_refresh_elapsed_seconds": null,
+    "note": "Old call count measured with checks mocked; new elapsed measured with full checks. No unsupported speedup ratio."
+  },
+  "paid_verification": {
+    "minimal_non_stream_probe": "complete",
+    "next_independent_paper_request": "http_403",
+    "scientific_content_acceptance": "not_completed"
+  },
+  "old_workspace_preserved": true,
+  "new_workspace": "local/sentence_v3_ws_pilot_fast_20261027",
+  "all_five_papers_complete": false
+}

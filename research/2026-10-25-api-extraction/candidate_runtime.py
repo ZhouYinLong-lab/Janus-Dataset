@@ -455,8 +455,13 @@ def _finish(ledger_path, entry):
 
 
 def _recover(workspace, state, ledger_path, validator):
+    paid_status = {a['attempt_id']: a['status'] for a in read(ledger_path)['attempts']}
     for entry in state['tasks'].values():
         if not entry.get('attempt_id'):
+            continue
+        if entry['status'] == 'complete':
+            if paid_status.get(entry['attempt_id']) == 'in_flight':
+                _finish(ledger_path, entry)
             continue
         if entry['status'] != 'complete':
             path = entry.get('response_path')
@@ -493,6 +498,7 @@ def _refresh_index(index, ledger_path):
     """Map old unknowns conservatively. Never edit old state or ledger history."""
     unknowns, unmapped = [], []
     states = {}
+    checked_states = set()
     for attempt in read(ledger_path)['attempts']:
         workspace = Path(attempt['workspace'])
         key = str(workspace)
@@ -509,7 +515,9 @@ def _refresh_index(index, ledger_path):
             tid, entry = matches[0]
             logical = entry.get('logical_id')
             if logical:
-                _check_state(workspace, source_state)
+                if key not in checked_states:
+                    _check_state(workspace, source_state)
+                    checked_states.add(key)
                 job = read(_path(workspace, f'jobs/{entry["job_id"]}.json'))
                 if not entry.get('reused_from'):
                     index['tasks'][logical] = _record(workspace, tid, entry, job)
@@ -613,6 +621,74 @@ def _legacy_discovery(workspace, entry, request, job, ledger_path, provider):
     return False
 
 
+def _sentence_response_reuse(workspace, entry, request, job, candidates, ledger_path, provider, validator):
+    """Revalidate exact successes or preserve definite failures; never send."""
+    if job.get('protocol') != 'sentence_v3':
+        return False
+    parsed = urlsplit(provider)
+    normalized = urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path.rstrip('/'), '', ''))
+    content_hash = budget.request_hash(request)
+    paid_hash = budget.request_hash({'provider': normalized, 'request': request})
+    for attempt in read(ledger_path)['attempts']:
+        if (attempt['status'] not in {'complete', 'http_failure'} or _unknown(attempt)
+                or attempt.get('provider_identity') != normalized
+                or attempt.get('requested_model') != request['model']
+                or attempt.get('content_sha256') != content_hash
+                or attempt.get('request_sha256') != paid_hash):
+            continue
+        origin = Path(attempt['workspace'])
+        state_path = origin / 'candidate_state.json'
+        if not state_path.is_file():
+            continue
+        source = read(state_path)
+        if source.get('pipeline') != SENTENCE_PIPELINE:
+            continue
+        matches = [(tid, old) for tid, old in source['tasks'].items()
+                   if old.get('attempt_id') == attempt['attempt_id']
+                   and old.get('stage') == entry['stage'] and old.get('status') == attempt['status']
+                   and not old.get('reused_from')]
+        if len(matches) != 1:
+            continue
+        tid, old = matches[0]
+        source_job = read(_path(origin, f'jobs/{old["job_id"]}.json'))
+        if (source_job.get('source_sha256') != job.get('source_sha256')
+                or source_job.get('paper_id') != job.get('paper_id')
+                or _scope(source_job) != _scope(job)):
+            continue
+        failed = attempt['status'] == 'http_failure'
+        files = {kind: _checked(origin, old[kind + '_path'], old[kind + '_sha256'])
+                 for kind in (('request',) if failed else ('request', 'response', 'result'))}
+        if budget.request_hash(read(files['request'])) != content_hash:
+            raise IntegrityError('Saved response reuse request differs from paid content hash')
+        for kind in (('request',) if failed else ('request', 'response')):
+            name = f'{kind}s/revalidated_{entry["job_id"]}_{entry["stage"]}_{entry["group"]:03d}.json'
+            target = _path(workspace, name)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists() and sha(target) != old[kind + '_sha256']:
+                raise IntegrityError('Revalidation destination changed')
+            if not target.exists():
+                target.write_bytes(files[kind].read_bytes())
+            entry[kind + '_path'], entry[kind + '_sha256'] = name, old[kind + '_sha256']
+        entry.update(attempt_id=attempt['attempt_id'], reused_from={
+            'workspace': str(origin.resolve()), 'task': tid,
+            'kind': 'known_http_failure_preserved' if failed else 'exact_response_revalidated',
+            'old_result_sha256': old.get('result_sha256')})
+        if failed:
+            entry.update(status='http_failure', http_status=old.get('http_status'),
+                         failure_kind='previous_http_failure_preserved')
+            return True
+        _usage(workspace, entry)
+        try:
+            _validate(workspace, entry, job, candidates, validator)
+        except IntegrityError:
+            raise
+        except (ValueError, TypeError, KeyError) as error:
+            entry.update(status='invalid_response', failure_kind='saved_response_contract_invalid',
+                         exception_type=type(error).__name__)
+        return True
+    return False
+
+
 def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         live=False, env_file=None, client=None, max_new_requests=None,
         resume_operator_pause=False, phase='pilot', on_progress=None, network_route='environment'):
@@ -706,6 +782,12 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
             if record:
                 entry.update(status='needs_attention', failure_kind='logical_task_already_reserved')
                 state['tasks'][tid] = entry
+                persist()
+                return True
+            if sentence and _sentence_response_reuse(workspace, entry, request, effective_job,
+                    candidates, ledger_path, config['base_url'], enrichment_validator):
+                state['tasks'][tid] = entry
+                index['tasks'][logical] = _record(workspace, tid, entry, job)
                 persist()
                 return True
             if not sentence and _legacy_discovery(workspace, entry, request, effective_job,

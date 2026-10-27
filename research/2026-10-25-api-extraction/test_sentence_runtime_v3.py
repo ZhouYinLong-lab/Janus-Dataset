@@ -505,8 +505,8 @@ class SentenceRuntimeTests(unittest.TestCase):
         self.assertTrue(all(e.get('reused_from') for e in state['tasks'].values()))
         self.key.assert_not_called()
 
-    def test_changed_facts_result_dependency_prevents_reusing_conditions(self):
-        self.execute()
+    def test_changed_facts_dependency_revalidates_exact_conditions_response(self):
+        old_state = self.execute()
         sibling = self.root / 'changed_facts'
         self.prepare(sibling)
 
@@ -518,7 +518,7 @@ class SentenceRuntimeTests(unittest.TestCase):
 
         # Revalidate the same saved facts response locally, then verify that a
         # byte-identical conditions request with a different facts-result hash
-        # cannot reuse the previous conditions outcome.
+        # revalidates raw output rather than copying the old validated outcome.
         original = runtime._reuse
 
         def revalidate(workspace, entry, record):
@@ -531,8 +531,11 @@ class SentenceRuntimeTests(unittest.TestCase):
 
         with patch.object(runtime, '_reuse', side_effect=revalidate):
             state = self.execute(workspace=sibling, live=False)
-        self.assertEqual(state['stop_reason'], 'live_required')
-        self.assertNotIn(runtime._task_key(self.jid, 'conditions'), state['tasks'])
+        condition = self.task(state, 'conditions')
+        self.assertEqual(condition['status'], 'complete')
+        self.assertEqual(condition['reused_from']['kind'], 'exact_response_revalidated')
+        self.assertEqual(condition['facts_result_sha256'], self.task(state, 'facts')['result_sha256'])
+        self.assertNotEqual(condition['facts_result_sha256'], self.task(old_state, 'conditions')['facts_result_sha256'])
         self.assertEqual(len(self.client.calls), 5)
 
     def test_v3_never_calls_legacy_response_reuse(self):
