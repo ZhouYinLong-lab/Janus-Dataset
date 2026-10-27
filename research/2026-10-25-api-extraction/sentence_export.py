@@ -254,7 +254,18 @@ def snapshot(workspace):
     semantic_pending = statuses['semantic_pending'] + statuses['quarantine']
     unresolved_candidates = sum(a['destination'] == 'unresolved' and a.get('stage') == 'facts' for a in audits)
     condition_gaps = sum(a['destination'] == 'optional_conditions_gap' for a in audits)
+    buckets = {'成功': [], '失败': [], '缺少全文': [], '未完成': []}
+    for row in paper_rows:
+        if row['status'] == 'input_gap':
+            buckets['缺少全文'].append(row['paper_id'])
+        elif row['status'] == 'partial':
+            buckets['未完成'].append(row['paper_id'])
+        elif row['status'] == 'processed_with_issues':
+            buckets['失败'].append(row['paper_id'])
+        else:
+            buckets['成功'].append(row['paper_id'])
     summary = {'pipeline': PIPELINE, 'protocol': 'sentence_v3', 'records': len(records),
+               'paper_buckets': buckets,
                'unique_records': len({r['record_key'] for r in records}),
                'record_status': dict(statuses), 'core_usable_records': statuses['core_usable'],
                'semantic_pending_records': statuses['semantic_pending'], 'quarantine_records': statuses['quarantine'],
@@ -325,6 +336,12 @@ def _summary_markdown(path, summary, audits):
     lines = ['# 句段提取进度（sentence_v3）', '',
              f'来源：{len(summary["papers"])}；观察记录：{summary["records"]}；'
              f'不同 record_key：{summary["unique_records"]}。多观察逐条保留。', '',
+             '成功 / 失败 / 缺少全文 / 未完成：']
+    buckets = summary.get('paper_buckets', {})
+    for label in ('成功', '失败', '缺少全文', '未完成'):
+        papers = buckets.get(label, [])
+        lines.append(f'- {label}（{len(papers)}）：' + ('、'.join(papers) if papers else '无'))
+    lines += ['',
              f'覆盖状态：{summary["paper_status"]}；未扫描句段：{summary["unscanned_sentences"]}；'
              f'未解决正文段落：{summary["unresolved_paragraphs"]}。', '',
              f'全部来源处理完整：{summary["all_sources_processed"]}；'
