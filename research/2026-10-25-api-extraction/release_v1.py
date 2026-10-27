@@ -266,6 +266,33 @@ def positive_candidates(inputs_dir: Path, split_by_paper: dict[str, str]) -> lis
     return rows
 
 
+def unresolved_duplicate_groups(records: list[dict]) -> list[dict]:
+    """Return weak-key collisions that are not already one linked experiment."""
+
+    groups = defaultdict(list)
+    for row in records:
+        if row.get("evidence_origin") == "secondary_report" or not row.get("experiment_id"):
+            continue
+        values = _values(row)
+        key = curation_overlay.sha256_json([
+            row.get("paper_id"), values.get("subject"), values.get("target"),
+            values.get("endpoint"),
+        ])
+        groups[key].append((curation_overlay.record_id(row), row["experiment_id"]))
+    result = []
+    for key, items in groups.items():
+        experiment_ids = sorted({experiment_id for _, experiment_id in items})
+        if len(experiment_ids) <= 1:
+            continue
+        result.append({
+            "group_id": key,
+            "evidence_ids": [record_id for record_id, _ in items],
+            "experiment_ids": experiment_ids,
+            "status": "possible_duplicate_requires_adjudication",
+        })
+    return result
+
+
 def build(args) -> dict:
     run, workspace, output = args.run.resolve(), args.workspace.resolve(), args.output.resolve()
     inventory = read(args.inventory)
@@ -333,7 +360,6 @@ def build(args) -> dict:
         write_json(output / f"{name}.json", rows); write_csv(output / f"{name}.csv", rows)
 
     mentions, experiments_by_id = [], defaultdict(list)
-    possible_groups = defaultdict(list)
     for row in records:
         rid = curation_overlay.record_id(row)
         for span in row.get("evidence_spans", []):
@@ -345,16 +371,10 @@ def build(args) -> dict:
                              "locator": span.get("locator")})
         if row.get("experiment_id"):
             experiments_by_id[row["experiment_id"]].append(rid)
-        values = _values(row)
-        key = curation_overlay.sha256_json([row.get("paper_id"), values.get("subject"),
-                                             values.get("target"), values.get("endpoint")])
-        possible_groups[key].append(rid)
     experiments = [{"experiment_id": xid, "evidence_ids": ids,
                     "evidence_count": len(ids), "status": "single" if len(ids) == 1 else "linked"}
                    for xid, ids in sorted(experiments_by_id.items())]
-    possible_duplicates = [{"group_id": key, "evidence_ids": ids,
-                            "status": "possible_duplicate_requires_adjudication"}
-                           for key, ids in possible_groups.items() if len(ids) > 1]
+    possible_duplicates = unresolved_duplicate_groups(records)
     write_json(output / "experiments.json", experiments); write_csv(output / "experiments.csv", experiments)
     write_json(output / "evidence_mentions.json", mentions); write_csv(output / "evidence_mentions.csv", mentions)
     write_json(output / "possible_duplicates.json", possible_duplicates)

@@ -65,3 +65,17 @@ def test_manifest_hashes_only_existing_files(tmp_path):
     hashes = release_v1.sha256_files([second, missing, first, first])
     assert list(hashes) == sorted([first.resolve().as_posix(), second.resolve().as_posix()])
     assert len(set(hashes.values())) == 2
+
+
+def test_linked_mentions_are_not_reported_as_possible_duplicates():
+    common = {"paper_id": "P1", "evidence_origin": "primary_report",
+              "facts": {"observations": [{"values": {
+                  "subject": "A", "target": "B", "endpoint": "protein degradation"}}]}}
+    linked = [dict(common, evidence_id="E1", experiment_id="X1"),
+              dict(common, evidence_id="E2", experiment_id="X1")]
+    assert release_v1.unresolved_duplicate_groups(linked) == []
+
+    unresolved = linked + [dict(common, evidence_id="E3", experiment_id="X2")]
+    groups = release_v1.unresolved_duplicate_groups(unresolved)
+    assert len(groups) == 1
+    assert groups[0]["experiment_ids"] == ["X1", "X2"]
