@@ -16,7 +16,7 @@ import time
 
 
 def read(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return json.loads(Path(path).read_text(encoding="utf-8-sig"))
 
 
 def digest(value):
