@@ -37,6 +37,25 @@ class CodexExportTests(unittest.TestCase):
             self.assertEqual(report["paper_status_counts"]["fulltext_missing"], 1)
             self.assertTrue((run / "exports" / "reliable_evidence.json").is_file())
 
+    def test_reads_partitioned_worker_outputs(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp); run = root / "run"
+            worker = run / "workers" / "P1"; worker.mkdir(parents=True)
+            (run / "review").mkdir()
+            row = {"record_id": "R1", "paper_id": "P1", "source_sha256": "s",
+                   "status": "pending_review", "evidence_spans": [{"quote": "q"}],
+                   "facts": {"observations": [{"values": {"subject": "A", "target": "T",
+                                                                  "endpoint": "e", "observation": "o"}}]}}
+            (worker / "pending_review.json").write_text(json.dumps([row]), encoding="utf-8")
+            (worker / "worker_summary.json").write_text(json.dumps({"paper_id": "P1", "source_sha256": "s",
+                "task_count": 1, "completed_tasks": 1, "failed_tasks": 0, "unfinished_tasks": 0,
+                "candidate_count": 1, "pending_review_count": 1, "api_requests": 0}), encoding="utf-8")
+            inv = root / "papers.json"; inv.write_text(json.dumps([{"paper_id": "P1", "path": "x"}]), encoding="utf-8")
+            man = root / "manifest.json"; man.write_text(json.dumps({"papers": [{"paper_id": "P1", "source_kind": "xml"}]}), encoding="utf-8")
+            report = codex_export.export(run, inv, man)
+            self.assertEqual(report["records_raw"], 1)
+            self.assertEqual(report["pending_review_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

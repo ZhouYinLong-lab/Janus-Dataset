@@ -34,7 +34,7 @@ def _rows(path):
 
 
 def _record_id(row):
-    return row.get("record_id") or row.get("evidence_id") or row.get("candidate_id")
+    return row.get("evidence_id") or row.get("record_id") or row.get("candidate_id")
 
 
 def _quote(row):
@@ -58,16 +58,17 @@ def _values(row):
 def _status(row, reviews):
     rid = _record_id(row)
     review = reviews.get(rid, {})
+    # Worker labels are provisional.  Only an independent review artifact can
+    # promote a row to reliable or excluded in the release layer.
+    if not review:
+        return "pending_review"
     status = review.get("review_status") or review.get("status")
     if status in {"reliable", "reliable_candidate", "reliable_evidence"}:
         return "reliable"
     if status in {"excluded", "exclude", "excluded_record"}:
         return "excluded"
-    status = row.get("status") or row.get("review_status") or row.get("result_type")
-    if status in {"reliable", "reliable_candidate", "reliable_evidence"}:
-        return "reliable"
-    if status in {"excluded", "exclude", "excluded_record"}:
-        return "excluded"
+    if status in {"pending", "pending_review", "uncertain", "needs_review"}:
+        return "pending_review"
     return "pending_review"
 
 
@@ -89,7 +90,15 @@ def _worker_records(worker):
     if records:
         return [read(p) for p in records]
     raw = worker / "raw_records.json"
-    return _rows(raw) if raw.is_file() else []
+    if raw.is_file():
+        return _rows(raw)
+    # Batch workers may publish the three release partitions directly.
+    result = []
+    for name in ("reliable_evidence.json", "pending_review.json", "excluded_records.json"):
+        path = worker / name
+        if path.is_file():
+            result.extend(_rows(path))
+    return result
 
 
 def _write_csv(path, rows):
