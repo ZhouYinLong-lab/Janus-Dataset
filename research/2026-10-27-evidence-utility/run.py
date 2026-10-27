@@ -4,6 +4,7 @@ from collections import Counter
 import json
 from pathlib import Path
 import sys
+from urllib.parse import urlsplit, urlunsplit
 
 from common import CORE, digest, finite, read, sha, verify, write
 sys.path.insert(0, str(CORE))
@@ -45,6 +46,32 @@ def validate(envelope, task, allowed_models):
     return result
 
 
+def find_reusable(ledger, request, cfg, task, allowed_models):
+    """Reuse exact successful requests across arms/workspaces, verifying the saved receipt."""
+    parsed = urlsplit(cfg['base_url'])
+    provider = urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path.rstrip('/'), '', ''))
+    content_hash = budget.request_hash(request)
+    for a in read(ledger)['attempts']:
+        if (a['status'] != 'complete' or a.get('content_sha256') != content_hash or
+                a.get('provider_identity') != provider):
+            continue
+        source = Path(a['workspace'])
+        if not (source / 'state.json').is_file():
+            continue
+        entry = read(source / 'state.json').get('tasks', {}).get(a['task'])
+        if not entry or entry.get('status') != 'complete' or not entry.get('response_sha256'):
+            continue
+        saved = source / entry['response_path']
+        original_request = source / 'requests' / (a['task'] + '.json')
+        if (not saved.is_file() or sha(saved) != entry['response_sha256'] or
+                not original_request.is_file() or budget.request_hash(read(original_request)) != content_hash):
+            raise ValueError('Reusable response/request hash mismatch')
+        envelope = read(saved)
+        result = validate(envelope, task, allowed_models)
+        return envelope, result, {'workspace': str(source), 'task_id': a['task'], 'attempt_id': a['attempt_id']}
+    return None
+
+
 def export(out):
     out = Path(out)
     verify(out)
@@ -61,7 +88,17 @@ def export(out):
                         'failure_kind': entry.get('failure_kind'),
                         'response_sha256': entry.get('response_sha256')})
     summary = {'tasks': len(answers), 'status_counts': dict(Counter(x['status'] for x in answers)),
-               'stop_reason': state.get('stop_reason'), 'ledger': state.get('ledger')}
+               'stop_reason': state.get('stop_reason'), 'ledger': state.get('ledger'),
+               'cache_reused_tasks': sum(bool(e.get('reused_from')) for e in state['tasks'].values())}
+    if state.get('ledger') and Path(state['ledger']).is_file():
+        attempts = [a for a in read(state['ledger'])['attempts'] if a['workspace'] == str(out.resolve())]
+        usage = [a.get('usage') for a in attempts]
+        summary['usage'] = {'requests_reserved': len(attempts),
+                            'reserved_token_estimate': sum(a['reserved_tokens'] for a in attempts),
+                            'reported_input_tokens': sum(u.get('prompt_tokens', 0) for u in usage if isinstance(u, dict)),
+                            'reported_output_tokens': sum(u.get('completion_tokens', 0) for u in usage if isinstance(u, dict)),
+                            'reported_total_tokens': sum(u.get('total_tokens', 0) for u in usage if isinstance(u, dict)),
+                            'requests_without_usage': sum(not isinstance(u, dict) for u in usage)}
     write(out / 'exports/answers.json', answers)
     write(out / 'exports/summary.json', summary)
     return summary
@@ -119,6 +156,17 @@ def run(out, ledger, env_file=None, live=False, client=None, allowed_models=None
                 state['stop_reason'] = 'per_invocation_limit'
                 break
             req = request_for(task, cfg)
+            reusable = find_reusable(ledger, req, cfg, task, allowed_models)
+            if reusable:
+                envelope, result, origin = reusable
+                response_path = 'responses/' + tid + '.json'
+                write(out / response_path, envelope)
+                write(out / ('requests/' + tid + '.json'), req)
+                state['tasks'][tid] = {'status': 'complete', 'attempt_id': origin['attempt_id'],
+                                      'response_path': response_path, 'response_sha256': sha(out / response_path),
+                                      'result': result, 'reused_from': origin}
+                write(path, state)
+                continue
             prior = [a for a in read(ledger)['attempts'] if a['workspace'] == str(out.resolve())]
             if (len(prior) >= cfg['max_requests'] or sum(a['reserved_tokens'] for a in prior) +
                     reserve_tokens(req, cfg) > cfg['max_reserved_tokens']):
@@ -155,6 +203,11 @@ def run(out, ledger, env_file=None, live=False, client=None, allowed_models=None
             except (ValueError, KeyError, TypeError, OSError):
                 entry.update(status='invalid_response' if entry.get('response_sha256') else 'needs_attention',
                              failure_kind='response_contract_or_local_error')
+            if isinstance(actual, StreamingClient) and actual.wire_events:
+                events = json.dumps(actual.wire_events, ensure_ascii=False)
+                if key:
+                    events = events.replace(key, '[REDACTED]')
+                write(out / ('events/' + tid + '.json'), json.loads(events))
             budget.finish(ledger, a['attempt_id'], entry['status'], **details)
             new_calls += 1
             write(path, state)

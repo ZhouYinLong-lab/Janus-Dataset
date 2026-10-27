@@ -7,12 +7,27 @@ import random
 from common import digest, doi, fresh, read, seal, sha, verify, write
 
 
+def complete_denominator(trial):
+    tasks = {t['task_id']: t for t in read(Path(trial) / 'tasks.json')}
+    received = {}
+    for a in read(Path(trial) / 'exports/answers.json'):
+        if a['task_id'] not in tasks or a['task_id'] in received:
+            raise ValueError('Unexpected/duplicate answer task')
+        expected = tasks[a['task_id']]
+        if any(a[k] != expected[k] for k in ('question_id', 'arm')):
+            raise ValueError('Answer identity differs from frozen task')
+        received[a['task_id']] = a
+    return [received.get(tid, {k: t[k] for k in ('task_id', 'question_id', 'arm')} |
+                        {'status': 'missing', 'result': None, 'response_sha256': None})
+            for tid, t in tasks.items()]
+
+
 def make_packet(trial, out, seed=71):
     verify(trial)
     trial = Path(trial)
     questions = {q['question_id']: q for q in read(trial / 'questions.json')}
     tasks = {t['task_id']: t for t in read(trial / 'tasks.json')}
-    answers = read(trial / 'exports/answers.json')
+    answers = complete_denominator(trial)
     shuffled = [a for a in answers if a['status'] == 'complete']
     random.Random(seed).shuffle(shuffled)
     packet, key = [], []
@@ -42,7 +57,7 @@ def score(trial, packet, judgments, out, bootstrap=2000):
     trial, packet = Path(trial), Path(packet)
     questions = {q['question_id']: q for q in read(trial / 'questions.json')}
     keys = {r['judge_id']: r for r in read(packet / 'private_key.json')}
-    answers = read(trial / 'exports/answers.json')
+    answers = complete_denominator(trial)
     by_task = {a['task_id']: a for a in answers}
     judgments = Path(judgments)
     judged, seen = {}, set()
