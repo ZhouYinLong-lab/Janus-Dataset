@@ -28,9 +28,9 @@ DEFAULTS = {
 BUCKET_LABELS = ('成功', '失败', '缺少全文', '未完成')
 
 
-def command(*args):
+def command(*args, env=None):
     subprocess.run([sys.executable, str(HERE / 'batch_candidate.py'), *map(str, args)],
-                   cwd=HERE.parents[1], check=True)
+                   cwd=HERE.parents[1], check=True, env=env)
 
 
 def _bound_ledger(settings):
@@ -77,7 +77,7 @@ def _status_summary(ws):
               f'未知用量：{budget["attempts_without_usage"]}')
 
 
-def action(name, settings_path=None):
+def action(name, settings_path=None, max_new_requests=None):
     from corpus import read, save
     path = Path(settings_path) if settings_path else HERE / 'local/sentence_launch.json'
     if path.exists():
@@ -90,7 +90,7 @@ def action(name, settings_path=None):
     else:
         raise ValueError('Run 句段-准备与检查.cmd first')
     s = settings
-    ledger = _bound_ledger(s) if name in {'prepare', 'run'} else None
+    ledger = _bound_ledger(s) if name in {'prepare', 'run', 'repair'} else None
     if name == 'prepare':
         inv = Path(s['inventory'])
         if not (inv / 'papers.json').exists():
@@ -105,10 +105,15 @@ def action(name, settings_path=None):
                 '--ledger', ledger)
         print('准备结束。全库启动仍需固定五篇验收通过；设置保存在：' + str(path))
     elif name == 'run':
+        from sentence_network import child_environment
+        env = child_environment(path, read(s['config']))
+        limit_args = [] if max_new_requests is None else ['--max-new-requests', max_new_requests]
+        if env is not None:
+            print('API连接使用已验证的直连；系统代理设置保持原样。')
         if not Path(s['acceptance']).is_file():
             command('run', '--workspace', s['pilot_workspace'], '--config', s['config'],
                     '--ledger', ledger, '--env-file', s['env_file'], '--phase', 'pilot',
-                    '--resume-operator-pause', '--live')
+                    '--resume-operator-pause', '--live', *limit_args, env=env)
             print('五篇试跑已启动或续跑。完成后用 sentence_acceptance 逐条复核并生成验收文件，'
                   '再重新双击本脚本以启动全库。')
             return
@@ -116,7 +121,14 @@ def action(name, settings_path=None):
         require_acceptance(s['acceptance'], s['workspace'], read(s['config']))
         command('run', '--workspace', s['workspace'], '--config', s['config'],
                 '--ledger', ledger, '--env-file', s['env_file'], '--phase', 'full',
-                '--acceptance', s['acceptance'], '--resume-operator-pause', '--live')
+                '--acceptance', s['acceptance'], '--resume-operator-pause', '--live', *limit_args, env=env)
+    elif name == 'repair':
+        from sentence_network import repair
+        result = repair(path, s, ledger)
+        for probe in result['probes']:
+            print(f'连接诊断 {probe["route"]}：{probe["status"]}；{probe["elapsed_seconds"]}秒')
+        print('诊断已保存：' + result['diagnosis_dir'])
+        print('连接已准备好。再次启动将续跑独立任务；未知请求不重发。')
     else:
         present = [ws for ws in (s['pilot_workspace'], s['workspace']) if Path(ws).exists()]
         if not present:
@@ -134,11 +146,12 @@ def action(name, settings_path=None):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action', choices=['prepare', 'run', 'status'])
+    p.add_argument('action', choices=['prepare', 'run', 'status', 'repair'])
     p.add_argument('--settings', type=Path)
+    p.add_argument('--max-new-requests', type=int)
     a = p.parse_args()
     try:
-        action(a.action, a.settings)
-    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        action(a.action, a.settings, a.max_new_requests)
+    except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as error:
         print(type(error).__name__ + ': ' + str(error), file=sys.stderr)
         raise SystemExit(1)

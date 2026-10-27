@@ -18,6 +18,7 @@ class SentenceLaunchTests(unittest.TestCase):
         self.settings = {key: str(self.root / key) for key in launch.DEFAULTS}
         self.settings_path = self.root / 'settings.json'
         save(self.settings_path, self.settings)
+        save(self.settings['config'], {})
         self.ledger = self.root / 'round_02_budget.json'
         save(self.ledger, {'attempts': [{'status': 'complete'}]})
         self.before = self.ledger.read_bytes()
@@ -42,6 +43,16 @@ class SentenceLaunchTests(unittest.TestCase):
 
     def test_first_run_keeps_configured_ledger(self):
         self.assertEqual(launch._bound_ledger(self.settings), self.settings['ledger'])
+
+    def test_run_passes_diagnosed_child_environment_and_invocation_limit(self):
+        self.bind()
+        with patch.object(launch, 'command') as command, \
+                patch('sentence_network.child_environment', return_value={'NO_PROXY': 'api.test'}), \
+                redirect_stdout(StringIO()):
+            launch.action('run', self.settings_path, max_new_requests=3)
+        self.assertEqual(command.call_args.kwargs['env'], {'NO_PROXY': 'api.test'})
+        args = command.call_args.args
+        self.assertEqual(args[args.index('--max-new-requests') + 1], 3)
 
     def test_full_run_carries_pilot_binding_and_keeps_acceptance_check(self):
         self.bind()
