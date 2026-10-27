@@ -1,0 +1,19 @@
+{
+ "source_release": "molglue_negative_v1_20261027",
+ "reviewer": "assistant (deepseek-v4-pro)",
+ "expert_gold": false,
+ "original_status": {
+  "reliable": 155,
+  "pending_review": 307,
+  "excluded": 2
+ },
+ "merged_status": {
+  "reliable": 385,
+  "pending_review": 66,
+  "excluded": 14
+ },
+ "new_decisions": 254,
+ "changes": 254,
+ "remaining_pending_reason": "54 records not newly reviewed (28 blocked_no_fulltext, 18 mention_level_no_facts, recoverable) plus 12 adjudicated ambiguous",
+ "note": "Evidence records only; no source text or file paths. Assistant review, not expert gold."
+}
