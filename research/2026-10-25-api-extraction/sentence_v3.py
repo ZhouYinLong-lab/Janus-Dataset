@@ -19,6 +19,55 @@ _INITIAL = re.compile(r'\b[A-Z]\.(?=\s+[A-Z])')
 _END = re.compile(r'[.!?。！？]+[\)\]\}"\'”’]*')
 
 
+# Structural contract of the discovery response envelope. Semantic span checks
+# (continuity, known IDs, ownership) run in validate_discovery; this schema and
+# example only freeze the envelope shape so every stage has a frozen schema.
+DISCOVERY_SCHEMA = {
+    'type': 'object',
+    'additionalProperties': False,
+    'required': ['paragraphs'],
+    'properties': {
+        'paragraphs': {
+            'type': 'array',
+            'items': {
+                'type': 'object',
+                'additionalProperties': False,
+                'required': ['paragraph_id', 'status', 'spans'],
+                'properties': {
+                    'paragraph_id': {'type': 'string'},
+                    'status': {'type': 'string',
+                               'enum': ['has_candidates', 'none_found', 'uncertain']},
+                    'spans': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'additionalProperties': False,
+                            'required': ['sentence_ids'],
+                            'properties': {
+                                'sentence_ids': {
+                                    'type': 'array',
+                                    'minItems': 1,
+                                    'items': {'type': 'string', 'minLength': 1},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+
+# Entirely synthetic FORMAT example, not a project observation or gold label.
+DISCOVERY_EXAMPLE = {
+    'paragraphs': [
+        {'paragraph_id': 'SUPPLIED_PRIMARY_UNIT_ID', 'status': 'has_candidates',
+         'spans': [{'sentence_ids': ['SUPPLIED_SENTENCE_ID']}]},
+        {'paragraph_id': 'ANOTHER_SUPPLIED_PRIMARY_UNIT_ID', 'status': 'none_found', 'spans': []},
+    ],
+}
+
+
 def _id(prefix, *parts):
     encoded = json.dumps(parts, ensure_ascii=False, separators=(',', ':'))
     return prefix + hashlib.sha256(encoded.encode('utf-8')).hexdigest()

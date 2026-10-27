@@ -92,6 +92,8 @@ def prepare(workspace, papers=None, manifest_path=None, limit=None, phase='full'
     selected = _selected(manifest_path, papers, limit, phase)
     code = runtime_files()
     artifacts = {
+        'discovery_schema.json': sentence_v3.DISCOVERY_SCHEMA,
+        'discovery_example.json': sentence_v3.DISCOVERY_EXAMPLE,
         'facts_schema.json': facts_v3.SCHEMA, 'facts_example.json': facts_v3.EXAMPLE,
         'conditions_schema.json': sentence_workflow.CONDITION_SCHEMA,
         'conditions_example.json': sentence_workflow.CONDITION_EXAMPLE,

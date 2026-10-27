@@ -150,9 +150,12 @@ class SentenceIntegrationV3Tests(unittest.TestCase):
                          'sentence_export.py', 'sentence_workspace.py', 'sentence_acceptance.py'} <= m['code_hashes'].keys())
         for name, digest in m['code_hashes'].items():
             self.assertEqual(sha(self.workspace / 'runtime' / name), digest)
-        for name in (*sentence_workspace.PROMPTS, 'sentence_protocol.json', 'facts_schema.json',
-                     'facts_example.json', 'conditions_schema.json', 'conditions_example.json'):
+        for name in (*sentence_workspace.PROMPTS, 'sentence_protocol.json', 'discovery_schema.json',
+                     'discovery_example.json', 'facts_schema.json', 'facts_example.json',
+                     'conditions_schema.json', 'conditions_example.json'):
             self.assertEqual(sha(self.workspace / name), m['file_hashes'][name])
+        self.assertEqual(read(self.workspace / 'discovery_schema.json'), sentence_v3.DISCOVERY_SCHEMA)
+        self.assertEqual(read(self.workspace / 'discovery_example.json'), sentence_v3.DISCOVERY_EXAMPLE)
         self.assertEqual(read(self.workspace / 'facts_schema.json'), facts_v3.SCHEMA)
         self.assertEqual(read(self.workspace / 'facts_example.json'), facts_v3.EXAMPLE)
         self.assertEqual(read(self.workspace / 'conditions_schema.json'), sentence_workflow.CONDITION_SCHEMA)
