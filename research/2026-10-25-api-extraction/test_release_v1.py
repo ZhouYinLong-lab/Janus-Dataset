@@ -1,3 +1,5 @@
+import pytest
+
 import release_v1
 
 
@@ -45,6 +47,19 @@ def test_two_reviews_or_adjudication_are_required():
     assert release_v1.assign_final_status(row, {"status": "reliable"}, {"verdict": "reliable"}, None)[0] == "reliable"
     assert release_v1.assign_final_status(row, {"status": "reliable"}, {"verdict": "excluded"}, None)[0] == "pending_review"
     assert release_v1.assign_final_status(row, {}, {}, {"verdict": "excluded"})[0] == "excluded"
+
+
+def test_adjudication_queue_includes_disagreement_pending_and_corrections():
+    assert release_v1.requires_adjudication({"status": "reliable"}, {"verdict": "excluded"})
+    assert release_v1.requires_adjudication({"status": "pending_review"}, {"verdict": "pending_review"})
+    assert release_v1.requires_adjudication(
+        {"status": "reliable"}, {"verdict": "reliable", "corrections": {"x": 1}})
+    assert not release_v1.requires_adjudication({"status": "reliable"}, {"verdict": "reliable"})
+
+
+def test_review_maps_reject_overlapping_extra_review():
+    with pytest.raises(ValueError, match="Duplicate review"):
+        release_v1.merge_review_maps({"E1": {}}, {"E1": {}})
 
 
 def test_split_keeps_blocked_benchmark_doi_out_of_train():

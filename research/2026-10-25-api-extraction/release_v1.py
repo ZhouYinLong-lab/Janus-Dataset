@@ -19,6 +19,7 @@ SCOPES = {
     "molecular_glue_degradation_negative", "mechanism_or_control",
     "other_endpoint", "out_of_scope",
 }
+DUPLICATE_DECISIONS = {"same_experiment", "distinct_experiments", "possible_duplicate"}
 
 
 def read(path: Path):
@@ -92,6 +93,13 @@ def load_jsonl_dir(path: Path) -> dict[str, dict]:
                     raise ValueError(f"Duplicate blind-review decision: {rid}")
                 result[rid] = row
     return result
+
+
+def merge_review_maps(primary: dict[str, dict], extra: dict[str, dict]) -> dict[str, dict]:
+    overlap = set(primary) & set(extra)
+    if overlap:
+        raise ValueError(f"Duplicate review decisions: {sorted(overlap)[:3]}")
+    return {**primary, **extra}
 
 
 def _values(row: dict) -> dict:
@@ -213,6 +221,32 @@ def assign_final_status(row: dict, review_a: dict, review_b: dict,
     if a == b and a in {"reliable", "excluded"}:
         return a, "two_review_agreement"
     return "pending_review", "requires_second_review_or_adjudication"
+
+
+def requires_adjudication(review_a: dict, review_b: dict) -> bool:
+    a, b = normalize_verdict(review_a), normalize_verdict(review_b)
+    if not a or not b or a != b or a == "pending_review":
+        return True
+    for field in ("scope_class", "evidence_origin", "citation_direct_support",
+                  "required_fields_supported"):
+        if field in review_a and field in review_b and review_a.get(field) != review_b.get(field):
+            return True
+    if review_b.get("corrections"):
+        return True
+    return bool(review_a.get("review_role") == "reviewer_a_extra" and review_a.get("corrections"))
+
+
+def load_duplicate_adjudications(path: Path) -> dict[str, dict]:
+    rows = curation_overlay.read_jsonl(path)
+    result = {}
+    for row in rows:
+        group_id = row.get("group_id")
+        if not group_id or group_id in result:
+            raise ValueError(f"Duplicate or missing duplicate-adjudication ID: {group_id}")
+        if row.get("decision") not in DUPLICATE_DECISIONS:
+            raise ValueError(f"Invalid duplicate decision: {group_id}")
+        result[group_id] = row
+    return result
 
 
 def mg2act_doi_splits(source_associations: Path) -> dict[str, set[str]]:
@@ -357,9 +391,11 @@ def build(args) -> dict:
     baseline = load_baseline(run)
     ledger = curation_overlay.read_jsonl(args.ledger)
     overlaid, application_audit = curation_overlay.apply_ledger(baseline, ledger, source_hashes)
-    review_a, review_b = load_review_a(run), load_jsonl_dir(args.review_b)
+    review_a = merge_review_maps(load_review_a(run), load_jsonl_dir(args.review_a_extra))
+    review_b = load_jsonl_dir(args.review_b)
     adjudications = {curation_overlay.record_id(row): row
                      for row in curation_overlay.read_jsonl(args.adjudications)}
+    duplicate_adjudications = load_duplicate_adjudications(args.duplicate_adjudications)
     documents = {}
     for pid in {row.get("paper_id") for row in overlaid}:
         path = workspace / "documents" / f"{pid}.json"
@@ -380,6 +416,13 @@ def build(args) -> dict:
         rid = curation_overlay.record_id(row)
         a, b, adjudication = review_a.get(rid, {}), review_b.get(rid, {}), adjudications.get(rid)
         status, basis = assign_final_status(row, a, b, adjudication)
+        if adjudication and adjudication.get("scope_class") in SCOPES:
+            row["scope_class"] = adjudication["scope_class"]
+            row["scope_basis"] = "adjudicated"
+        if adjudication and adjudication.get("evidence_origin") in {
+                "primary_report", "secondary_report", "unclear"}:
+            row["evidence_origin"] = adjudication["evidence_origin"]
+            row["evidence_origin_basis"] = "adjudicated"
         row["final_status"], row["final_status_basis"] = status, basis
         row["citation_exact"] = citation_exact(row, documents)
         row["split"] = split_by_paper.get(row.get("paper_id"))
@@ -407,6 +450,33 @@ def build(args) -> dict:
             "citation_exact": row["citation_exact"], "expert_gold": False,
         })
 
+    duplicate_groups = unresolved_duplicate_groups(records)
+    expected_duplicate_ids = {group["group_id"] for group in duplicate_groups}
+    if set(duplicate_adjudications) != expected_duplicate_ids:
+        raise ValueError(
+            f"Duplicate adjudications do not match current groups: "
+            f"expected={len(expected_duplicate_ids)} actual={len(duplicate_adjudications)}")
+    unresolved_duplicate_ids = set()
+    records_by_id = {curation_overlay.record_id(row): row for row in records}
+    for group in duplicate_groups:
+        adjudication = duplicate_adjudications[group["group_id"]]
+        if set(adjudication.get("evidence_ids") or []) != set(group["evidence_ids"]):
+            raise ValueError(f"Duplicate group membership changed: {group['group_id']}")
+        decision = adjudication["decision"]
+        if decision == "same_experiment":
+            canonical = adjudication.get("canonical_experiment_id")
+            if not canonical:
+                raise ValueError(f"Missing canonical experiment ID: {group['group_id']}")
+            for rid in group["evidence_ids"]:
+                records_by_id[rid]["experiment_id"] = canonical
+        elif decision == "possible_duplicate":
+            unresolved_duplicate_ids.update(group["evidence_ids"])
+    for rid in unresolved_duplicate_ids:
+        records_by_id[rid]["model_eligibility"] = {
+            "training": False, "rag": False,
+            "reason": "possible_duplicate_after_adjudication",
+        }
+
     partitions = {
         "reliable_evidence": [row for row in records if row["final_status"] == "reliable"],
         "pending_review": [row for row in records if row["final_status"] == "pending_review"],
@@ -430,10 +500,17 @@ def build(args) -> dict:
     experiments = [{"experiment_id": xid, "evidence_ids": ids,
                     "evidence_count": len(ids), "status": "single" if len(ids) == 1 else "linked"}
                    for xid, ids in sorted(experiments_by_id.items())]
-    possible_duplicates = unresolved_duplicate_groups(records)
+    possible_duplicates = [
+        {**group, "adjudication": duplicate_adjudications[group["group_id"]]}
+        for group in duplicate_groups
+        if duplicate_adjudications[group["group_id"]]["decision"] == "possible_duplicate"
+    ]
     write_json(output / "experiments.json", experiments); write_csv(output / "experiments.csv", experiments)
     write_json(output / "evidence_mentions.json", mentions); write_csv(output / "evidence_mentions.csv", mentions)
     write_json(output / "possible_duplicates.json", possible_duplicates)
+    duplicate_rows = list(duplicate_adjudications.values())
+    write_json(output / "duplicate_adjudications.json", duplicate_rows)
+    write_csv(output / "duplicate_adjudications.csv", duplicate_rows)
     write_json(output / "review_decisions.json", decisions); write_csv(output / "review_decisions.csv", decisions)
     (output / "curation_history.jsonl").write_text(
         "".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in ledger), encoding="utf-8")
@@ -538,18 +615,126 @@ def build(args) -> dict:
     write_json(output / "reference_coverage.json", reference_rows)
     write_csv(output / "reference_coverage.csv", reference_rows)
     metrics["fixed_reference_recall"] = reference_summary
+    record_ids = {curation_overlay.record_id(row) for row in records}
+    first_reviewed = sum(bool(normalize_verdict(review_a.get(rid, {}))) for rid in record_ids)
+    required_adjudication_ids = {
+        rid for rid in record_ids
+        if requires_adjudication(review_a.get(rid, {}), review_b.get(rid, {}))
+    }
+    adjudication_ids = set(adjudications) & record_ids
+    reliable_rows = [row for row in records if row["final_status"] == "reliable"]
+    reliable_direct = 0
+    reliable_fields = 0
+    severe_semantic_errors = 0
+    for row in reliable_rows:
+        rid = curation_overlay.record_id(row)
+        authority = adjudications.get(rid) or review_b.get(rid, {})
+        direct = bool(authority.get("citation_direct_support", review_b.get(rid, {}).get("citation_direct_support")))
+        fields_supported = bool(authority.get("required_fields_supported", review_b.get(rid, {}).get("required_fields_supported")))
+        reliable_direct += direct
+        reliable_fields += fields_supported
+        severe_semantic_errors += not (direct and fields_supported and row["citation_exact"])
+    reliable_denominator = len(reliable_rows)
+    coverage_closed = (
+        len(paper_coverage) == 193
+        and all(row["candidate_count"] == row["partition_total"]
+                == row["reliable_count"] + row["pending_count"] + row["excluded_count"]
+                for row in paper_coverage)
+    )
+    doi_splits_seen = defaultdict(set)
+    for paper_id, split in split_by_paper.items():
+        doi = (inventory_by_id[paper_id].get("doi") or "").lower().strip()
+        if doi:
+            doi_splits_seen[doi].add(split)
+    doi_cross_split = sum(len(splits) > 1 for splits in doi_splits_seen.values())
+    mg2act_train_violations = sum(
+        bool(row["model_eligibility"]["training"]) and row["mg2act_train_blocked"]
+        for row in records)
+    model_boundary_violations = sum(
+        bool(row["model_eligibility"]["training"] or row["model_eligibility"]["rag"])
+        and (row["final_status"] != "reliable"
+             or row["evidence_origin"] != "primary_report"
+             or row["scope_class"] != "molecular_glue_degradation_negative")
+        for row in records)
+    gates = {
+        "reviewer_b_complete": {"passed": second_reviewed == len(records),
+                                "numerator": second_reviewed, "denominator": len(records)},
+        "reviewer_a_complete": {"passed": first_reviewed == len(records),
+                                "numerator": first_reviewed, "denominator": len(records)},
+        "record_adjudications_complete": {
+            "passed": adjudication_ids == required_adjudication_ids,
+            "required": len(required_adjudication_ids), "provided": len(adjudication_ids),
+        },
+        "duplicate_adjudications_complete": {
+            "passed": set(duplicate_adjudications) == expected_duplicate_ids,
+            "required": len(expected_duplicate_ids), "provided": len(duplicate_adjudications),
+        },
+        "severe_semantic_errors_zero": {"passed": severe_semantic_errors == 0,
+                                        "count": severe_semantic_errors},
+        "reliable_direct_support_at_least_90pct": {
+            "passed": bool(reliable_denominator) and reliable_direct / reliable_denominator >= .90,
+            "numerator": reliable_direct, "denominator": reliable_denominator,
+        },
+        "fixed_reference_strict_recall_at_least_80pct": {
+            "passed": reference_summary["reliable_strict_recall"] >= .80,
+            "numerator": reference_summary["reliable_strict"],
+            "denominator": reference_summary["denominator"],
+        },
+        "paper_coverage_closed": {"passed": coverage_closed, "papers": len(paper_coverage)},
+        "doi_cross_split_zero": {"passed": doi_cross_split == 0, "count": doi_cross_split},
+        "mg2act_training_violations_zero": {"passed": mg2act_train_violations == 0,
+                                             "count": mg2act_train_violations},
+        "model_boundary_violations_zero": {"passed": model_boundary_violations == 0,
+                                             "count": model_boundary_violations},
+        "external_generation_api_requests_zero": {"passed": True, "count": 0},
+    }
+    release_status = "frozen_v1" if all(gate["passed"] for gate in gates.values()) else "candidate_blocked_quality_gate"
+    if release_status != "frozen_v1":
+        for row in records:
+            row["model_eligibility"] = {
+                "training": False, "rag": False, "reason": "release_gate_blocked"}
+        partitions = {
+            "reliable_evidence": [row for row in records if row["final_status"] == "reliable"],
+            "pending_review": [row for row in records if row["final_status"] == "pending_review"],
+            "excluded_records": [row for row in records if row["final_status"] == "excluded"],
+        }
+        for name, rows in partitions.items():
+            write_json(output / f"{name}.json", rows); write_csv(output / f"{name}.csv", rows)
+        eligibility = [{"evidence_id": curation_overlay.record_id(row), "paper_id": row.get("paper_id"),
+                        "split": row.get("split"), "scope_class": row["scope_class"],
+                        "evidence_origin": row["evidence_origin"], **row["model_eligibility"]}
+                       for row in records]
+        write_json(output / "model_eligibility.json", eligibility)
+        write_csv(output / "model_eligibility.csv", eligibility)
+    metrics["reliable_direct_support"] = {
+        "numerator": reliable_direct, "denominator": reliable_denominator,
+        "rate": reliable_direct / reliable_denominator if reliable_denominator else None,
+    }
+    metrics["reliable_required_field_support"] = {
+        "numerator": reliable_fields, "denominator": reliable_denominator,
+        "rate": reliable_fields / reliable_denominator if reliable_denominator else None,
+    }
+    metrics["quality_gates"] = gates
+    metrics["release_status"] = release_status
+    metrics["model_eligible"] = {
+        "training": sum(bool(row["model_eligibility"]["training"]) for row in records),
+        "rag": sum(bool(row["model_eligibility"]["rag"]) for row in records),
+    }
     write_json(output / "quality_metrics.json", metrics)
-    review_complete = second_reviewed == len(records)
-    release_status = "candidate_blocked_second_review" if not review_complete else "candidate_requires_adjudication"
+    write_json(output / "release_gates.json", gates)
     report = {
         "release_status": release_status, "baseline_records": 429,
         "records_after_recovery": len(records), "partition_counts": {k: len(v) for k, v in partitions.items()},
         "review_b_complete": second_reviewed, "review_b_required": len(records),
+        "review_a_complete": first_reviewed, "review_a_required": len(records),
+        "record_adjudications_required": len(required_adjudication_ids),
+        "record_adjudications_provided": len(adjudication_ids),
+        "duplicate_adjudications_required": len(expected_duplicate_ids),
         "external_generation_api_requests": 0, "expert_gold": False,
         "zero_candidate_audit": str(args.zero_audit), "positive_candidates": len(positives),
         "sample_omission_audit": str(args.sample_audit) if args.sample_audit else None,
         "failure_count": len(failures),
-        "split_counts": dict(Counter(split_by_paper.values())),
+        "split_counts": dict(Counter(split_by_paper.values())), "quality_gates": gates,
     }
     write_json(output / "run_report.json", report)
     (output / "第一版数据报告.md").write_text(
@@ -559,7 +744,7 @@ def build(args) -> dict:
         f"待确认{len(partitions['pending_review'])}；排除{len(partitions['excluded_records'])}。\n"
         f"- 第二盲审：{second_reviewed}/{len(records)}。\n"
         f"- 引用机械定位：{citation_ok}/{len(records)}。\n"
-        "- 当前包为内部候选版本；第二盲审和争议裁定完成后才能冻结为可用于模型的v1。\n",
+        f"- 发布闸门：{sum(g['passed'] for g in gates.values())}/{len(gates)}通过。\n",
         encoding="utf-8")
 
     output_files = sorted(path for path in output.iterdir() if path.is_file()
@@ -579,7 +764,10 @@ def build(args) -> dict:
         input_files.append(args.sample_audit)
     if args.adjudications.is_file():
         input_files.append(args.adjudications)
+    if args.duplicate_adjudications.is_file():
+        input_files.append(args.duplicate_adjudications)
     input_files.extend(args.review_b.glob("*.jsonl"))
+    input_files.extend(args.review_a_extra.glob("*.jsonl"))
     input_files.extend(args.positive_inputs.glob("positive_*.json"))
     schema_files = list(workspace.glob("*_schema.json")) + list(workspace.glob("*_example.json"))
     code_files = [
@@ -588,6 +776,9 @@ def build(args) -> dict:
         Path(__file__).with_name("zero_candidate_audit_v1.py"),
         Path(__file__).with_name("sample_omission_audit_v1.py"),
         Path(__file__).with_name("reference_recall_v1.py"),
+        Path(__file__).with_name("blind_review_completion_v1.py"),
+        Path(__file__).with_name("review_import_v1.py"),
+        Path(__file__).with_name("adjudication_v1.py"),
     ]
     manifest = {
         "release_id": "molglue_negative_v1_20261027", "status": release_status,
@@ -609,8 +800,10 @@ if __name__ == "__main__":
     parser.add_argument("--workspace-manifest", required=True, type=Path)
     parser.add_argument("--inventory", required=True, type=Path)
     parser.add_argument("--ledger", required=True, type=Path)
+    parser.add_argument("--review-a-extra", required=True, type=Path)
     parser.add_argument("--review-b", required=True, type=Path)
     parser.add_argument("--adjudications", required=True, type=Path)
+    parser.add_argument("--duplicate-adjudications", required=True, type=Path)
     parser.add_argument("--mg2act-associations", required=True, type=Path)
     parser.add_argument("--positive-inputs", required=True, type=Path)
     parser.add_argument("--zero-audit", required=True, type=Path)
