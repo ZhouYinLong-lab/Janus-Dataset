@@ -22,6 +22,7 @@ def terms(text):
 
 
 def make_options(question, evidence, index, seed=20261027):
+    """Legacy development options retained for reproducibility only."""
     ref = question.get("reference_answer") or ""
     base = [
         ("correct", "原文支持的结论：" + ref),
@@ -34,7 +35,77 @@ def make_options(question, evidence, index, seed=20261027):
     return [{"category": c, "text": t} for c, t in base]
 
 
-def prepare(questions, trial, out, seed=20261027):
+def visible_length(text):
+    return len(re.sub(r"\s+", "", str(text)))
+
+
+def validate_authored_options(authored, questions, evidence_by_question):
+    """Validate a blinded, human/model-authored hard-choice packet before inference."""
+    expected = {q["question_id"]: q for q in questions}
+    rows = {r.get("question_id"): r for r in authored}
+    if None in rows or len(rows) != len(authored) or set(rows) != set(expected):
+        raise ValueError("Authored options must cover each frozen question exactly once")
+    positions, issues = Counter(), []
+    records, labels = [], []
+    for qid in expected:
+        q, row = expected[qid], rows[qid]
+        options = row.get("options") or []
+        categories = [o.get("category") for o in options]
+        if len(options) != 4 or Counter(categories) != Counter(CATEGORIES):
+            issues.append({"question_id": qid, "code": "category_contract"})
+            continue
+        correct = categories.index("correct")
+        if row.get("correct_option") != correct:
+            issues.append({"question_id": qid, "code": "correct_position_mismatch"})
+        positions[correct] += 1
+        texts = [str(o.get("text") or "").strip() for o in options]
+        lengths = [visible_length(x) for x in texts]
+        ratio = max(lengths) / min(lengths) if min(lengths) else math.inf
+        if ratio > 1.35:
+            issues.append({"question_id": qid, "code": "option_length_ratio", "value": ratio})
+        reference = re.sub(r"\s+", " ", str(q.get("reference_answer") or "")).strip().casefold()
+        correct_text = re.sub(r"\s+", " ", texts[correct]).strip().casefold()
+        if not correct_text or correct_text == reference or reference in correct_text:
+            issues.append({"question_id": qid, "code": "reference_copy"})
+        if len(set(texts)) != 4:
+            issues.append({"question_id": qid, "code": "duplicate_option_text"})
+        for option in options:
+            if option.get("category") != "correct" and not option.get("changed_field"):
+                issues.append({"question_id": qid, "code": "missing_changed_field",
+                               "category": option.get("category")})
+        evidence = evidence_by_question[qid]
+        allowed = {e["evidence_id"] for e in evidence}
+        used = set(row.get("evidence_ids_used") or [])
+        if not used or not used <= allowed:
+            issues.append({"question_id": qid, "code": "evidence_identity"})
+        records.append({"question_id": qid, "question": q["question"], "evidence": evidence,
+                        "options": [{"category": o["category"], "text": texts[i]}
+                                    for i, o in enumerate(options)],
+                        "messages": [{"role": "system", "content": SYSTEM},
+                                     {"role": "user", "content": json.dumps({
+                                         "question": q["question"], "evidence": evidence
+                                     }, ensure_ascii=False)}]})
+        labels.append({"question_id": qid, "correct_option": correct,
+                       "correct_category": "correct", "evaluation_group": q.get("evaluation_group"),
+                       "source_dois": q.get("source_dois", [])})
+    if sorted(positions.values()) != [14, 14, 14, 15]:
+        issues.append({"question_id": None, "code": "answer_position_balance", "value": dict(positions)})
+    return records, labels, issues, dict(positions)
+
+
+def keyword_baseline(records, labels):
+    label_map = {x["question_id"]: x for x in labels}
+    predictions = []
+    for rec in records:
+        context = terms(rec["question"] + " " + json.dumps(rec["evidence"], ensure_ascii=False))
+        scores = [len(context & terms(opt["text"])) for opt in rec["options"]]
+        predictions.append({"question_id": rec["question_id"],
+                            "option": max(range(len(scores)), key=lambda i: (scores[i], -i))})
+    return sum(x["option"] == label_map[x["question_id"]]["correct_option"]
+               for x in predictions) / len(predictions)
+
+
+def prepare(questions, trial, out, seed=20261027, authored_options=None):
     questions, trial, out = Path(questions), Path(trial), Path(out)
     qs = read(questions)
     if len(qs) != 57 or any(q.get("split") != "test" for q in qs):
@@ -42,30 +113,50 @@ def prepare(questions, trial, out, seed=20261027):
     tasks = {t["question_id"]: t for t in read(trial / "tasks.json") if t["arm"] == "recovered"}
     if len(tasks) != len(qs):
         raise ValueError("Recovered context must cover all 57 questions")
-    records, labels = [], []
-    for i, q in enumerate(qs):
+    evidence_by_question = {}
+    for q in qs:
         task = tasks[q["question_id"]]
         user_payload = json.loads(task["messages"][-1]["content"])
-        options = make_options(q, user_payload.get("evidence", []), i, seed)
-        correct = next(i for i, o in enumerate(options) if o["category"] == "correct")
-        # Labels are kept separate and never passed to model scoring.
-        labels.append({"question_id": q["question_id"], "correct_option": correct,
-                       "correct_category": "correct", "evaluation_group": q.get("evaluation_group"),
-                       "source_dois": q.get("source_dois", [])})
-        records.append({"question_id": q["question_id"], "question": q["question"],
-                        "evidence": user_payload.get("evidence", []), "options": options,
-                        "messages": [{"role": "system", "content": SYSTEM},
-                                     {"role": "user", "content": json.dumps({
-                                         "question": q["question"], "evidence": user_payload.get("evidence", [])
-                                     }, ensure_ascii=False)}]})
+        evidence_by_question[q["question_id"]] = user_payload.get("evidence", [])
+    authored_path = Path(authored_options) if authored_options else None
+    if authored_path:
+        records, labels, issues, positions = validate_authored_options(
+            read(authored_path), qs, evidence_by_question)
+    else:
+        records, labels, issues, positions = [], [], [], Counter()
+        for i, q in enumerate(qs):
+            options = make_options(q, evidence_by_question[q["question_id"]], i, seed)
+            correct = next(j for j, o in enumerate(options) if o["category"] == "correct")
+            positions[correct] += 1
+            labels.append({"question_id": q["question_id"], "correct_option": correct,
+                           "correct_category": "correct", "evaluation_group": q.get("evaluation_group"),
+                           "source_dois": q.get("source_dois", [])})
+            records.append({"question_id": q["question_id"], "question": q["question"],
+                            "evidence": evidence_by_question[q["question_id"]], "options": options,
+                            "messages": [{"role": "system", "content": SYSTEM},
+                                         {"role": "user", "content": json.dumps({
+                                             "question": q["question"],
+                                             "evidence": evidence_by_question[q["question_id"]]
+                                         }, ensure_ascii=False)}]})
+    keyword = keyword_baseline(records, labels) if records and not issues else None
+    gate = {"status": "pass" if not issues and keyword < .70 else "blocked",
+            "questions": len(records), "structural_issues": issues,
+            "answer_position_counts": dict(positions), "keyword_accuracy": keyword,
+            "requirements": {"questions": 57, "maximum_length_ratio": 1.35,
+                             "maximum_keyword_accuracy_exclusive": .70,
+                             "answer_position_counts_sorted": [14, 14, 14, 15]}}
     out = fresh(out)
     write(out / "fixed_choice_questions.json", records)
     write(out / "fixed_choice_labels.json", labels)
+    write(out / "quality_gate.json", gate)
     write(out / "config.json", {"seed": seed, "questions": len(records),
                                  "models": ["base", "positive_only", "domain_control", "balanced_negative"],
                                  "scoring": "mean conditional log-likelihood over option tokens"})
-    seal(out, [questions, trial / "manifest.json"], {"artifact": "fixed_choice_evaluation", "api_requests": 0})
-    return {"questions": len(records), "options": len(records) * 4, "api_requests": 0}
+    inputs = [questions, trial / "manifest.json"] + ([authored_path] if authored_path else [])
+    seal(out, inputs, {"artifact": "fixed_choice_evaluation", "api_requests": 0,
+                       "quality_gate": gate["status"]})
+    return {"questions": len(records), "options": len(records) * 4, "api_requests": 0,
+            "quality_gate": gate["status"], "keyword_accuracy": keyword}
 
 
 def option_score(model, tokenizer, prefix, option, device):
@@ -116,6 +207,9 @@ def run(eval_dir, base_model, adapters, out=None):
     from peft import PeftModel
     eval_dir = Path(eval_dir)
     records, labels = read(eval_dir / "fixed_choice_questions.json"), read(eval_dir / "fixed_choice_labels.json")
+    gate_path = eval_dir / "quality_gate.json"
+    if gate_path.exists() and read(gate_path).get("status") != "pass":
+        raise ValueError("Fixed-choice quality gate has not passed")
     label_map = {x["question_id"]: x for x in labels}
     specs = {"base": {"model_path": str(Path(base_model).resolve()), "adapter_path": None}}
     for name, path in adapters.items():
@@ -210,6 +304,7 @@ if __name__ == "__main__":
     a.add_argument("--questions", required=True, type=Path)
     a.add_argument("--trial", required=True, type=Path)
     a.add_argument("--out", required=True, type=Path)
+    a.add_argument("--authored-options", type=Path)
     b = sub.add_parser("run")
     b.add_argument("--eval-dir", required=True, type=Path)
     b.add_argument("--base-model", required=True, type=Path)
