@@ -1,6 +1,8 @@
 # 恢复证据的 RAG、训练与下游评价框架
 
-2026-10-27。该目录接在 `sentence_v3` 内容验收之后，回答“恢复的叙述性阴性是否改善模型回答或预测”。真实数据、正式训练和付费生成延后接入。本轮验证使用合成样例和随机初始化的微型模型。
+2026-10-27。该目录接在 `sentence_v3` 内容验收之后，回答“恢复的叙述性阴性是否改善模型回答或预测”。2026-10-28已完成冻结真实数据上的RAG、三组LoRA困难固定选项评价和MG2Act外部检查。正式结论见 `正式用途评价总报告_20261028.md`。
+
+当前结论：恢复证据相对结构化数据库和等长背景材料改善RAG回答，但弱于原文检索；平衡阴性LoRA没有提高57题准确率或降低过度推断；MG2Act六组均退化为相同常数预测，没有显示外部迁移增量。
 
 ## 入口与当前状态
 
@@ -114,12 +116,14 @@ python train.py run --material local/training_material --arm balanced_negative -
 
 `tokenization_report.json`、`training_metrics.json` 记录 token 组成、完整更新数和验证损失。损失用于排查训练，不作为任务增益指标。默认配置每组 100 个更新、每次 4 个长度 512 的 block，即 204800 个输入 token、204400 个 loss 目标 token。
 
-本地评价统一比较基座及三个适配器，默认用 RAG 冻结的 `no_retrieval` 问题；可指定另一上下文组，所有模型保持一致：
+本地自由生成入口保留用于诊断。正式LoRA比较使用困难固定选项和条件平均对数似然，避免JSON格式失败混入科学得分：
 
 ```powershell
 python local_eval.py prepare --trial local/rag_01 --models models.example.json --out local/model_eval_01
 python local_eval.py run --out local/model_eval_01
 python local_eval.py run --out local/model_eval_01 --execute --max-new-tasks 10
+python fixed_choice_eval.py prepare --questions local/questions.json --trial local/rag_trial --authored-options local/adjudicated_options.json --review-a local/review_a.json --review-b local/review_b.json --adjudications local/adjudications.json --out local/fixed_choice
+python fixed_choice_eval.py run --eval-dir local/fixed_choice --base-model local/base_model --positive-adapter local/positive_adapter --domain-adapter local/domain_adapter --balanced-adapter local/balanced_adapter --out local/fixed_choice_results
 ```
 
 输出的 `exports/answers.json` 与 RAG 共用判定入口。上下文超长或输出不符合 JSON 时保留失败；不悄悄裁剪或重写回答。`evaluate.py` 还计算 balanced_negative 相对于 base、positive_only、domain_control 的来源组配对增量。
@@ -133,6 +137,8 @@ python benchmark.py prepare --data-dir ../2026-10-26-mg2act-audit/local/upstream
 # API 运行共用 run.py；本地基座/适配器也可复用这一套数值任务。
 python local_eval.py prepare --trial local/mg2act --models models.example.json --context-arm structured --out local/mg_model_eval
 python benchmark.py score --benchmark local/mg2act --predictions local/mg_model_eval/exports/answers.json --out local/mg_scores
+python mg2act_local_eval.py prepare --benchmark local/mg2act --out local/mg2act_score_grid
+python mg2act_local_eval.py run --eval-dir local/mg2act_score_grid --base-model local/base_model --positive-adapter local/positive_adapter --domain-adapter local/domain_adapter --balanced-adapter local/balanced_adapter --out local/mg2act_local_results
 ```
 
 数值任务的 structured/recovered/background_ablation 都排除已知验证/测试来源 DOI，检索只使用训练分区。`overlap_audit.json` 列出隔离记录、来源未知和实验独立性未确定项。这里提供的是同一任务上的语言模型比较器；复现作者 ESM-C/GNN 架构可在其环境运行，将每条预测导出为含 `id,prediction` 的 CSV：
@@ -146,10 +152,10 @@ python benchmark.py score --benchmark local/mg2act --predictions local/mg2act_au
 
 ## 验证与接续
 
-测试包含来源篡改/偏移错误、来源连通分组、测试泄漏、黄金答案不进请求、未知/429 停止、成功续跑与已保存响应恢复、固定分母、三组平衡与 token 预算、随机微型模型实际优化、LoRA checkpoint 恢复、fine-test 和外部数值预测导入。正式效果实验均尚未执行。
+测试包含来源篡改/偏移错误、来源连通分组、测试泄漏、黄金答案不进请求、未知/429 停止、成功续跑与已保存响应恢复、固定分母、三组平衡与 token 预算、随机微型模型实际优化、LoRA checkpoint 恢复、困难选项标签隔离、fine-test 和外部数值预测导入。正式用途实验已经执行，异常与不利结果均保留。
 
 核心接入、检索、记账和评分使用标准库及现有提取模块；训练依赖见 `requirements-training.txt`。训练实现参考 [Transformers 因果语言模型接口](https://huggingface.co/docs/transformers/en/main_classes/trainer) 和 [PEFT LoRA](https://huggingface.co/docs/peft/en/developer_guides/lora)，本目录使用显式 PyTorch 更新循环以固定三组预算。
 
-这意味着什么：接口、执行和对照可以先验收，科学结论由随后冻结的真实数据与独立题集产生。
+这意味着什么：接口、冻结数据和正式对照已经形成可复核闭环；结果支持RAG局部增量，不支持当前LoRA或MG2Act增量。
 
-下一步应该做什么以完成总体目标：提取内容验收后冻结证据与修正层，补齐可靠阳性/背景和保留评价题，先运行 RAG 对照，再以相同评价启动三组训练及下游预测。
+下一步应该做什么以完成总体目标：优先做少量专家抽查；若继续训练路线，在更大基座或多seed条件下复验，不重复当前RAG生成。

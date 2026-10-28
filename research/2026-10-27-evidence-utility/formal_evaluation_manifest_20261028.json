@@ -1,0 +1,37 @@
+{
+  "status": "complete",
+  "evaluation_date": "2026-10-28",
+  "research_question": "Whether recovered narrative negative evidence improves retrieval-augmented answers, small-model training, or external activity prediction.",
+  "rag": {
+    "tasks": 285,
+    "judged_answers": 283,
+    "historical_unknown": 1,
+    "invalid_response": 1,
+    "report_sha256": "81677a384a553665f28d9527aba267dc885513c3ca4d8f5ae44c7d751be49f0b"
+  },
+  "lora": {
+    "questions": 57,
+    "models": 4,
+    "single_seed": true,
+    "summary_sha256": "ab2f5ac296e3ec17e6bb044f714d8b6d063f63b016bd46a81437e2cf545518a3",
+    "evaluator_sha256": "dcba56da623bbc639c56a24349ad95f52294d3e175fe5adf84579de542c97e7d"
+  },
+  "mg2act": {
+    "official_revision": "d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065",
+    "test_rows": 127,
+    "fine_test_rows": 73,
+    "model_context_arms": 6,
+    "summary_sha256": "80d0fe90ae1e35701dbfa72c2a6bfa07f5c77868acc090893d7d377472eeaa36",
+    "evaluator_sha256": "652923ed2b192ce751d9c044f4918856dbea5363e4cf6c93cc48e28d88c59341"
+  },
+  "final_report_sha256": "ab29c470baf237ff174954ae875b175894ee5cc2c7b05f7f4fd4ed9031a71aff",
+  "review_provenance": "Model-assisted review and adjudication; not expert gold.",
+  "external_generation_requests_this_round": 0,
+  "new_training_runs_this_round": 0,
+  "commits": {
+    "hard_choice_gate": "2e972d78ab2e9e9a198bc46a94404fe7cd1e4fd3",
+    "mg2act_evaluator": "d5438fa3f7860f04029fbb37e489b577fc4fefb3",
+    "lora_evaluation": "8fb649e92de672b3929a8254f926073d6dc7369e",
+    "mg2act_results": "a5a8c0e8ceddac3d1a72f3790aefc6cf499d5630"
+  }
+}
