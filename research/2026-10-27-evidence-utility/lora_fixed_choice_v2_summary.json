@@ -1,0 +1,35 @@
+{
+  "evaluation": "evidence-conditioned hard fixed-choice v2",
+  "questions": 57,
+  "doi_groups": 10,
+  "options_per_question": 4,
+  "quality_gate": "pass",
+  "keyword_baseline_accuracy": 0.24561403508771928,
+  "majority_position_accuracy": 0.2631578947368421,
+  "models": {
+    "base": {"accuracy": 0.7192982456140351, "overclaim_rate": 0.19298245614035087},
+    "positive_only": {"accuracy": 0.7192982456140351, "overclaim_rate": 0.21052631578947367},
+    "domain_control": {"accuracy": 0.7368421052631579, "overclaim_rate": 0.19298245614035087},
+    "balanced_negative": {"accuracy": 0.7192982456140351, "overclaim_rate": 0.21052631578947367}
+  },
+  "balanced_negative_comparisons": {
+    "minus_base_accuracy": 0.0,
+    "minus_positive_only_accuracy": 0.0,
+    "minus_domain_control_accuracy": -0.01754385964912275,
+    "minus_base_overclaim_rate": 0.017543859649122806,
+    "minus_positive_only_overclaim_rate": 0.0,
+    "minus_domain_control_overclaim_rate": 0.017543859649122806
+  },
+  "interpretation": "The balanced-negative adapter did not improve accuracy or reduce overclaiming in this single-seed evaluation.",
+  "review_provenance": "Two independent Luna model-assisted reviews plus model-assisted adjudication; not expert gold.",
+  "external_generation_requests": 0,
+  "single_seed": true,
+  "hashes": {
+    "evaluation_manifest": "7692817cf99db44f6f88cfbd508ee1cd468d5d252a9581ee95e7173f6c6ec1fb",
+    "predictions": "2f433512f4a5d065e8f73318db80824960d00f36234fbd511523184d2c61c4fb",
+    "report": "5304ce80240df3214fb350195657e3c4c2f71df21556a44b5030b3b5a0985aa4",
+    "review_a": "54dfcf9bac08e9c54bf3b9616836a6364e0de56fa57a99f8393137a97b37b876",
+    "review_b": "9eae1b7b44c31e38c32034504e1028ddfbce981600e76c3f0639ee1d9da7da99",
+    "adjudications": "b7eaccf6ae13248fb87dfd3a9e9061f0079eade85c0ea3871dc4331d82d9d5ee"
+  }
+}

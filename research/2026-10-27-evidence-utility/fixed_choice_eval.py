@@ -39,6 +39,23 @@ def visible_length(text):
     return len(re.sub(r"\s+", "", str(text)))
 
 
+def normalize_insufficient_option(options):
+    """Make the experiment-status distractor comparable in length without adding facts."""
+    result = [dict(option) for option in options]
+    correct = next(o for o in result if o.get("category") == "correct")
+    insufficient = next(o for o in result if o.get("category") == "insufficient")
+    text = str(correct.get("text") or "").strip()
+    marker = "结果为："
+    if marker in text:
+        prefix, observation = text.split(marker, 1)
+        insufficient["text"] = (prefix + marker + "论文未报告是否“" + observation.rstrip("。") +
+                                "”，故结果无法判断。")
+    else:
+        insufficient["text"] = "论文未报告是否“" + text.rstrip("。") + "”，故结果无法判断。"
+    insufficient["changed_field"] = "experiment_status"
+    return result
+
+
 def validate_authored_options(authored, questions, evidence_by_question):
     """Validate a blinded, human/model-authored hard-choice packet before inference."""
     expected = {q["question_id"]: q for q in questions}
@@ -49,7 +66,7 @@ def validate_authored_options(authored, questions, evidence_by_question):
     records, labels = [], []
     for qid in expected:
         q, row = expected[qid], rows[qid]
-        options = row.get("options") or []
+        options = normalize_insufficient_option(row.get("options") or [])
         categories = [o.get("category") for o in options]
         if len(options) != 4 or Counter(categories) != Counter(CATEGORIES):
             issues.append({"question_id": qid, "code": "category_contract"})
@@ -105,7 +122,8 @@ def keyword_baseline(records, labels):
                for x in predictions) / len(predictions)
 
 
-def prepare(questions, trial, out, seed=20261027, authored_options=None):
+def prepare(questions, trial, out, seed=20261027, authored_options=None,
+            review_a=None, review_b=None, adjudications=None):
     questions, trial, out = Path(questions), Path(trial), Path(out)
     qs = read(questions)
     if len(qs) != 57 or any(q.get("split") != "test" for q in qs):
@@ -117,7 +135,12 @@ def prepare(questions, trial, out, seed=20261027, authored_options=None):
     for q in qs:
         task = tasks[q["question_id"]]
         user_payload = json.loads(task["messages"][-1]["content"])
-        evidence_by_question[q["question_id"]] = user_payload.get("evidence", [])
+        reference = [{"evidence_id": f'reference:{q["question_id"]}:{i}', "text": text,
+                      "doi": (q.get("source_dois") or [None])[0], "kind": "frozen_reference_excerpt"}
+                     for i, text in enumerate(q.get("reference_evidence") or [])]
+        if not reference:
+            raise ValueError("Every fixed-choice question requires frozen direct evidence")
+        evidence_by_question[q["question_id"]] = reference + user_payload.get("evidence", [])
     authored_path = Path(authored_options) if authored_options else None
     if authored_path:
         records, labels, issues, positions = validate_authored_options(
@@ -149,10 +172,25 @@ def prepare(questions, trial, out, seed=20261027, authored_options=None):
     write(out / "fixed_choice_questions.json", records)
     write(out / "fixed_choice_labels.json", labels)
     write(out / "quality_gate.json", gate)
+    review_paths = [Path(x) for x in (review_a, review_b, adjudications) if x]
+    if review_paths:
+        if len(review_paths) != 3:
+            raise ValueError("Reviewer A, Reviewer B and adjudications must be supplied together")
+        expected_ids = {q["question_id"] for q in qs}
+        for path in review_paths:
+            rows = read(path)
+            ids = [x.get("question_id") for x in rows]
+            if len(ids) != 57 or len(set(ids)) != 57 or set(ids) != expected_ids:
+                raise ValueError("Review/adjudication coverage must be exactly the frozen 57 questions")
+        write(out / "review_provenance.json", {
+            "review_a_sha256": sha(review_paths[0]), "review_b_sha256": sha(review_paths[1]),
+            "adjudications_sha256": sha(review_paths[2]),
+            "coverage": 57, "provenance": "two independent Luna model-assisted reviews plus model-assisted adjudication; not expert gold"
+        })
     write(out / "config.json", {"seed": seed, "questions": len(records),
                                  "models": ["base", "positive_only", "domain_control", "balanced_negative"],
                                  "scoring": "mean conditional log-likelihood over option tokens"})
-    inputs = [questions, trial / "manifest.json"] + ([authored_path] if authored_path else [])
+    inputs = [questions, trial / "manifest.json"] + ([authored_path] if authored_path else []) + review_paths
     seal(out, inputs, {"artifact": "fixed_choice_evaluation", "api_requests": 0,
                        "quality_gate": gate["status"]})
     return {"questions": len(records), "options": len(records) * 4, "api_requests": 0,
@@ -251,6 +289,8 @@ def score_report(predictions, labels, records=None):
               "objective": "evidence-conditioned fixed-choice likelihood; no free generation"}
     for model in models:
         rows = [p for p in predictions if p["model"] == model]
+        if len(rows) != len(labels) or len({p["question_id"] for p in rows}) != len(labels):
+            raise ValueError("Every model must cover the complete fixed-choice denominator")
         correct = sum(p["correct"] for p in rows)
         tp = Counter()
         pred = Counter(p["predicted_category"] for p in rows)
@@ -262,11 +302,20 @@ def score_report(predictions, labels, records=None):
             groups[label_map[p["question_id"]].get("evaluation_group")].append(p)
         binary_f1 = (2 * correct / (2 * correct + (len(rows) - correct) + (len(rows) - correct))
                      if rows else None)
+        margins = []
+        for p in rows:
+            if p.get("scores"):
+                correct_option = label_map[p["question_id"]]["correct_option"]
+                correct_score = next(x["mean_logprob"] for x in p["scores"] if x["option"] == correct_option)
+                distractor = max(x["mean_logprob"] for x in p["scores"] if x["option"] != correct_option)
+                margins.append(correct_score - distractor)
         result["models"][model] = {
             "accuracy": correct / len(rows) if rows else None,
             "macro_f1_correct_vs_incorrect": binary_f1,
             "overclaim_rate": sum(p["predicted_category"] == "overclaim" for p in rows) / len(rows) if rows else None,
             "predicted_category_counts": dict(pred),
+            "distractor_selection_rates": {c: pred[c] / len(rows) for c in CATEGORIES if c != "correct"},
+            "mean_correct_minus_best_distractor_logprob": sum(margins) / len(margins) if margins else None,
             "source_group_accuracy": {g: sum(p["correct"] for p in rs) / len(rs) for g, rs in groups.items()},
         }
     # Transparent non-model baselines.
@@ -294,7 +343,36 @@ def score_report(predictions, labels, records=None):
                     "accuracy_delta": result["models"]["balanced_negative"]["accuracy"] - result["models"][other]["accuracy"],
                     "overclaim_rate_delta": result["models"]["balanced_negative"]["overclaim_rate"] - result["models"][other]["overclaim_rate"],
                 }
+                result["balanced_negative_deltas"][other]["doi_cluster_bootstrap"] = paired_accuracy_bootstrap(
+                    [p for p in predictions if p["model"] == "balanced_negative"],
+                    [p for p in predictions if p["model"] == other], label_map)
+    accuracies = [x["accuracy"] for x in result["models"].values()]
+    result["quality_gate"] = {
+        "status": "blocked_non_discriminative" if accuracies and min(accuracies) >= .95 else "pass",
+        "all_models_at_least_95_percent": bool(accuracies and min(accuracies) >= .95),
+        "keyword_below_70_percent": keyword_accuracy is not None and keyword_accuracy < .70,
+    }
     return result
+
+
+def paired_accuracy_bootstrap(first, second, label_map, seed=20261027, draws=2000):
+    second_map = {x["question_id"]: x for x in second}
+    groups = defaultdict(list)
+    for row in first:
+        other = second_map[row["question_id"]]
+        group = label_map[row["question_id"]].get("evaluation_group")
+        groups[group].append(int(row["correct"]) - int(other["correct"]))
+    names = sorted(groups, key=str)
+    observed_values = [v for name in names for v in groups[name]]
+    observed = sum(observed_values) / len(observed_values)
+    rng, samples = random.Random(seed), []
+    for _ in range(draws):
+        selected = [rng.choice(names) for _ in names]
+        values = [v for name in selected for v in groups[name]]
+        samples.append(sum(values) / len(values))
+    samples.sort()
+    return {"groups": len(names), "delta_accuracy": observed,
+            "ci95": [samples[int(.025 * draws)], samples[min(draws - 1, int(.975 * draws))]]}
 
 
 if __name__ == "__main__":
@@ -305,6 +383,9 @@ if __name__ == "__main__":
     a.add_argument("--trial", required=True, type=Path)
     a.add_argument("--out", required=True, type=Path)
     a.add_argument("--authored-options", type=Path)
+    a.add_argument("--review-a", type=Path)
+    a.add_argument("--review-b", type=Path)
+    a.add_argument("--adjudications", type=Path)
     b = sub.add_parser("run")
     b.add_argument("--eval-dir", required=True, type=Path)
     b.add_argument("--base-model", required=True, type=Path)
