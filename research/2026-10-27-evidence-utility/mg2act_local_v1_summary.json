@@ -1,0 +1,42 @@
+{
+  "benchmark_revision": "d3f9d1da48be93d67cfc2be074c0cf0c6bdbb065",
+  "official_split_counts": {"train": 907, "validation": 125, "test": 127, "fine_test": 73},
+  "candidate_score_source": "16 unique values from the official train split only",
+  "eligible_retrieval_evidence": 570,
+  "blocked_heldout_or_ineligible_evidence": 367,
+  "test_rows_with_recovered_negative_evidence": 127,
+  "mean_extra_negative_records_per_test_row": 1.82677165354331,
+  "coverage": 1.0,
+  "predicted_score": 0.666666667,
+  "constant_prediction_arms": [
+    "base_structured",
+    "positive_only_structured",
+    "domain_control_structured",
+    "balanced_negative_structured",
+    "base_recovered",
+    "base_background_ablation"
+  ],
+  "model_metrics": {
+    "full_test": {"mae": 0.28950131257480316, "rmse": 0.36731033956142783, "r2": -0.7818208471131136},
+    "fine_test": {"mae": 0.27351598193150684, "rmse": 0.34329853104056807, "r2": -0.5173468144042777}
+  },
+  "baselines": {
+    "train_mean_mae": 0.22915324669310438,
+    "train_median_mae": 0.2291338582677165,
+    "target_train_mean_mae": 0.2308679097039365
+  },
+  "paired_delta_mae": {
+    "balanced_minus_positive_only": 0.0,
+    "balanced_minus_domain_control": 0.0,
+    "balanced_minus_base": 0.0,
+    "recovered_minus_structured": 0.0,
+    "recovered_minus_background": 0.0
+  },
+  "interpretation": "All model and retrieval arms collapsed to the same constant prediction. MG2Act shows no training or retrieval increment for the current 0.6B language-model setup and performs worse than simple train-distribution baselines.",
+  "external_generation_requests": 0,
+  "hashes": {
+    "result_manifest": "c8aeeb269cdfe3f0ae0524926442c533464ef5b095d5c4557608afd3838e12ca",
+    "report": "dbd6fc308664a66b34a415f3672b29fb9899bbfabaac5113e4ccd44fed1c7ecd",
+    "predictions": "714d3f906dd791ca63c4cb91740610d1c69f55377137ad53de5e6193977a7439"
+  }
+}
