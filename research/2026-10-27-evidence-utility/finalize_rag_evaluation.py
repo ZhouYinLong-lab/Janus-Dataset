@@ -31,6 +31,8 @@ def finalize(trial, packet, adjudications, out):
     result["review_provenance"] = "Two independent Luna model-assisted screening passes plus model-assisted adjudication; not expert gold."
     result["judged_answers"] = len(judgments)
     result["generation_exceptions"] = {
+        "original_tasks": 285,
+        "completed_answers": 283,
         "historical_unknown": 1,
         "invalid_response": 1,
         "not_retried": True,
