@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "frozen_at": "2026-10-28",
+  "title": "分子胶非结构化阴性证据恢复与利用进展小结",
+  "sources": [
+    {
+      "path": "research/2026-10-25-api-extraction/molglue_negative_v1_summary_20261027.json",
+      "sha256": "ecaa41ed96fa9a351e12f87b52f23135762e3457afdcb0f0dbb9c38a842aaf00"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/local/bundle_frozen_v1c_20261028/evidence.json",
+      "sha256": "d81bd8b17feec26329207a162ad408993abc84d7b41466e35e5541291bd06038"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/正式用途评价总报告_20261028.md",
+      "sha256": "108152277a849a88a8f77347578d51e520063f1556a3b87ea56b61e6903f7db1"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/error_summary_20261028.json",
+      "sha256": "96c5f0f892ef65dc1462c2366e067dc8ac76211a24adf0ed42df50a3607c99fa"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/lora_fixed_choice_v2_summary.json",
+      "sha256": "ab2f5ac296e3ec17e6bb044f714d8b6d063f63b016bd46a81437e2cf545518a3"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/mg2act_local_v1_summary.json",
+      "sha256": "80d0fe90ae1e35701dbfa72c2a6bfa07f5c77868acc090893d7d377472eeaa36"
+    },
+    {
+      "path": "research/2026-10-27-evidence-utility/typical_cases_20261028.csv",
+      "sha256": "c8ca25b19bc7887198a24d364cccb3fe1d67dd72aed33dbfba530bb29ac0b738"
+    }
+  ],
+  "inventory": {
+    "papers": 193,
+    "scanned": 70,
+    "completed_with_candidates": 67,
+    "completed_no_candidates": 3,
+    "fulltext_missing": 107,
+    "html_pending_format": 16,
+    "candidate_records": 464,
+    "formal_negative_evidence": 148,
+    "formal_evidence_dois": 42,
+    "independent_experiments": 146,
+    "records_without_experiment_id": 1
+  },
+  "rag": {
+    "questions": 57,
+    "arms": 5,
+    "tasks": 285,
+    "completed": 283,
+    "historical_unknown": 1,
+    "invalid_response": 1,
+    "mean_scores": {
+      "no_retrieval": 0.315,
+      "structured": 0.327,
+      "background": 0.322,
+      "recovered": 0.404,
+      "raw": 0.673
+    },
+    "recovered_vs_structured": {
+      "delta": 0.063,
+      "ci95": [0.025, 0.107],
+      "better": 11,
+      "equal": 44,
+      "worse": 2
+    },
+    "recovered_vs_background": {
+      "delta": 0.047,
+      "ci95": [0.008, 0.087]
+    },
+    "recovered_vs_raw": {
+      "better": 5,
+      "equal": 20,
+      "worse": 32
+    },
+    "field_incomplete": {
+      "recovered_direction": 47,
+      "recovered_condition": 52,
+      "raw_direction": 25,
+      "raw_condition": 26
+    }
+  },
+  "lora": {
+    "base_model": "Qwen3-0.6B-Base",
+    "updates": 100,
+    "seeds": 1,
+    "questions": 57,
+    "keyword_baseline_correct": 14,
+    "models": {
+      "base": {"correct": 41, "accuracy": 0.7193, "overclaim_rate": 0.1930},
+      "positive_only": {"correct": 41, "accuracy": 0.7193, "overclaim_rate": 0.2105},
+      "domain_control": {"correct": 42, "accuracy": 0.7368, "overclaim_rate": 0.1930},
+      "balanced_negative": {"correct": 41, "accuracy": 0.7193, "overclaim_rate": 0.2105}
+    },
+    "all_correct": 41,
+    "all_wrong": 15,
+    "model_disagreement": 4,
+    "balanced_unique_benefit": 0,
+    "balanced_harm_vs_domain": 1,
+    "balanced_vs_domain_delta_percentage_points": -1.75,
+    "balanced_vs_domain_ci95_percentage_points": [-6.25, 0.0]
+  },
+  "mg2act": {
+    "train": 907,
+    "validation": 125,
+    "test": 127,
+    "fine_test": 73,
+    "candidate_values": 16,
+    "constant_prediction": 0.666666667,
+    "test_mae": 0.2895,
+    "train_mean_baseline_mae": 0.2292
+  },
+  "cases": [
+    {
+      "case_id": "CASE_03",
+      "question_id": "Q_R_2f78faeecab220",
+      "topic": "β-catenin降解",
+      "doi": "10.1038/s41467-019-09358-9",
+      "role": "恢复证据明确增益"
+    },
+    {
+      "case_id": "CASE_08",
+      "question_id": "Q_R_7ccc44285c0154",
+      "topic": "E7820线粒体呼吸",
+      "doi": "10.1038/s41467-022-28907-3",
+      "role": "原文信息优势"
+    },
+    {
+      "case_id": "CASE_09",
+      "question_id": "Q_R_6af5031883b1ec",
+      "topic": "LXH-3-71对PHGDH酶抑制",
+      "doi": "10.1016/j.apsb.2024.06.001",
+      "role": "LoRA共同终点错误"
+    },
+    {
+      "case_id": "CASE_11",
+      "question_id": "Q_R_8f6e12edac7e22",
+      "topic": "IKZF3-GFP蛋白丰度",
+      "doi": "10.1021/acs.jmedchem.3c00851",
+      "role": "LoRA模型分歧"
+    }
+  ],
+  "review_status": {
+    "model_assisted": true,
+    "expert_reviews_completed": 0,
+    "expert_packet_prepared": true
+  }
+}

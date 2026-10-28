@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "status": "validated",
+  "date": "2026-10-28",
+  "page_count": 4,
+  "files": {
+    "report_facts_20261028.json": {
+      "sha256": "be6e460b54eb1574d8c7319b992771e9274345f074fb17bf7831bf5501f11846",
+      "bytes": 4539
+    },
+    "分子胶非结构化阴性证据进展小结.md": {
+      "sha256": "616f8fc991c4fc5a401458e929c65a40a5541d43f5969df5179de1ad1863787f",
+      "bytes": 10363
+    },
+    "分子胶非结构化阴性证据恢复与利用进展小结.docx": {
+      "sha256": "0896aeaba269b548747d29b5bec8ea86548d3be8e031f0cde613a238e59e797f",
+      "bytes": 43668
+    },
+    "build_report.py": {
+      "sha256": "57ea5e9575318cdec2e9d45f831abbf057765ef0c5860c823a217920390e2285",
+      "bytes": 8371
+    },
+    "validate_report.py": {
+      "sha256": "ebaced4e5111dbe727af84b8d0f02179a27f8da785b61037aff6cb5aa981898c",
+      "bytes": 4868
+    }
+  },
+  "checks": {
+    "frozen_source_hashes": "passed",
+    "report_number_consistency": "passed",
+    "case_identity_consistency": "passed",
+    "forbidden_claim_scan": "passed",
+    "accessibility_audit_high": 0,
+    "accessibility_audit_medium": 0,
+    "accessibility_audit_low": 0,
+    "rendered_pages_reviewed": 4,
+    "layout_review": "passed"
+  }
+}
