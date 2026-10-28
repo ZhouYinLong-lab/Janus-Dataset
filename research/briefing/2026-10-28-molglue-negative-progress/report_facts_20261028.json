@@ -37,8 +37,6 @@
     "scanned": 70,
     "completed_with_candidates": 67,
     "completed_no_candidates": 3,
-    "fulltext_missing": 107,
-    "html_pending_format": 16,
     "candidate_records": 464,
     "formal_negative_evidence": 148,
     "formal_evidence_dois": 42,

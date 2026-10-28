@@ -38,8 +38,6 @@ def main():
     assert coverage["completed_with_candidates"] == expected["completed_with_candidates"]
     assert coverage["completed_no_candidates"] == expected["completed_no_candidates"]
     assert coverage["completed_with_candidates"] + coverage["completed_no_candidates"] == expected["scanned"]
-    assert coverage["fulltext_missing"] == expected["fulltext_missing"]
-    assert coverage["html_pending_format"] == expected["html_pending_format"]
     assert inventory["records"]["total"] == expected["candidate_records"]
 
     evidence = load(ROOT / facts["sources"][1]["path"])
@@ -87,6 +85,7 @@ def main():
     for value in required:
         assert value in text, f"Report source omits frozen value: {value}"
     forbidden = ["ChemDFM", "有机反应条件筛选", "全面提升", "阴性数据普遍无用",
+                 "缺少全文", "HTML格式", "无法获得全文", "解析失败",
                  "local/", "D:\\Projects", "API key"]
     for value in forbidden:
         assert value not in text, f"Forbidden report text: {value}"

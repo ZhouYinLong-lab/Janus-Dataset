@@ -5,24 +5,24 @@
   "page_count": 4,
   "files": {
     "report_facts_20261028.json": {
-      "sha256": "be6e460b54eb1574d8c7319b992771e9274345f074fb17bf7831bf5501f11846",
-      "bytes": 4539
+      "sha256": "a78c68bb5a062d857bf7c4fecef93cf6cab8c3d4cda3da6c046d912c9501d658",
+      "bytes": 4479
     },
     "分子胶非结构化阴性证据进展小结.md": {
-      "sha256": "616f8fc991c4fc5a401458e929c65a40a5541d43f5969df5179de1ad1863787f",
-      "bytes": 10363
+      "sha256": "c4668eb746ae0ddda002800bc1a944090ac6718fe0817888722b82f08689a8a7",
+      "bytes": 10176
     },
     "分子胶非结构化阴性证据恢复与利用进展小结.docx": {
-      "sha256": "0896aeaba269b548747d29b5bec8ea86548d3be8e031f0cde613a238e59e797f",
-      "bytes": 43668
+      "sha256": "e3c6a62c6aef112dbe57211ab746c8c7d2c646e49905b5489838c4101a20f37d",
+      "bytes": 43504
     },
     "build_report.py": {
       "sha256": "57ea5e9575318cdec2e9d45f831abbf057765ef0c5860c823a217920390e2285",
       "bytes": 8371
     },
     "validate_report.py": {
-      "sha256": "ebaced4e5111dbe727af84b8d0f02179a27f8da785b61037aff6cb5aa981898c",
-      "bytes": 4868
+      "sha256": "887352fadf1f36ce9cb7451a9d05ef0e71b9c07421ecf288b6a5ed148cb788aa",
+      "bytes": 4803
     }
   },
   "checks": {
