@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "fields": [
+    "audit_id",
+    "item_type",
+    "experiment_performed",
+    "negative_or_boundary_supported",
+    "subject_correct",
+    "target_correct",
+    "endpoint_correct",
+    "direction_correct",
+    "conditions_correct",
+    "citation_supported",
+    "single_supported_option",
+    "decision",
+    "correct_option_if_applicable",
+    "corrections",
+    "reason",
+    "reviewer_id",
+    "reviewed_at"
+  ],
+  "boolean_values": [
+    "true",
+    "false",
+    "uncertain",
+    "not_applicable"
+  ],
+  "decision_values": [
+    "accept",
+    "correct",
+    "exclude",
+    "not_assessable"
+  ],
+  "correct_option_values": [
+    "",
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "notes": {
+    "audit_id": "不得改动。它用于把专家意见与私有索引重新关联。",
+    "correct_option_if_applicable": "仅固定选项题填写，使用从0开始的选项编号。",
+    "reviewed_at": "建议使用带时区的ISO 8601时间。",
+    "blank": "没有填写的字段保留空值，不要猜测。"
+  }
+}

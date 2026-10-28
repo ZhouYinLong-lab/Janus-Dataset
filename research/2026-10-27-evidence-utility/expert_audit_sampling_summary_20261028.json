@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "seed": 20261028,
+  "status": "packet_prepared_not_reviewed",
+  "total_items": 65,
+  "item_counts": {
+    "evidence": 30,
+    "rag_answer": 20,
+    "fixed_choice": 15
+  },
+  "evidence_outcome_counts": {
+    "not_observed": 12,
+    "relative_weakening": 6,
+    "conditional_loss": 5,
+    "reduced": 3,
+    "rare_boundary": 4
+  },
+  "evidence_split_counts": {
+    "train": 20,
+    "val": 5,
+    "test": 5
+  },
+  "evidence_endpoint_counts": {
+    "protein_degradation": 25,
+    "protein_abundance": 3,
+    "binding_or_recruitment": 1,
+    "other_endpoint": 1
+  },
+  "evidence_incomplete_context_count": 6,
+  "rag_counts": {
+    "available_answers": 18,
+    "historical_unknown": 1,
+    "invalid_response": 1,
+    "recovered_gain": 5,
+    "recovered_regression": 2,
+    "raw_advantage": 4,
+    "recovered_equal": 4,
+    "background_control": 3
+  },
+  "fixed_choice_counts": {
+    "model_disagreement": 4,
+    "common_failure": 6,
+    "common_correct_control": 5
+  },
+  "expert_reviews_completed": 0,
+  "external_generation_requests": 0
+}
