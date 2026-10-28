@@ -1,0 +1,13 @@
+case_id,stratum,question_id,doi,endpoint,strength_class,rag_no_retrieval,rag_structured,rag_raw,rag_recovered,rag_background,lora_base,lora_positive_only,lora_domain_control,lora_balanced_negative,error_fields
+CASE_01,rag_recovered_regression,Q_R_8d8424661ccdee,10.1038/s41586-020-2374-x,CR8 resistance,not_observed,0,0.333333,0.333333,0,0,,,,,object
+CASE_02,rag_recovered_regression,Q_R_6e7be7c18f2a35,10.1038/s41586-020-2374-x,CDK12-DDB1 complex formation,other_boundary,0.333333,0.333333,1,0,0,,,,,object
+CASE_03,rag_recovered_gain,Q_R_2f78faeecab220,10.1038/s41467-019-09358-9,protein degradation,not_observed,0.333333,0.333333,0.666667,1,0.333333,,,,,"direction; condition"
+CASE_04,rag_recovered_gain,Q_R_611e642cfc7cf3,10.1002/ctm2.881,protein abundance,not_observed,0.333333,0.333333,0.666667,0.666667,0.333333,,,,,direction
+CASE_05,rag_recovered_gain,Q_R_20802660bfcb6c,10.1002/anie.202108848,protein degradation,not_observed,0.333333,0.333333,0.333333,0.666667,0.333333,,,,,condition
+CASE_06,rag_raw_advantage,Q_R_4bb356ab73e9f4,10.1021/acsmedchemlett.4c00250,protein degradation,relative_weakening,0.333333,0.333333,0.666667,0.333333,0.333333,,,,,direction
+CASE_07,rag_raw_advantage,Q_R_3d3ca04ca77ff4,10.1002/ctm2.881,antitumor response,relative_weakening,0.333333,0.333333,0.666667,0.333333,0.333333,,,,,direction
+CASE_08,rag_raw_advantage,Q_R_7ccc44285c0154,10.1038/s41467-022-28907-3,mitochondrial respiration,not_observed,0.333333,0.333333,1,0.333333,0.333333,,,,,"direction; condition"
+CASE_09,lora_common_failure,Q_R_6af5031883b1ec,10.1016/j.apsb.2024.06.001,enzyme inhibition,not_observed,,,,,,wrong_endpoint,wrong_endpoint,wrong_endpoint,wrong_endpoint,wrong_endpoint
+CASE_10,lora_common_failure,Q_R_dfb23494c0565c,10.1038/s41598-023-48606-3,SPR binding,other_boundary,,,,,,wrong_endpoint,overclaim,overclaim,overclaim,"overclaim; wrong_endpoint"
+CASE_11,lora_disagreement,Q_R_8f6e12edac7e22,10.1021/acs.jmedchem.3c00851,protein abundance,not_significant,,,,,,wrong_endpoint,wrong_endpoint,correct,wrong_endpoint,wrong_endpoint
+CASE_12,retrieval_and_lora_correct_control,Q_R_9600c0cf16112b,10.1002/anie.202108848,protein degradation,not_observed,0.333333,0.333333,0.333333,1,,correct,correct,correct,correct,

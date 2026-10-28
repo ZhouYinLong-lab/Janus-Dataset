@@ -1,0 +1,35 @@
+{
+  "rag_questions": 57,
+  "lora_questions": 57,
+  "rag_comparisons": {
+    "recovered_vs_structured": {"better": 11, "equal": 44, "worse": 2},
+    "recovered_vs_background": {"better": 9, "equal": 46, "worse": 1, "missing": 1},
+    "recovered_vs_raw": {"better": 5, "equal": 20, "worse": 32}
+  },
+  "rag_field_errors": {
+    "no_retrieval": {"object": 3, "direction": 56, "condition": 56, "judged": 56},
+    "structured": {"object": 3, "direction": 55, "condition": 57, "judged": 57},
+    "raw": {"object": 5, "direction": 25, "condition": 26, "judged": 57},
+    "recovered": {"object": 3, "direction": 47, "condition": 52, "judged": 57},
+    "background_ablation": {"object": 3, "direction": 54, "condition": 56, "judged": 56}
+  },
+  "lora_patterns": {
+    "all_correct": 41,
+    "all_wrong": 15,
+    "model_disagreement": 4,
+    "balanced_unique_benefit": 0,
+    "balanced_harm_vs_base": 0,
+    "balanced_harm_vs_domain": 1
+  },
+  "all_rag_and_lora_correct_questions": 0,
+  "generation_exceptions": {
+    "original_tasks": 285,
+    "completed_answers": 283,
+    "historical_unknown": 1,
+    "invalid_response": 1,
+    "not_retried": true
+  },
+  "seed": 20261028,
+  "external_generation_requests": 0,
+  "interpretation_scope": "Frozen 57-question test; model-assisted adjudication, not expert gold."
+}
