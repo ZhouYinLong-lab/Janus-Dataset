@@ -25,3 +25,11 @@ uv run --no-project --with rdkit --with scikit-learn --with pandas --with scipy 
 Runtime outputs stay under `local/`.  The compact checked-in summary contains
 the measured results and hashes without model weights or source records.
 
+The concise shared update is maintained in both Markdown and Word. Rebuild and
+check it with:
+
+```powershell
+python research/2026-10-29-structured-negative-learning/build_shared_update_docx.py
+python research/2026-10-29-structured-negative-learning/validate_shared_update.py
+```
+
