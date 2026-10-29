@@ -1,0 +1,37 @@
+{
+  "input_negative_records": 148,
+  "mapped_evidence_records": 70,
+  "unmapped_evidence_records": 78,
+  "mapped_entity_units": 95,
+  "primary_not_observed": {
+    "entity_units": 54,
+    "evidence_records": 41,
+    "experiments": 41,
+    "dois": 23,
+    "normalized_targets": 32
+  },
+  "boundary_units": {
+    "entity_units": 29,
+    "evidence_records": 22
+  },
+  "mapping_rules": {
+    "exact": 24,
+    "bounded_token": 17,
+    "explicit_numbered_member": 11,
+    "normalized_identifier": 2
+  },
+  "positive_pool": {
+    "eligible_units": 1059,
+    "nonconflicting_units": 1053
+  },
+  "training_gate": {
+    "at_least_50_negative_units": true,
+    "at_least_10_dois": true,
+    "at_least_5_targets": true,
+    "enough_nonconflicting_positives": true,
+    "passed": true
+  },
+  "condition_policy": "All recovered condition fields are retained. They are not classifier features because the structured positive pool lacks comparable condition coverage.",
+  "external_generation_requests": 0
+}
+
