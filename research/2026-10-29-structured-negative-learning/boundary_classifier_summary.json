@@ -1,0 +1,40 @@
+{
+  "protocol": {
+    "seeds": [20261029, 20261030, 20261031],
+    "recovered_negative_units": 54,
+    "recovered_negative_experiments": 41,
+    "structured_negative_pool": 206,
+    "structured_positive_pool": 1059,
+    "training_rows_per_arm": [72, 80, 80],
+    "test_rows_per_split": [24, 20, 20],
+    "doi_held_out": true,
+    "entity_overlap_blocked": true,
+    "synthetic_labels": 0
+  },
+  "mean_results": {
+    "logistic_regression": {
+      "positive_biased": {"accuracy": 0.5167, "macro_f1": 0.3846, "negative_false_positive_rate": 0.9333, "auroc": 0.6399},
+      "structured_balanced": {"accuracy": 0.5306, "macro_f1": 0.4309, "negative_false_positive_rate": 0.7389, "auroc": 0.6706},
+      "recovered_balanced": {"accuracy": 0.5611, "macro_f1": 0.4960, "negative_false_positive_rate": 0.2611, "auroc": 0.6422}
+    },
+    "extra_trees": {
+      "positive_biased": {"accuracy": 0.5000, "macro_f1": 0.3571, "negative_false_positive_rate": 0.9667, "auroc": 0.6263},
+      "structured_balanced": {"accuracy": 0.5306, "macro_f1": 0.4134, "negative_false_positive_rate": 0.9056, "auroc": 0.7110},
+      "recovered_balanced": {"accuracy": 0.5417, "macro_f1": 0.4772, "negative_false_positive_rate": 0.4000, "auroc": 0.6744}
+    },
+    "mlp": {
+      "positive_biased": {"accuracy": 0.5500, "macro_f1": 0.5069, "negative_false_positive_rate": 0.7111, "auroc": 0.5691},
+      "structured_balanced": {"accuracy": 0.5278, "macro_f1": 0.3875, "negative_false_positive_rate": 0.6111, "auroc": 0.6268},
+      "recovered_balanced": {"accuracy": 0.5639, "macro_f1": 0.5032, "negative_false_positive_rate": 0.2611, "auroc": 0.6117}
+    }
+  },
+  "recovered_minus_structured_range": {
+    "accuracy_percentage_points": [1.11, 3.61],
+    "macro_f1_points": [0.0638, 0.1157],
+    "negative_false_positive_percentage_points": [-50.56, -35.0],
+    "auroc_points": [-0.0367, -0.0151]
+  },
+  "interpretation": "Across three DOI-held-out splits, recovered-negative balancing consistently reduced false positive predictions on narrative negatives and modestly improved thresholded accuracy and macro F1. AUROC did not improve, and split-to-split variation remained large, so the evidence supports a local reduction in overprediction rather than a general performance gain.",
+  "external_generation_requests": 0
+}
+
