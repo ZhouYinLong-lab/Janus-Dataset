@@ -1,0 +1,62 @@
+{
+  "official_split": {
+    "train": 907,
+    "validation": 125,
+    "test": 127,
+    "fine_test": 73
+  },
+  "features": {
+    "dimension": 1088,
+    "morgan_radius": 2,
+    "morgan_bits": 1024,
+    "additional": [
+      "target_amino_acid_composition",
+      "e3_amino_acid_composition",
+      "sequence_lengths",
+      "train_fitted_target_and_e3_categories"
+    ]
+  },
+  "test_results": {
+    "training_free_llm": {
+      "mae": 0.28950131257480316,
+      "rmse": 0.36731033956142783,
+      "r2": -0.7818208471131136,
+      "behavior": "constant_prediction"
+    },
+    "train_mean": {
+      "mae": 0.22915324669310438,
+      "rmse": 0.27596239246343,
+      "r2": -0.0057673460005849275
+    },
+    "ridge": {
+      "mae": 0.11678291092238088,
+      "rmse": 0.17485587155406032,
+      "r2": 0.5962075735689214,
+      "target_macro_mae": 0.09472605444538426
+    },
+    "extra_trees_three_seed_mean": {
+      "mae": 0.09593963254187265,
+      "mae_std": 0.0006016326340474923,
+      "rmse": 0.17181758939928285,
+      "r2": 0.6101079198300873,
+      "target_macro_mae": 0.08989664149023356
+    },
+    "mlp_three_seed_mean": {
+      "mae": 0.20639079543322122,
+      "mae_std": 0.008876589551597815,
+      "rmse": 0.29173417483819836,
+      "r2": -0.12529428372533538,
+      "target_macro_mae": 0.19580030156740377
+    }
+  },
+  "fine_test_results": {
+    "training_free_llm_mae": 0.27351598193150684,
+    "train_mean_mae": 0.2359044066284756,
+    "ridge_mae": 0.1612429241975025,
+    "extra_trees_three_seed_mean_mae": 0.13574784372742799,
+    "mlp_three_seed_mean_mae": 0.25566510566293377
+  },
+  "interpretation": "On the official MG2Act split, ExtraTrees and Ridge learned the structured X-to-Y task and substantially outperformed the prior training-free language-model candidate scorer. The small MLP was unstable and weaker than the tree and linear models.",
+  "external_generation_requests": 0
+}
+
