@@ -196,7 +196,7 @@ def main() -> int:
 
 ## 下一步
 
-先对172条记录做离线内容验收，逐项处理5条语义待定、2条隔离和11个历史失败/未知任务；五篇通过后才进入全量可读正文，不能直接宣称241篇完成。
+先对{pilot_summary.get('unique_records', 0)}条记录做离线内容验收，逐项处理{pilot_summary.get('semantic_pending_records', 0)}条语义待定、{pilot_summary.get('quarantine_records', 0)}条隔离和{pilot_summary.get('failed_tasks', 0)}个未完成任务；五篇通过后才进入全量可读正文，不能直接宣称241篇完成。
 """
     (ROOT / "run_report.md").write_text(report, encoding="utf-8")
     print(json.dumps({"status": acceptance["status"], "requests": budget["requests_reserved"],
