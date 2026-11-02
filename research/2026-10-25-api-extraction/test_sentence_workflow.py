@@ -173,6 +173,14 @@ class WorkflowTests(unittest.TestCase):
         request = workflow.request_for(self.root, self.effective, 'discovery', config)
         self.assertEqual(request['thinking'], {'type': 'disabled'})
 
+    def test_explicit_stage_token_caps_can_raise_truncation_ceiling(self):
+        (self.root/'discovery_v3.md').write_text('Return JSON.', encoding='utf-8')
+        config = {'model': 'offline', 'output_token_parameter': 'max_tokens',
+                  'max_output_tokens': 8192, 'response_format': 'json_object',
+                  'stage_output_token_caps': {'discovery': 4096, 'facts': 8192, 'conditions': 4096}}
+        request = workflow.request_for(self.root, self.effective, 'discovery', config)
+        self.assertEqual(request['max_tokens'], 4096)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,7 +14,7 @@ class RequestFailure(Exception):
 def check_config(config):
     expected={'base_url','model','api_key_env','timeout_seconds','max_output_tokens',
               'output_token_parameter','response_format','max_requests','max_reserved_tokens'}
-    optional = {'thinking'}
+    optional = {'thinking', 'stage_output_token_caps'}
     if set(config)-expected-optional or expected-set(config):
         raise ValueError('Config has missing/unknown keys; secrets belong only in environment')
     url=urllib.parse.urlsplit(config['base_url'])
@@ -41,6 +41,11 @@ def check_config(config):
         if (not isinstance(thinking, dict) or set(thinking) != {'type'}
                 or thinking['type'] not in {'enabled', 'disabled'}):
             raise ValueError('thinking must be {type: enabled|disabled}')
+    if 'stage_output_token_caps' in config:
+        caps = config['stage_output_token_caps']
+        if (not isinstance(caps, dict) or set(caps) != {'discovery', 'facts', 'conditions'}
+                or any(type(value) is not int or value < 1 for value in caps.values())):
+            raise ValueError('stage_output_token_caps must contain positive integer caps for all stages')
 
 
 def make_request(job,prompt,config):

@@ -169,9 +169,10 @@ def request_for(workspace, job, stage, config, candidates=None, discovery_hash=N
             user.update(records=[{'record_id': r['record_key'], 'values': r['values'],
                          'outcome_type': r['outcome_type']} for r in frozen['records']
                          if r['record_key'] in frozen['requested_record_ids']], needs=frozen['needs'])
+    stage_caps = config.get('stage_output_token_caps', TOKEN_CAPS)
     request = {'model': config['model'], 'messages': [{'role': 'system', 'content': prompt},
                 {'role': 'user', 'content': json.dumps(user, ensure_ascii=False)}], 'stream': True,
-               config['output_token_parameter']: min(config['max_output_tokens'], TOKEN_CAPS[stage])}
+               config['output_token_parameter']: min(config['max_output_tokens'], stage_caps[stage])}
     if config['response_format'] == 'json_object':
         request['response_format'] = {'type': 'json_object'}
     if config.get('thinking') is not None:

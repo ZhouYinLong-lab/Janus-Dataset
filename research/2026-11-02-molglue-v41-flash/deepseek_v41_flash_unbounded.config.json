@@ -1,0 +1,13 @@
+{
+  "base_url": "https://yeysai.com/v1",
+  "model": "deepseek-v4.1-flash",
+  "api_key_env": "api_key",
+  "timeout_seconds": 120,
+  "max_output_tokens": 8192,
+  "output_token_parameter": "max_tokens",
+  "response_format": "json_object",
+  "thinking": {"type": "disabled"},
+  "stage_output_token_caps": {"discovery": 4096, "facts": 8192, "conditions": 4096},
+  "max_requests": null,
+  "max_reserved_tokens": null
+}
