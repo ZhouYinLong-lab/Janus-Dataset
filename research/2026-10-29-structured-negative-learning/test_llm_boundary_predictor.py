@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from llm_boundary_predictor import build_user_prompt, parse_predictions, score_predictions
+from llm_boundary_predictor import api_payload, build_user_prompt, parse_predictions, score_predictions
 
 
 class LLMBoundaryPredictorTests(unittest.TestCase):
@@ -28,6 +28,11 @@ class LLMBoundaryPredictorTests(unittest.TestCase):
         self.assertEqual(len(parsed), 2)
         with self.assertRaises(ValueError):
             parse_predictions(content, ["T1", "T2", "T3"])
+
+    def test_v4_pro_request_explicitly_disables_thinking(self):
+        payload = api_payload("deepseek-v4-pro", "predict")
+        self.assertEqual(payload["thinking"], {"type": "disabled"})
+        self.assertEqual(payload["response_format"], {"type": "json_object"})
 
     def test_scoring_keeps_all_three_arms_and_seeds(self):
         labels = {}

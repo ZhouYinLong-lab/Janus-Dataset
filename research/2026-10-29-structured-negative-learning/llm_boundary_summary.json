@@ -1,0 +1,73 @@
+{
+  "model": "deepseek-v4-pro",
+  "task": "predict whether target-protein degradation was observed from molecule SMILES, target, and E3 ligase",
+  "protocol": {
+    "seeds": [20261029, 20261030, 20261031],
+    "test_records_per_seed": [24, 20, 20],
+    "test_records_per_arm": 64,
+    "total_scored_predictions": 192,
+    "doi_held_out": true,
+    "test_labels_in_prompts": false,
+    "synthetic_labels": 0
+  },
+  "requests": {
+    "successful": 10,
+    "failed": 1,
+    "failure_reason": "initial smoke request exhausted its output budget in default thinking mode before producing final content",
+    "total_tokens_including_failure": 46442
+  },
+  "large_model_results": [
+    {
+      "arm": "zero_shot",
+      "accuracy": 0.65,
+      "macro_f1": 0.5878968253968254,
+      "auroc": 0.5765277777777778,
+      "negative_false_positive_rate": 0.638888888888889
+    },
+    {
+      "arm": "structured_negative_fewshot",
+      "accuracy": 0.48333333333333334,
+      "macro_f1": 0.4069444444444444,
+      "auroc": 0.46462962962962956,
+      "negative_false_positive_rate": 0.3333333333333333
+    },
+    {
+      "arm": "recovered_negative_fewshot",
+      "accuracy": 0.48333333333333334,
+      "macro_f1": 0.4069444444444444,
+      "auroc": 0.45412037037037045,
+      "negative_false_positive_rate": 0.3333333333333333
+    }
+  ],
+  "comparisons": {
+    "recovered_minus_zero_shot_accuracy": -0.16666666666666669,
+    "recovered_minus_zero_shot_false_positive_rate": -0.30555555555555564,
+    "recovered_minus_structured_accuracy": 0.0,
+    "recovered_minus_structured_auroc": -0.010509259259259107,
+    "structured_recovered_label_agreement": "64/64"
+  },
+  "traditional_recovered_balanced_results": [
+    {
+      "model": "logistic_regression",
+      "accuracy": 0.5611111111111111,
+      "macro_f1": 0.496031746031746,
+      "auroc": 0.6422222222222222,
+      "negative_false_positive_rate": 0.2611111111111111
+    },
+    {
+      "model": "extra_trees",
+      "accuracy": 0.5416666666666666,
+      "macro_f1": 0.4771825396825397,
+      "auroc": 0.6743518518518519,
+      "negative_false_positive_rate": 0.39999999999999997
+    },
+    {
+      "model": "mlp",
+      "accuracy": 0.5638888888888889,
+      "macro_f1": 0.5032228672467377,
+      "auroc": 0.6116666666666667,
+      "negative_false_positive_rate": 0.2611111111111111
+    }
+  ],
+  "conclusion": "The strong large model achieved the highest zero-shot accuracy but retained a high negative false-positive rate. Balanced demonstrations reduced its false-positive rate, yet recovered negatives produced exactly the same class decisions as structured negatives. Conventional models trained with recovered negatives showed the clearest recovered-data-specific reduction in false positives."
+}

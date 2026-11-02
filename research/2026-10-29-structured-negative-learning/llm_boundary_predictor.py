@@ -270,7 +270,7 @@ def request_specs(bundle: dict[str, Any]) -> list[dict[str, Any]]:
     first_split = bundle["splits"][0]
     first_task = first_split["test"][0]
     specs.append({
-        "request_id": f"smoke_{first_split['seed']}_zero_shot",
+        "request_id": f"nothink_smoke_{first_split['seed']}_zero_shot",
         "seed": first_split["seed"],
         "arm": "zero_shot",
         "tests": [first_task],
@@ -282,7 +282,7 @@ def request_specs(bundle: dict[str, Any]) -> list[dict[str, Any]]:
             if split["seed"] == first_split["seed"] and arm == "zero_shot":
                 tests = tests[1:]
             specs.append({
-                "request_id": f"batch_{split['seed']}_{arm}",
+                "request_id": f"nothink_batch_{split['seed']}_{arm}",
                 "seed": split["seed"],
                 "arm": arm,
                 "tests": tests,
@@ -293,6 +293,20 @@ def request_specs(bundle: dict[str, Any]) -> list[dict[str, Any]]:
 
 def response_content(response: dict[str, Any]) -> str:
     return str(response["choices"][0]["message"]["content"])
+
+
+def api_payload(model: str, user_prompt: str) -> dict[str, Any]:
+    return {
+        "model": model,
+        "thinking": {"type": "disabled"},
+        "temperature": 0,
+        "max_tokens": 4096,
+        "response_format": {"type": "json_object"},
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+    }
 
 
 def score_predictions(
@@ -370,16 +384,7 @@ def main() -> None:
         request_path = request_dir / f"{spec['request_id']}.json"
         response_path = response_dir / f"{spec['request_id']}.json"
         user_prompt = build_user_prompt(spec["arm"], spec["demonstrations"], spec["tests"])
-        payload = {
-            "model": args.model,
-            "temperature": 0,
-            "max_tokens": 4096,
-            "response_format": {"type": "json_object"},
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-        }
+        payload = api_payload(args.model, user_prompt)
         write_json(request_path, payload)
         started = time.time()
         if response_path.exists():
@@ -428,8 +433,21 @@ def main() -> None:
 
     scored = score_predictions(all_predictions, bundle["private_labels"])
     traditional = json.loads(args.traditional_report.read_text(encoding="utf-8"))
+    prior_failed_attempts = []
+    for previous_path in sorted(response_dir.glob("*.json")):
+        if previous_path.stem.startswith("nothink_"):
+            continue
+        previous = json.loads(previous_path.read_text(encoding="utf-8"))
+        prior_failed_attempts.append({
+            "request_id": previous_path.stem,
+            "response_sha256": sha256(previous_path),
+            "returned_model": previous.get("model"),
+            "finish_reason": previous.get("choices", [{}])[0].get("finish_reason"),
+            "usage": previous.get("usage"),
+            "status": "failed_no_final_content",
+        })
     total_usage: dict[str, int] = {}
-    for row in ledger:
+    for row in [*prior_failed_attempts, *ledger]:
         for key_name, value in (row.get("usage") or {}).items():
             if isinstance(value, (int, float)):
                 total_usage[key_name] = total_usage.get(key_name, 0) + int(value)
@@ -438,7 +456,10 @@ def main() -> None:
         "large_model": {
             "requested_model": args.model,
             "returned_models": sorted({str(row.get("returned_model")) for row in ledger}),
-            "requests": len(ledger),
+            "requests": len(ledger) + len(prior_failed_attempts),
+            "successful_requests": len(ledger),
+            "failed_requests": len(prior_failed_attempts),
+            "prior_failed_attempts": prior_failed_attempts,
             "usage": total_usage,
             "summary": scored["summary"],
             "runs": scored["runs"],
@@ -469,7 +490,9 @@ def main() -> None:
             for path in sorted(args.out.iterdir())
             if path.is_file() and path.name != "manifest.json"
         },
-        "external_generation_requests": len([row for row in ledger if not row.get("reused")]),
+        "external_generation_requests": (
+            len(prior_failed_attempts) + len([row for row in ledger if not row.get("reused")])
+        ),
         "synthetic_labels": 0,
     }
     write_json(args.out / "manifest.json", manifest)
