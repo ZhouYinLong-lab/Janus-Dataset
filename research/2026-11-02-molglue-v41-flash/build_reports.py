@@ -157,8 +157,8 @@ def main() -> int:
         "quality_gate": {
             "five_papers_complete": pilot_summary.get("all_sources_processed", False),
             "all_tasks_complete": not bool(pilot_summary.get("failed_tasks")),
-            "json_contract_failures": pilot_summary.get("failed_tasks", 0),
-            "unknown_or_interrupted_tasks": 1,
+            "json_contract_failures": pilot_summary.get("task_status", {}).get("invalid_response", 0),
+            "unknown_or_interrupted_tasks": pilot_summary.get("task_status", {}).get("needs_attention", 0),
             "content_acceptance": pilot_summary.get("content_review_status", "pending"),
         },
         "reason": ("Five-paper content review and task completion are still incomplete; no full-library claim is made."
