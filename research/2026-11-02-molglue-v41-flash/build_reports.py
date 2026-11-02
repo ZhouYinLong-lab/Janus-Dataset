@@ -109,7 +109,8 @@ def main() -> int:
         "created_utc": now(), "reported_scope": 241, "confirmed_identity_count": 193,
         "unresolved_identity_count": 48,
         "pilot": {"path": str(pilot_workspace), "manifest_sha256": sha(pilot_workspace / "manifest.json"),
-                  "papers": pilot_summary.get("papers_count", 5), "discovery_jobs": 120,
+                  "papers": len(pilot_summary.get("papers", [])),
+                  "discovery_jobs": pilot_summary.get("workspace_requests", 0),
                   "unscanned_sentences": pilot_summary.get("unscanned_sentences", 0)},
         "full": {"path": str(full_workspace), "manifest_sha256": sha(full_workspace / "manifest.json"),
                  "papers": full_summary.get("papers_count", 193), "discovery_jobs": len(full_manifest.get("job_ids", [])),
@@ -182,7 +183,7 @@ def main() -> int:
 
 - 模型：`deepseek-v4.1-flash`；thinking关闭。
 - 独立续跑账本：请求数和预留tokens不设本地硬上限；服务异常和重复合约失败仍会停止。
-- 五篇工作区：120个发现任务；本轮导出{pilot_summary.get('unique_records', 0)}条证据记录。
+- 五篇工作区：{pilot_summary.get('workspace_requests', 0)}个工作区任务；本轮导出{pilot_summary.get('unique_records', 0)}条证据记录。
 - 账本请求数：{budget['requests_reserved']}；已报告tokens：{budget['reported_total_tokens']}。
 - 工作区任务状态包含{pilot_summary.get('task_status', {}).get('invalid_response', 0)}条JSON契约失败和{pilot_summary.get('task_status', {}).get('needs_attention', 0)}条未知/中断结果，均保留在分母；本轮新账本没有新增失败。
 
