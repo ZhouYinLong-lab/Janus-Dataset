@@ -3,11 +3,11 @@
   "model": "deepseek-v4.1-flash",
   "api_key_env": "api_key",
   "timeout_seconds": 120,
-  "max_output_tokens": 12288,
+  "max_output_tokens": 24576,
   "output_token_parameter": "max_tokens",
   "response_format": "json_object",
   "thinking": {"type": "disabled"},
-  "stage_output_token_caps": {"discovery": 8192, "facts": 12288, "conditions": 8192},
+  "stage_output_token_caps": {"discovery": 8192, "facts": 24576, "conditions": 8192},
   "max_requests": null,
   "max_reserved_tokens": null
 }
