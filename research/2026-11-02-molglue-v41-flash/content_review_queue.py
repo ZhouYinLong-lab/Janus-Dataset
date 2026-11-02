@@ -19,6 +19,7 @@ OUT_OF_SCOPE = re.compile(
     r"phosphoryl|solubility|toxicity|tumou?r|cell growth|interaction|TR-FRET",
     re.I,
 )
+SECONDARY = re.compile(r"previous studies|prior studies|reported|as expected|presumably|suggesting", re.I)
 
 
 def reasons(row: dict, incomplete_candidates: set[str]) -> list[str]:
@@ -33,6 +34,8 @@ def reasons(row: dict, incomplete_candidates: set[str]) -> list[str]:
         result.append("semantic_pending")
     if row.get("candidate_id") in incomplete_candidates:
         result.append("context_incomplete")
+    if SECONDARY.search(row.get("original_quote") or ""):
+        result.append("secondary_or_interpretive_wording")
     if not result:
         result.append("source_first_review")
     return result
