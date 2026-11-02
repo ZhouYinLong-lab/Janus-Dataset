@@ -451,6 +451,8 @@ def _finish(ledger_path, entry):
                    if k in entry}
         if entry.get('http_status') in {401, 402, 403}:
             details['global_stop'] = f'provider_http_{entry["http_status"]}'
+        if entry.get('global_stop'):
+            details['global_stop'] = entry['global_stop']
         budget.finish(ledger_path, entry['attempt_id'], entry['status'], **details)
 
 
@@ -738,6 +740,7 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
         _check_state(workspace, state)
         index = read(index_path) if index_path.exists() else {'version': 2, 'tasks': {}}
         sent = 0
+        contract_failures = 0
 
         def persist():
             save(state_path, state)
@@ -748,7 +751,7 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
                 on_progress(workspace)
 
         def process(job, stage, group=0, candidates=None, dependency=None, frozen=None):
-            nonlocal sent, actual_client, secret
+            nonlocal sent, actual_client, secret, contract_failures
             jid = job['job_id']
             tid = _task_key(jid, stage, group)
             previous = state['tasks'].get(tid)
@@ -892,6 +895,10 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
             finally:
                 if entry['status'] == 'in_flight':
                     entry.update(status='needs_attention', failure_kind='interrupted_request_outcome_unknown')
+                if entry['status'] == 'invalid_response':
+                    contract_failures += 1
+                    if contract_failures >= 2:
+                        entry['global_stop'] = 'repeated_json_contract_failures'
                 entry['finished'] = time.time()
                 diagnostic = getattr(getattr(actual_client, 'opener', None), 'diagnostic', None)
                 if diagnostic:
