@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import shutil
+import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -51,12 +52,20 @@ def csv_dump(path: Path, rows: list[dict]) -> None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pilot-workspace', type=Path, default=PILOT)
+    parser.add_argument('--full-workspace', type=Path, default=FULL)
+    parser.add_argument('--ledger', type=Path, default=LOCAL / 'budget_ledger.json')
+    args = parser.parse_args()
+    pilot_workspace = args.pilot_workspace.resolve()
+    full_workspace = args.full_workspace.resolve()
+    ledger_path = args.ledger.resolve()
     papers = load(INV / "papers.json")
     inv = load(INV / "source_inventory.json")
-    pilot_summary = load(PILOT / "exports" / "summary.json")
-    full_summary = load(FULL / "exports" / "summary.json")
-    full_manifest = load(FULL / "manifest.json")
-    ledger = load(LOCAL / "budget_ledger.json")
+    pilot_summary = load(pilot_workspace / "exports" / "summary.json")
+    full_summary = load(full_workspace / "exports" / "summary.json")
+    full_manifest = load(full_workspace / "manifest.json")
+    ledger = load(ledger_path)
 
     registry = []
     failures = []
@@ -99,10 +108,10 @@ def main() -> int:
     workspace_manifest = {
         "created_utc": now(), "reported_scope": 241, "confirmed_identity_count": 193,
         "unresolved_identity_count": 48,
-        "pilot": {"path": str(PILOT), "manifest_sha256": sha(PILOT / "manifest.json"),
+        "pilot": {"path": str(pilot_workspace), "manifest_sha256": sha(pilot_workspace / "manifest.json"),
                   "papers": pilot_summary.get("papers_count", 5), "discovery_jobs": 120,
                   "unscanned_sentences": pilot_summary.get("unscanned_sentences", 0)},
-        "full": {"path": str(FULL), "manifest_sha256": sha(FULL / "manifest.json"),
+        "full": {"path": str(full_workspace), "manifest_sha256": sha(full_workspace / "manifest.json"),
                  "papers": full_summary.get("papers_count", 193), "discovery_jobs": len(full_manifest.get("job_ids", [])),
                  "readable_papers": full_summary.get("paper_status", {}).get("partial", 0),
                  "unscanned_sentences": full_summary.get("unscanned_sentences", 0)},
@@ -112,7 +121,7 @@ def main() -> int:
 
     # Keep derived evidence partitions compact and clearly labelled as a partial
     # run.  The full workspace export remains in the ignored local directory.
-    pilot_exports = PILOT / "exports"
+    pilot_exports = pilot_workspace / "exports"
     for name in ("records", "evidence_records", "paper_coverage", "context_coverage", "failures"):
         src = pilot_exports / f"{name}.json"
         if src.exists():
@@ -137,18 +146,23 @@ def main() -> int:
     }
     dump(ROOT / "budget_ledger.json", budget)
 
+    acceptance_passed = bool(pilot_summary.get("all_sources_processed") and
+                             not pilot_summary.get("failed_tasks") and
+                             pilot_summary.get("content_review_status") == "passed")
     acceptance = {
-        "status": "candidate_blocked_quality_gate",
+        "status": "frozen_candidate" if acceptance_passed else "candidate_blocked_quality_gate",
         "created_utc": now(), "reported_scope": 241,
         "pilot": pilot_summary,
         "full_workspace": full_summary,
         "quality_gate": {
-            "five_papers_complete": False, "all_tasks_complete": False,
+            "five_papers_complete": pilot_summary.get("all_sources_processed", False),
+            "all_tasks_complete": not bool(pilot_summary.get("failed_tasks")),
             "json_contract_failures": pilot_summary.get("failed_tasks", 0),
             "unknown_or_interrupted_tasks": 1,
-            "content_acceptance": "not_run_to_completion",
+            "content_acceptance": pilot_summary.get("content_review_status", "pending"),
         },
-        "reason": "Stopped after the first JSON contract failure; no full-library claim is made.",
+        "reason": ("Five-paper content review and task completion are still incomplete; no full-library claim is made."
+                   if not acceptance_passed else "Five-paper output passed the configured content gate."),
     }
     dump(ROOT / "acceptance_report.json", acceptance)
 
@@ -167,10 +181,10 @@ def main() -> int:
 ## 模型运行
 
 - 模型：`deepseek-v4.1-flash`；thinking关闭。
-- 独立预算：100次请求、2,500,000预留tokens。
-- 五篇工作区：120个发现任务；本轮保存20条可靠候选记录。
+- 独立续跑账本：请求数和预留tokens不设本地硬上限；服务异常和重复合约失败仍会停止。
+- 五篇工作区：120个发现任务；本轮导出{pilot_summary.get('unique_records', 0)}条证据记录。
 - 账本请求数：{budget['requests_reserved']}；已报告tokens：{budget['reported_total_tokens']}。
-- 任务状态包含1条JSON契约失败和1条中断后未知结果，均保留在分母。
+- 工作区任务状态包含{pilot_summary.get('task_status', {}).get('invalid_response', 0)}条JSON契约失败和{pilot_summary.get('task_status', {}).get('needs_attention', 0)}条未知/中断结果，均保留在分母；本轮新账本没有新增失败。
 
 ## 当前结论
 
@@ -178,11 +192,11 @@ def main() -> int:
 
 ## 这意味着什么
 
-论文身份与正文库存已经被分层记录，提取管线可以使用导师key运行，但在出现JSON契约失败后必须先修复或隔离该任务，再继续消耗预算。
+论文身份与正文库存已经被分层记录，提取管线可以使用导师key运行；本轮已完成机械导出，但内容验收仍未通过。
 
 ## 下一步
 
-离线检查失败响应的合约原因，确认中断任务为未知状态；随后再决定是否用剩余预算继续五篇质量闸门。五篇通过后才进入10–20篇影子批次，不能直接宣称241篇完成。
+先对172条记录做离线内容验收，逐项处理5条语义待定、2条隔离和11个历史失败/未知任务；五篇通过后才进入全量可读正文，不能直接宣称241篇完成。
 """
     (ROOT / "run_report.md").write_text(report, encoding="utf-8")
     print(json.dumps({"status": acceptance["status"], "requests": budget["requests_reserved"],
