@@ -198,6 +198,10 @@ class RunnerTests(unittest.TestCase):
         cfg['thinking']={'type':'invalid'}
         with self.assertRaises(ValueError):check_config(cfg)
 
+    def test_config_accepts_unbounded_continuation_caps(self):
+        cfg = config(); cfg['max_requests'] = None; cfg['max_reserved_tokens'] = None
+        check_config(cfg)
+
     def test_config_rejects_remote_http_and_url_credentials(self):
         for url in ['http://example.org/v1','https://user:secret@example.org/v1']:
             cfg=config();cfg['base_url']=url

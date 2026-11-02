@@ -827,15 +827,21 @@ def run(workspace, config, ledger_path, request_builder, enrichment_validator,
             attempts = [a for a in read(ledger_path)['attempts']
                         if a['workspace'] == str(workspace)]
             tokens = reserve_tokens(request, config)
-            if len(attempts) >= config['max_requests']:
+            if (config['max_requests'] is not None
+                    and len(attempts) >= config['max_requests']):
                 state['stop_reason'] = 'workspace_request_budget'
                 return False
-            if sum(a['reserved_tokens'] for a in attempts) + tokens > config['max_reserved_tokens']:
+            if (config['max_reserved_tokens'] is not None
+                    and sum(a['reserved_tokens'] for a in attempts) + tokens > config['max_reserved_tokens']):
                 state['stop_reason'] = 'workspace_token_reservation_budget'
                 return False
             ledger = read(ledger_path)
-            if (len(ledger['attempts']) >= ledger['max_requests'] or
-                    sum(a['reserved_tokens'] for a in ledger['attempts']) + tokens > ledger['max_reserved_tokens']):
+            request_cap_hit = (ledger['max_requests'] is not None
+                               and len(ledger['attempts']) >= ledger['max_requests'])
+            token_cap_hit = (ledger['max_reserved_tokens'] is not None
+                             and sum(a['reserved_tokens'] for a in ledger['attempts']) + tokens
+                             > ledger['max_reserved_tokens'])
+            if request_cap_hit or token_cap_hit:
                 state['stop_reason'] = 'Shared request/token budget exhausted'
                 return False
             if actual_client is None:

@@ -72,3 +72,13 @@ class BudgetTests(unittest.TestCase):
         self.assertEqual(status(self.path)['requests_reserved'], 2)
         with self.assertRaises(ValueError):
             reserve(self.path, self.root, 'same', self.req, 100, provider_identity='https://ONE.invalid/v1/')
+
+    def test_unbounded_continuation_ledger_allows_reservations(self):
+        path = self.root / 'unbounded.json'
+        create(path, None, None, 'Explicit continuation authorization')
+        for index in range(3):
+            attempt = reserve(path, self.root, f'task-{index}',
+                              {'model': 'fixture', 'number': index}, 100)
+            finish(path, attempt['attempt_id'], 'complete', usage={'total_tokens': 1})
+        self.assertIsNone(status(path)['max_requests'])
+        self.assertEqual(status(path)['requests_reserved'], 3)

@@ -27,8 +27,12 @@ def check_config(config):
         raise ValueError('Set an actual provider model ID')
     if not isinstance(config['api_key_env'],str) or not config['api_key_env'].isidentifier():
         raise ValueError('api_key_env must be an environment variable name')
-    for name in ['timeout_seconds','max_output_tokens','max_requests','max_reserved_tokens']:
+    for name in ['timeout_seconds','max_output_tokens']:
         if type(config[name]) is not int or config[name]<1:raise ValueError(name+' must be a positive integer')
+    for name in ['max_requests','max_reserved_tokens']:
+        value = config[name]
+        if value is not None and (type(value) is not int or value < 1):
+            raise ValueError(name+' must be a positive integer or null for an explicitly unbounded continuation')
     if config['output_token_parameter'] not in {'max_tokens','max_completion_tokens'}:
         raise ValueError('Unsupported output token parameter')
     if config['response_format'] not in {'json_object','none'}:raise ValueError('Unsupported response_format')

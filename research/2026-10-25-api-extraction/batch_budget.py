@@ -28,8 +28,9 @@ def ledger_lock(path):
 
 def create(path, max_requests, max_reserved_tokens, authorization):
     path = Path(path)
-    if any(type(x) is not int or x < 1 for x in [max_requests, max_reserved_tokens]):
-        raise ValueError('Positive integer budget caps required')
+    for name, value in [('max_requests', max_requests), ('max_reserved_tokens', max_reserved_tokens)]:
+        if value is not None and (type(value) is not int or value < 1):
+            raise ValueError(f'{name} must be a positive integer or null')
     if not isinstance(authorization, str) or not authorization.strip():
         raise ValueError('Record the explicit authorization before creating a budget')
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -58,9 +59,12 @@ def reserve(path, workspace, task, request, tokens, retry=False, provider_identi
             raise ValueError('Duplicate/unknown paid request blocked by shared ledger')
         if retry and not previous:
             raise ValueError('No eligible previous request for retry')
-        if (len(ledger['attempts']) >= ledger['max_requests']
-                or sum(a['reserved_tokens'] for a in ledger['attempts']) + tokens
-                > ledger['max_reserved_tokens']):
+        request_cap_hit = (ledger['max_requests'] is not None
+                           and len(ledger['attempts']) >= ledger['max_requests'])
+        token_cap_hit = (ledger['max_reserved_tokens'] is not None
+                         and sum(a['reserved_tokens'] for a in ledger['attempts']) + tokens
+                         > ledger['max_reserved_tokens'])
+        if request_cap_hit or token_cap_hit:
             raise ValueError('Shared request/token budget exhausted')
         attempt = {'attempt_id': uuid.uuid4().hex, 'workspace': str(Path(workspace).resolve()),
                    'task': task, 'request_sha256': digest, 'reserved_tokens': tokens,
