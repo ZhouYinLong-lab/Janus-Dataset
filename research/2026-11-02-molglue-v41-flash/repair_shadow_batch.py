@@ -52,8 +52,8 @@ def _remap_workspace_paths(workspace: Path):
     manifest = read(manifest_path)
     for paper in manifest.get("papers", []):
         pid = paper["paper_id"]
-        document = f"documents/{pid}.json"
-        index = f"sentence_indexes/{pid}.json"
+        document = str((workspace / "documents" / f"{pid}.json").resolve())
+        index = str((workspace / "sentence_indexes" / f"{pid}.json").resolve())
         paper["document_path"] = document
         paper["sentence_index_path"] = index
         for jid in paper.get("job_ids", []):
