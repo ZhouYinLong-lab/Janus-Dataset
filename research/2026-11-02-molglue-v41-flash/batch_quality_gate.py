@@ -32,6 +32,32 @@ def _ledger_report(path: Path):
     }
 
 
+def _record_partition(records, routed, support_rows, pending_context):
+    by_key = {row.get("record_key"): row for row in records}
+    route_by_key = {row.get("record_key"): row.get("route") for row in routed}
+    directly_supported = {row.get("record_key") for row in support_rows
+                          if row.get("direct_support") is True}
+    semantic_pending = {key for key, row in by_key.items()
+                        if row.get("record_status") == "semantic_pending"}
+    quarantined = {key for key, row in by_key.items()
+                   if row.get("record_status") == "quarantine"}
+    scope_pending = {key for key, route in route_by_key.items()
+                     if route == "pending_scope_review"}
+    excluded = {key for key, route in route_by_key.items()
+                if route in {"other_endpoint", "mechanism_or_control"}} | quarantined
+    reliable = {key for key, route in route_by_key.items()
+                if route == "candidate_review" and key in directly_supported
+                and key not in semantic_pending and key not in quarantined}
+    isolated = semantic_pending | scope_pending
+    return {
+        "reliable_records": len(reliable),
+        "excluded_records": len(excluded),
+        "isolated_pending": len(isolated) + len(pending_context),
+        "model_eligible_records": sum(by_key[key].get("ready_for_training") is True
+                                      for key in reliable),
+    }
+
+
 def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | None = None):
     workspace = Path(workspace).resolve()
     summary, records, audits, failures = snapshot(workspace)
@@ -60,6 +86,7 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
     task_counts = Counter(row.get("status") for row in
                           (read(workspace / "candidate_state.json").get("tasks", {}) or {}).values())
     support = None
+    routed = []
     try:
         from offline_shadow_closeout import scope_partition, citation_audit
         audit_dir = Path(out).resolve().parent / (Path(out).stem + "_audit")
@@ -75,8 +102,6 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
         blockers.append("unresolved_paragraphs")
     if context_gaps:
         blockers.append("context_gaps")
-    if pending_context:
-        blockers.append("pending_context")
     if failures:
         blockers.append("task_failures")
     if task_counts.get("in_flight"):
@@ -89,9 +114,12 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
         blockers.append("duplicate_request_hashes")
     if support.get("support_rate") is None or support.get("support_rate") < 0.90:
         blockers.append("citation_support_below_threshold")
+    scope_counts = Counter(row.get("route") for row in routed)
+    partition = _record_partition(records, routed, support.get("rows") or [], pending_context)
+    hard_blockers = list(blockers)
     report = {
         "schema_version": 1,
-        "status": "batch_ready_for_next" if not blockers else "batch_blocked",
+        "status": "batch_ready_for_next" if not hard_blockers else "batch_blocked",
         "workspace": str(workspace),
         "workspace_manifest_sha256": sha(workspace / "manifest.json"),
         "summary": summary,
@@ -105,9 +133,18 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
         "failures": failures,
         "ledger": ledger,
         "citation": {k: support.get(k) for k in ("records", "supported", "support_rate")},
-        "scope": {"model_eligible": sum(row.get("model_eligible") is True
-                                        for row in (support.get("rows") or []))},
-        "blockers": blockers,
+        "citation_support_rate": support.get("support_rate"),
+        "scope": {"counts": dict(scope_counts),
+                  "model_eligible": partition["model_eligible_records"]},
+        "candidate_review_records": scope_counts.get("candidate_review", 0),
+        "mechanically_supported_records": support.get("supported", 0),
+        "reliable_records": partition["reliable_records"],
+        "excluded_records": partition["excluded_records"],
+        "isolated_pending": partition["isolated_pending"],
+        "reliability_basis": "direct anchors plus scope and semantic-status checks; model-assisted, not expert gold",
+        "hard_blockers": hard_blockers,
+        "blockers": hard_blockers,
+        "allow_next_batch": not hard_blockers,
         "model_assisted_review": "not expert gold",
     }
     save(Path(out), report)

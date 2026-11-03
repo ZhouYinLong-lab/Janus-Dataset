@@ -38,7 +38,7 @@ CONTEXT_DECISIONS = {
     ("B203", "C:2f90872d46e74250f754a7c93048e1ed992c52cd6dd0b4802a3d9cee560b559a"):
         ("resolved_not_required", "degradation_rescue_assay_is_mechanism_control_not_main_negative"),
     ("B204", "C:a93a4df69eebc0153e9754c4f7fb6658437c2e32fd38baec9adca9022d4488f3"):
-        ("pending_context", "negative_off_targets_refer_to_missing_supplementary_table_and_figure"),
+        ("resolved_context_from_supplement", "Table S1 and Figure S5 recovered from the verified public supplement"),
     ("B211", "C:89f56b875db039fc8696055e510f5f6dfb0cc13f9a370d5f4cd477dfa715b32a"):
         ("resolved_not_required", "positive_brd4_result_does_not_enter_negative_evidence"),
     ("B212", "C:f40423cadf8ad24aeec34e3b7db2f89ebbeb06cd83a585c4240062086cb8e992"):
@@ -46,8 +46,16 @@ CONTEXT_DECISIONS = {
 }
 
 
-def resolve(workspace: Path, out: Path):
+def resolve(workspace: Path, out: Path, b204_audit: Path | None = None):
     workspace = Path(workspace).resolve()
+    supplement = None
+    if b204_audit is not None:
+        b204_audit = Path(b204_audit).resolve()
+        supplement = read(b204_audit)
+        if supplement.get("paper_id") != "B204":
+            raise ValueError("b204_supplement_identity_mismatch")
+        if supplement.get("identity", {}).get("resource_doi") != "10.1021/acsmedchemlett.4c00250":
+            raise ValueError("b204_supplement_doi_mismatch")
     _summary, _records, audits, _failures = snapshot(workspace)
     rows = []
     seen = set()
@@ -68,11 +76,21 @@ def resolve(workspace: Path, out: Path):
             if key not in CONTEXT_DECISIONS:
                 raise ValueError(f"unclassified_context:{key}")
             status, reason = CONTEXT_DECISIONS[key]
+            if key[0] == "B204" and status == "resolved_context_from_supplement" and supplement is None:
+                raise ValueError("b204_supplement_audit_required")
             seen.add(("context", *key))
-            rows.append({"kind": "context", "paper_id": key[0], "candidate_id": key[1],
-                         "original_status": audit.get("status"),
-                         "terminal_status": status, "reason": reason,
-                         "model_eligible": False})
+            row = {"kind": "context", "paper_id": key[0], "candidate_id": key[1],
+                   "original_status": audit.get("status"),
+                   "terminal_status": status, "reason": reason,
+                   "model_eligible": False}
+            if key[0] == "B204":
+                row["supplement_audit_path"] = str(b204_audit)
+                row["supplement_audit_sha256"] = sha(b204_audit)
+                row["supplement_pdf_sha256"] = supplement["identity"]["sha256"]
+                row["split_table_records"] = len(supplement.get("table_s1_records") or [])
+                row["split_figure_mentions"] = len(supplement.get("figure_s5_records") or [])
+                row["original_composite_record_model_eligible"] = False
+            rows.append(row)
     expected_paragraphs = set(PARAGRAPH_DECISIONS)
     if seen & expected_paragraphs != expected_paragraphs:
         raise ValueError("paragraph_resolution_incomplete")
@@ -91,8 +109,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--b204-audit", type=Path)
     args = parser.parse_args(argv)
-    print(json.dumps(resolve(args.workspace, args.out), ensure_ascii=False, indent=2))
+    print(json.dumps(resolve(args.workspace, args.out, args.b204_audit), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
