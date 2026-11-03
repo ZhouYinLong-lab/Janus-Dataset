@@ -58,10 +58,30 @@ def _record_partition(records, routed, support_rows, pending_context):
     }
 
 
+def _source_hash_report(workspace: Path):
+    manifest = read(workspace / "manifest.json")
+    rows = []
+    for paper in manifest.get("papers", []):
+        source_path = Path(paper.get("source_path") or "")
+        expected = paper.get("source_sha256")
+        exists = source_path.is_file()
+        actual = sha(source_path) if exists else None
+        rows.append({
+            "paper_id": paper.get("paper_id"),
+            "source_path": str(source_path),
+            "expected_sha256": expected,
+            "actual_sha256": actual,
+            "matches": bool(exists and expected and actual == expected),
+        })
+    return {"sources": len(rows), "stable": bool(rows) and all(row["matches"] for row in rows),
+            "mismatches": [row for row in rows if not row["matches"]]}
+
+
 def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | None = None):
     workspace = Path(workspace).resolve()
     summary, records, audits, failures = snapshot(workspace)
     ledger = _ledger_report(Path(ledger_path).resolve())
+    source_hashes = _source_hash_report(workspace)
     paragraph_rows = [row for row in audits if row.get("destination") == "paragraph_coverage"]
     resolution_rows = {}
     if resolutions and Path(resolutions).is_file():
@@ -112,6 +132,8 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
         blockers.append("invalid_responses")
     if ledger["duplicate_request_hashes"]:
         blockers.append("duplicate_request_hashes")
+    if not source_hashes["stable"]:
+        blockers.append("source_hash_changes")
     if support.get("support_rate") is None or support.get("support_rate") < 0.90:
         blockers.append("citation_support_below_threshold")
     scope_counts = Counter(row.get("route") for row in routed)
@@ -132,6 +154,8 @@ def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | No
         "pending_context": len(pending_context),
         "failures": failures,
         "ledger": ledger,
+        "source_hashes": source_hashes,
+        "source_hashes_stable": source_hashes["stable"],
         "citation": {k: support.get(k) for k in ("records", "supported", "support_rate")},
         "citation_support_rate": support.get("support_rate"),
         "scope": {"counts": dict(scope_counts),

@@ -32,12 +32,20 @@ def _load_gate(path: Path):
     return module.validate_gate(path)
 
 
+def _load_previous_batch_gate(path: Path):
+    spec = importlib.util.spec_from_file_location("molglue_offline_gate", HERE / "offline_gate.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.validate_batch_gate(path)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--ledger", required=True, type=Path)
     parser.add_argument("--gate", required=True, type=Path)
+    parser.add_argument("--previous-batch-report", type=Path)
     parser.add_argument("--env-file", type=Path)
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--max-new-requests", type=int)
@@ -47,6 +55,16 @@ def main(argv=None):
 
     gate = _load_gate(args.gate)
     workspace = args.workspace.resolve()
+    batch_name = workspace.parent.name
+    try:
+        batch_number = int(batch_name.removeprefix("batch_")) if batch_name.startswith("batch_") else 1
+    except ValueError:
+        batch_number = 1
+    previous_gate = None
+    if batch_number > 1:
+        if args.previous_batch_report is None:
+            raise ValueError("previous_batch_report_required")
+        previous_gate = _load_previous_batch_gate(args.previous_batch_report)
     config = read(args.config)
     check_config(config)
     manifest = verify(workspace)
@@ -61,6 +79,10 @@ def main(argv=None):
     result = {
         "gate": {"path": str(args.gate.resolve()), "sha256": sha(args.gate),
                  "status": gate["status"]},
+        "previous_batch_gate": ({"path": str(args.previous_batch_report.resolve()),
+                                  "sha256": sha(args.previous_batch_report),
+                                  "status": previous_gate["status"]}
+                                 if previous_gate is not None else None),
         "workspace": str(workspace),
         "ledger": str(args.ledger.resolve()),
         "summary": summary,

@@ -42,3 +42,30 @@ def validate_gate(path: Path) -> dict:
         raise ValueError("offline_gate_failures_present")
     return report
 
+
+def validate_batch_gate(path: Path) -> dict:
+    path = Path(path).resolve()
+    if not path.is_file():
+        raise ValueError(f"batch_gate_missing:{path}")
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise ValueError(f"batch_gate_invalid_json:{type(exc).__name__}") from exc
+    if not isinstance(report, dict) or report.get("schema_version") != 1:
+        raise ValueError("batch_gate_schema_version_missing")
+    if report.get("status") != "batch_ready_for_next" or report.get("allow_next_batch") is not True:
+        raise ValueError(f"batch_gate_status:{report.get('status')!r}")
+    if report.get("hard_blockers"):
+        raise ValueError("batch_gate_hard_blockers_present")
+    if report.get("source_hashes_stable") is not True:
+        raise ValueError("batch_gate_source_hashes_unstable")
+    if report.get("failures"):
+        raise ValueError("batch_gate_failures_present")
+    support = report.get("citation_support_rate")
+    if not isinstance(support, (int, float)) or support < 0.90:
+        raise ValueError("batch_gate_citation_support_below_threshold")
+    tasks = report.get("tasks") or {}
+    if any(tasks.get(status) for status in ("in_flight", "needs_attention", "invalid_response")):
+        raise ValueError("batch_gate_nonterminal_tasks")
+    return report
+

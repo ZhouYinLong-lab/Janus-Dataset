@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from batch_quality_gate import _ledger_report, _record_partition
+from batch_quality_gate import _ledger_report, _record_partition, _source_hash_report
 
 
 class BatchQualityGateTests(unittest.TestCase):
@@ -37,6 +37,20 @@ class BatchQualityGateTests(unittest.TestCase):
         self.assertEqual(result["excluded_records"], 1)
         self.assertEqual(result["isolated_pending"], 2)
         self.assertEqual(result["model_eligible_records"], 0)
+
+    def test_source_hash_report_detects_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "paper.xml"
+            source.write_text("original", encoding="utf-8")
+            import hashlib
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            (root / "manifest.json").write_text(json.dumps({"papers": [{
+                "paper_id": "P1", "source_path": str(source), "source_sha256": digest,
+            }]}), encoding="utf-8")
+            self.assertTrue(_source_hash_report(root)["stable"])
+            source.write_text("changed", encoding="utf-8")
+            self.assertFalse(_source_hash_report(root)["stable"])
 
 
 
