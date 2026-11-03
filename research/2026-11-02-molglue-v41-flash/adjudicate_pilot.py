@@ -267,7 +267,16 @@ def build(args: argparse.Namespace) -> dict:
         "external_generation_requests": 0,
     }
 
+    export_names = {
+        "reliable": "reliable_evidence",
+        "pending_review": "pending_review",
+        "excluded": "excluded_records",
+    }
     for name, rows in partitions.items():
+        export_name = export_names[name]
+        dump(output / f"{export_name}.json", rows)
+        csv_dump(output / f"{export_name}.csv", rows)
+        # Keep short aliases for local callers built against the pilot queue.
         dump(output / f"{name}.json", rows)
         csv_dump(output / f"{name}.csv", rows)
     dump(output / "source_adjudications.json", adjudications)
