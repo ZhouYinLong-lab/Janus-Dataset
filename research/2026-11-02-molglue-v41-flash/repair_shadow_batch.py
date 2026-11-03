@@ -62,6 +62,7 @@ def _remap_workspace_paths(workspace: Path):
             job["document_path"] = document
             job["sentence_index_path"] = index
             save(job_path, job)
+            manifest["file_hashes"][f"jobs/{jid}.json"] = sha(job_path)
     save(manifest_path, manifest)
     for name in ("requests", "responses", "results", "groups", "condition_groups"):
         path = workspace / name
