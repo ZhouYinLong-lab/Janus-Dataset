@@ -21,5 +21,6 @@ class BatchQualityGateTests(unittest.TestCase):
             self.assertEqual(result["reported_tokens"], 3)
 
 
+
 if __name__ == "__main__":
     unittest.main()

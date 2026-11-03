@@ -32,17 +32,31 @@ def _ledger_report(path: Path):
     }
 
 
-def assess(workspace: Path, ledger_path: Path, out: Path):
+def assess(workspace: Path, ledger_path: Path, out: Path, resolutions: Path | None = None):
     workspace = Path(workspace).resolve()
     summary, records, audits, failures = snapshot(workspace)
     ledger = _ledger_report(Path(ledger_path).resolve())
     paragraph_rows = [row for row in audits if row.get("destination") == "paragraph_coverage"]
+    resolution_rows = {}
+    if resolutions and Path(resolutions).is_file():
+        resolution_rows = {row.get("paragraph_id"): row for row in
+                           (read(Path(resolutions)).get("rows") or [])
+                           if row.get("kind") == "paragraph"}
     unresolved_paragraphs = [row for row in paragraph_rows
-                             if row.get("status") not in {"has_candidates", "none_found"}]
+                             if row.get("status") not in {"has_candidates", "none_found"}
+                             and row.get("paragraph_id") not in resolution_rows]
     unscanned = [row for row in audits if row.get("destination") == "unscanned"]
+    context_resolution_rows = {}
+    if resolutions and Path(resolutions).is_file():
+        context_resolution_rows = {(row.get("paper_id"), row.get("candidate_id")): row for row in
+                                   (read(Path(resolutions)).get("rows") or [])
+                                   if row.get("kind") == "context"}
     context_gaps = [row for row in audits if row.get("destination") in
                     {"optional_conditions_gap", "context_coverage"}
-                    and row.get("context_complete") is False]
+                    and row.get("context_complete") is False
+                    and (row.get("paper_id"), row.get("candidate_id")) not in context_resolution_rows]
+    pending_context = [row for row in context_resolution_rows.values()
+                       if row.get("terminal_status") == "pending_context"]
     task_counts = Counter(row.get("status") for row in
                           (read(workspace / "candidate_state.json").get("tasks", {}) or {}).values())
     support = None
@@ -61,6 +75,8 @@ def assess(workspace: Path, ledger_path: Path, out: Path):
         blockers.append("unresolved_paragraphs")
     if context_gaps:
         blockers.append("context_gaps")
+    if pending_context:
+        blockers.append("pending_context")
     if failures:
         blockers.append("task_failures")
     if task_counts.get("in_flight"):
@@ -85,6 +101,7 @@ def assess(workspace: Path, ledger_path: Path, out: Path):
         "paragraphs": {"total": len(paragraph_rows), "unscanned": len(unscanned),
                        "unresolved": len(unresolved_paragraphs)},
         "context_gaps": len(context_gaps),
+        "pending_context": len(pending_context),
         "failures": failures,
         "ledger": ledger,
         "citation": {k: support.get(k) for k in ("records", "supported", "support_rate")},
@@ -102,8 +119,9 @@ def main(argv=None):
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--ledger", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--resolutions", type=Path)
     args = parser.parse_args(argv)
-    print(json.dumps(assess(args.workspace, args.ledger, args.out), ensure_ascii=False, indent=2))
+    print(json.dumps(assess(args.workspace, args.ledger, args.out, args.resolutions), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
