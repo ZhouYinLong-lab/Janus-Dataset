@@ -44,6 +44,25 @@ def _reset_runtime_dirs(workspace: Path):
         path = workspace / name
         if path.exists():
             path.unlink()
+
+
+def _remap_workspace_paths(workspace: Path):
+    """Convert copied absolute document/index paths to workspace-relative paths."""
+    manifest_path = workspace / "manifest.json"
+    manifest = read(manifest_path)
+    for paper in manifest.get("papers", []):
+        pid = paper["paper_id"]
+        document = f"documents/{pid}.json"
+        index = f"sentence_indexes/{pid}.json"
+        paper["document_path"] = document
+        paper["sentence_index_path"] = index
+        for jid in paper.get("job_ids", []):
+            job_path = workspace / "jobs" / f"{jid}.json"
+            job = read(job_path)
+            job["document_path"] = document
+            job["sentence_index_path"] = index
+            save(job_path, job)
+    save(manifest_path, manifest)
     for name in ("requests", "responses", "results", "groups", "condition_groups"):
         path = workspace / name
         if path.exists():
@@ -86,6 +105,7 @@ def build(source_workspace, out_workspace):
 
     shutil.copytree(source_workspace, out_workspace)
     _reset_runtime_dirs(out_workspace)
+    _remap_workspace_paths(out_workspace)
     discovery = out_workspace / "discovery_v3.md"
     facts = out_workspace / "facts_v3.md"
     discovery.write_text(discovery.read_text(encoding="utf-8") + DISCOVERY_PATCH, encoding="utf-8")
