@@ -1,0 +1,41 @@
+编号,层级,区域,研究方向,论文题名,年份及来源,DOI或标识
+1,核心,国外,发表偏倚,Negative results are disappearing from most disciplines and countries,"2012, Scientometrics",10.1007/s11192-011-0494-7
+2,核心,国外,发表偏倚,Dissemination and publication of research findings: an updated review of related biases,"2010, Health Technology Assessment",10.3310/hta14080
+3,核心,国外,发表偏倚,Publication bias in the social sciences: Unlocking the file drawer,"2014, Science",10.1126/science.1255484
+4,核心,国外,负数据资源,The Negatome database: a reference set of non-interacting protein pairs,"2010, Nucleic Acids Research",10.1093/nar/gkp1026
+5,核心,国外,负数据资源,"Negatome 2.0: a database of non-interacting proteins derived by literature mining, manual annotation and protein structure analysis","2014, Nucleic Acids Research",10.1093/nar/gkt1079
+6,核心,国外,否定识别,Evaluation of negation phrases in narrative clinical reports,"2001, AMIA Annual Symposium Proceedings",PMID: 11825270
+7,核心,国外,否定识别,"The BioScope corpus: biomedical texts annotated for uncertainty, negation and their scopes","2008, BMC Bioinformatics",10.1186/1471-2105-9-S11-S9
+8,核心,国外,否定识别,Learning the Scope of Negation in Biomedical Texts,"2008, EMNLP",ACL: D08-1075
+9,核心,国外,否定识别,Biomedical negation scope detection with conditional random fields,"2010, Journal of the American Medical Informatics Association",10.1136/jamia.2010.003228
+10,核心,国外,阴性发现识别,Classifying Negative Findings in Biomedical Publications,"2014, BioNLP",ACL: W14-3403
+11,核心,国内,否定识别,面向自然语言文本的否定性与不确定性信息抽取,"2015, 软件学报",文章编号: 4860
+12,核心,国外,科学信息抽取,Structured information extraction from scientific text with large language models,"2024, Nature Communications",10.1038/s41467-024-45563-x
+13,核心,国外,科学信息抽取,Extracting accurate materials data from research papers with conversational language models and prompt engineering,"2024, Nature Communications",10.1038/s41467-024-45914-8
+14,核心,国外,科学信息抽取,Large Language Models for Scientific Information Extraction: An Empirical Study for Virology,"2024, Findings of EACL",ACL: 2024.findings-eacl.26
+15,核心,国外,证据定位,Fast Evidence Extraction for Grounded Language Model Outputs,"2024, FEVER",ACL: 2024.fever-1.24
+16,核心,国内团队,信息抽取综述,Large Language Models for Generative Information Extraction: A Survey,"2025, Frontiers of Computer Science",10.1007/s11704-024-40555-y
+17,核心,国外,生物医学抽取评测,LLMs are not Zero-Shot Reasoners for Biomedical Information Extraction,"2025, Insights from Negative Results in NLP",ACL: 2025.insights-1.11
+18,核心,国内团队,中文生物医学基准,CBLUE: A Chinese Biomedical Language Understanding Evaluation Benchmark,2021,arXiv: 2106.08087
+19,核心,国内团队,信息抽取评测,Assessing the Performance of Chinese Open Source Large Language Models in Information Extraction Tasks,2024,arXiv: 2406.02079
+20,核心,国内,信息检索综述,大语言模型时代的信息检索综述,"2024, 第23届中国计算语言学大会",ACL: 2024.ccl-2.6
+21,核心,国内,科技文献抽取,生成式人工智能技术在科技期刊论文关键信息提取与总结中的应用,"2025, 中国科技期刊研究",10.11946/cjstp.202408280941
+22,核心,国内,科技文献挖掘,大语言模型赋能科技文献数据挖掘进展分析,"2025, 农业图书情报学报",无DOI
+23,核心,国外,检索增强,Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,"2020, NeurIPS",arXiv: 2005.11401
+24,核心,国外,负数据应用,An efficient computational chemistry approach to generating negative data for drug discovery pipeline validation,2026,PMCID: PMC12982188
+25,案例,国外,分子胶机制,The CDK inhibitor CR8 acts as a molecular glue degrader that depletes cyclin K,"2020, Nature",10.1038/s41586-020-2374-x
+26,案例,国外,分子胶发现,Rational discovery of molecular glue degraders via scalable chemical profiling,"2020, Nature Chemical Biology",10.1038/s41589-020-0594-x
+27,案例,国外,分子胶设计,Design principles for cyclin K molecular glue degraders,"2024, Nature Chemical Biology",10.1038/s41589-023-01409-z
+28,案例,国内团队,分子胶设计,Dual-site molecular glues for enhancing protein-protein interactions of the CDK12-DDB1 complex,"2024, Nature Communications",10.1038/s41467-024-50642-0
+29,案例,国外,共价分子胶,Template-assisted covalent modification underlies activity of covalent molecular glues,"2024, Nature Chemical Biology",10.1038/s41589-024-01668-4
+30,案例,国外,疾病应用,A molecular glue degrader of the WIZ transcription factor for fetal hemoglobin induction,"2024, Science",10.1126/science.adk6129
+31,案例,国内团队,新型界面,TRIM21-NUP98 Interface Accommodates Structurally Diverse Molecular Glue Degraders,"2025, ACS Chemical Biology",10.1021/acschembio.5c00036
+32,案例,国外,阴性边界,Unveiling the hidden interactome of CRBN molecular glues,"2025, Nature Communications",10.1038/s41467-025-62099-w
+33,案例,国外,发现技术,Charged molecular glue discovery enabled by targeted degron display,"2026, Nature Chemical Biology",10.1038/s41589-026-02182-5
+34,案例,国外,条件激活,DCAF11-dependent molecular glue degrader activated by glutathionylation,"2026, Nature",10.1038/s41586-026-10873-1
+35,案例,国内团队,疾病应用,Molecular glue degraders of HuR suppress BRAF-mutant colorectal cancer,"2026, Nature",10.1038/s41586-026-10613-5
+36,案例,国内团队,领域数据库,MolGlueDB: an online database of molecular glues,"2026, Nucleic Acids Research",10.1093/nar/gkaf811
+37,案例,国内团队,领域数据库,MGDB: a curated database for molecular glues,"2026, Nucleic Acids Research",10.1093/nar/gkaf1131
+38,案例,归属待核,预测模型,MG2Act: A Mechanism-Inspired Sequential Attention Framework for Molecular Glue Degradation Prediction,"2026, bioRxiv（预印本）",10.64898/2026.08.08.739980
+39,案例,国外,领域综述,Emerging strategies for prospective discovery of molecular glue degraders,"2024, Current Opinion in Structural Biology",10.1016/j.sbi.2024.102811
+40,案例,国外,领域综述,Routes to molecular glue degrader discovery,"2025, Trends in Biochemical Sciences",10.1016/j.tibs.2024.12.006
