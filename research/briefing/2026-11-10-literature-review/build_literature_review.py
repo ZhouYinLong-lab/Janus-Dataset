@@ -13,8 +13,8 @@ from docx.shared import Cm, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parent
-SOURCE = ROOT / "分子胶非结构化阴性证据研究文献调研.md"
-OUTPUT = ROOT / "分子胶非结构化阴性证据研究文献调研.docx"
+SOURCE = ROOT / "非结构化阴性数据挖掘与应用文献调研.md"
+OUTPUT = ROOT / "非结构化阴性数据挖掘与应用文献调研.docx"
 
 
 def set_cell_shading(cell, fill: str) -> None:
@@ -152,7 +152,7 @@ def style_document(doc: Document) -> None:
     footer = section.footer
     p = footer.paragraphs[0]
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run("分子胶降解剂非结构化阴性证据研究文献调研  ·  2026.11")
+    run = p.add_run("非结构化阴性数据挖掘与应用文献调研  ·  2026.11")
     set_run_font(run, east_asia="微软雅黑", latin="Aptos", size=8, color="777777")
 
 
@@ -161,11 +161,13 @@ def add_table(doc: Document, rows: list[list[str]]) -> None:
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.style = "Table Grid"
     table.autofit = False
-    widths = [Cm(3.0), Cm(5.2), Cm(7.4)]
+    if len(rows[0]) == 4:
+        widths = [Cm(2.3), Cm(4.2), Cm(4.5), Cm(5.1)]
+    else:
+        widths = [Cm(3.0), Cm(5.2), Cm(7.4)]
     for i, row in enumerate(table.rows):
-        row.cells[0].width = widths[0]
-        row.cells[1].width = widths[1]
-        row.cells[2].width = widths[2]
+        for j, width in enumerate(widths):
+            row.cells[j].width = width
         for j, cell in enumerate(row.cells):
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             set_cell_margins(cell)
@@ -246,9 +248,9 @@ def build() -> None:
         i += 1
 
     props = doc.core_properties
-    props.title = "分子胶降解剂非结构化阴性证据研究文献调研"
-    props.subject = "国内外研究现状、发展动态与项目定位"
-    props.keywords = "分子胶降解剂; 非结构化阴性证据; 文献综述; 科学文本抽取"
+    props.title = "非结构化阴性数据挖掘与应用文献调研"
+    props.subject = "国内外研究现状、发展动态与大创项目定位"
+    props.keywords = "非结构化阴性数据; 科学文本抽取; 检索增强; 预测模型; 文献综述"
     props.comments = "截至2026年11月10日"
     doc.save(OUTPUT)
 
