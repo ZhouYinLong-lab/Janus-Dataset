@@ -122,14 +122,29 @@ def add_intro(doc: Document) -> None:
     set_font(run, size=11.5, bold=True, color="17365D")
 
     paragraphs = [
-        "我们围绕“非结构化阴性数据的挖掘与应用”整理了两类文献。第一类是方法与研究基础，覆盖阴性结果的发表偏倚、否定与不确定性识别、科学信息抽取、原文证据定位和检索增强等方向，共24篇；第二类是分子胶降解剂领域的实验与数据库论文，共16篇，用于观察正文中容易被结构化数据库遗漏的失败结果和作用边界。",
-        "本次共整理40篇论文。每篇保留原始题名、年份、来源，以及DOI、PMID、arXiv或ACL编号等可用于唯一定位的标识，并按核心方法或垂域案例、国内或国外进行分类。整理结果见下表。",
+        (
+            "文献调研：",
+            "我们围绕非结构化阴性数据的挖掘与应用整理了40篇论文。其中24篇涉及阴性结果发表偏倚、否定与不确定性识别、科学信息抽取、原文证据定位和检索增强；另外16篇来自分子胶降解剂领域，用于观察正文中容易被结构化数据库遗漏的失败结果和作用边界。",
+        ),
+        (
+            "提取 pipeline：",
+            "我们搭建了从全文解析、句段扫描和阴性候选发现，到实验对象、终点、条件及原文出处恢复的流程，并加入断点续跑、去重、失败记录、引用核对和分区导出。该流程把散落在正文中的阴性描述整理为可追溯的实验记录。",
+        ),
+        (
+            "数据利用：",
+            "恢复后的证据一方面接入RAG，与无检索、结构化数据库和原文检索进行对照；另一方面整理成结构化实验记录，为后续预测模型比较阳性偏置与加入阴性数据后的表现提供输入。",
+        ),
+        (
+            "文献记录：",
+            "每篇论文保留原始题名、年份、来源，以及DOI、PMID、arXiv或ACL编号等唯一标识，并按核心方法或垂域案例、国内或国外进行分类。整理结果见下表。",
+        ),
     ]
-    for text in paragraphs:
+    for prefix, text in paragraphs:
         paragraph = doc.add_paragraph()
-        paragraph.paragraph_format.first_line_indent = Cm(0.74)
         paragraph.paragraph_format.space_after = Pt(3)
         paragraph.paragraph_format.line_spacing = 1.12
+        run = paragraph.add_run(prefix)
+        set_font(run, size=9, bold=True, color="17365D")
         run = paragraph.add_run(text)
         set_font(run, size=9)
 
