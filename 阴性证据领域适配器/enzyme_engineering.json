@@ -1,0 +1,47 @@
+{
+  "adapter_id": "enzyme_engineering_v1",
+  "name": "酶工程突变体功能与失败结果",
+  "description": "从酶工程、定向进化和突变体筛选论文中恢复序列/变体、反应/底物、实验条件和低性能或失败结果。",
+  "fields": [
+    "enzyme_or_variant",
+    "parent_enzyme",
+    "mutation",
+    "reaction_or_substrate",
+    "product_or_endpoint",
+    "assay",
+    "experimental_condition",
+    "result_value",
+    "unit",
+    "observation"
+  ],
+  "required_fields": [
+    "enzyme_or_variant",
+    "product_or_endpoint",
+    "observation"
+  ],
+  "outcome_types": [
+    "loss_of_function",
+    "no_detectable_activity",
+    "low_activity",
+    "low_yield",
+    "low_selectivity",
+    "conditional_failure",
+    "relative_weakening",
+    "not_tested",
+    "unknown"
+  ],
+  "negative_outcomes": [
+    "loss_of_function",
+    "no_detectable_activity",
+    "low_activity",
+    "low_yield",
+    "low_selectivity",
+    "conditional_failure",
+    "relative_weakening"
+  ],
+  "non_negative_outcomes": [
+    "not_tested",
+    "unknown"
+  ],
+  "source_policy": "正文、表格、图注和补充材料均可作为证据；必须保留具体证据位置，不能把未报道当作失败。"
+}
