@@ -19,6 +19,23 @@
     "product_or_endpoint",
     "observation"
   ],
+  "training_required_fields": [
+    "enzyme_or_variant",
+    "reaction_or_substrate",
+    "product_or_endpoint",
+    "experimental_condition",
+    "observation"
+  ],
+  "allowed_record_kinds": [
+    "biochemical_observation",
+    "process_failure",
+    "assay_failure",
+    "computational_failure",
+    "literature_background"
+  ],
+  "training_record_kinds": [
+    "biochemical_observation"
+  ],
   "outcome_types": [
     "loss_of_function",
     "no_detectable_activity",
@@ -43,5 +60,11 @@
     "not_tested",
     "unknown"
   ],
-  "source_policy": "正文、表格、图注和补充材料均可作为证据；必须保留具体证据位置，不能把未报道当作失败。"
+  "numeric_preferred_outcomes": [
+    "low_activity",
+    "low_yield",
+    "low_selectivity",
+    "relative_weakening"
+  ],
+  "source_policy": "训练候选仅接受经人工复核的正文自然语言增量证据。图表、图注、补充材料和数据库中的结果单独保留，但在完成跨来源对齐与去重前不得标记为 ready_for_training。未测试、未报道、检测失败、计算失败、纯化失败和实验阴性必须分开。"
 }
