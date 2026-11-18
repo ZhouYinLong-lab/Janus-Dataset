@@ -1,4 +1,16 @@
-zotero-automation/private/
-zotero-automation/staging/
+# Local credentials and execution artifacts.
+.env
+.env.*
+!.env.example
 __pycache__/
+*.pyc
+.pytest_cache/
+.local/
+.tmp*/
 tmp/
+~$*
+*.tmp
+
+# Historical tracked files remain versioned. Local models, downloaded corpora
+# and execution caches in this archive stay on disk.
+/06_历史调研/

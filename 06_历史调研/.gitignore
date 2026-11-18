@@ -1,0 +1,25 @@
+zotero-automation/private/
+zotero-automation/staging/
+__pycache__/
+tmp/
+research/2026-10-22-sol-extraction/runs/
+# Publicly readable manuscript; NCBI BioC reports NO-CC CODE, redistribution not cleared.
+/research/2026-10-22-sol-extraction/batch02/sources/B296_PMC7486275.xml
+/research/2026-10-22-sol-extraction/batch02/text/B296_PMC7486275.txt
+# Local paragraph index contains mixed-license full text; do not republish via derived files.
+/research/2026-10-22-sol-extraction/batch02/improvement_2026-10-23/source_chunks.json
+/research/2026-10-22-sol-extraction/batch02/improvement_2026-10-23/packets/
+/research/2026-10-22-sol-extraction/batch02/improvement_2026-10-23/grading_packet.json
+/research/2026-10-22-sol-extraction/batch02/improvement_2026-10-23/grading_group_*.json
+/research/2026-10-22-sol-extraction/batch02/improvement_2026-10-23/runs/
+/research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/source_chunks.json
+/research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/packets/
+/research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/grading_packets/
+/research/2026-10-22-sol-extraction/batch02/continuation_2026-10-24/runs/
+/research/2026-10-25-small-lm-pilot/local_model/
+/research/2026-10-25-small-lm-pilot/runs/
+/research/2026-10-25-small-lm-pilot/data/
+/research/2026-10-25-small-lm-followup/inputs/
+/research/2026-10-25-small-lm-followup/reviews/
+/research/2026-10-25-small-lm-followup/data/
+/research/2026-10-25-small-lm-followup/runs/

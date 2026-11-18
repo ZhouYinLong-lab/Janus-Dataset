@@ -6,13 +6,15 @@
 
 ## 工作做了什么
 
-Wu 等提出 Assay-Aware BindingDB：对 BindingDB 中四类亲和力 assay（ITC、SPR、RBA、FPA）的蛋白—配体记录，从关联原始论文抽取结构化实验上下文，再把上下文嵌入输入 Boltz-2 affinity module。作者称筛选 113,311 个候选 pair、检索到 5,991 篇可访问论文，最后得到 74,425 个带上下文的 pair。抽取评估从四类 assay 各抽 30 篇论文，报告字段存在性 F1 至少 0.947、语义内容准确率至少 0.913。模型按 PMID 做 paper-level split，10 次拆分比较完整模型、无上下文模型及 context-only 模型；论文报告组合测试集 65,169 条中，加入上下文后 MSE 由 1.27 降至 1.19、Pearson r 由 0.64 升至 0.67、c-index 由 0.73 升至 0.74，三项跨拆分差异均报告 p<0.001；ITC 的 MSE 反而变差，RBA 的 MSE 改善未达显著。结果是作者报告，未独立复现。[arXiv v1](https://arxiv.org/abs/2609.34001)
+Wu 等提出 Assay-Aware BindingDB：对 BindingDB 中四类亲和力 assay（ITC、SPR、RBA、FPA）的蛋白—配体记录，从关联原始论文抽取结构化实验上下文，再把上下文嵌入输入 Boltz-2 affinity module。作者称筛选 113,311 个候选 pair、检索到 5,991 篇可访问论文，最后得到 74,425 个带上下文的 pair。抽取评估从四类 assay 各抽 30 篇论文，报告字段存在性 F1 至少 0.947、语义内容准确率至少 0.913。模型按 PMID 做 paper-level split，10 次拆分比较完整模型、无上下文模型及 context-only 模型；论文的合并建模队列含 65,169 个 pair，留出测试的 MSE 由 1.27 降至 1.19、Pearson r 由 0.64 升至 0.67、c-index 由 0.73 升至 0.74，三项跨拆分差异均报告 p<0.001；ITC 的 MSE 反而变差，RBA 的 MSE 改善未达显著。结果是作者报告，未独立复现。[arXiv v1](https://arxiv.org/abs/2609.34001)
+
+2026-10-18更正：原笔记将65,169误称为“组合测试集”。原文§4.1与Table 3列的是combined regime队列，不能当作单次测试集大小；这不改变所引作者指标，但影响样本量的解释。
 
 ## 公开数据工件核查
 
 Hugging Face 上存在同名的 [`anonymousapple/Assay-aware-BindingDB`](https://huggingface.co/datasets/anonymousapple/Assay-aware-BindingDB) 仓库。平台 API 显示其于 2026-05-07 创建、2026-07-31 更新；仓库公开且未设登录门槛，卡片未列明确 license，当前文件树中未发现 Python/R/notebook/shell/YAML 代码。该账号资料标为 anonymous，arXiv v1 正文/页面未给出这个仓库链接，因此不能确认账号身份或精确对应的论文版本。
 
-平台数据服务当前报告 `default/full` 有 269,023 行，四个 assay 子集行数合计也是 269,023；合并所有配置和不同 seed 的切分后平台总计 1,200,886 行，这个总数包含重复出现在 default、assay-specific、train/validation/test 与多组 seeds 中的数据，不能当成 120 万条独立观察。**一个强关联证据**是四个 `*_seed_0` 配置的 train+validation+test 行数分别为 ITC 1,761、SPR 3,650、RBA 44,223、FPA 15,535，合计 65,169，恰与论文表 3 的合并测试队列计数一致；HF 卡片也称这些 seeded configurations reproduce 论文 downstream experiment data。这使其非常可能是论文配套工件，但不消除“论文未链接、匿名上传、版本与全量口径不同”的限制。
+平台数据服务在2026-09-30核查时报告 `default/full` 有 269,023 行，四个 assay 子集行数合计也是 269,023；合并所有配置和不同 seed 的切分后平台总计 1,200,886 行，这个总数包含重复出现在 default、assay-specific、train/validation/test 与多组 seeds 中的数据，不能当成 120 万条独立观察。**一个强关联证据**是四个 `*_seed_0` 配置的 train+validation+test 行数分别为 ITC 1,761、SPR 3,650、RBA 44,223、FPA 15,535，合计 65,169，恰与论文表 3 的合并建模队列计数一致；HF 卡片也称这些 seeded configurations reproduce 论文 downstream experiment data。这使其非常可能是论文配套工件，但不消除“论文未链接、匿名上传、版本与全量口径不同”的限制。本轮未重新下载该工件，上述工件计数仍是旧核查结果。
 
 HF 卡片声明模型复现实验只纳入恰有一个正数值的 Kd/Ki/IC50 且关系符不是 `<` 或 `>` 的记录。full 数据仍保留了 `affinity_data.relation`、原始论文段落、`search_path`、补充材料路径及结构化条件。通过 viewer 的首 100 行示例中有 35 行为 `>` 截断值（这是展示顺序样本，不是总体比例估计），例如 `Kd > 50,000 nM`；这些是有 assay 语义的右删失定量结果，可能提示很弱结合/未达测量范围，但**不能不经判定直接重标为实验 inactive**。它们确实被保留在 full artifact，但排除在所述模型训练兼容切分之外。
 

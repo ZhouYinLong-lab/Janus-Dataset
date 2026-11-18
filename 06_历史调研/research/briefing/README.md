@@ -4,6 +4,7 @@
 
 ## 文件
 
+- [`本轮收尾材料`](closure/本轮收尾汇报怎么讲.md)：2026-10-13整理，区分前期材料已有内容、交流后新增核查与实验，以及未回答项；包含[阶段总结](closure/交流后工作阶段总结.md)和[工作归属对照](closure/已汇报与交流后新增工作对照.md)。用于本轮收口，不启动新调研或补跑实验。
 - [`scoping_review.md`](scoping_review.md)：完整的初步范围综述，包含检索边界、证据综合、现有工作、研究空白和可行方案。
 - [`briefing_notes.md`](briefing_notes.md)：约 8 分钟的短版汇报提纲，可直接据此口头说明。
 - [`claim_evidence_matrix.csv`](claim_evidence_matrix.csv)：逐条记录核心主张、证据、反证或限制和当前置信度。

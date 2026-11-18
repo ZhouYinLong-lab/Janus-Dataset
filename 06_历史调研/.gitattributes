@@ -1,0 +1,12 @@
+# Preserve downloaded evidence bytes so source-manifest hashes survive checkout.
+/research/2026-10-18-gap-trial/**/sources/** -text
+/research/2026-10-18-extraction-pilot/**/sources/** -text
+/research/2026-10-18-literature-judgment/**/sources/** -text
+/research/2026-10-18-direction-options/**/sources/** -text
+/research/2026-10-20-domain-selection/**/sources/** -text
+/research/2026-10-22-sol-extraction/**/sources/** -text
+# Reviews and first-observed snapshots bind exact extraction bytes, not line endings.
+/research/2026-10-22-sol-extraction/**/extractions/*.json -text
+# Machine snapshots bind exact bytes; Python implementation hashes assume LF checkout.
+/research/2026-10-22-sol-extraction/**/*.json -text
+/research/2026-10-22-sol-extraction/**/*.py text eol=lf
