@@ -1,0 +1,149 @@
+方向二：蛋白突变导致的稳定性下降或功能丧失
+抽取方式：开放全文/API正文读取 → Evidence关键原句 → Description → A/B/C人工复核
+判定口径：Figure支持不构成排除理由；技术对照、未测试、推测和非目标结果归C。
+
+================================================================================
+论文1：Multiplex Assessment of Protein Variant Abundance by Massively Parallel Sequencing
+PMID：29785012
+DOI：10.1038/s41588-018-0122-z
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC5980760/
+ProteinGym：TPMT_HUMAN_Matreyek_2018
+================================================================================
+
+[P1-E1]
+Evidence："lower abundance of TPMT relative to wild type"
+Description：作者实际比较了TPMT p.Ala80Pro、p.Ala154Thr和p.Tyr240Cys与WT。这三种高频非功能等位变体的稳态丰度均降低，正文进一步把低丰度与携带者硫嘌呤药物毒性联系起来。结构化丰度分数之外，文本补充了“低丰度→药物不能充分灭活→毒性”的临床机制链。
+来源位置：Results，"Implications of TPMT abundance for drug treatment"，Fig. 5a附近。
+判定：A（高价值增量）
+
+[P1-E2]
+Evidence："mean RBC activity ... was lower"
+Description：在ALL患者中，p.Gln179His、p.Arg215His和p.Arg226Gln杂合携带者的红细胞TPMT活性低于无TPMT变体者，但高于常见药物敏感变体携带者；与此同时，VAMP-seq和单独检测均显示这些变体丰度接近WT。该证据区分了轻度功能下降与蛋白丰度下降。
+来源位置：Results，"Implications of TPMT abundance for drug treatment"，Supplementary Fig. 7a–d附近。
+判定：A（高价值增量）
+
+[P1-E3]
+Evidence："RBC activity for p.Ser125Leu was higher than WT"
+Description：p.Ser125Leu没有表现出目标方向的功能下降；正文还将其与另外三种稀有变体一起判断为不一定属于decreased-function variants。
+来源位置：Results，"Implications of TPMT abundance for drug treatment"，Supplementary Fig. 7附近。
+判定：C（排除）
+排除原因：结果方向不是稳定性下降或功能丧失。
+
+================================================================================
+论文2：Integrating thousands of PTEN variant activity and abundance measurements reveals variant subgroups and new dominant negatives in cancers
+PMID：34649609
+DOI：10.1186/s13073-021-00984-x
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC8518224/
+ProteinGym：PTEN_HUMAN_Matreyek_2021
+================================================================================
+
+[P2-E1]
+Evidence："Asp331Gly ... reduced abundance ... near-WT phosphatase activity"
+Description：Asp331Gly在U87-MG细胞表达时稳态丰度降低，但纯化后以等摩尔量进行体外实验时，磷酸酶活性接近WT。该句明确证明细胞内低丰度不能直接解释为蛋白本征催化失活。
+来源位置：Results，"Classification of PTEN variants by abundance and activity"，Fig. 2A附近。
+判定：A（高价值增量）
+
+[P2-E2]
+Evidence："Arg130Pro and Asp92His ... markedly increased pAkt levels"
+Description：Arg130Pro和Asp92His属于“活性丧失但丰度接近WT”的变体；在含WT PTEN的细胞中仍使pAkt明显升高，支持显性负效应。结构化丰度标签本身无法表达该机制。
+来源位置：Results，显性负效应验证段，Fig. 4A–B附近。
+判定：A（高价值增量）
+
+[P2-E3]
+Evidence："known low abundance variants Leu345Gln and Asp252Gly"
+Description：Leu345Gln和Asp252Gly在该实验段中被作者作为已知低丰度对照使用，没有在此处形成新的突变—结果关系。
+来源位置：Results，显性负效应验证段，Fig. 4A附近。
+判定：C（排除）
+排除原因：已知对照，且本段只用于验证实验区分能力。
+
+================================================================================
+论文3：Massively parallel variant characterization identifies NUDT15 alleles associated with thiopurine toxicity
+PMID：32094176
+DOI：10.1073/pnas.1915680117
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC7071893/
+ProteinGym：NUD15_HUMAN_Suiter_2020
+================================================================================
+
+[P3-E1]
+Evidence："approximately three-fold reduction in EGFP signal"
+Description：在HEK293T细胞中，已知低稳定性变体Arg139Cys与EGFP融合后，信号约为WT的三分之一；这是明确对象、明确对照和明确程度的文本阴性证据，但核心关系同时由结构化丰度分数和图支持。
+来源位置：Results，NUDT15 protein abundance assay，SI Appendix Fig. S1A附近。
+判定：B（有效文本阴性）
+
+[P3-E2]
+Evidence："85% reduction ... but only a 13% decrease"
+Description：Arg139Cys相对WT在丰度实验中下降85%，但在药物敏感性实验中的下降只有13%。作者把差异归因于HEK293T背景、药物浓度和暴露时长对终点灵敏度的影响。该信息可用于标注跨assay不一致和条件边界。
+来源位置：Discussion，assay caveats段。
+判定：A（高价值增量）
+
+[P3-E3]
+Evidence："Five variants were associated with hematopoietic toxicity"
+Description：Lys33Glu、Arg34Thr、Val75Gly、Arg139Cys和Arg139His在接受硫嘌呤治疗的患者中与血液毒性相关，其平均实验activity score为0.20，低于无毒性关联变体的0.74。正文把细胞实验功能下降与患者药物毒性连接起来。
+来源位置：Results，临床验证段，Fig. 4D附近。
+判定：A（高价值增量）
+
+================================================================================
+论文4：A proactive genotype-to-patient-phenotype map for cystathionine beta-synthase
+PMID：32000841
+DOI：10.1186/s13073-020-0711-1
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC6993387/
+ProteinGym：CBS_HUMAN_Sun_2020
+================================================================================
+
+[P4-E1]
+Evidence："some residual CBS enzyme activity is required for rescue"
+Description：低维生素B6条件下有害的CBS变体并非都能被高B6挽救；可挽救组的低B6中位fitness高于不可挽救组，说明必须保留一定残余活性才会产生B6救援。该证据给出了条件依赖和程度阈值。
+来源位置：Results，vitamin B6 remediability，Fig. 3a–b附近。
+判定：A（高价值增量）
+
+[P4-E2]
+Evidence："consistently negative delta scores in Thr53"
+Description：Thr53位置替换在高B6相对低B6条件下呈持续负delta score，即提高B6反而加重功能效应；其邻近Cys52血红素配位位点。该反常条件效应无法由单一ProteinGym分数完整表达。
+来源位置：Results，vitamin B6 remediability结构分析，Supplementary Fig. S15附近。
+判定：A（高价值增量）
+
+[P4-E3]
+Evidence："p.Trp409Ter ... were not detected as damaging"
+Description：酵母互补实验没有把p.Trp409Ter识别为有害，且对p.Asp444Asn所在调控域不够敏感；正文指出在人类中前者会受NMD影响，后者属于实验体系难以捕获的调控域效应。这是benchmark标签的明确适用边界。
+来源位置：Discussion，assay caveats段。
+判定：A（高价值增量）
+
+================================================================================
+论文5：A mutational atlas for Parkin proteostasis
+PMID：38378758
+DOI：10.1038/s41467-024-45829-4
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC10879094/
+ProteinGym：PRKN_HUMAN_Clausen_2023
+================================================================================
+
+[P5-E1]
+Evidence："R42P level was reduced approximately 10-fold compared to WT"
+Description：R42P已知会造成热力学去稳定化、快速降解和稳态丰度下降；流式实验显示其丰度约比WT低10倍。过表达条件下R42P仍能完成本研究的mitophagy实验，因此致病机制主要指向低丰度而不是催化功能完全丧失。
+来源位置：Results，VAMP-seq system validation，Fig. 1B–E与Supplementary Fig. 1附近。
+判定：A（高价值增量）
+
+[P5-E2]
+Evidence："pathogenic variants ... relatively high abundance scores"
+Description：部分致病Parkin变体丰度接近WT，但因功能步骤受损而致病：T415N和G430D影响硫酯形成/泛素连接，K161N影响Parkin活化，G284R妨碍磷酸化泛素结合。文本提供了丰度benchmark之外的功能丧失机制。
+来源位置：Discussion，pathogenic high-abundance variants段。
+判定：A（高价值增量）
+
+[P5-E3]
+Evidence："(C431A) variant was not"
+Description：C431A被人工设计为催化死变体，在AO诱导的mitophagy实验中不工作，用于验证GFP-Parkin功能检测的动态范围。
+来源位置：Results，fusion protein functional validation，Supplementary Fig. 1B–C附近。
+判定：C（排除）
+排除原因：人为设计的催化死实验对照，不作为主要数据对象。
+
+================================================================================
+汇总
+================================================================================
+A类：11条
+B类：1条
+C类：3条
+A+B：12条
+有A或B的论文：5/5
+A+B平均密度：2.4条/篇
+
+最终判断：成功。
+理由：有ProteinGym公开benchmark；5篇全部命中；A+B=12≥5；A=11>0。

@@ -1,0 +1,197 @@
+蛋白—蛋白非互作/结合下降：正文自然语言简单抽取样例（5篇）
+抽取日期：2026-11-13
+
+口径：
+1. 只依据论文正文或正文式图注中的自然语言陈述，不把数据库标签反向写成证据。
+2. 必须能识别蛋白A、蛋白B、阴性结果；条件、突变、实验方法能识别时一并记录。
+3. “不互作”“不直接结合”“未沉淀”“结合显著下降”计入；纯阴性对照不计入。
+4. 同一句列出多个明确蛋白对时，按蛋白对分别计数。
+
+================================================================================
+论文1：Yersinia Virulence Factor YopM Induces Sustained RSK Activation by Interfering with Dephosphorylation
+PMCID：PMC2950144
+PMID：20957203
+================================================================================
+
+[1]
+Evidence:
+
+“Furthermore, RSK1 (left upper panel) and RSK2 (right upper panel) could separately be co-immunoprecipitated with PKN1 in the presence but not in the absence of YopM. The same results were obtained when co-immunoprecipitation with PKN2 was assayed (left lower and right lower panel). These experiments confirm the earlier finding that PKN isoforms physiologically do not interact with RSK. Interaction occurs only if YopM is present in the cell.”
+
+来源位置：Results，Figure 2C 前后正文。
+
+Description:
+在共免疫沉淀实验中，只有细胞内存在 YopM 时，PKN1/PKN2 才能分别与 RSK1/RSK2 共沉淀；缺少 YopM 时这些组合不发生可检测互作。正文不仅给出阴性蛋白对，还给出了决定互作是否发生的条件变量 YopM。
+
+结构化记录（4条）：
+- PKN1 — RSK1；结果：未互作；条件：无 YopM；方法：co-IP。
+- PKN1 — RSK2；结果：未互作；条件：无 YopM；方法：co-IP。
+- PKN2 — RSK1；结果：未互作；条件：无 YopM；方法：co-IP。
+- PKN2 — RSK2；结果：未互作；条件：无 YopM；方法：co-IP。
+
+判定：计入，4条。属于有明确条件的自然语言阴性数据。
+
+
+================================================================================
+论文2：Structure of the HCMV UL16-MICB Complex Elucidates Select Binding of a Viral Immunoevasin to Diverse NKG2D Ligands
+PMCID：PMC2797645
+PMID：20090832
+================================================================================
+
+[2]
+Evidence:
+
+“All NKG2D ligands that carry a glutamine or glutamate at position 169, i.e. MICB, ULBP1, ULBP2 and ULBP6, bind UL16, while all ligands that have an arginine at this position, i.e. MICA, ULBP3 and ULBP4, do not bind UL16 (Figure 3A).”
+
+来源位置：Discussion，解释 UL16 选择性结合及 Figure 3A 的正文段落。
+
+Description:
+UL16 对 NKG2D 配体具有序列位点依赖的选择性：第169位为精氨酸的 MICA、ULBP3 和 ULBP4 均不与 UL16 结合。正文同时给出阴性蛋白对和可解释阴性的位点特征，而不只是“阴性”标签。
+
+结构化记录（3条）：
+- UL16 — MICA；结果：不结合；条件/机制线索：MICA 第169位为 Arg。
+- UL16 — ULBP3；结果：不结合；条件/机制线索：ULBP3 第169位为 Arg。
+- UL16 — ULBP4；结果：不结合；条件/机制线索：ULBP4 第169位为 Arg。
+
+判定：计入，3条。属于带序列机制线索的自然语言阴性数据。
+
+
+================================================================================
+论文3：Pericentrosomal Targeting of Rab6 Secretory Vesicles by Bicaudal-D-related Protein 1 (BICDR-1) Regulates Neuritogenesis
+PMCID：PMC2876961
+PMID：20360680
+================================================================================
+
+[3]
+Evidence:
+
+“Moreover, both full-length BICDR-1 and a C-terminal region of BICDR-1, amino acids 382–577, interact with constitutively active GTPase-deficient Rab6A-Q72R and not with GDP-locked inactive Rab6A-T27N in the yeast two-hybrid assay (Figure 3B; Supplementary Figure S2A).”
+
+来源位置：Results，Rab6 结合实验段落。
+
+Description:
+BICDR-1 全长及其 C 端区域可与活化态 Rab6A-Q72R 互作，但不与 GDP 锁定的非活化态 Rab6A-T27N 互作；阴性结果取决于 Rab6A 的核苷酸/构象状态。
+
+结构化记录（1条）：
+- BICDR-1 — Rab6A-T27N；结果：不互作；条件：GDP 锁定、非活化态；方法：yeast two-hybrid。
+
+判定：计入，1条。
+
+[4]
+Evidence:
+
+“Similarly, BICD2-K785M could not be precipitated by GST-Rab6 (Figure 3D).”
+
+来源位置：Results，Rab6 pull-down 实验段落。
+
+Description:
+BICD2 的 K785M 突变体不能被 GST-Rab6 沉淀，说明该突变破坏或显著削弱 BICD2—Rab6 结合。
+
+结构化记录（1条）：
+- BICD2-K785M — Rab6；结果：未沉淀/结合丧失；条件：K785M 突变；方法：GST pull-down。
+
+判定：计入，1条。
+
+[5]
+Evidence:
+
+“Both full-length BICDR-1 and an N-terminal region of BICDR-1, amino acids 1–353, interact with the C-terminal tail domain of Kif1C, amino acids 811–1090 and not with other tail regions of Kif1C or other kinesin motors, such as Kif5 (Figure 7A; data not shown).”
+
+“Here, we show that BICDR-1 does not interact with Kif5 but recruits kinesin-3/Kif1C to Rab6 secretory vesicles in hippocampal neurons.”
+
+来源位置：Results 与 Discussion。
+
+Description:
+BICDR-1 与 Kif1C 特定尾部区域互作，但不与另一类驱动蛋白 Kif5 互作。第二处正文再次明确陈述 BICDR-1—Kif5 非互作。
+
+结构化记录（1条）：
+- BICDR-1 — Kif5；结果：不互作；方法：yeast two-hybrid（正文引用 Figure 7A，部分数据未展示）。
+
+判定：计入，1条；证据强度低于前两条，人工复核时应保留“data not shown”标记。
+
+
+================================================================================
+论文4：Lamin B Counteracts the Kinesin Eg5 to Restrain Spindle Pole Separation during Spindle Assembly
+PMCID：PMC2966137
+PMID：20826821
+================================================================================
+
+[6]
+Evidence:
+
+“Moreover, LB3 does not interact with Eg5 in egg extracts based on immunoprecipitation analyses (supplemental Fig. S2B).”
+
+“However, because LB3 does not directly bind to Eg5, the two proteins must antagonize each other indirectly.”
+
+来源位置：Results 与 Discussion。
+
+Description:
+在非洲爪蟾卵提取物环境中，免疫沉淀未发现 lamin B3（LB3）与 Eg5 的互作；两者虽在功能上拮抗，但不是直接结合关系。该记录包含实验体系和“功能关联不等于物理互作”的语义。
+
+结构化记录（1条）：
+- LB3 — Eg5；结果：不互作/不直接结合；条件：Xenopus egg extracts；方法：immunoprecipitation。
+
+判定：计入，1条。
+
+
+================================================================================
+论文5：Structural Determinants of PINK1 Topology and Dual Subcellular Distribution
+PMCID：PMC2995477
+PMID：21092208
+================================================================================
+
+[7]
+Evidence:
+
+“L347P mutation reduces PINK1 interaction with Hsp90 by co-immunoprecipitation.”
+
+“When we introduced natural PINK1 mutation L347P in the kinase domain, we not only disrupted the Hsp90-PINK1 interaction, we increased the mitochondrial PINK1 level, provided that a TM is absent.”
+
+“In our co-immunoprecipitation experiment, L347P PINK1 and mito-L347P PINK1 showed significant reduction but not a 100% loss of Hsp90 interaction.”
+
+来源位置：Figure 4 图注与 Discussion。
+
+Description:
+PINK1 激酶结构域的天然突变 L347P 显著降低、但未完全消除 PINK1 与 Hsp90 的互作，并改变 PINK1 的亚细胞分布。该记录属于“结合下降”而不是绝对非互作，不能错误标成完全阴性。
+
+结构化记录（1条）：
+- PINK1-L347P — Hsp90；结果：互作显著下降、非完全丧失；条件：L347P 突变；方法：co-IP。
+
+判定：计入，1条，标签应为“结合下降”。
+
+[8：排除示例]
+Evidence:
+
+“GFP does not co-immunoprecipitate with Hsp90.”
+
+Description:
+GFP 是实验阴性对照，不是该研究中具有生物学意义的候选互作对象。若直接按“不共沉淀”关键词抽取，会把它错误计入有用阴性数据。
+
+判定：排除，不计数。
+
+
+================================================================================
+简单抽取结果汇总
+================================================================================
+
+论文数：5篇
+自然语言证据块：7个有效证据块，另有1个排除示例
+有效蛋白对级记录：12条
+
+其中：
+- 明确“不互作/不结合/未沉淀”：11条
+- 明确“结合显著下降但未完全消失”：1条
+- 纯实验阴性对照：1条，已排除
+
+12条有效记录的条件信息覆盖：
+- 第三方蛋白是否存在：YopM（4条）
+- 配体关键位点/序列特征：第169位 Arg（3条）
+- 蛋白活化状态：Rab6A-T27N、GDP 锁定（1条）
+- 突变：BICD2-K785M、PINK1-L347P（2条）
+- 实验/生物体系：Xenopus egg extracts（1条）
+- 蛋白家族选择性：BICDR-1 不与 Kif5 互作（1条）
+
+直接判断：
+这5篇的简单抽取已经能得到12条可用于建模或构造条件化负样本的记录，且每条都不只是“数据库中某蛋白对为阴性”的自然语言改写。最有价值的增量是“在什么条件下阴性”和“为何阴性”：第三方蛋白依赖、核苷酸状态、具体突变、序列位点及实验体系。这说明蛋白—蛋白非互作/结合下降比此前的酶工程场景更符合“非结构化阴性数据挖掘”的项目要求。
+
+但这不是对整个领域数据规模的外推：它只证明该场景确实存在可抽取、带增量条件信息的正文阴性数据。后续扩大样本时仍需按本文口径排除 GFP 一类对照项，并区分“完全不结合”与“结合下降”。

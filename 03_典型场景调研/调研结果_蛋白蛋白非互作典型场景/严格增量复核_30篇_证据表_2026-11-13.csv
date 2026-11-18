@@ -1,0 +1,18 @@
+﻿序号,PMID,PMCID,蛋白A,蛋白B,正文新增信息,证据位置,严格保留理由
+1,20090832,PMC2797645,UL16,MICA,"第169位Arg会与UL16的Met59和Leu161产生空间冲突，从而阻止结合",Discussion,"正文提供序列位点和结构机制，不只是Figure中的阴性标签"
+2,20090832,PMC2797645,UL16,ULBP3,"第169位Arg被作者归纳为UL16选择性结合的关键决定因素",Discussion,"正文机制归纳"
+3,20090832,PMC2797645,UL16,ULBP4,"第169位Arg被作者归纳为UL16选择性结合的关键决定因素",Discussion,"正文机制归纳"
+4,19506034,PMC2711621,p300,CD44,"p300不直接结合CD44，而是通过与STAT3结合存在于CD44-STAT3-p300复合物中",Supplementary-material narrative,"提供第三方蛋白介导和直接/间接关系"
+5,20007596,PMC2836571,KlcA,HsdR/EcoKI组件,"KlcA在体内具有抗限制活性，但体外不能通过与完整EcoKI、核心甲基转移酶或HsdR直接互作解释",Results/Discussion,"提供体内功能与体外物理互作不一致的解释边界"
+6,20007596,PMC2836571,ArdB,HsdR/EcoKI组件,"ArdB在体内具有抗限制活性，但体外不能通过与完整EcoKI、核心甲基转移酶或HsdR直接互作解释",Results/Discussion,"提供体内/体外差异和机制排除"
+7,20639538,PMC2995049,RfaH,Rho,"RfaH不与Rho结合，且原文明确标注data not shown；同时用于解释其不同于NusG的功能",Introduction/Discussion,"不是Figure复述，并提供同源因子功能差异"
+8,20826821,PMC2966137,LB3,Eg5,"两者在功能上拮抗但不直接结合，作者据此提出膜性网络限制Eg5滑动等间接机制",Discussion,"保留的是功能关系与物理关系的区别及机制解释，不重复共沉淀阴性本身"
+9,19369943,PMC2688529,Prdx2,PTEN,"作者明确称免疫沉淀未检出该互作且data not shown，并与Prdx1的选择性相对照",Discussion,"不是Figure复述，提供旁系同源蛋白选择性"
+10,21092208,PMC2995477,PINK1-L347P,Hsp90,"互作显著下降但不是100%丧失；残余Hsp90结合可能解释其仍存在的胞质分布",Discussion,"提供阴性程度和功能解释，不能由二元阴性标签表达"
+11,18628823,PMC2440817,RIP140,PRMT1,"二者不直接互作，14-3-3被提出为形成RIP140/14-3-3/PRMT1三元复合物的中介",Results,"提供第三方介导机制"
+12,18617507,PMC2577208,VRK1,RCC1,"VRK1不直接结合RCC1，但Ran存在时三者可以作为复合物被分离",Abstract/Discussion,"提供第三方蛋白依赖及直接/间接区分"
+13,18443218,PMC2364703,POT1,TRF2,"POT1不直接结合TRF2，作者据此判断POT1/TPP1通过TIN2与TRF2/hRap1形成更稳定复合物",Results,"提供桥接蛋白和复合物稳定性解释"
+14,20404111,PMC2856893,HPat,EDC3,"HPat不与EDC3互作被作者解释为二者可能竞争Me31B上的同一结合表面",Results/Discussion,"保留互斥网络解释，不重复单纯阴性结果"
+15,20404111,PMC2856893,HPat,Tral,"HPat不与Tral互作被作者解释为二者可能竞争Me31B上的同一结合表面",Results/Discussion,"保留互斥网络解释"
+16,20404111,PMC2856893,HPat,Me31B,"即使HPat与Me31B不能直接互作，GW182依赖的mRNA仍可被有效去帽降解",Discussion,"提供非互作条件下功能仍保持的反直觉结果"
+

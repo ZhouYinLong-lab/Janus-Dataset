@@ -1,0 +1,19 @@
+﻿论文,PMID/DOI,证据编号,等级,对象A,对象B/结果终点,条件,阴性结果,增量信息,来源位置,排除原因
+YopM induces sustained RSK activation,20957203 / 10.1371/journal.pone.0013165,P1-E01,A,PKN1,RSK1,无YopM；细胞内共免疫沉淀,不互作/不能共同沉淀,第三方蛋白YopM存在时关系翻转为互作,"Results: YopM interacts with all PKN and all RSK isoforms; Fig. 2C",
+YopM induces sustained RSK activation,20957203 / 10.1371/journal.pone.0013165,P1-E02,A,PKN1,RSK2,无YopM；细胞内共免疫沉淀,不互作/不能共同沉淀,第三方蛋白YopM存在时关系翻转为互作,"Results: YopM interacts with all PKN and all RSK isoforms; Fig. 2C",
+YopM induces sustained RSK activation,20957203 / 10.1371/journal.pone.0013165,P1-E03,A,PKN2,RSK1,无YopM；细胞内共免疫沉淀,不互作/不能共同沉淀,第三方蛋白YopM存在时关系翻转为互作,"Results: YopM interacts with all PKN and all RSK isoforms; Fig. 2C",
+YopM induces sustained RSK activation,20957203 / 10.1371/journal.pone.0013165,P1-E04,A,PKN2,RSK2,无YopM；细胞内共免疫沉淀,不互作/不能共同沉淀,第三方蛋白YopM存在时关系翻转为互作,"Results: YopM interacts with all PKN and all RSK isoforms; Fig. 2C",
+Lamin B counteracts Eg5,20826821 / 10.1074/jbc.M110.140749,P2-E01,A,LB3,Eg5/KIF11,Xenopus卵提取物；免疫沉淀,未检测到直接互作,功能上拮抗但物理关系为间接；提供直接/间接和纺锤体语境,"Results: LB3 Limits whereas Eg5 Increases...; Suppl. Fig. S2B; Discussion",
+Lamin B counteracts Eg5,20826821 / 10.1074/jbc.M110.140749,P2-E02,C,LB3,微管MTs,纺锤体语境,不直接结合,无可纳入的蛋白B,"Introduction: lamin B and spindle matrix",对象B是聚合结构而非规范蛋白实体
+BICDR-1 regulates neuritogenesis,20360680 / 10.1038/emboj.2010.51,P3-E01,A,BICDR-1,Rab6A-T27N,GDP锁定失活态；酵母双杂交,不互作,与活化型Q72R形成状态对照；新增核苷酸/构象状态,"Results: BICDR-1 is a Rab6-binding protein; Fig. 3B; Suppl. Fig. S2A",
+BICDR-1 regulates neuritogenesis,20360680 / 10.1038/emboj.2010.51,P3-E02,A,BICD2-K785M,Rab6,GST-Rab6 pull-down,不能被沉淀,单点突变导致结合丧失,"Results: BICDR-1 is a Rab6-binding protein; Fig. 3D",
+BICDR-1 regulates neuritogenesis,20360680 / 10.1038/emboj.2010.51,P3-E03,A,BICDR-1,Kif5,神经元Rab6分泌囊泡运输；酵母双杂交,不互作,替代马达Kif1C被招募；新增货物和功能语境,"Results: Kif1C participates... Fig. 7A; Results: BICDR-1 controls secretory trafficking",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E01,A,UL16,MICA,SPR与结构比较,亲和力可忽略/不结合,与MICB高亲和形成对照；α2结构域及Arg169空间冲突机制,"Discussion paragraphs 17-19; Table S1; Figs. 3A and 6A",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E02,B,UL16,ULBP3,正文汇总既往结合实验,不结合,对象和阴性结论明确；本篇给出结构解释但直接实验需回溯被引论文,"Discussion paragraphs 17 and 19; Figs. 3A and 6A",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E03,B,UL16,ULBP4,正文汇总既往结合实验,不结合,对象和阴性结论明确；本篇给出结构解释但直接实验需回溯被引论文,"Discussion paragraphs 17 and 19; Figs. 3A and 6A",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E04,B,UL16,ULBP5,正文汇总既往突变实验,不结合,α2结构域特异替换被描述为阻止结合；原始实验在被引论文,"Discussion paragraph 19; Fig. 3A; cited ref. 31",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E05,A,UL16,MICB-Q169R,点突变；结构建模与既往突变实验,不再结合,Arg169与UL16 Met59/Leu161空间冲突机制,"Discussion paragraph 19; Fig. 6A",
+UL16-MICB complex structure,20090832 / 10.1371/journal.ppat.1000723,P4-E06,C,UL16,MICB-E68G,结构推测,仅推测可能降低结合,同段域替换实验不支持其为关键决定因素,"Discussion paragraph 18",未观测到明确阴性；属于推测
+PINK1 topology,21092208 / 10.1186/1471-2121-11-90,P5-E01,A,PINK1-L347P,Hsp90,全长和mito构建体；共免疫沉淀,结合显著降低但未完全消失,突变条件、下降程度、残余结合及线粒体定位后果,"Results: PINK1 transmembrane and kinase domain determine... Fig. 4F; Discussion",
+PINK1 topology,21092208 / 10.1186/1471-2121-11-90,P5-E02,C,GFP,Hsp90,融合蛋白实验阴性对照,不共同免疫沉淀,无生物学目标关系,"Fig. 4F caption and Results",技术性阴性对照
+PINK1 topology,21092208 / 10.1186/1471-2121-11-90,P5-E03,C,PINK1-L347P,胞质/线粒体分布,与WT比较,未观察到分布差异,不是PPI关系,"Results; Fig. 4A",非目标终点

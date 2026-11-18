@@ -1,0 +1,200 @@
+重组蛋白可溶表达、异源表达与纯化失败：5篇全文简单抽取
+日期：2026-11-13
+
+抽取方法：检索/benchmark调研 → PMC开放全文读取 → Evidence + Description + 来源位置 → 人工A/B/C复核。
+说明：Evidence保留原文原句中的关键连续片段；“……”只省略无关上下文，不改变原意。Description根据同段全文补齐对象和条件。
+
+统计：A=8，B=2，C=5；A+B=10；5/5篇命中A或B；A+B平均2.0条/篇。
+
+================================================================================
+论文1：Community-wide experimental evaluation of the PROSS stability-design method
+PMID：33781758
+PMCID：PMC7610701
+DOI：10.1016/j.jmb.2021.166964
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC7610701/
+================================================================================
+
+[P1-E1]
+Evidence:
+“RET(CLD12) and CDK7, showed no soluble expression in E. coli ... under all tested conditions.”
+Description:
+RET(CLD12)的野生型和PROSS设计在作者测试的E. coli条件下均无可溶表达。正文明确给出对象、宿主体系、条件范围和阴性终点，但未在该句中给出更具体机制。
+来源位置：Results → “Improved expression for most targets in low-throughput screening”，结论段。
+判定：B（有效文本阴性；条件范围明确，机制增量较弱）
+
+[P1-E2]
+Evidence:
+同P1-E1；该原句同时明确列出CDK7。
+Description:
+CDK7野生型及PROSS设计D1、D2、D3在测试的E. coli条件下均未得到可溶蛋白；正文其他位置说明CDK7可在昆虫细胞中达到mg规模，因此失败与表达宿主相关。
+来源位置：Results → “Improved expression for most targets in low-throughput screening”，同段及前句。
+判定：B（有效文本阴性；宿主语境明确，但数据库外机制信息有限）
+
+[P1-C1]
+Evidence:
+“expression was considerably lower and often below detection”
+Description:
+该表述没有把“其他条件”下的低表达逐一映射到具体蛋白或构建体，无法单独生成对象级阴性记录。
+来源位置：Results → “Orders of magnitude increase in soluble expression in HTP screening”。
+判定：C
+排除原因：缺少目标—条件的逐条映射。
+
+本篇统计：A=0，B=2，C=1，A+B=2。
+
+================================================================================
+论文2：Protein haploinsufficiency drivers identify MYBPC3 variants that cause hypertrophic cardiomyopathy
+PMID：34097875
+PMCID：PMC8260873
+DOI：10.1016/j.jbc.2021.100854
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC8260873/
+================================================================================
+
+[P2-E1]
+Evidence:
+“three ... HCM-linked mutants (C4-D610N, C10-G1206D, and C10-Y1251H) could not be produced in soluble form”
+Description:
+cMyBP-C结构域突变体C4-D610N在作者筛选的最有利E. coli表达条件下仍不能以可溶形式制备。方法部分给出pQE80L载体、BLR(DE3)菌株，并说明困难构建体优先采用低IPTG和不高于25°C的条件。
+来源位置：Results → “HCM-linked variants induce extensive protein destabilization”；条件见Experimental procedures → “Protein expression and purification”。
+判定：A（具体结构域突变＋优化条件下仍失败＋疾病/稳定性语境）
+
+[P2-E2]
+Evidence:
+同P2-E1；原句明确列出C10-G1206D。
+Description:
+cMyBP-C C10-G1206D结构域突变体在最有利条件下仍不能获得可溶产物；突变身份和结构域边界使其可直接形成条件化序列样本。
+来源位置：同P2-E1。
+判定：A
+
+[P2-E3]
+Evidence:
+同P2-E1；原句明确列出C10-Y1251H。
+Description:
+cMyBP-C C10-Y1251H结构域突变体在最有利条件下仍不能获得可溶产物；正文将该失败与强烈去稳定化联系起来。
+来源位置：同P2-E1。
+判定：A
+
+[P2-C1]
+Evidence:
+“Using molecular dynamics simulations, we obtained evidence ...”
+Description:
+分子动力学结果支持突变体失稳，但模拟本身不是本项目定义中的实际表达/可溶性实验。实际表达失败已经由P2-E1至P2-E3记录，不能再把模拟结论算作新的阴性数据。
+来源位置：Results → “HCM-linked variants induce extensive protein destabilization”，同段。
+判定：C
+排除原因：计算推断，且与已有实验记录重复。
+
+本篇统计：A=3，B=0，C=1，A+B=3。
+
+================================================================================
+论文3：A 33-residue peptide tag increases solubility and stability of Escherichia coli produced single-chain antibody fragments
+PMID：35941164
+PMCID：PMC9359998
+DOI：10.1038/s41467-022-32423-9
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC9359998/
+================================================================================
+
+[P3-E1]
+Evidence:
+“G12-scFv-HA ... virtually insoluble ... BL21 (DE3) Star ... G12-scFv-HA-P17 ... remained insoluble”
+Description:
+未加P17的G12-scFv-HA在BL21(DE3) Star中几乎完全不溶。正文明确指出该菌株保留gor和trxB还原通路，不能支持scFv结构域内二硫键形成。
+来源位置：Results → “P17 tag enhanced solubility of four different scFvs in E. coli SHuffle T7 strain”，首段。
+判定：A（构建体＋菌株＋氧化还原机制）
+
+[P3-E2]
+Evidence:
+同P3-E1；后半句明确描述G12-scFv-HA-P17仍不溶。
+Description:
+即使加入P17标签，G12-scFv-HA-P17在BL21(DE3) Star中仍不溶；作者据此限定P17增溶效应依赖氧化型胞质环境。该记录能够构造“同一标签在不同菌株背景下失效”的条件样本。
+来源位置：同P3-E1。
+判定：A（标签效应的适用边界＋菌株机制）
+
+[P3-C1]
+Evidence:
+“scFvs are often expressed as insoluble aggregates”
+Description:
+这是领域级背景陈述，没有具体scFv对象、构建体和本研究实验条件，不能单独作为样本。
+来源位置：Discussion，首段。
+判定：C
+排除原因：泛化陈述，缺少明确对象级实验。
+
+本篇统计：A=2，B=0，C=1，A+B=2。
+
+================================================================================
+论文4：An Approach to the Production of Soluble Protein from a Fungal Gene Encoding an Aggregation-Prone Xylanase in Escherichia coli
+PMID：21494625
+PMCID：PMC3072991
+DOI：10.1371/journal.pone.0018489
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC3072991/
+================================================================================
+
+[P4-E1]
+Evidence:
+“pET-xynA2 formed inclusion bodies ... temperature upshift ... could not improve the soluble yield”
+Description:
+pET-xynA2表达的成熟XynA形成包涵体；仅对重组细胞进行温度上调不能改善可溶产量。正文对比显示，需要同时改变为Hsh启动子、周质导出和温度上调诱导，才能避免大部分包涵体形成。
+来源位置：Discussion末段；救援条件见Results → “Soluble periplasmic protein produced from xynA2 in the pHsh-ex”。
+判定：A（载体/启动子＋区室＋温度干预及其失效边界）
+
+[P4-E2]
+Evidence:
+“the major proportion of the recombinant protein remained insoluble”
+Description:
+108 kDa的Xar-Xyn融合蛋白使用pHsh-ex并尝试周质导出后，可溶水平虽增加，但主要部分仍不溶；这是部分救援后仍失败的程度型阴性结果。
+来源位置：Results → “Soluble periplasmic protein produced from xynA2 in the pHsh-ex”，第二段。
+判定：A（融合构建体＋周质导出＋部分改善程度）
+
+[P4-C1]
+Evidence:
+“probably because ... too big to be exported”
+Description:
+“蛋白过大导致导出困难”是作者给出的推测性原因。实际不溶结果已保留为P4-E2，但该原因不能单独作为已验证阴性记录。
+来源位置：同P4-E2原句后半部分。
+判定：C
+排除原因：推测性机制，未独立检验。
+
+本篇统计：A=2，B=0，C=1，A+B=2。
+
+================================================================================
+论文5：One-step design of a stable variant of the malaria invasion protein RH5 for use as a vaccine immunogen
+PMID：28096331
+PMCID：PMC5293100
+DOI：10.1073/pnas.1616903114
+全文：https://pmc.ncbi.nlm.nih.gov/articles/PMC5293100/
+================================================================================
+
+[P5-E1]
+Evidence:
+“no detectable soluble expression was observed for PfRH5ΔNL”
+Description:
+PfRH5ΔNL在Rosetta-gami E. coli中、作者测试的不同生长条件下均无可检测可溶表达；同段的三个稳定化设计则能够表达并进入纯化。该对照把失败限定到具体构建体，并提供“稳定化设计救援”的条件信息。
+来源位置：Results → “Generation of a Stabilized, Functional, and Bacterially Expressed PfRH5”，首段。
+判定：A（具体构建体＋菌株/生长条件＋设计救援对照）
+
+[P5-C1]
+Evidence:
+“each of the stabilized variants expressed at similar levels”
+Description:
+这是稳定化变体的阳性表达结果，可作为P5-E1的对照上下文，但本身不是阴性数据。
+来源位置：同P5-E1原句。
+判定：C
+排除原因：阳性结果，不是目标阴性关系。
+
+本篇统计：A=1，B=0，C=1，A+B=1。
+
+================================================================================
+总计与成功判定
+================================================================================
+
+A类：8条
+B类：2条
+C类：5条
+A+B：10条
+命中论文：5/5
+A+B密度：2.0条/篇
+A类密度：1.6条/篇
+
+硬性门槛：有benchmark；至少3/5篇有A/B；至少5条A+B；A>0。
+实际结果：有benchmark；5/5篇；10条A+B；A=8。
+
+最终判定：成功。
+

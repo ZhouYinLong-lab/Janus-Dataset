@@ -1,0 +1,228 @@
+蛋白—蛋白条件性非互作与结合丧失：5篇开放全文简单抽取
+日期：2026-11-13
+
+抽取口径
+1. A：正文在阴性关系之外给出第三方介导、状态、突变、程度、直接/间接或功能语境，可用于条件化PPI模型。
+2. B：正文明确给出对象、条件和阴性结论，可用于文本抽取，但增量或实验溯源弱于A。
+3. C：技术对照、非蛋白—蛋白终点、推测而非实验结果、对象不清或重复表述。
+4. Figure/Supplement支持不构成排除理由；Evidence保留原文短引，完整上下文由“来源位置”定位。
+
+================================================================================
+论文1
+================================================================================
+Title: Yersinia Virulence Factor YopM Induces Sustained RSK Activation by Interfering with Dephosphorylation
+PMID: 20957203
+PMCID: PMC2950144
+DOI: 10.1371/journal.pone.0013165
+全文: https://pmc.ncbi.nlm.nih.gov/articles/PMC2950144/
+
+共享Evidence E1:
+“These experiments confirm the earlier finding that PKN isoforms physiologically do not interact with RSK.”
+
+共享Evidence E2:
+“Interaction occurs only if YopM is present in the cell.”
+
+[P1-E01]
+Evidence: E1 + E2
+Description: PKN1与RSK1在无YopM时不能共同免疫沉淀；YopM存在时形成复合物。该文本把数据库中的静态“非互作”限定为第三方蛋白依赖的条件性阴性。
+来源位置: Results，“YopM interacts with all PKN and all RSK isoforms”，Figure 2C对应段落。
+判定: A
+
+[P1-E02]
+Evidence: E1 + E2
+Description: PKN1与RSK2在无YopM时不互作，YopM存在时可共同免疫沉淀；新增第三方介导条件。
+来源位置: Results，同上，Figure 2C右上面板对应叙述。
+判定: A
+
+[P1-E03]
+Evidence: E1 + E2
+Description: PKN2与RSK1在无YopM时不互作，YopM存在时可共同免疫沉淀；新增第三方介导条件。
+来源位置: Results，同上，Figure 2C左下面板对应叙述。
+判定: A
+
+[P1-E04]
+Evidence: E1 + E2
+Description: PKN2与RSK2在无YopM时不互作，YopM存在时可共同免疫沉淀；新增第三方介导条件。
+来源位置: Results，同上，Figure 2C右下面板对应叙述。
+判定: A
+
+本篇统计: A=4，B=0，C=0，A+B=4。
+
+================================================================================
+论文2
+================================================================================
+Title: Lamin B Counteracts the Kinesin Eg5 to Restrain Spindle Pole Separation during Spindle Assembly
+PMID: 20826821
+PMCID: PMC2966137
+DOI: 10.1074/jbc.M110.140749
+全文: https://pmc.ncbi.nlm.nih.gov/articles/PMC2966137/
+
+共享Evidence E1:
+“Moreover, LB3 does not interact with Eg5 in egg extracts based on immunoprecipitation analyses”
+
+共享Evidence E2:
+“LB3 does not directly bind to MTs”
+
+[P2-E01]
+Evidence: E1
+Description: Xenopus卵提取物免疫沉淀未检测到LB3—Eg5直接互作；正文进一步说明二者对纺锤体长度的功能拮抗必须是间接的。直接/间接区分和功能语境是平面蛋白对标签没有的信息。
+来源位置: Results，“LB3 Limits whereas Eg5 Increases...”，Supplementary Figure S2B；Discussion首段解释间接拮抗。
+判定: A
+
+[P2-E02]
+Evidence: E2
+Description: LB3不直接结合微管。微管是聚合结构而非本任务要求的第二个蛋白对象，不能作为蛋白—蛋白非互作记录。
+来源位置: Introduction，讨论LB3与纺锤体微管关系的段落。
+判定: C
+排除原因: 非目标关系；对象B不是规范化蛋白实体。
+
+本篇统计: A=1，B=0，C=1，A+B=1。
+
+================================================================================
+论文3
+================================================================================
+Title: Pericentrosomal targeting of Rab6 secretory vesicles by Bicaudal-D-related protein 1 (BICDR-1) regulates neuritogenesis
+PMID: 20360680
+PMCID: PMC2876961
+DOI: 10.1038/emboj.2010.51
+全文: https://pmc.ncbi.nlm.nih.gov/articles/PMC2876961/
+
+共享Evidence E1:
+“not with GDP-locked inactive Rab6A-T27N”
+
+共享Evidence E2:
+“BICD2-K785M could not be precipitated by GST-Rab6”
+
+共享Evidence E3:
+“BICDR-1 does not interact with Kif5”
+
+[P3-E01]
+Evidence: E1
+Description: 全长BICDR-1及其382–577区段与活化型Rab6A-Q72R互作，但不与GDP锁定失活型Rab6A-T27N互作。阴性标签取决于Rab6核苷酸/构象状态。
+来源位置: Results，“BICDR-1 is a Rab6-binding protein”，Figure 3B及Supplementary Figure S2A。
+判定: A
+
+[P3-E02]
+Evidence: E2
+Description: BICD2的K785M突变体不能被GST-Rab6沉淀，说明单点突变导致结合丧失；突变条件不能由全长野生型蛋白对标签表达。
+来源位置: Results，“BICDR-1 is a Rab6-binding protein”，Figure 3D。
+判定: A
+
+[P3-E03]
+Evidence: E3
+Description: BICDR-1不与kinesin-1/Kif5互作，而是招募kinesin-3/Kif1C到Rab6分泌囊泡。正文提供了替代马达、货物和神经元运输语境。
+来源位置: Results，“BICDR-1 controls secretory trafficking in young neurons”；实验依据另见Figure 7A及data not shown说明。
+判定: A
+
+本篇统计: A=3，B=0，C=0，A+B=3。
+
+================================================================================
+论文4
+================================================================================
+Title: Structure of the HCMV UL16-MICB Complex Elucidates Select Binding of a Viral Immunoevasin to Diverse NKG2D Ligands
+PMID: 20090832
+PMCID: PMC2797645
+DOI: 10.1371/journal.ppat.1000723
+全文: https://pmc.ncbi.nlm.nih.gov/articles/PMC2797645/
+
+共享Evidence E1:
+“but not MICA, ULBP3, ULBP4 and ULBP5”
+
+共享Evidence E2:
+“MICB carrying a Gln169Arg substitution no longer bound UL16”
+
+共享Evidence E3:
+“could therefore conceivably have a negative effect”
+
+[P4-E01]
+Evidence: E1
+Description: UL16对MICA的亲和力可忽略，而对MICB为高亲和；正文结合SPR和结构比较，将选择性定位到α2结构域及169位点的空间冲突。
+来源位置: Discussion第17–19段，Table S1、Figures 3A和6A。
+判定: A
+
+[P4-E02]
+Evidence: E1
+Description: UL16不结合ULBP3。对象与阴性结论明确，但该句汇总既往结合实验；本篇主要提供结构解释，若建设金标准仍应回溯被引原始实验论文。
+来源位置: Discussion第17、19段，Figure 3A/6A。
+判定: B
+
+[P4-E03]
+Evidence: E1
+Description: UL16不结合ULBP4。对象与阴性结论明确，但直接实验来自被引研究，本篇为结构性解释。
+来源位置: Discussion第17、19段，Figure 3A/6A。
+判定: B
+
+[P4-E04]
+Evidence: E1
+Description: UL16不结合ULBP5。正文同时指出ULBP5的α2结构域特异替换阻止结合，但直接突变实验来自被引研究，故作为有效文本阴性而非本篇A级实验记录。
+来源位置: Discussion第17、19段，Figure 3A及参考文献31对应叙述。
+判定: B
+
+[P4-E05]
+Evidence: E2
+Description: MICB的Q169R替换使其不再结合UL16；当前结构显示Arg169会与UL16的Met59/Leu161发生空间冲突。突变—机制—失活链条可用于条件化结合模型。
+来源位置: Discussion第19段，Figure 6A；正文回指既往突变实验。
+判定: A
+
+[P4-E06]
+Evidence: E3
+Description: 作者只推测MICB E68G可能不利于结合，随后又指出整个α1结构域替换并未显著影响结合；这不是观测到的阴性结果。
+来源位置: Discussion第18段。
+判定: C
+排除原因: 结构推测而非实验阴性，且同段实验结果不支持其成为关键决定因素。
+
+本篇统计: A=2，B=3，C=1，A+B=5。
+
+================================================================================
+论文5
+================================================================================
+Title: Structural determinants of PINK1 topology and dual subcellular distribution
+PMID: 21092208
+PMCID: PMC2995477
+DOI: 10.1186/1471-2121-11-90
+全文: https://pmc.ncbi.nlm.nih.gov/articles/PMC2995477/
+
+共享Evidence E1:
+“Full length L347P PINK1 also interacted less with Hsp90”
+
+共享Evidence E2:
+“GFP does not co-immunoprecipitate with Hsp90.”
+
+共享Evidence E3:
+“not observable difference in the cytosolic or mitochondrial distribution”
+
+[P5-E01]
+Evidence: E1
+Description: 帕金森病相关PINK1-L347P突变体与Hsp90的结合显著下降但并非完全消失；同一实验还比较了mito-L347P构建体。正文把“降低程度”“残余结合”和线粒体定位后果联系起来。
+来源位置: Results，“PINK1 transmembrane and kinase domain determine...”，Figure 4F；Discussion关于residual Hsp90 binding的段落。
+判定: A
+
+[P5-E02]
+Evidence: E2
+Description: GFP与Hsp90不共同免疫沉淀，是融合蛋白实验中的技术性阴性对照，不应作为生物学非互作训练样本。
+来源位置: Figure 4F图注及Results对应段落。
+判定: C
+排除原因: 技术对照；Negatome Manual却将P42212（GFP）—P08238（Hsp90β）收为一条负对，说明平面数据库需二次质控。
+
+[P5-E03]
+Evidence: E3
+Description: WT与L347P PINK1在胞质/线粒体分布上未观察到差异；这是亚细胞定位终点，不是蛋白—蛋白结合终点。
+来源位置: Results，同一小节，Figure 4A。
+判定: C
+排除原因: 非目标关系终点。
+
+本篇统计: A=1，B=0，C=2，A+B=1。
+
+================================================================================
+汇总
+================================================================================
+论文数: 5
+A类: 11
+B类: 3
+C类: 4
+A+B: 14
+有A或B的论文: 5/5（100%）
+A+B平均密度: 2.8条/篇
+
+成功判定: 成功。
+理由: 存在Negatome/Flock公开基准和明确下游任务；5篇中5篇命中A或B；A+B=14≥5；A=11>0。
